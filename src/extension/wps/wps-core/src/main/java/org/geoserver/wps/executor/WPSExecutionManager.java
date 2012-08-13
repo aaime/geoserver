@@ -64,8 +64,11 @@ public class WPSExecutionManager implements ApplicationContextAware,
 
     private int connectionTimeout;
 
-    public WPSExecutionManager(WPSResourceManager resourceManager) {
+    private ProcessListeners processListeners;
+
+    public WPSExecutionManager(WPSResourceManager resourceManager, ProcessListeners processListeners) {
         this.resourceManager = resourceManager;
+        this.processListeners = processListeners;
     }
 
     /**
@@ -80,7 +83,18 @@ public class WPSExecutionManager implements ApplicationContextAware,
         ProcessManager processManager = getProcessManager(processName);
         String executionId = resourceManager.getExecutionId(true);
         Map<String, Object> inputs = request.getProcessInputs(this);
-        return processManager.submitChained(executionId, processName, inputs);
+        processListeners.fireProcessSubmitted(new ProcessEvent(executionId, request.getRequest(), false, true, inputs));
+        Map<String, Object> outputs;
+        try {
+            outputs = processManager.submitChained(executionId, processName, inputs);
+            processListeners.fireProcessExecuted(new ProcessEvent(executionId, request.getRequest(), false, true, inputs, outputs));
+        } catch(Exception e) {
+            processListeners.fireProcessFailed(new ProcessEvent(executionId, request.getRequest(), false, true, inputs, e));
+            
+            throw new WPSException("Chained execution failed: " + e);
+        }
+        
+        return outputs;
     }
     
 
@@ -98,24 +112,33 @@ public class WPSExecutionManager implements ApplicationContextAware,
         ProcessManager processManager = getProcessManager(processName);
         LazyInputMap inputs = request.getProcessInputs(this);
         String executionId = resourceManager.getExecutionId(synchronous);
-        final AsynchronousProcessContext context = new AsynchronousProcessContext(request,
-                executionId, inputs, processManager, applicationContext);
-        contexts.put(executionId, context);
-        processManager.submit(executionId, processName, inputs, request.isAsynchronous());
-        if (request.isAsynchronous()) {
-            // ah, we need to store the output at the end, schedule a thread that will
-            // do as soon as the process is done executing
-            storedResponseWriters.submit(new Runnable() {
-
-                @Override
-                public void run() {
-                    
-                    context.writeResponseFile();
-                }
-            });
+        processListeners.fireProcessSubmitted(new ProcessEvent(executionId, request.getRequest(), !synchronous, false, inputs));
+        
+        // actually submit the process for deferred execution
+        try {
+            final AsynchronousProcessContext context = new AsynchronousProcessContext(request,
+                    executionId, inputs, processManager, applicationContext);
+            contexts.put(executionId, context);
+            processManager.submit(executionId, processName, inputs, request.isAsynchronous());
+            if (request.isAsynchronous()) {
+                // ah, we need to store the output at the end, schedule a thread that will
+                // do as soon as the process is done executing
+                storedResponseWriters.submit(new Runnable() {
+    
+                    @Override
+                    public void run() {
+                        
+                        context.writeResponseFile();
+                    }
+                });
+            }
+    
+            return executionId;
+        } catch(Exception e) {
+            processListeners.fireProcessFailed(new ProcessEvent(executionId, request.getRequest(), false, true, inputs, e));
+            
+            throw new WPSException("Failure occurred while submitting process into the process manager", e);
         }
-
-        return executionId;
     }
 
     /**

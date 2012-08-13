@@ -250,6 +250,9 @@
       <constructor-arg index="1" ref="defaultProcessManager"/>
       <constructor-arg index="2" ref="wpsStorageCleaner"/>
     </bean>
+    
+    <!-- Handles all the process listeners in the application context -->
+    <bean id="processListeners" class="org.geoserver.wps.execute.ProcessListeners"/>
 
     <!-- The uber-process factory used by GeoServer -->
     <bean id="wpsProcessors" class="org.geoserver.wps.process.GeoServerProcessors"/>
