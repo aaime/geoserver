@@ -96,6 +96,7 @@ import org.geotools.util.logging.Log4JLoggerFactory;
 import org.geotools.util.logging.Logging;
 import org.geotools.xml.XSD;
 import org.junit.After;
+import org.junit.runner.RunWith;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
@@ -150,6 +151,7 @@ import com.mockrunner.mock.web.MockServletOutputStream;
  *
  */
 @TestSetup(run=TestSetupFrequency.ONCE)
+@RunWith(GeoServerTestRunner.class)
 public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemTestData> {
 
     protected SystemTestData createTestData() throws Exception {
