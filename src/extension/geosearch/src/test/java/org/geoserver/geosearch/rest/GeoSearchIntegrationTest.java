@@ -34,6 +34,10 @@ public class GeoSearchIntegrationTest extends GeoServerSystemTestSupport {
 
     static QName[] indexed = { MockData.BASIC_POLYGONS, MockData.BRIDGES };
 
+    @Override
+    protected boolean isPersistentConfigurationRequired() {
+        return true;
+    }
     
     @Override
     protected void onSetUp(SystemTestData testData) throws Exception {

@@ -24,13 +24,13 @@ public class LiveDbmsDataSecurity extends LiveDbmsData {
     static Logger LOGGER = org.geotools.util.logging.Logging.getLogger("org.geoserver.security.jdbc");
     protected Boolean available = null;
     
-    public LiveDbmsDataSecurity(File dataDirSourceDirectory, String fixtureId, File sqlScript) throws IOException{
-        super(dataDirSourceDirectory, fixtureId, sqlScript);
+    public LiveDbmsDataSecurity(File dataDirSourceDirectory, String fixtureId, File sqlScript, boolean isPersistentConfigurationRequired) throws IOException{
+        super(dataDirSourceDirectory, fixtureId, sqlScript, isPersistentConfigurationRequired);
 
     }
     
-    public LiveDbmsDataSecurity( String fixtureId) throws Exception {
-        this(AbstractSecurityServiceTest.unpackTestDataDir(),fixtureId,null);
+    public LiveDbmsDataSecurity( String fixtureId, boolean isPersistentConfigurationRequired) throws Exception {
+        this(AbstractSecurityServiceTest.unpackTestDataDir(),fixtureId,null, isPersistentConfigurationRequired);
     }
 
     @Override

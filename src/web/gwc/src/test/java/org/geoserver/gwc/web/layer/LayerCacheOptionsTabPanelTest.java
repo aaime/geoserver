@@ -39,6 +39,12 @@ public class LayerCacheOptionsTabPanelTest extends GeoServerWicketTestSupport {
     private IModel<LayerInfo> layerModel;
 
     private GeoServerTileLayerInfoModel tileLayerModel;
+    
+    @Override
+    protected boolean isPersistentConfigurationRequired() {
+        // no clue why this particular test fails without a persistent config
+        return true;
+    }
 
     @Before
     public void setUpInternal() throws Exception {

@@ -27,6 +27,11 @@ import org.w3c.dom.DocumentType;
 public class CachingExtendedCapabilitiesProviderTest extends GeoServerSystemTestSupport {
 
     @Override
+    protected boolean isPersistentConfigurationRequired() {
+        return true;
+    }
+    
+    @Override
     protected void onSetUp(SystemTestData testData) throws Exception {
         super.onSetUp(testData);
 

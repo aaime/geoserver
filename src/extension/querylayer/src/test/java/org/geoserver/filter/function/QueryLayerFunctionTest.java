@@ -18,6 +18,11 @@ import org.opengis.filter.expression.Function;
 public class QueryLayerFunctionTest extends GeoServerSystemTestSupport {
 
     FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2(null);
+    
+    @Override
+    protected boolean isPersistentConfigurationRequired() {
+        return true;
+    }
 
     @Test
     public void testQuerySingle() {

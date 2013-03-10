@@ -15,10 +15,10 @@ import org.geoserver.data.util.IOUtils;
  * @author mcr
  *
  */
-public class Security_2_2_TestData extends SystemTestData{
+public class Security_2_2_TestData extends SystemTestData {
     
-    public Security_2_2_TestData() throws IOException {
-        super();
+    public Security_2_2_TestData(boolean isPersistentConfigurationRequired) throws IOException {
+        super(isPersistentConfigurationRequired);
         
     }
 

@@ -26,6 +26,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 public class DescribeFeatureTest extends WFSTestSupport {
+    
+    @Override
+    protected boolean isPersistentConfigurationRequired() {
+        return true;
+    }
 
     @Before
     public void revert() throws Exception {

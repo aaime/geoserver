@@ -46,6 +46,12 @@ import com.mockrunner.mock.web.MockHttpServletResponse;
 public class GWCIntegrationTest extends GeoServerSystemTestSupport {
 
     @Override
+    protected boolean isPersistentConfigurationRequired() {
+        // we do a reload in this test
+        return true;
+    }
+    
+    @Override
     protected void onSetUp(SystemTestData testData) throws Exception {
         super.onSetUp(testData);
         

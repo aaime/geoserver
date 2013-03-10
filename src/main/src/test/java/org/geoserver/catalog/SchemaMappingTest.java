@@ -16,6 +16,11 @@ import org.junit.experimental.categories.Category;
 @TestSetup(run=TestSetupFrequency.REPEAT)
 @Category(SystemTest.class)
 public class SchemaMappingTest extends GeoServerSystemTestSupport {
+    
+    @Override
+    protected boolean isPersistentConfigurationRequired() {
+        return true;
+    }
 
     public SchemaMappingTest() {
         super();

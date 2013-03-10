@@ -15,16 +15,19 @@ import org.geoserver.security.GeoServerUserGroupService;
 import org.geoserver.security.GeoServerUserGroupStore;
 import org.geoserver.security.GroupAdminServiceTest;
 import org.geoserver.security.jdbc.config.JDBCRoleServiceConfig;
-import org.geoserver.security.xml.XMLRoleService;
 import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 
 public class JDBCGroupAdminServiceTest extends GroupAdminServiceTest {
 
     @Override
     protected SystemTestData createTestData() throws Exception {
-        return new LiveSystemTestData(unpackTestDataDir());
+        return new LiveSystemTestData(unpackTestDataDir(), isPersistentConfigurationRequired());
+    }
+    
+    @Override
+    protected final boolean isPersistentConfigurationRequired() {
+        // no salvation for these tests, they need a persisted data dir it seems...
+        return true;
     }
 
 //    @Before

@@ -1352,6 +1352,10 @@ public class CatalogImpl implements Catalog {
             }
         }
     }
+    
+    public void clearListeners() {
+        listeners.clear();
+    }
 
     public Iterator search(String cql) {
         // TODO Auto-generated method stub

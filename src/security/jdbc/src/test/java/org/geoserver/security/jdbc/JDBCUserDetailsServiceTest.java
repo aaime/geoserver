@@ -113,7 +113,7 @@ public abstract class JDBCUserDetailsServiceTest extends AbstractUserDetailsServ
     protected SystemTestData createTestData() throws Exception {
         if ("h2".equalsIgnoreCase(getFixtureId()))
             return super.createTestData();
-        return new LiveDbmsDataSecurity(getFixtureId());
+        return new LiveDbmsDataSecurity(getFixtureId(), isPersistentConfigurationRequired());
     }
     
     @Test
@@ -129,6 +129,12 @@ public abstract class JDBCUserDetailsServiceTest extends AbstractUserDetailsServ
         } catch (Exception ex) {
             fail(ex.getMessage());
         }
+    }
+    
+    @Override
+    protected final boolean isPersistentConfigurationRequired() {
+        // no salvation for these tests, they need a persisted data dir it seems...
+        return true;
     }
 
 }

@@ -13,8 +13,8 @@ public class LiveSystemTestData extends SystemTestData {
 
     protected File source;
 
-    public LiveSystemTestData(File source) throws IOException {
-        super();
+    public LiveSystemTestData(File source, boolean isPersistentConfigurationRequired) throws IOException {
+        super(isPersistentConfigurationRequired);
         this.source = source;
     }
 

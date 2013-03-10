@@ -39,11 +39,10 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
@@ -62,12 +61,14 @@ import org.geoserver.catalog.ResourceInfo;
 import org.geoserver.catalog.StoreInfo;
 import org.geoserver.catalog.StyleInfo;
 import org.geoserver.catalog.WorkspaceInfo;
+import org.geoserver.catalog.event.CatalogListener;
+import org.geoserver.catalog.impl.CatalogImpl;
 import org.geoserver.config.GeoServer;
 import org.geoserver.config.GeoServerDataDirectory;
 import org.geoserver.config.GeoServerLoaderProxy;
+import org.geoserver.config.GeoServerPersister;
 import org.geoserver.config.ServiceInfo;
 import org.geoserver.data.test.SystemTestData;
-import org.geoserver.data.test.TestData;
 import org.geoserver.logging.LoggingUtils;
 import org.geoserver.ows.util.CaseInsensitiveMap;
 import org.geoserver.ows.util.KvpUtils;
@@ -153,7 +154,11 @@ import com.mockrunner.mock.web.MockServletOutputStream;
 public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemTestData> {
 
     protected SystemTestData createTestData() throws Exception {
-        return new SystemTestData();
+        return new SystemTestData(isPersistentConfigurationRequired());
+    }
+
+    protected boolean isPersistentConfigurationRequired() {
+        return false;
     }
 
     /**
@@ -205,10 +210,20 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
             applicationContext.publishEvent(new ContextLoadedEvent(applicationContext));
 
             // set the parameter after a refresh because it appears a refresh
-            // wipes
-            // out all parameters
+            // wipes out all parameters
             servletContext.setAttribute(
                 WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, applicationContext);
+            
+            if(!isPersistentConfigurationRequired()) {
+                CatalogImpl rawCatalog = (CatalogImpl) applicationContext.getBean("rawCatalog");
+                List<CatalogListener> listeners = new ArrayList(rawCatalog.getListeners());
+                testData.synchCatalog(rawCatalog);
+                rawCatalog.clearListeners();
+                for (CatalogListener listener : listeners) {
+                    rawCatalog.addListener(listener);
+                }
+                rawCatalog.removeListeners(GeoServerPersister.class);
+            }
 
             onSetUp(testData);
         }

@@ -5,29 +5,22 @@
 
 package org.geoserver.security.xml;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.logging.Logger;
 
-import junit.framework.Assert;
-
-import org.geoserver.data.test.LiveData;
 import org.geoserver.data.test.LiveSystemTestData;
 import org.geoserver.data.test.SystemTestData;
-import org.geoserver.data.test.TestData;
-import org.geoserver.platform.GeoServerExtensions;
 import org.geoserver.security.GeoServerRoleService;
 import org.geoserver.security.GeoServerSecurityManager;
 import org.geoserver.security.GeoServerUserGroupService;
 import org.geoserver.security.impl.AbstractUserDetailsServiceTest;
-import org.geoserver.security.impl.DataAccessRuleDAO;
 import org.geoserver.security.impl.GeoServerRole;
 import org.geoserver.security.impl.GeoServerUser;
-import org.geoserver.security.impl.RESTAccessRuleDAO;
-import org.geoserver.security.impl.ServiceAccessRuleDAO;
 import org.geoserver.security.password.GeoServerMultiplexingPasswordEncoder;
 import org.geoserver.security.password.PasswordValidator;
 import org.geoserver.test.SystemTest;
@@ -39,7 +32,12 @@ public class XMLUserDetailsServiceTest extends AbstractUserDetailsServiceTest {
 
     @Override
     protected SystemTestData createTestData() throws Exception {
-        return new LiveSystemTestData(new File("./src/test/resources/data_dir/legacy"));
+        return new LiveSystemTestData(new File("./src/test/resources/data_dir/legacy"), isPersistentConfigurationRequired());
+    }
+    
+    @Override
+    protected boolean isPersistentConfigurationRequired() {
+        return true;
     }
 
     @Override

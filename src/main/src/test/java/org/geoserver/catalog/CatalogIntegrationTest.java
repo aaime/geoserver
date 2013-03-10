@@ -31,6 +31,11 @@ import org.junit.experimental.categories.Category;
 public class CatalogIntegrationTest extends GeoServerSystemTestSupport {
     
     @Override
+    protected boolean isPersistentConfigurationRequired() {
+        return true;
+    }
+    
+    @Override
     protected void setUpTestData(SystemTestData testData) throws Exception {
         super.setUpTestData(testData);
         testData.setUpDefaultRasterLayers();

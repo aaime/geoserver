@@ -105,9 +105,12 @@ public class SystemTestData extends CiteTestData {
 
     /** internal catalog, used for setup before the real catalog available */
     Catalog catalog;
+    
+    boolean persistentConfigurationRequired;
 
-    public SystemTestData() throws IOException {
-        // setup the root
+    public SystemTestData(boolean persistentConfigurationRequired) throws IOException {
+        this.persistentConfigurationRequired = persistentConfigurationRequired;
+        // setup the root (needed to also put the data, we need it anyways)
         data = IOUtils.createRandomDirectory("./target", "default", "data");
         data.delete();
         data.mkdir();
@@ -282,8 +285,10 @@ public class SystemTestData extends CiteTestData {
         catalog.setExtendedValidation(false);
         catalog.setResourceLoader(new GeoServerResourceLoader(data));
         
-        catalog.addListener(new GeoServerPersister(catalog.getResourceLoader(), 
-            createXStreamPersister()));
+        if(persistentConfigurationRequired) {
+            catalog.addListener(new GeoServerPersister(catalog.getResourceLoader(), 
+                    createXStreamPersister()));
+        }
 
         //workspaces
         addWorkspace(DEFAULT_PREFIX, DEFAULT_URI, catalog);
@@ -295,14 +300,21 @@ public class SystemTestData extends CiteTestData {
         //default style
         addStyle(DEFAULT_VECTOR_STYLE, catalog);
         addStyle(DEFAULT_RASTER_STYLE, catalog);
+        addStyle("point", catalog);
+        addStyle("line", catalog);
+        addStyle("polygon", catalog);
 
         this.catalog = catalog;
     }
+    
+    
 
     protected void createConfig() {
         GeoServerImpl geoServer = new GeoServerImpl();
-        geoServer.addListener(new GeoServerPersister(new GeoServerResourceLoader(data), 
-            createXStreamPersister()));
+        if(persistentConfigurationRequired) {
+            geoServer.addListener(new GeoServerPersister(new GeoServerResourceLoader(data), 
+                createXStreamPersister()));
+        }
 
         GeoServerInfo global = geoServer.getFactory().createGlobal();
         geoServer.setGlobal(global);
@@ -916,4 +928,9 @@ public class SystemTestData extends CiteTestData {
     public boolean isTestDataAvailable() {
         return true;
     }
+
+    public void synchCatalog(Catalog other) {
+        ((CatalogImpl)other).sync((CatalogImpl) catalog);
+    }
+    
 }

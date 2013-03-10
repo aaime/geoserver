@@ -194,7 +194,7 @@ public class CasAuthenticationTest extends AbstractAuthenticationProviderTest {
 
     @Override
     protected SystemTestData createTestData() throws Exception {
-        return new LiveCasData(AbstractSecurityServiceTest.unpackTestDataDir());
+        return new LiveCasData(AbstractSecurityServiceTest.unpackTestDataDir(), isPersistentConfigurationRequired());
     }
 
     @Override

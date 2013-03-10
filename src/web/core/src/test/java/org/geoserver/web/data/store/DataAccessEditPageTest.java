@@ -4,7 +4,9 @@
  */
 package org.geoserver.web.data.store;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.Serializable;
 import java.util.List;
@@ -20,8 +22,6 @@ import org.geoserver.catalog.FeatureTypeInfo;
 import org.geoserver.catalog.NamespaceInfo;
 import org.geoserver.catalog.WorkspaceInfo;
 import org.geoserver.data.test.MockData;
-import org.geoserver.test.TestSetup;
-import org.geoserver.test.TestSetupFrequency;
 import org.geoserver.web.GeoServerWicketTestSupport;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,6 +33,11 @@ public class DataAccessEditPageTest extends GeoServerWicketTestSupport {
 
     private DataStoreInfo store;
 
+    @Override
+    protected boolean isPersistentConfigurationRequired() {
+        return true;
+    }
+    
     @Before
     public void init() {
         store = getCatalog().getStoreByName(MockData.CITE_PREFIX, DataStoreInfo.class);

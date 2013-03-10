@@ -44,6 +44,11 @@ import org.w3c.dom.Element;
  */
 @Category(SystemTest.class)
 public class ResourcePoolTest extends GeoServerSystemTestSupport {
+    
+    @Override
+    protected boolean isPersistentConfigurationRequired() {
+        return true;
+    }
 
     /**
      * Test that the {@link FeatureType} cache returns the same instance every time. This is assumed

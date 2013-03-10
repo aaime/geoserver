@@ -75,7 +75,8 @@ public class SampleDataAccessMockData extends SystemTestData {
      * 
      * @throws IOException
      */
-    public SampleDataAccessMockData() throws IOException {
+    public SampleDataAccessMockData(boolean isPersistentConfigurationRequired) throws IOException {
+        super(isPersistentConfigurationRequired);
         data = IOUtils.createRandomDirectory("./target", "sample-data-access-mock", "data");
         data.delete();
         data.mkdir();

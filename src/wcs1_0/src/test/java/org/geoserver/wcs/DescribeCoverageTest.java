@@ -28,6 +28,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 public class DescribeCoverageTest extends WCSTestSupport {
+    
+    @Override
+    protected boolean isPersistentConfigurationRequired() {
+        return true;
+    }
 
     @Before
     public void revertTasmaniaDem() throws IOException {

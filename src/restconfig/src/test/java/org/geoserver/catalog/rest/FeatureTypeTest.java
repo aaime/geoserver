@@ -33,6 +33,11 @@ import com.mockrunner.mock.web.MockHttpServletResponse;
 import com.vividsolutions.jts.geom.MultiPolygon;
 
 public class FeatureTypeTest extends CatalogRESTTestSupport {
+    
+    @Override
+    protected boolean isPersistentConfigurationRequired() {
+        return true;
+    }
 
     @Before
     public void removePdsStore() {

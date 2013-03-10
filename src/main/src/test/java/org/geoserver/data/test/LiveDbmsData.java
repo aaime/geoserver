@@ -91,8 +91,8 @@ public class LiveDbmsData extends LiveSystemTestData {
      * @param filterMap
      * @param sqlScript
      */
-    public LiveDbmsData(File dataDirSourceDirectory, String fixtureId, File sqlScript) throws IOException {
-        super(dataDirSourceDirectory);
+    public LiveDbmsData(File dataDirSourceDirectory, String fixtureId, File sqlScript, boolean isPersistentConfigurationRequired) throws IOException {
+        super(dataDirSourceDirectory, isPersistentConfigurationRequired);
         this.fixture = lookupFixture(fixtureId);
         this.fixtureId = fixtureId;
         this.sqlScript = sqlScript;

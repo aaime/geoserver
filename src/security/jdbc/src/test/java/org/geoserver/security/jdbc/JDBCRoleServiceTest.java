@@ -29,7 +29,11 @@ public abstract class JDBCRoleServiceTest extends AbstractRoleServiceTest {
     
     protected abstract String getFixtureId();            
     
-    
+    @Override
+    protected final boolean isPersistentConfigurationRequired() {
+        // no salvation for these tests, they need a persisted data dir it seems...
+        return true;
+    }
 
     @After
     public void dropExistingTables() throws Exception {
@@ -91,12 +95,9 @@ public abstract class JDBCRoleServiceTest extends AbstractRoleServiceTest {
     protected SystemTestData createTestData() throws Exception {
         if ("h2".equalsIgnoreCase(getFixtureId()))
             return super.createTestData();
-        return new LiveDbmsDataSecurity(getFixtureId());
+        return new LiveDbmsDataSecurity(getFixtureId(), isPersistentConfigurationRequired());
     }
     
-    
-    
-
     @Override
     protected boolean isJDBCTest() {
         return true;

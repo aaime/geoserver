@@ -33,7 +33,7 @@ public class MigrateFrom_2_2_Test extends GeoServerSystemTestSupport {
     
     @Override    
     protected SystemTestData createTestData() throws Exception {
-        return new Security_2_2_TestData();
+        return new Security_2_2_TestData(isPersistentConfigurationRequired());
     }
     
     @Test

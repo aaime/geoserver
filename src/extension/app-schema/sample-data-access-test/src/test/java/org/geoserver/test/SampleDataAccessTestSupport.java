@@ -6,7 +6,6 @@
 
 package org.geoserver.test;
 
-import org.geoserver.data.test.TestData;
 import org.geotools.data.SampleDataAccess;
 
 /**
@@ -19,7 +18,12 @@ public abstract class SampleDataAccessTestSupport extends GeoServerSystemTestSup
 
     @Override
     protected SampleDataAccessMockData createTestData() throws Exception {
-        return new SampleDataAccessMockData();
+        return new SampleDataAccessMockData(isPersistentConfigurationRequired());
+    }
+    
+    @Override
+    protected boolean isPersistentConfigurationRequired() {
+        return true;
     }
 
 }

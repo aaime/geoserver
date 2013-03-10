@@ -136,6 +136,12 @@ public abstract class AbstractAppSchemaTestSupport extends GeoServerSystemTestSu
         // disable schema caching in tests, as schemas are expected to provided on the classpath
         SchemaCache.disableAutomaticConfiguration();
     }
+    
+    @Override
+    protected boolean isPersistentConfigurationRequired() {
+        // hmmm.. none of these tests work if the configuration is not persisted...
+        return true;
+    }
 
     /**
      * Unregister all data access from registry to avoid stale data access being used by other unit

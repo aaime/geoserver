@@ -43,6 +43,11 @@ import com.mockrunner.mock.web.MockHttpServletResponse;
  * 
  */
 public class RESTIntegrationTest extends GeoServerSystemTestSupport {
+    
+    @Override
+    protected boolean isPersistentConfigurationRequired() {
+        return true;
+    }
 
     @Override
     protected void onSetUp(SystemTestData testData) throws Exception {

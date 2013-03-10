@@ -95,8 +95,8 @@ public class LiveCasData extends LiveSystemTestData {
      */
     protected String fixtureId="cas";
 
-    public LiveCasData(File dataDirSourceDirectory ) throws IOException {
-        super(dataDirSourceDirectory);
+    public LiveCasData(File dataDirSourceDirectory, boolean isPersistentConfigurationRequired) throws IOException {
+        super(dataDirSourceDirectory, isPersistentConfigurationRequired);
         this.fixture = lookupFixture(fixtureId);
     }
     

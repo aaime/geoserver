@@ -34,6 +34,12 @@ public class GetCapabilitiesTest extends WCSTestSupport {
     // return "/GEOTOOLS_DEVELOPER_LOGGING.properties";
     // }
 
+    @Override
+    protected final boolean isPersistentConfigurationRequired() {
+        // no salvation for these tests, they need a persisted data dir it seems...
+        return true;
+    }
+    
     @Before
     public void revertTasmaniaDem() throws IOException {
         getTestData().addDefaultRasterLayer(TASMANIA_DEM, getCatalog());

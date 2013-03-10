@@ -110,11 +110,17 @@ public abstract class JDBCUserGroupServiceTest extends AbstractUserGroupServiceT
     protected SystemTestData createTestData() throws Exception {
         if ("h2".equalsIgnoreCase(getFixtureId()))
             return super.createTestData();
-        return new LiveDbmsDataSecurity(getFixtureId());
+        return new LiveDbmsDataSecurity(getFixtureId(), isPersistentConfigurationRequired());
     }
     
     @Override
     protected boolean isJDBCTest() {
+        return true;
+    }
+    
+    @Override
+    protected final boolean isPersistentConfigurationRequired() {
+        // no salvation for these tests, they need a persisted data dir it seems...
         return true;
     }
 
