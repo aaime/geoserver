@@ -116,8 +116,8 @@ public class DeleteElementHandler extends AbstractTransactionElementHandler {
             filter = WFSReprojectionUtil.normalizeFilterCRS(filter, store.getSchema(), declaredCRS);
             
             // notify listeners
-            TransactionEvent event = new TransactionEvent(TransactionEventType.PRE_DELETE, request,
-                    elementName, store.getFeatures(filter));
+            TransactionEvent event = new TransactionEvent(TransactionEventType.PRE_DELETE, 
+                    TransactionRequest.WFS11.unadapt(request), elementName, store.getFeatures(filter));
             event.setSource( Delete.WFS11.unadapt((Delete)delete));
             listener.dataStoreChange( event );
 

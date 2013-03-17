@@ -21,10 +21,6 @@ import org.geoserver.config.GeoServer;
 import org.geoserver.platform.Operation;
 import org.geoserver.platform.Service;
 import org.geoserver.platform.ServiceException;
-import org.geoserver.wfs.xml.FeatureTypeSchemaBuilder;
-import org.geoserver.wfs.xml.GML3OutputFormat;
-import org.geoserver.wfs.xml.v1_1_0.WFS;
-import org.geoserver.wfs.xml.v1_1_0.WFSConfiguration;
 import org.geoserver.wms.GetFeatureInfoRequest;
 import org.geoserver.wms.MapLayerInfo;
 import org.geoserver.wms.WMS;
@@ -119,11 +115,13 @@ public class GML3FeatureInfoOutputFormat extends GetFeatureInfoOutputFormat {
 
         final GeoServer gs = wms.getGeoServer();
                 
-        FeatureTypeSchemaBuilder sb = new FeatureTypeSchemaBuilder.GML3(gs); 
-        WFSConfiguration configuration = new WFSConfiguration(gs, sb, new WFS(sb));
+        throw new ServiceException("Unsupported for the moment");
         
-        GML3OutputFormat format = new GML3OutputFormat(gs, configuration);
-        format.write(features, out, opDescriptor);
+//        FeatureTypeSchemaBuilder sb = new FeatureTypeSchemaBuilder.GML3(gs); 
+//        WFSConfiguration configuration = new WFSConfiguration(gs, sb, new WFS(sb));
+//        
+//        GML3OutputFormat format = new GML3OutputFormat(gs, configuration);
+//        format.write(features, out, opDescriptor);
     }
 
 }

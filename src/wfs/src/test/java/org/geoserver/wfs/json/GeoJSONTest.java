@@ -16,6 +16,7 @@ import net.sf.json.JSONObject;
 import org.geoserver.config.GeoServer;
 import org.geoserver.data.test.SystemTestData;
 import org.geoserver.data.util.IOUtils;
+import org.geoserver.json.JSONType;
 import org.geoserver.wfs.WFSInfo;
 import org.geoserver.wfs.WFSTestSupport;
 import org.junit.Test;

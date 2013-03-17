@@ -4,6 +4,8 @@
  */
 package org.geoserver.wfs;
 
+import org.geoserver.platform.ServiceException;
+
 
 /**
  * Implemented by classes needing to listen to datastore change events during a
@@ -20,5 +22,5 @@ public interface TransactionListener {
      * as PostGIS) is being used. 
      * </p>
      */
-    void dataStoreChange(TransactionEvent event) throws WFSException;
+    void dataStoreChange(TransactionEvent event) throws ServiceException;
 }

@@ -6,26 +6,13 @@ package org.geoserver.wms.featureinfo;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Collections;
-import java.util.Iterator;
 
 import net.opengis.wfs.FeatureCollectionType;
-import net.opengis.wfs.GetFeatureType;
-import net.opengis.wfs.QueryType;
-import net.opengis.wfs.WfsFactory;
 
-import org.geoserver.config.GeoServer;
-import org.geoserver.platform.Operation;
-import org.geoserver.platform.Service;
+import org.geoserver.gml.GML2Writer;
 import org.geoserver.platform.ServiceException;
-import org.geoserver.wfs.xml.GML2OutputFormat;
 import org.geoserver.wms.GetFeatureInfoRequest;
 import org.geoserver.wms.WMS;
-import org.geotools.data.simple.SimpleFeatureCollection;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.gml2.bindings.GML2EncodingUtils;
 
 /**
  * A GetFeatureInfo response handler specialized in producing GML data for a GetFeatureInfo request.
@@ -66,42 +53,19 @@ public class GML2FeatureInfoOutputFormat extends GetFeatureInfoOutputFormat {
     @Override
     public void write(FeatureCollectionType results, GetFeatureInfoRequest fInfoReq,
             OutputStream out) throws ServiceException, IOException {
-
-        // the 'response' object we'll pass to our OutputFormat
-        FeatureCollectionType features = WfsFactory.eINSTANCE.createFeatureCollectionType();
-
-        // the 'request' object we'll pass to our OutputFormat
-        GetFeatureType gfreq = WfsFactory.eINSTANCE.createGetFeatureType();
-        gfreq.setBaseUrl(fInfoReq.getBaseUrl());
-
-        for (Iterator i = results.getFeature().iterator(); i.hasNext();) {
-            FeatureCollection fc = (FeatureCollection) i.next();
-            features.getFeature().add(fc);
-
-            QueryType qt = WfsFactory.eINSTANCE.createQueryType();
-            String crs = GML2EncodingUtils.epsgCode(fc.getSchema().getCoordinateReferenceSystem());
-            if (crs != null) {
-                final String srsName = "EPSG:" + crs;
-                try {
-                    qt.setSrsName(new URI(srsName));
-                } catch (URISyntaxException e) {
-                    throw new ServiceException(
-                        "Unable to determite coordinate system for featureType " + 
-                            fc.getSchema().getName() + ".  Schema told us '" + srsName + "'", e);
-                }
-            }
-            gfreq.getQuery().add(qt);
-
+        
+        if (results == null) {
+            throw new IllegalStateException("It seems prepare() has not been called"
+                    + " or has not succeed");
         }
 
-        // this is a dummy wrapper around our 'request' object so that the new Dispatcher will
-        // accept it.
-        Service serviceDesc = new Service("wms", null, null, Collections.EMPTY_LIST);
-        Operation opDescriptor = new Operation("", serviceDesc, null, new Object[] { gfreq });
-
-        final GeoServer gs = wms.getGeoServer();
-        GML2OutputFormat format = new GML2OutputFormat(gs);
-        format.write(features, out, opDescriptor);
+        GML2Writer writer = new GML2Writer(wms.getGeoServer());
+        writer.setIndent(true);
+        writer.setFeatureBounding(true);
+        writer.setGmlPrefixing(true);
+        writer.setSrsPrefix("EPSG:");
+        
+        writer.write(results.getFeature(), fInfoReq.getBaseUrl(), out);
     }
 
 }

@@ -90,7 +90,7 @@
 		<constructor-arg value="text/javascript" />
 	</bean>
 	<!-- GetFeatureInfo JSONP filter -->
-	<bean id="geoJSONPFeatureInfoResponseEF" class="org.geoserver.wfs.json.JSONPExtensionFilter">
+	<bean id="geoJSONPFeatureInfoResponseEF" class="org.geoserver.json.JSONPExtensionFilter">
 		<constructor-arg value="geoJSONPFeatureInfoResponse" />
 	</bean>
 	<!-- GetFeatureInfo JSON -->
@@ -212,6 +212,8 @@
       <property name="request" value="GetFeatureInfo"/>
     </bean>
     -->
+
+    <bean id="wms_filter1_0_0_KvpParser" class="org.geoserver.wfs.kvp.Filter_1_0_0_KvpParser"/>
     
     <bean id="QuantizerMethodKvpParser" class="org.geoserver.ows.kvp.EnumKvpParser">
 		<constructor-arg value="quantizer"/>
@@ -366,7 +368,7 @@
 		<constructor-arg value="text/javascript" />
 	</bean>
 	<!-- DescribeLayer JSONP Filter -->
-	<bean id="jsonPDescribeLayerResponseEF" class="org.geoserver.wfs.json.JSONPExtensionFilter">
+	<bean id="jsonPDescribeLayerResponseEF" class="org.geoserver.json.JSONPExtensionFilter">
 		<constructor-arg value="jsonPDescribeLayerResponse" />
 	</bean>
 	<!-- DescribeLayer JSON -->

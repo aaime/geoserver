@@ -11,6 +11,7 @@ import java.io.StringWriter;
 import java.util.Calendar;
 import java.util.TimeZone;
 
+import org.geoserver.json.GeoJSONBuilder;
 import org.junit.Before;
 import org.junit.Test;
 

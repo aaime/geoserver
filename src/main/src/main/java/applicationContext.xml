@@ -211,4 +211,15 @@
   
   <!-- Automatically injects a env map into the env function -->
   <bean id="enviromentInjector" class="org.geoserver.ows.EnviromentInjectionCallback"/>
+  
+  <bean id="featureIdKvpParser" class="org.geoserver.ows.FlatKvpParser">
+    <constructor-arg index="0" value="featureId"/>
+    <constructor-arg index="1" value="java.lang.String"/>
+  </bean>
+  
+  <bean id="bboxKvpParser" class="org.geoserver.ows.kvp.BBoxKvpParser"/>
+  
+  <bean id="cqlKvpParser" class="org.geoserver.ows.kvp.CQLFilterKvpParser"/>
+  
+  
 </beans>

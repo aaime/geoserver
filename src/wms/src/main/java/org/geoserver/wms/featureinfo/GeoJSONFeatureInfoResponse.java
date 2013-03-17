@@ -6,11 +6,12 @@ package org.geoserver.wms.featureinfo;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 
 import net.opengis.wfs.FeatureCollectionType;
 
-import org.geoserver.config.GeoServer;
-import org.geoserver.wfs.json.GeoJSONGetFeatureResponse;
+import org.geoserver.json.GeoJSONFeatureWriter;
+import org.geoserver.json.JSONType;
 import org.geoserver.wms.GetFeatureInfoRequest;
 import org.geoserver.wms.WMS;
 
@@ -43,9 +44,12 @@ public class GeoJSONFeatureInfoResponse extends GetFeatureInfoOutputFormat {
     @Override
     public void write(FeatureCollectionType features, GetFeatureInfoRequest fInfoReq,
             OutputStream out) throws IOException {
-
-        GeoJSONGetFeatureResponse format = new GeoJSONGetFeatureResponse(wms.getGeoServer(), getContentType());
-        format.write(features, out, null);
+        List resultsList = features.getFeature();
+        boolean jsonp = JSONType.isJsonpMimeType(getContentType());
+        GeoJSONFeatureWriter writer = new GeoJSONFeatureWriter(wms.getGeoServer());
+        writer.setJsonp(jsonp);
+        writer.setFeatureBounding(true);
+        writer.write(resultsList, out); 
     }
 
 }

@@ -6,8 +6,7 @@ package org.geoserver.wms.wms_1_1_1;
 
 import static junit.framework.Assert.assertEquals;
 import static org.custommonkey.xmlunit.XMLAssert.assertXpathEvaluatesTo;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -15,8 +14,6 @@ import java.util.Map;
 import java.util.logging.Level;
 
 import javax.xml.namespace.QName;
-
-import org.junit.Test;
 
 import org.geoserver.catalog.Catalog;
 import org.geoserver.catalog.CatalogBuilder;
@@ -30,7 +27,6 @@ import org.geoserver.data.test.MockData;
 import org.geoserver.data.test.SystemTestData;
 import org.geoserver.data.test.SystemTestData.LayerProperty;
 import org.geoserver.test.RemoteOWSTestSupport;
-import org.geoserver.wfs.WFSInfo;
 import org.geoserver.wms.WMSInfo;
 import org.geoserver.wms.WMSTestSupport;
 import org.geotools.factory.CommonFactoryFinder;
@@ -39,6 +35,7 @@ import org.geotools.styling.Rule;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleFactory;
 import org.geotools.util.logging.Logging;
+import org.junit.Test;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.w3c.dom.Document;
@@ -61,11 +58,6 @@ public class GetFeatureInfoTest extends WMSTestSupport {
         WMSInfo wmsInfo = getGeoServer().getService(WMSInfo.class);
         wmsInfo.setMaxBuffer(50);
         getGeoServer().save(wmsInfo);
-        
-        // force feature bounding in WFS
-        WFSInfo wfsInfo = getGeoServer().getService(WFSInfo.class);
-        wfsInfo.setFeatureBounding(true);
-        getGeoServer().save(wfsInfo);
         
         // add a wms store too, if possible
         if (RemoteOWSTestSupport.isRemoteWMSStatesAvailable(LOGGER)) {

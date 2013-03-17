@@ -17,10 +17,10 @@ import net.sf.json.JSONException;
 import net.sf.json.util.JSONBuilder;
 
 import org.apache.commons.io.IOUtils;
+import org.geoserver.json.JSONType;
 import org.geoserver.ows.Dispatcher;
 import org.geoserver.ows.Request;
 import org.geoserver.platform.ServiceException;
-import org.geoserver.wfs.json.JSONType;
 import org.geoserver.wms.DescribeLayerRequest;
 import org.geoserver.wms.WMS;
 import org.geotools.data.ows.LayerDescription;

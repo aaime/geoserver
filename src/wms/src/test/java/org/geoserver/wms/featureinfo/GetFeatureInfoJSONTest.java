@@ -11,7 +11,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.geoserver.data.test.MockData;
-import org.geoserver.wfs.json.JSONType;
+import org.geoserver.json.JSONType;
 import org.geoserver.wms.wms_1_1_1.GetFeatureInfoTest;
 import org.junit.Test;
 
@@ -111,7 +111,7 @@ public class GetFeatureInfoJSONTest extends GetFeatureInfoTest {
 
         // JSON
         MockHttpServletResponse response = getAsServletResponse(request);
-
+        
         // MimeType
         assertEquals(JSONType.json, response.getContentType());
 

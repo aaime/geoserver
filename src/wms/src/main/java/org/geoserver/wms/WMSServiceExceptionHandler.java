@@ -4,8 +4,7 @@
  */
 package org.geoserver.wms;
 
-import static org.geoserver.ows.util.ResponseUtils.baseURL;
-import static org.geoserver.ows.util.ResponseUtils.buildSchemaURL;
+import static org.geoserver.ows.util.ResponseUtils.*;
 
 import java.awt.Color;
 import java.awt.FontMetrics;
@@ -32,12 +31,12 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.geoserver.config.GeoServer;
+import org.geoserver.json.JSONType;
 import org.geoserver.ows.Request;
 import org.geoserver.ows.ServiceExceptionHandler;
 import org.geoserver.ows.util.OwsUtils;
 import org.geoserver.ows.util.ResponseUtils;
 import org.geoserver.platform.ServiceException;
-import org.geoserver.wfs.json.JSONType;
 import org.geotools.util.Version;
 
 /**

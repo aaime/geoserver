@@ -224,7 +224,8 @@ public class UpdateElementHandler extends AbstractTransactionElementHandler {
             LOGGER.finer("Preprocess to remember modification as a set of fids");
             
             SimpleFeatureCollection features = store.getFeatures(filter);
-            TransactionEvent event = new TransactionEvent(TransactionEventType.PRE_UPDATE, request,
+            TransactionEvent event = new TransactionEvent(TransactionEventType.PRE_UPDATE, 
+                    TransactionRequest.WFS11.unadapt(request),
                     elementName, features);
             event.setSource(Update.WFS11.unadapt(update));
             
@@ -294,7 +295,8 @@ public class UpdateElementHandler extends AbstractTransactionElementHandler {
                 response.addUpdatedFeatures(handle, changedIds);
 
                 listener.dataStoreChange(new TransactionEvent(TransactionEventType.POST_UPDATE,
-                        request, elementName, changed, Update.WFS11.unadapt(update)));
+                        TransactionRequest.WFS11.unadapt(request), 
+                        elementName, changed, Update.WFS11.unadapt(update)));
                 
             }
 

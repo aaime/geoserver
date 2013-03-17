@@ -25,7 +25,6 @@ import org.geoserver.config.impl.GeoServerLifecycleHandler;
 import org.geoserver.platform.ServiceException;
 import org.geoserver.wfs.TransactionEvent;
 import org.geoserver.wfs.TransactionListener;
-import org.geoserver.wfs.WFSException;
 import org.geoserver.wms.GetMapRequest;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
@@ -365,7 +364,7 @@ public class QuickTileCache implements TransactionListener, GeoServerLifecycleHa
         }
     }
 
-    public void dataStoreChange(TransactionEvent event) throws WFSException {
+    public void dataStoreChange(TransactionEvent event) {
         // if anything changes we just wipe out the cache. the mapkey
         // contains a string with part of the map request where the layer
         // name is included, but we would have to parse it and consider

@@ -321,16 +321,11 @@
     <property name="request"><value>DescribeFeatureType</value></property>
   </bean>
   
-	<bean id="featureIdKvpParser" class="org.geoserver.ows.FlatKvpParser">
-		<constructor-arg index="0" value="featureId"/>
-		<constructor-arg index="1" value="java.lang.String"/>
-	</bean>
 	<bean id="resourceIdKvpParser" class="org.geoserver.ows.FlatKvpParser">
         <constructor-arg index="0" value="resourceId"/>
         <constructor-arg index="1" value="java.lang.String"/>
     </bean>
 	
-	<bean id="bboxKvpParser" class="org.geoserver.wfs.kvp.BBoxKvpParser"/>
 	<bean id="filter1_0_0_KvpParser" class="org.geoserver.wfs.kvp.Filter_1_0_0_KvpParser">
 		<property name="service"><value>WFS</value></property>
 		<property name="version"><value>1.0.0</value></property>
@@ -348,7 +343,6 @@
 	     may not find out the one to use) -->
 	<bean id="filter1_1_0_KvpParserDefault" class="org.geoserver.wfs.kvp.Filter_1_1_0_KvpParser"/>
 
-    <bean id="cqlKvpParser" class="org.geoserver.ows.kvp.CQLFilterKvpParser"/>
 	<bean id="propertyName10KvpParser" class="org.geoserver.ows.NestedKvpParser">
 		<constructor-arg index="0" value="propertyName"/>
 		<constructor-arg index="1" value="java.lang.String"/>
@@ -609,7 +603,7 @@
 		<constructor-arg ref="geoServer" />
 		<constructor-arg value="text/javascript" />
 	</bean>
-	<bean id="geoJSONPGetFeatureResponseEF" class="org.geoserver.wfs.json.JSONPExtensionFilter">
+	<bean id="geoJSONPGetFeatureResponseEF" class="org.geoserver.json.JSONPExtensionFilter">
 		<constructor-arg value="geoJSONPGetFeatureResponse" />
 	</bean>
 	<!-- GetFeature JSON -->
@@ -627,7 +621,7 @@
 		<constructor-arg ref="geoServer" />
 		<constructor-arg value="text/javascript" />
 	</bean>
-	<bean id="jsonPDescribeFeatureTypeResponseEF" class="org.geoserver.wfs.json.JSONPExtensionFilter">
+	<bean id="jsonPDescribeFeatureTypeResponseEF" class="org.geoserver.json.JSONPExtensionFilter">
 		<constructor-arg value="jsonPDescribeFeatureTypeResponse" />
 	</bean>
 	<!-- DescribeFeatureType JSON -->

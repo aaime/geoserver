@@ -14,6 +14,8 @@ import org.apache.commons.io.IOUtils;
 import org.geoserver.catalog.FeatureTypeInfo;
 import org.geoserver.catalog.NamespaceInfo;
 import org.geoserver.config.GeoServer;
+import org.geoserver.json.GeoJSONBuilder;
+import org.geoserver.json.JSONType;
 import org.geoserver.ows.Dispatcher;
 import org.geoserver.ows.Request;
 import org.geoserver.platform.Operation;

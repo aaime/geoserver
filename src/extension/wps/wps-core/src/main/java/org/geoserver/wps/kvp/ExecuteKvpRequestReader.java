@@ -229,7 +229,7 @@ public class ExecuteKvpRequestReader extends EMFKvpRequestReader implements Appl
 
     private BoundingBoxType parseBoundingBox(InputType it, Wps10Factory factory, IOParam param) {
         try {
-            ReferencedEnvelope envelope = (ReferencedEnvelope) new org.geoserver.wfs.kvp.BBoxKvpParser().parse(param.value);
+            ReferencedEnvelope envelope = (ReferencedEnvelope) new org.geoserver.ows.kvp.BBoxKvpParser().parse(param.value);
             if(envelope != null) {
                 BoundingBoxType bbox = Ows11Factory.eINSTANCE.createBoundingBoxType();
                 if(envelope.getCoordinateReferenceSystem() != null) {

@@ -5,12 +5,13 @@
 package org.geoserver.wms;
 
 import static org.junit.Assert.*;
+
 import java.io.ByteArrayInputStream;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-import org.geoserver.wfs.json.JSONType;
+import org.geoserver.json.JSONType;
 import org.junit.Test;
 import org.w3c.dom.Document;
 

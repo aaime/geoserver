@@ -180,7 +180,7 @@ public class InsertElementHandler extends AbstractTransactionElementHandler {
 
                     //fire pre insert event
                     TransactionEvent event = new TransactionEvent(TransactionEventType.PRE_INSERT,
-                            request, elementName, collection);
+                            TransactionRequest.WFS11.unadapt(request), elementName, collection);
                     event.setSource(Insert.WFS11.unadapt(insert));
                     
                     listener.dataStoreChange( event );
@@ -188,7 +188,7 @@ public class InsertElementHandler extends AbstractTransactionElementHandler {
                     
                     //fire post insert event
                     SimpleFeatureCollection features = store.getFeatures(filterFactory.id(new HashSet<FeatureId>(fids)));
-                    event = new TransactionEvent(TransactionEventType.POST_INSERT, request, 
+                    event = new TransactionEvent(TransactionEventType.POST_INSERT, TransactionRequest.WFS11.unadapt(request), 
                         elementName, features, Insert.WFS11.unadapt(insert));
                     listener.dataStoreChange( event );
                 }

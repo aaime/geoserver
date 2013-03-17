@@ -7,6 +7,7 @@ package org.geoserver.wfs;
 import net.opengis.wfs.TransactionResponseType;
 import net.opengis.wfs.TransactionType;
 
+import org.geoserver.platform.ServiceException;
 
 /**
  * A transaction plugin is able to listen to a transaction evolution, perform
@@ -17,12 +18,12 @@ public interface TransactionPlugin extends TransactionListener {
      * Check/alter the transaction request elements
      */
     TransactionType beforeTransaction(TransactionType request)
-        throws WFSException;
+        throws ServiceException;
 
     /**
      * Say the last word before we actually commit the transaction
      */
-    void beforeCommit(TransactionType request) throws WFSException;
+    void beforeCommit(TransactionType request) throws ServiceException;
 
     /**
      * Notification the transaction ended

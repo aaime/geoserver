@@ -7,6 +7,7 @@ package org.geoserver.wfs.json;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.geoserver.json.JSONType;
 import org.junit.Test;
 
 import junit.framework.TestCase;

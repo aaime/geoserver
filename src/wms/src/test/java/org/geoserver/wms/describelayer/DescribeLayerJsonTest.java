@@ -4,15 +4,12 @@
  */
 package org.geoserver.wms.describelayer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.geoserver.data.test.MockData;
-import org.geoserver.wfs.json.JSONType;
+import org.geoserver.json.JSONType;
 import org.geoserver.wms.WMSTestSupport;
 import org.junit.Test;
 

@@ -9,9 +9,7 @@ import static org.geoserver.ows.util.ResponseUtils.buildSchemaURL;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.StringReader;
 import java.util.List;
 
 import javax.xml.parsers.SAXParser;
@@ -29,7 +27,6 @@ import javax.xml.transform.stream.StreamSource;
 import org.geoserver.ows.Response;
 import org.geoserver.platform.Operation;
 import org.geoserver.platform.ServiceException;
-import org.geoserver.wfs.CapabilitiesTransformer;
 import org.geoserver.wms.ExtendedCapabilitiesProvider;
 import org.geoserver.wms.GetCapabilities;
 import org.geoserver.wms.GetCapabilitiesRequest;

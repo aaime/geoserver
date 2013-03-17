@@ -23,10 +23,10 @@ import net.opengis.wfs.TransactionType;
 import net.opengis.wfs.UpdateElementType;
 
 import org.eclipse.emf.ecore.EObject;
+import org.geoserver.platform.ServiceException;
 import org.geoserver.wfs.TransactionEvent;
 import org.geoserver.wfs.TransactionEventType;
 import org.geoserver.wfs.TransactionPlugin;
-import org.geoserver.wfs.WFSException;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.util.logging.Logging;
@@ -72,7 +72,7 @@ public class GWCTransactionListener implements TransactionPlugin {
      * 
      * @see org.geoserver.wfs.TransactionPlugin#beforeTransaction(net.opengis.wfs.TransactionType)
      */
-    public TransactionType beforeTransaction(TransactionType request) throws WFSException {
+    public TransactionType beforeTransaction(TransactionType request) throws ServiceException {
         // nothing to do
         return request;
     }
@@ -83,7 +83,7 @@ public class GWCTransactionListener implements TransactionPlugin {
      * 
      * @see org.geoserver.wfs.TransactionPlugin#beforeCommit(net.opengis.wfs.TransactionType)
      */
-    public void beforeCommit(TransactionType request) throws WFSException {
+    public void beforeCommit(TransactionType request) throws ServiceException {
         // nothing to do
     }
 
@@ -161,7 +161,7 @@ public class GWCTransactionListener implements TransactionPlugin {
      * 
      * @see org.geoserver.wfs.TransactionListener#dataStoreChange(org.geoserver.wfs.TransactionEvent)
      */
-    public void dataStoreChange(final TransactionEvent event) throws WFSException {
+    public void dataStoreChange(final TransactionEvent event) throws ServiceException {
         log.info("DataStoreChange: " + event.getLayerName() + " " + event.getType());
         try {
             dataStoreChangeInternal(event);
