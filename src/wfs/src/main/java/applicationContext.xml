@@ -6,7 +6,7 @@
  -->
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
-<beans>
+<beans default-lazy-init="true">
 	<bean id="wfsLegacyLoader" class="org.geoserver.wfs.WFSLoader"/>
 	<bean id="wfsLoader" class="org.geoserver.wfs.WFSXStreamLoader">
 	  <constructor-arg ref="resourceLoader"/>

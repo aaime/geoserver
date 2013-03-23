@@ -6,7 +6,7 @@
  -->
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
-<beans>
+<beans default-lazy-init="true">
 
   <bean id="dataDirectory" class="org.geoserver.config.GeoServerDataDirectory">
     <constructor-arg>

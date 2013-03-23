@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
-<beans>
+<beans default-lazy-init="true">
   <bean id="GWCGeoServerConfigurationProvider" class="org.geoserver.gwc.layer.GWCGeoServerConfigurationProvider">
     <description>
       XmlConfiguration contributor to set up XStream with GeoServer provided configuration objects for GWC configuration storage
@@ -86,7 +86,7 @@
     </description>
   </bean>
 
-  <bean id="GWCDispatcherProxyService" class="org.geoserver.gwc.dispatch.GwcServiceProxy">
+  <bean id="GWCDispatcherProxyService" class="org.geoserver.gwc.dispatch.GwcServiceProxy" depends-on="geoWebCacheExtensions">
     <description>
     </description>
   </bean>

@@ -6,7 +6,7 @@
  -->
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
-<beans>
+<beans default-lazy-init="true">
 
   <!-- h2 datastore initialier -->
   <bean id="h2DataStoreFactoryInitializer" class="org.geoserver.h2.H2DataStoreFactoryInitializer">

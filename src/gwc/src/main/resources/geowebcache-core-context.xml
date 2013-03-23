@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
-<beans>
+<beans default-lazy-init="true">
   <description>
    Bean configuration file for the gwc-core module
   </description>
 
-  <bean id="geoWebCacheExtensions" class="org.geowebcache.GeoWebCacheExtensions"/>
+  <bean id="geoWebCacheExtensions" class="org.geowebcache.GeoWebCacheExtensions" lazy-init="false"/>
   
   <bean id="gwcAppCtx" class="org.geowebcache.util.ApplicationContextProvider" />
   

@@ -6,7 +6,7 @@
  -->
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
  
-<beans>
+<beans default-lazy-init="true">
 
     <!--  
         resources
@@ -15,7 +15,7 @@
     <bean id="dataDirectory" class="org.geoserver.config.GeoServerDataDirectory">
        <constructor-arg ref="resourceLoader"/>
     </bean>
-    <bean id="manifestLoader" class="org.geoserver.ManifestLoader">
+    <bean id="manifestLoader" class="org.geoserver.ManifestLoader" lazy-init="false">
        <constructor-arg ref="resourceLoader"/>
     </bean>
     
@@ -38,7 +38,7 @@
         <!-- note: we use depends to ensure that all datastore plugins are 
              loaded from the spring container before processing hte catalog -->
      
-    <bean id="rawCatalog" class="org.geoserver.catalog.impl.CatalogImpl" depends-on="extensions">
+    <bean id="rawCatalog" class="org.geoserver.catalog.impl.CatalogImpl" depends-on="extensions" lazy-init="false">
          <property name="resourceLoader" ref="resourceLoader"/>  
     </bean>
     <bean id="secureCatalog" class="org.geoserver.security.SecureCatalogImpl" depends-on="accessRulesDao,extensions">
@@ -59,7 +59,7 @@
     <!--alias name="secureCatalog" alias="catalog"/-->
     <alias name="localWorkspaceCatalog" alias="catalog"/> 
     
-    <bean id="geoServer" class="org.geoserver.config.impl.GeoServerImpl">
+    <bean id="geoServer" class="org.geoserver.config.impl.GeoServerImpl" lazy-init="false">
       <property name="catalog" ref="catalog"/>
     </bean>
     <bean id="geoServerLoader" class="org.geoserver.config.GeoServerLoaderProxy">
@@ -193,11 +193,11 @@
      <constructor-arg ref="geoServer"/>  
   </bean>
   
-  <bean id="updateSequenceListener" class="org.geoserver.config.UpdateSequenceListener">
+  <bean id="updateSequenceListener" class="org.geoserver.config.UpdateSequenceListener" lazy-init="false">
 	<constructor-arg ref="geoServer"/>
   </bean>
   
-  <bean id="namespaceWorkspaceConsistencyListener" class="org.geoserver.catalog.NamespaceWorkspaceConsistencyListener">
+  <bean id="namespaceWorkspaceConsistencyListener" class="org.geoserver.catalog.NamespaceWorkspaceConsistencyListener" lazy-init="false">
     <constructor-arg ref="catalog"/>
   </bean>
   

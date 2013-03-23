@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
-<beans>
+<beans default-lazy-init="true">
 
   <!-- the config loader depends on the metastore remover because in case of migration we need to drop the disk quota subsystem -->
   <bean id="DiskQuotaConfigLoader" class="org.geowebcache.diskquota.ConfigLoader" depends-on="metastoreRemover">

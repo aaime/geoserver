@@ -6,7 +6,7 @@
  -->
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
-<beans>
+<beans default-lazy-init="true">
 
     <bean id="ogr2ogrOutputFormat" class="org.geoserver.wfs.response.Ogr2OgrOutputFormat">
       <constructor-arg ref="geoServer"/>

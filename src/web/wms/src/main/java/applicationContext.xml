@@ -6,7 +6,7 @@
  -->
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
-<beans>
+<beans default-lazy-init="true">
   <bean id="wmsServicePage" class="org.geoserver.web.services.ServiceMenuPageInfo">
     <property name="id" value="wms"/>
     <property name="titleKey" value="wms.title"/>

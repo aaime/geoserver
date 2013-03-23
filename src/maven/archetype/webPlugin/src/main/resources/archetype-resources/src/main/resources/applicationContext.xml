@@ -6,7 +6,7 @@
  -->
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
-<beans>
+<beans default-lazy-init="true">
   <bean id="myWebPluginPage" class="org.geoserver.web.MenuPageInfo">
     <property name="componentClass" value="${groupId}.MyWebPluginPage"/>
     <property name="titleKey" value="MyWebPluginPage.title"/>

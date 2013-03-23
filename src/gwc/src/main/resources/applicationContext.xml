@@ -5,7 +5,7 @@
  application directory.
  -->
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
-<beans>
+<beans default-lazy-init="true">
 
   <import resource="geowebcache-geoserver-context.xml" />
   <import resource="geowebcache-servlet.xml" />
@@ -44,7 +44,7 @@
     </constructor-arg>
   </bean>
 
-  <bean id="gwcInitializer" class="org.geoserver.gwc.config.GWCInitializer">
+  <bean id="gwcInitializer" class="org.geoserver.gwc.config.GWCInitializer" lazy-init="false">
     <constructor-arg ref="gwcGeoServervConfigPersister" />
     <constructor-arg ref="rawCatalog" />
     <constructor-arg ref="GeoSeverTileLayerCatalog" />

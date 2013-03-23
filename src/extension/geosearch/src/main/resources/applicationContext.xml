@@ -5,7 +5,7 @@
  application directory.
  -->
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
-<beans>
+<beans default-lazy-init="true">
 
   <bean id="SiteMapLinkHomePageProvider" class="org.geoserver.geosearch.web.SiteMapLinkHomePageProvider">
     <description>Puts a link to sitemap.xml in the home page</description>

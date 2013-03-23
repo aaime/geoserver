@@ -5,7 +5,7 @@
  application directory.
  -->
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
-<beans>
+<beans default-lazy-init="true">
 
 	<bean id="wpsFactoryExtension" class="org.geoserver.wps.WPSFactoryExtension"/>
 	
@@ -260,7 +260,7 @@
     </bean>
 
     <!-- The uber-process factory used by GeoServer -->
-    <bean id="wpsProcessors" class="org.geoserver.wps.process.GeoServerProcessors"/>
+    <bean id="wpsProcessors" class="org.geoserver.wps.process.GeoServerProcessors" lazy-init="false"/>
     
     <!-- The default process filters -->
     <bean id="unsupportedParameterTypeProcessFilter" class="org.geoserver.wps.UnsupportedParameterTypeProcessFilter"/>

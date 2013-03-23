@@ -6,7 +6,7 @@
  -->
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
-<beans>
+<beans default-lazy-init="true">
 	<bean id="wmsLegacyLoader" class="org.geoserver.wms.WMSLoader"/>
     <bean id="wmsLoader" class="org.geoserver.wms.WMSXStreamLoader">
       <constructor-arg ref="resourceLoader"/>

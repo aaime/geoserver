@@ -4,7 +4,7 @@
  application directory.
  -->
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
-<beans>
+<beans default-lazy-init="true">
 
   <bean id="ldapSecurityProvider" class="org.geoserver.security.ldap.LDAPSecurityProvider">
     <constructor-arg ref="geoServerSecurityManager"/>
