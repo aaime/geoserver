@@ -275,5 +275,15 @@
 				<module>libjpeg-turbo</module>
 			</modules>
 		</profile>    
+    <profile>
+      <id>catalog-store</id>
+      <activation>
+        <property><name>catalog-store</name></property>
+      </activation> 	  
+      <modules>
+        <module>catalog-store</module>
+      </modules>
+    </profile>
+
   </profiles>
 </project>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- 
+ Copyright (c) 2001 - 2013 OpenPlans - www.openplans.org. All rights reserved.
+ This code is licensed under the GPL 2.0 license, available at the root
+ application directory.
+ -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.geoserver</groupId>
+    <artifactId>community</artifactId>
+    <version>2.4-SNAPSHOT</version>
+  </parent>
+
+  <groupId>org.geoserver.community</groupId>
+  <artifactId>catalog-store</artifactId>
+  <packaging>jar</packaging>
+  <name>A datastore deriving its contents from the GeoServer own layers</name>
+
+ <dependencies>
+  <dependency>
+   <groupId>org.geoserver</groupId>
+   <artifactId>main</artifactId>
+   <version>2.4-SNAPSHOT</version>
+  </dependency>
+  <dependency>
+   <groupId>junit</groupId>
+   <artifactId>junit</artifactId>
+   <scope>test</scope>
+  </dependency>
+  <dependency>
+   <groupId>org.geoserver</groupId>
+   <artifactId>wfs</artifactId>
+   <version>2.4-SNAPSHOT</version>
+   <classifier>tests</classifier>
+   <scope>test</scope>
+  </dependency>
+  <dependency>
+   <groupId>org.geoserver</groupId>
+   <artifactId>wms</artifactId>
+   <version>2.4-SNAPSHOT</version>
+   <classifier>tests</classifier>
+   <scope>test</scope>
+  </dependency>
+  <dependency>
+   <groupId>org.geoserver</groupId>
+   <artifactId>main</artifactId>
+   <version>2.4-SNAPSHOT</version>
+   <classifier>tests</classifier>
+   <scope>test</scope>
+  </dependency>
+  <dependency>
+     <groupId>com.mockrunner</groupId>
+     <artifactId>mockrunner</artifactId>
+     <scope>test</scope>
+  </dependency>
+  <dependency>
+    <groupId>xmlunit</groupId>
+    <artifactId>xmlunit</artifactId>
+    <scope>test</scope>
+  </dependency>
+   <dependency>
+      <groupId>org.geotools.jdbc</groupId>
+      <artifactId>gt-jdbc-spatialite</artifactId>
+      <version>${gt.version}</version>
+   </dependency>
+  </dependencies>
+
+ <build>
+  <plugins>
+   <plugin>
+     <groupId>org.apache.maven.plugins</groupId>
+     <artifactId>maven-compiler-plugin</artifactId>
+     <configuration>
+       <source>1.5</source> 
+       <target>1.5</target>
+       <debug>true</debug>
+       <encoding>UTF-8</encoding>
+     </configuration>
+    </plugin>
+  </plugins>
+ </build>
+ 
+ </project>
