@@ -988,7 +988,7 @@ public class XStreamPersister {
                             pre = reader.getValue();
                         }
                     }
-                    else {
+                    else if(ref == null) {
                         ref = reader.getValue();
                     }
 
