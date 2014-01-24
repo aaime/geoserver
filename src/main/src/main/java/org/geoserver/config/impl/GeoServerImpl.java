@@ -26,16 +26,20 @@ import org.geoserver.config.ServiceInfo;
 import org.geoserver.config.SettingsInfo;
 import org.geoserver.ows.LocalWorkspace;
 import org.geoserver.ows.util.OwsUtils;
+import org.geoserver.platform.ContextLoadedEvent;
 import org.geoserver.platform.GeoServerExtensions;
 import org.geotools.referencing.CRS;
 import org.geotools.util.logging.Logging;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ApplicationContextEvent;
+import org.springframework.context.event.ContextRefreshedEvent;
 
 import static org.geoserver.ows.util.OwsUtils.resolveCollections;
 
-public class GeoServerImpl implements GeoServer, ApplicationContextAware {
+public class GeoServerImpl implements GeoServer, ApplicationContextAware, ApplicationListener<ApplicationContextEvent> {
     
     private static final Logger LOGGER = Logging.getLogger(GeoServerImpl.class);
 
@@ -58,6 +62,8 @@ public class GeoServerImpl implements GeoServer, ApplicationContextAware {
      * listeners
      */
     List<ConfigurationListener> listeners = new ArrayList<ConfigurationListener>();
+
+    private List<GeoServerLifecycleHandler> lifecycleHandlers;
 
     public GeoServerImpl() {
         this.facade = new DefaultGeoServerFacade(this);
@@ -414,7 +420,7 @@ public class GeoServerImpl implements GeoServer, ApplicationContextAware {
     
     public void dispose() {
         // look for pluggable handlers
-        for(GeoServerLifecycleHandler handler : GeoServerExtensions.extensions(GeoServerLifecycleHandler.class)) {
+        for(GeoServerLifecycleHandler handler : lifecycleHandlers) {
             try {
                 handler.onDispose();
             } catch(Throwable t) {
@@ -439,8 +445,8 @@ public class GeoServerImpl implements GeoServer, ApplicationContextAware {
             loader.reload();
         }
         
-        // look for pluggable handlers
-        for(GeoServerLifecycleHandler handler : GeoServerExtensions.extensions(GeoServerLifecycleHandler.class)) {
+        // notify handlers of reload
+        for(GeoServerLifecycleHandler handler : lifecycleHandlers) {
             try {
                 handler.onReload();
             } catch(Throwable t) {
@@ -457,12 +463,19 @@ public class GeoServerImpl implements GeoServer, ApplicationContextAware {
         CRS.reset("all");
         
         // look for pluggable handlers
-        for(GeoServerLifecycleHandler handler : GeoServerExtensions.extensions(GeoServerLifecycleHandler.class)) {
+        for(GeoServerLifecycleHandler handler : lifecycleHandlers) {
             try {
                 handler.onReset();
             } catch(Throwable t) {
                 LOGGER.log(Level.SEVERE, "A GeoServer lifecycle handler threw an exception during reset", t);
             }
+        }
+    }
+
+    @Override
+    public void onApplicationEvent(ApplicationContextEvent event) {
+        if(event instanceof ContextRefreshedEvent) {
+            lifecycleHandlers = GeoServerExtensions.extensions(GeoServerLifecycleHandler.class);
         }
     }
 }

@@ -86,6 +86,7 @@ public class GeoServerExtensions implements ApplicationContextAware, Application
         GeoServerExtensions.context = context;
         extensionsCache.clear();
         singletonBeanCache.clear();
+        spiCache.clear();
     }
 
     /**
@@ -304,6 +305,7 @@ public class GeoServerExtensions implements ApplicationContextAware, Application
         if(event instanceof ContextRefreshedEvent) { 
             extensionsCache.clear();
             singletonBeanCache.clear();
+            spiCache.clear();
         }
     }
     
