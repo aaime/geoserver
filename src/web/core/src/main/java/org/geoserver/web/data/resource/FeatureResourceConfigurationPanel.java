@@ -19,6 +19,7 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -47,6 +48,9 @@ public class FeatureResourceConfigurationPanel extends ResourceConfigurationPane
     public FeatureResourceConfigurationPanel(String id, final IModel model) {
         super(id, model);
         
+        TextField<Double> tolerance = new TextField<>("linearizationTolerance", Double.class);
+        add(tolerance);
+
         final Fragment attributePanel = new Fragment("attributePanel", "attributePanelFragment", this);
         attributePanel.setOutputMarkupId(true);
         add(attributePanel);

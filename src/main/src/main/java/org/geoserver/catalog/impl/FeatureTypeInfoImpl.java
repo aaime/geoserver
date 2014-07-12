@@ -13,6 +13,7 @@ import org.geoserver.catalog.Catalog;
 import org.geoserver.catalog.CatalogVisitor;
 import org.geoserver.catalog.DataStoreInfo;
 import org.geoserver.catalog.FeatureTypeInfo;
+import org.geoserver.catalog.StoreInfo;
 import org.geotools.data.FeatureSource;
 import org.geotools.factory.Hints;
 import org.opengis.feature.Feature;
@@ -34,6 +35,7 @@ public class FeatureTypeInfoImpl extends ResourceInfoImpl implements
     
     boolean overridingServiceSRS;
     
+    Double linearizationTolerance;
     
     protected FeatureTypeInfoImpl() {
     }
@@ -47,6 +49,11 @@ public class FeatureTypeInfoImpl extends ResourceInfoImpl implements
     }
 
     public DataStoreInfo getStore() {
+        StoreInfo storeInfo = super.getStore();
+        if (!(storeInfo instanceof DataStoreInfo)) {
+            LOGGER.warning("Failed to load actual store for " + this);
+            return null;
+        }
         return (DataStoreInfo) super.getStore();
     }
 
@@ -164,6 +171,16 @@ public class FeatureTypeInfoImpl extends ResourceInfoImpl implements
             return false;
         }
         return true;
+    }
+
+    @Override
+    public Double getLinearizationTolerance() {
+        return linearizationTolerance;
+    }
+
+    @Override
+    public void setLinearizationTolerance(Double tolerance) {
+        this.linearizationTolerance = tolerance;
     }
     
     

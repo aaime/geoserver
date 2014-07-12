@@ -285,4 +285,15 @@ public abstract class DecoratingFeatureTypeInfo extends AbstractDecorator<Featur
     public void setOverridingServiceSRS(boolean overridingServiceSRS) {
         delegate.setOverridingServiceSRS(overridingServiceSRS);
     }
+
+    @Override
+    public Double getLinearizationTolerance() {
+        return delegate.getLinearizationTolerance();
+    }
+
+    @Override
+    public void setLinearizationTolerance(Double tolerance) {
+        delegate.setLinearizationTolerance(tolerance);
+    }
+
 }

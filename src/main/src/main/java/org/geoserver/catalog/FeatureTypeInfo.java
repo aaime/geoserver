@@ -95,7 +95,24 @@ public interface FeatureTypeInfo extends ResourceInfo {
     void setNumDecimals( int numDecimals );
     
     /**
+     * Tolerance used to linearize this feature type, as an absolute value expressed in the
+     * geometries own CRS
+     * 
+     * @return
+     */
+    Double getLinearizationTolerance();
+
+    /**
+     * Tolerance used to linearize this feature type, as an absolute value expressed in the
+     * geometries own CRS
+     * 
+     * @return
+     */
+    void setLinearizationTolerance(Double tolerance);
+
+    /**
      * True if this feature type info is overriding the WFS global SRS list
+     * 
      * @return
      */
     boolean isOverridingServiceSRS();

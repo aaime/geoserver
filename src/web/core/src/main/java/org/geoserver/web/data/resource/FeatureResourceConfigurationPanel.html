@@ -2,6 +2,12 @@
 <head></head>
 <body>
 <wicket:panel>
+    <div>
+      <fieldset><legend><span><wicket:message key="curves">curves</wicket:message></span></legend>
+         <label for="tolerance"><wicket:message key="tolerance">tolerance</wicket:message></label>
+         <input type="text" wicket:id="linearizationTolerance" class="field text" />
+      </fieldset>
+    </div>
     <div wicket:id="attributePanel"></div>
     <wicket:fragment wicket:id="attributePanelFragment">
       <div>
