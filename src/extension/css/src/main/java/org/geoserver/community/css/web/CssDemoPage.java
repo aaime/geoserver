@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,8 +37,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
-import org.geoscript.geocss.CssParser;
-import org.geoscript.geocss.Translator;
 import org.geoserver.catalog.Catalog;
 import org.geoserver.catalog.CoverageInfo;
 import org.geoserver.catalog.FeatureTypeInfo;
@@ -167,24 +166,9 @@ public class CssDemoPage extends GeoServerSecuredPage {
     
     public String cssText2sldText(String css, StyleInfo styleInfo) {
         try {
-            GeoServerDataDirectory datadir = 
-                new GeoServerDataDirectory(getCatalog().getResourceLoader());
-            File styleDir;
-            if(styleInfo == null || styleInfo.getWorkspace() == null) {
-                styleDir= datadir.findStyleDir();
-            } else {
-                File ws = datadir.findOrCreateWorkspaceDir(styleInfo.getWorkspace());
-                styleDir = new File(ws, "styles");
-                if(!styleDir.exists()) {
-                    styleDir.mkdir();
-                }
-            }
-
-            scala.collection.Seq<org.geoscript.geocss.Rule> rules = CssParser.parse(css).get();
-            Translator translator = 
-                new Translator(scala.Option.apply(styleDir.toURI().toURL()));
-            Style style = translator.css2sld(rules);
-
+            CssHandler cssHandler = getGeoServerApplication().getBeanOfType(CssHandler.class);
+            Style style = cssHandler.convert(new StringReader(css),
+                    styleInfo != null ? styleInfo.getWorkspace() : null);
             SLDTransformer tx = new org.geotools.styling.SLDTransformer();
             tx.setIndentation(2);
             StringWriter sldChars = new java.io.StringWriter();
@@ -193,6 +177,7 @@ public class CssDemoPage extends GeoServerSecuredPage {
         } catch (Exception e) {
             throw new WicketRuntimeException("Error while parsing stylesheet [" + css + "] : " + e);
         }
+
     }
 
     void createCssTemplate(String workspace, String name) {

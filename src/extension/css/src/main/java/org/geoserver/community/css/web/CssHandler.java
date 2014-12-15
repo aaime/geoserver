@@ -11,25 +11,36 @@ import java.io.Reader;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 
-import org.apache.commons.io.IOUtils;
-import org.geoscript.geocss.compat.CSS2SLD;
 import org.geoserver.catalog.StyleHandler;
 import org.geoserver.catalog.Styles;
+import org.geoserver.platform.GeoServerExtensions;
 import org.geotools.styling.ResourceLocator;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyledLayerDescriptor;
 import org.geotools.util.Version;
+import org.geotools.util.logging.Logging;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.xml.sax.EntityResolver;
 
 /**
- * Style handler for geocss. Justin Deoliveira, Boundless
+ * Style handler for geocss.
+ * 
+ * @author Justin Deoliveira, Boundless
+ * @author Andrea Aime, GeoSolutions
  */
-public class CssHandler extends StyleHandler {
+public class CssHandler extends StyleHandler implements ApplicationContextAware {
+
+    static final Logger LOGGER = Logging.getLogger(CssHandler.class);
 
     public static final String FORMAT = "css";
 
     public static final String MIME_TYPE = "application/vnd.geoserver.geocss+css";
+
+    private CSSConverter converter;
 
     protected CssHandler() {
         super("CSS", FORMAT);
@@ -43,14 +54,15 @@ public class CssHandler extends StyleHandler {
     @Override
     public StyledLayerDescriptor parse(Object input, Version version,
             ResourceLocator resourceLocator, EntityResolver entityResolver) throws IOException {
-        Reader reader = null;
-        try {
-            reader = toReader(input);
-            Style style = CSS2SLD.convert(reader);
+        try (Reader reader = toReader(input)) {
+            Style style = convert(reader, null);
             return Styles.sld(style);
-        } finally {
-            IOUtils.closeQuietly(reader);
         }
+    }
+
+    public Style convert(Reader reader, Object context) throws IOException {
+        Style style = converter.convert(reader, context);
+        return style;
     }
 
     @Override
@@ -62,16 +74,29 @@ public class CssHandler extends StyleHandler {
     @Override
     public List<Exception> validate(Object input, Version version, EntityResolver entityResolver)
             throws IOException {
-        Reader reader = null;
-        try {
-            reader = toReader(input);
-            Style style = CSS2SLD.convert(reader);
-            Styles.sld(style);
+        try (Reader reader = toReader(input)) {
+            converter.convert(reader, null);
             return Collections.emptyList();
         } catch (Exception e) {
             return Arrays.asList(e);
-        } finally {
-            IOUtils.closeQuietly(reader);
         }
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        List<CSSConverter> converters = GeoServerExtensions.extensions(CSSConverter.class,
+                applicationContext);
+        for (CSSConverter converter : converters) {
+            if (converter.isAvailable()) {
+                this.converter = converter;
+                LOGGER.info("Will convert CSS to GeoTools Style objects using: " + converter);
+                break;
+            }
+        }
+
+        if (this.converter == null) {
+            LOGGER.severe("Could not find any CSS to Style converter, are the dependent libraries loaded?");
+        }
+
     }
 }

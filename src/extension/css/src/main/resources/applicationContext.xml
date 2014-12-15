@@ -15,4 +15,9 @@
   </bean>
 
   <bean id="cssStyleHandler" class="org.geoserver.community.css.web.CssHandler"/>
+  
+  <bean id="javaCssConverter" class="org.geoserver.community.css.web.JavaCssConverter"/>
+  <bean id="scalaCssConverter" class="org.geoserver.community.css.web.ScalaCssConverter">
+    <constructor-arg ref="dataDirectory"/>
+  </bean>
 </beans>
