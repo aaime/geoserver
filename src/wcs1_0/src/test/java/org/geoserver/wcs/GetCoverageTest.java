@@ -172,7 +172,7 @@ public class GetCoverageTest extends WCSTestSupport {
 
         Document dom = getAsDOM( 
             "wcs?sourcecoverage=NotThere" + queryString);
-        // print(dom);
+        print(dom);
         XMLAssert.assertXpathEvaluatesTo("InvalidParameterValue", "/ServiceExceptionReport/ServiceException/@code", dom);
         XMLAssert.assertXpathEvaluatesTo("sourcecoverage", "/ServiceExceptionReport/ServiceException/@locator", dom);
     }

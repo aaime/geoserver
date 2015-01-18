@@ -8,6 +8,8 @@ package org.geoserver.ows;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.geoserver.platform.Service;
+import org.geoserver.platform.ServiceException;
 import org.geotools.filter.function.EnvFunction;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,7 +23,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
  */
 public class EnviromentInjectionCallback extends AbstractDispatcherCallback {
 
-    public Request init(Request request) {
+    @Override
+    public Service serviceDispatched(Request request, Service service) throws ServiceException {
         // see if we have an env map already parsed in the request
         Object obj = request.getKvp().get("env");
         Map<String, Object> envVars = null;
@@ -44,7 +47,7 @@ public class EnviromentInjectionCallback extends AbstractDispatcherCallback {
             EnvFunction.setLocalValues(envVars);
         }
         
-        return request;
+        return service;
     }
 
     public void finished(Request request) {

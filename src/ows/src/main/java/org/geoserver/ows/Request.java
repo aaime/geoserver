@@ -68,6 +68,11 @@ public class Request {
     protected String version;
 
     /**
+     * Unparsed acceptVersions, used during GetCapabilities negotiation
+     */
+    protected String acceptVersions;
+
+    /**
      * xml namespace used in request body, only relevant for post requests and when request body 
      * content is namespace qualified
      */
@@ -135,6 +140,7 @@ public class Request {
         this.service = other.service;
         this.request = other.request;
         this.version = other.version;
+        this.acceptVersions = other.acceptVersions;
         this.namespace = other.namespace;
         this.serviceDescriptor = other.serviceDescriptor;
         this.context = other.context;
@@ -490,5 +496,13 @@ public class Request {
         } else if (!identifier.equals(other.identifier))
             return false;
         return true;
+    }
+
+    protected String getAcceptVersions() {
+        return acceptVersions;
+    }
+
+    protected void setAcceptVersions(String acceptVersions) {
+        this.acceptVersions = acceptVersions;
     }
 }

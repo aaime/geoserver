@@ -5,7 +5,9 @@
  */
 package org.geoserver.wms.wms_1_1_1;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -33,7 +35,12 @@ import org.geoserver.test.RemoteOWSTestSupport;
 import org.geoserver.wfs.WFSInfo;
 import org.geoserver.wms.WMSInfo;
 import org.geoserver.wms.WMSTestSupport;
-import org.geoserver.wms.featureinfo.*;
+import org.geoserver.wms.featureinfo.GML2FeatureInfoOutputFormat;
+import org.geoserver.wms.featureinfo.GML3FeatureInfoOutputFormat;
+import org.geoserver.wms.featureinfo.GetFeatureInfoOutputFormat;
+import org.geoserver.wms.featureinfo.TextFeatureInfoOutputFormat;
+import org.geoserver.wms.featureinfo.XML2FeatureInfoOutputFormat;
+import org.geoserver.wms.featureinfo.XML311FeatureInfoOutputFormat;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.geometry.jts.ReferencedEnvelope3D;
@@ -414,7 +421,7 @@ public class GetFeatureInfoTest extends WMSTestSupport {
 
         // another request that will catch one feature due to the style with a thick stroke, make sure it's in
         dom = getAsDOM(base + "&env=thickness:12");
-        // print(dom);
+        print(dom);
         XMLAssert.assertXpathEvaluatesTo("1",
                 "count(/html/body/table/tr/td[starts-with(.,'BasicPolygons.')])", dom);
         XMLAssert.assertXpathEvaluatesTo("1",

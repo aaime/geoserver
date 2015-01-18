@@ -11,13 +11,9 @@ import static org.custommonkey.xmlunit.XMLAssert.assertXpathEvaluatesTo;
 import static org.custommonkey.xmlunit.XMLAssert.assertXpathExists;
 import static org.custommonkey.xmlunit.XMLAssert.assertXpathNotExists;
 import static org.geoserver.data.test.MockData.TASMANIA_DEM;
-import static org.junit.Assert.assertEquals;
-
-import java.util.List;
 
 import org.custommonkey.xmlunit.XMLUnit;
 import org.custommonkey.xmlunit.XpathEngine;
-import org.geoserver.catalog.CascadeDeleteVisitor;
 import org.geoserver.catalog.Catalog;
 import org.geoserver.catalog.CoverageInfo;
 import org.geoserver.catalog.CoverageStoreInfo;
@@ -182,6 +178,7 @@ public class GetCapabilitiesTest extends WCSTestSupport {
     public void testUnsupportedVersionGet() throws Exception {
         Document dom = getAsDOM(BASEPATH
                 + "?request=GetCapabilities&service=WCS&acceptVersions=9.9.9,8.8.8");
+        print(dom);
         checkValidationErrors(dom, WCS11_SCHEMA);
         checkOws11Exception(dom);
         assertXpathEvaluatesTo("VersionNegotiationFailed",

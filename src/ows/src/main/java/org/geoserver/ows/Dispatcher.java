@@ -14,7 +14,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -24,8 +23,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -37,15 +36,11 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.eclipse.emf.ecore.EObject;
@@ -252,7 +247,7 @@ public class Dispatcher extends AbstractController {
             // store it in the thread local
             REQUEST.set(request);
             
-            //find the service
+            // find the service and its firm version
             try {
                 service = service(request);
             } catch (Throwable t) {
@@ -324,8 +319,8 @@ public class Dispatcher extends AbstractController {
         request.setGet("GET".equalsIgnoreCase(httpRequest.getMethod())
             || "application/x-www-form-urlencoded".equals(reqContentType));
 
-        //create the kvp map
-        parseKVP(request);
+        // create the kvp map
+        preParseKVP(request);
         
         if ( !request.isGet() ) { // && httpRequest.getInputStream().available() > 0) {
             //check for a SOAP request, if so we need to unwrap the SOAP stuff
@@ -363,12 +358,13 @@ public class Dispatcher extends AbstractController {
                     }
                 }
 
+                // integrate the kvp maps
                 Map<String,String> kvpItems = new LinkedHashMap();
                 for (Map.Entry<String,FileItem> e : kvpFileItems.entrySet()) {
                     kvpItems.put(e.getKey(), e.getValue().toString());
                 }
-
-                request.setOrAppendKvp(parseKVP(request, kvpFileItems));
+                request.rawKvp.putAll(kvpItems);
+                request.kvp.putAll(kvpItems);
             }
             else {
                 //regular XML POST
@@ -490,11 +486,11 @@ public class Dispatcher extends AbstractController {
     }
 
     Service service(Request req) throws Exception {
-        //check kvp
+        // check kvp
         if (req.getKvp() != null) {
-
             req.setService(normalize(KvpUtils.getSingleValue(req.getKvp(), "service")));
             req.setVersion(normalizeVersion(normalize(KvpUtils.getSingleValue(req.getKvp(), "version"))));
+            req.setAcceptVersions(getAcceptVersions(req.getKvp()));
             req.setRequest(normalize(KvpUtils.getSingleValue(req.getKvp(), "request")));
             req.setOutputFormat(normalize(KvpUtils.getSingleValue(req.getKvp(), "outputFormat")));
         } 
@@ -516,10 +512,13 @@ public class Dispatcher extends AbstractController {
             if (req.getNamespace() == null) {
                 req.setNamespace(normalize((String)xml.get("namespace")));
             }
+            if (req.getAcceptVersions() == null) {
+                req.setAcceptVersions(normalize((String) xml.get("acceptVersions")));
+            }
         }
 
         //try to infer from context
-        //JD: for cite compliance, a service *must* be specified explicitley by 
+        // JD: for cite compliance, a service *must* be specified explicitly by
         // either a kvp, or an xml attribute, however in reality the context 
         // is often a good way to infer the service or request 
         String service = req.getService();
@@ -546,13 +545,13 @@ public class Dispatcher extends AbstractController {
                 "service");
         }
 
-        //load from teh context
-        Service serviceDescriptor = findService(service, req.getVersion(), req.getNamespace());
+        // load from the context
+        Service serviceDescriptor = findService(service, req, req.getNamespace());
         if (serviceDescriptor == null) {
-            //hack for backwards compatability, try finding the service with the context instead 
+            // hack for backwards compatibility, try finding the service with the context instead
             // of the service
             if (req.getContext() != null) {
-                serviceDescriptor = findService(req.getContext(), req.getVersion(), req.getNamespace());
+                serviceDescriptor = findService(req.getContext(), req, req.getNamespace());
                 if (serviceDescriptor != null) {
                     //found, assume that the client is using <service>/<request>
                     if (req.getRequest() == null) {
@@ -567,10 +566,35 @@ public class Dispatcher extends AbstractController {
                 throw new ServiceException(msg, "InvalidParameterValue", "service");    
             }
         }
+
+        // now we can actually do kvp parsing
+        req.setVersion(serviceDescriptor.getVersion().toString());
+        List<Throwable> errors = KvpUtils.parse(req.getKvp(), serviceDescriptor.getId(),
+                serviceDescriptor.getVersion()
+                .toString(), req.getRequest());
+        if (!errors.isEmpty()) {
+            req.setError(errors.get(0));
+        }
+
         req.setServiceDescriptor(serviceDescriptor);
         return fireServiceDispatchedCallback(req,serviceDescriptor);
     }
     
+    /**
+     * Looks for one way the specs name accept versions, plus one found in broken CITE tess
+     * 
+     * @param kvp
+     * @return
+     */
+    private String getAcceptVersions(Map kvp) {
+        // look for AcceptVersions
+        String av = normalize(KvpUtils.getSingleValue(kvp, "AcceptVersions"));
+        if (av == null) {
+            av = normalize(KvpUtils.getSingleValue(kvp, "Accept_Versions"));
+        }
+        return av;
+    }
+
     Service fireServiceDispatchedCallback(Request req, Service service ) {
         for ( DispatcherCallback cb : callbacks ) {
             Service s = cb.serviceDispatched( req, service );
@@ -1083,10 +1107,10 @@ public class Dispatcher extends AbstractController {
         return response;
     }
     
-    Collection loadServices() {
-        Collection services = GeoServerExtensions.extensions(Service.class);
+    Collection<Service> loadServices() {
+        Collection<Service> services = GeoServerExtensions.extensions(Service.class);
 
-        if (!(new HashSet(services).size() == services.size())) {
+        if (!(new HashSet<Service>(services).size() == services.size())) {
             String msg = "Two identical service descriptors found";
             throw new IllegalStateException(msg);
         }
@@ -1094,9 +1118,8 @@ public class Dispatcher extends AbstractController {
         return services;
     }
 
-    Service findService(String id, String ver, String namespace) throws ServiceException {
-        Version version = (ver != null) ? new Version(ver) : null;
-        Collection services = loadServices();
+    Service findService(String id, Request request, String namespace) throws ServiceException {
+        Collection<Service> services = loadServices();
         
         // the id is actually the pathinfo, in case workspace specific services
         // are active we want to skip the workspace part in the path and go directly to the
@@ -1105,8 +1128,8 @@ public class Dispatcher extends AbstractController {
             id = id.substring(id.indexOf("/") + 1);
         }
 
-        //first just match on service,request
-        List matches = new ArrayList();
+        // first just match on service,request
+        List<Service> matches = new ArrayList<Service>();
 
         for (Iterator itr = services.iterator(); itr.hasNext();) {
             Service sBean = (Service) itr.next();
@@ -1122,11 +1145,58 @@ public class Dispatcher extends AbstractController {
 
         Service sBean = null;
 
-        //if multiple, use version to filter match
+        // are we running a GetCapabilities request? If so, this requires negotiation
+        if("GetCapabilities".equals(request.getRequest())) {
+            // look for AcceptVersions
+            String av = normalize(KvpUtils.getSingleValue(request.getKvp(), "AcceptVersions"));
+            if (av == null) {
+                av = normalize(KvpUtils.getSingleValue(request.getKvp(), "Accept_Versions"));
+            }
+            if (av == null) {
+                av = normalize(KvpUtils.getSingleValue(request.getKvp(), "version"));
+            }
+            if (av == null && "WMS".equals(id)) {
+                av = normalize(KvpUtils.getSingleValue(request.getKvp(), "wmtver"));
+            }
+            if(av != null) {
+                // try to match in client preference order
+                List<String> versions = KvpUtils.readFlat(av, KvpUtils.INNER_DELIMETER);
+                for (String v : versions) {
+                    Version currentVersion = new Version(normalizeVersion(v));
+                    for (Service s : matches) {
+                        if(s.getVersion().equals(currentVersion)) {
+                            return s;
+                        }
+                    }
+                }
+                // negotation failed, but do not throw an exception here, as we
+                // cannot full do negotation in the dispatcher, cannot cover the xml path
+                // if(request.getKvp().containsKey("AcceptVersions") ||
+                // request.getKvp().containsKey("Accept_Versions")) {
+                // // this is an error, but the exception handling still needs a Service object
+                // try {
+                //
+                // throw new ServiceException(
+                // "Failed to match any of the requested versions: " + av,
+                // "VersionNegotiationFailed");
+                // } catch (ServiceException e) {
+                // request.setError(e);
+                // }
+                // }
+            }
+
+            // if av is still null continue, we'll match against the highest version
+        } 
+            
+        // we only work against the "version" parameter then
+        String ver = request.getVersion();
+        Version version = (ver != null) ? new Version(ver) : null;
+
+        // if multiple, use version to filter match
         if (matches.size() > 1) {
             List vmatches = new ArrayList(matches);
 
-            //match up the version
+            // match up the version
             if (version != null) {
                 //version specified, look for a match
                 for (Iterator itr = vmatches.iterator(); itr.hasNext();) {
@@ -1146,7 +1216,7 @@ public class Dispatcher extends AbstractController {
                 }
             }
 
-            //if still multiple matches use namespace, if available, to filter
+            // if still multiple matches use namespace, if available, to filter
             if (namespace != null && vmatches.size() > 1) {
                 List nmatches = new ArrayList(vmatches);
                 for (Iterator itr = nmatches.iterator(); itr.hasNext();) {
@@ -1183,7 +1253,7 @@ public class Dispatcher extends AbstractController {
             sBean = (Service) vmatches.get(vmatches.size() - 1);
         } else {
             //only a single match, that was easy
-            sBean = (Service) matches.get(0);
+            sBean = matches.get(0);
         }
 
         return sBean;
@@ -1445,9 +1515,7 @@ public class Dispatcher extends AbstractController {
         Map kvp = request.getParameterMap();
 
         if (kvp == null || kvp.isEmpty()) {
-            req.setKvp(new HashMap());
-            //req.kvp = null;
-            return;
+            kvp = new HashMap<>();
         }
 
         //track parsed kvp and unparsd
@@ -1569,7 +1637,8 @@ public class Dispatcher extends AbstractController {
         parser.nextTag();
 
         Map map = new HashMap();
-        map.put("request", parser.getName());
+        String request = parser.getName();
+        map.put("request", request);
         map.put("namespace", parser.getNamespace());
 
         for (int i = 0; i < parser.getAttributeCount(); i++) {
@@ -1587,7 +1656,7 @@ public class Dispatcher extends AbstractController {
                 map.put("outputFormat", parser.getAttributeValue(i));
             }
         }
-
+        
         //close parser + release resources
         parser.setInput(null);
 
