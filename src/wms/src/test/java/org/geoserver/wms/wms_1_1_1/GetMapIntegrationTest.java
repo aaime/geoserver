@@ -6,7 +6,6 @@
 package org.geoserver.wms.wms_1_1_1;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -33,7 +32,6 @@ import javax.imageio.ImageIO;
 import javax.servlet.ServletResponse;
 import javax.xml.namespace.QName;
 
-import org.apache.batik.bridge.svg12.SVG12BridgeContext;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.spi.LoggingEvent;
@@ -58,9 +56,6 @@ import org.geoserver.wms.GetMapOutputFormat;
 import org.geoserver.wms.WMS;
 import org.geoserver.wms.WMSInfo;
 import org.geoserver.wms.WMSTestSupport;
-import org.geoserver.wms.featureinfo.GML3FeatureInfoOutputFormat;
-import org.geoserver.wms.featureinfo.GetFeatureInfoOutputFormat;
-import org.geoserver.wms.featureinfo.TextFeatureInfoOutputFormat;
 import org.geoserver.wms.map.OpenLayersMapOutputFormat;
 import org.geoserver.wms.map.RenderedImageMapOutputFormat;
 import org.geotools.gce.imagemosaic.ImageMosaicFormat;
@@ -77,6 +72,8 @@ public class GetMapIntegrationTest extends WMSTestSupport {
     private static final QName MOSAIC_HOLES = new QName(MockData.SF_URI, "mosaic_holes", MockData.SF_PREFIX);
 
     private static final QName MOSAIC = new QName(MockData.SF_URI, "mosaic", MockData.SF_PREFIX);
+
+    private static final String WS_LOCAL_GROUP = "wsLocalGroup";
 
     String bbox = "-130,24,-66,50";
 
@@ -184,6 +181,20 @@ public class GetMapIntegrationTest extends WMSTestSupport {
                 "mosaic.zip", null, properties,GetMapIntegrationTest.class,catalog);
 
         addCoverageViewLayer();
+
+        // create a workspace qualified group
+        LayerGroupInfo group = catalog.getFactory().createLayerGroup();
+        LayerInfo lakes = catalog.getLayerByName(getLayerId(MockData.LAKES));
+        LayerInfo forests = catalog.getLayerByName(getLayerId(MockData.FORESTS));
+        if (lakes != null && forests != null) {
+            group.setName(WS_LOCAL_GROUP);
+            group.getLayers().add(lakes);
+            group.getLayers().add(forests);
+            group.setWorkspace(catalog.getWorkspaceByName(MockData.CITE_PREFIX));
+            CatalogBuilder cb = new CatalogBuilder(catalog);
+            cb.calculateLayerGroupBounds(group);
+            catalog.add(group);
+        }
     }
 
     private void addCoverageViewLayer() throws Exception {
@@ -624,7 +635,7 @@ public class GetMapIntegrationTest extends WMSTestSupport {
     }
     
     @Test
-    public void testGroupWorkspaceQualified() throws Exception {
+    public void testGlobalGroupWorkspaceQualified() throws Exception {
         // check the group works without workspace qualification
         String url = "wms?request=getmap&service=wms"
                 + "&layers=nature&width=100&height=100&format=image/png"
@@ -637,6 +648,27 @@ public class GetMapIntegrationTest extends WMSTestSupport {
         assertEquals("image/png", response.getContentType());
     }
     
+    @Test
+    public void testLocalGroupWorkspaceQualified() throws Exception {
+        // check the group works without workspace qualification
+        String url = "wms?request=getmap&service=wms" + "&layers=" + MockData.CITE_PREFIX + ":"
+                + WS_LOCAL_GROUP + "&width=100&height=100&format=image/png"
+                + "&srs=epsg:4326&bbox=-0.002,-0.003,0.005,0.002";
+        ServletResponse response = getAsServletResponse(url);
+        assertEquals("image/png", response.getContentType());
+
+        // see that it works also with workspace qualification
+        response = getAsServletResponse("cite/" + url);
+        assertEquals("image/png", response.getContentType());
+
+        // and also if we omit the prefix in the group name
+        url = "cite/wms?request=getmap&service=wms" + "&layers=" + WS_LOCAL_GROUP
+                + "&width=100&height=100&format=image/png"
+                + "&srs=epsg:4326&bbox=-0.002,-0.003,0.005,0.002";
+        response = getAsServletResponse(url);
+        assertEquals("image/png", response.getContentType());
+    }
+
     @Test
     public void testEnvDefault() throws Exception {
         MockHttpServletResponse response = getAsServletResponse("wms?bbox=" + bbox

@@ -463,8 +463,7 @@ public class GWCIntegrationTest extends GeoServerSystemTestSupport {
                 response.getContentType().startsWith("application/vnd.ogc.se_xml"));
 
         assertTrue(response.getOutputStreamContent(),
-                response.getOutputStreamContent()
-                        .contains("Could not find layer cdf:BasicPolygons"));
+                response.getOutputStreamContent().contains("Could not find layer BasicPolygons"));
     }
 
     @Test public void testReloadConfiguration() throws Exception {
