@@ -23,6 +23,7 @@ public class XMLParsingTest extends WFSTestSupport {
     @Override
     protected void setUpTestData(SystemTestData testData) throws Exception {
         // no need for test data
+        testData.setUpSecurity();
     }
 
 	@Test

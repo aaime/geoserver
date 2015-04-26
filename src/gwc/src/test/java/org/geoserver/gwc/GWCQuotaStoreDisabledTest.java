@@ -28,6 +28,7 @@ public class GWCQuotaStoreDisabledTest extends GeoServerSystemTestSupport {
     protected void setUpTestData(SystemTestData testData) throws Exception {
         // disable disk quota completely
         System.setProperty(DiskQuotaMonitor.GWC_DISKQUOTA_DISABLED, "true");
+        testData.setUpSecurity();
     }
 
     @After

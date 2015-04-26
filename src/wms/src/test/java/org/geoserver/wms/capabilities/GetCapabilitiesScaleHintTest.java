@@ -71,6 +71,7 @@ public class GetCapabilitiesScaleHintTest extends WMSTestSupport {
     @Override
     protected void setUpTestData(SystemTestData testData) throws Exception {
         // all the data we need is registered in this test
+        testData.setUpSecurity();
     }
 
 

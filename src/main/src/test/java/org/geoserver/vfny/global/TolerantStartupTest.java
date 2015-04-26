@@ -5,7 +5,7 @@
  */
 package org.geoserver.vfny.global;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +33,7 @@ public class TolerantStartupTest extends GeoServerSystemTestSupport {
         testData.setUpVectorLayer(name, props, name.getLocalPart() + ".properties", SystemTestData.class);
         
         testData.setUpVectorLayer(SystemTestData.BUILDINGS);
+        testData.setUpSecurity();
     }
     
 //    @Override

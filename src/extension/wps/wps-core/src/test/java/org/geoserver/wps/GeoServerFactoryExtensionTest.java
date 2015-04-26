@@ -10,6 +10,7 @@ public class GeoServerFactoryExtensionTest extends WPSTestSupport {
     @Override
     protected void setUpTestData(SystemTestData testData) throws Exception {
         // do nothing, we don't need data for this test
+        testData.setUpSecurity();
     }
     
     @Test

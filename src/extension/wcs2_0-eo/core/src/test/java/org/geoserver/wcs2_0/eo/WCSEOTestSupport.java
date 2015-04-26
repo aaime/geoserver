@@ -89,6 +89,7 @@ public abstract class WCSEOTestSupport extends GeoServerSystemTestSupport {
     @Override
     protected void setUpTestData(SystemTestData testData) throws Exception {
         // do not setup anything here, we'll setup mosaics later
+        testData.setUpSecurity();
     }
 
     @Override

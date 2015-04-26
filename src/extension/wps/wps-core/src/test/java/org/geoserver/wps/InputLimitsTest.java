@@ -36,6 +36,7 @@ public class InputLimitsTest extends WPSTestSupport {
     @Override
     protected void setUpTestData(SystemTestData testData) throws Exception {
         // need no layers for this test
+        testData.setUpSecurity();
     }
 
     @Before

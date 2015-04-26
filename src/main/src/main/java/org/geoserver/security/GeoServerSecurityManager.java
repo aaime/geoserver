@@ -17,6 +17,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
@@ -145,6 +146,7 @@ import org.geoserver.security.xml.XMLRoleService;
 import org.geoserver.security.xml.XMLRoleServiceConfig;
 import org.geoserver.security.xml.XMLUserGroupService;
 import org.geoserver.security.xml.XMLUserGroupServiceConfig;
+import org.geotools.util.Version;
 import org.geotools.util.logging.Logging;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanCreationException;
@@ -183,6 +185,24 @@ import com.thoughtworks.xstream.mapper.Mapper;
  */
 public class GeoServerSecurityManager extends ProviderManager implements ApplicationContextAware, 
     ApplicationListener, ResourceStore {
+
+    private static final String VERSION_PROPERTIES = "version.properties";
+
+    private static final Version VERSION_2_1 = new Version("2.1");
+
+    private static final Version VERSION_2_2 = new Version("2.2");
+
+    private static final Version VERSION_2_3 = new Version("2.3");
+
+    private static final Version VERSION_2_4 = new Version("2.4");
+
+    private static final Version VERSION_2_5 = new Version("2.5");
+
+    private static final Version BASE_VERSION = VERSION_2_1;
+
+    private static final Version CURR_VERSION = VERSION_2_5;
+
+    private static final String VERSION = "version";
 
     static Logger LOGGER = Logging.getLogger("org.geoserver.security");
 
@@ -326,11 +346,25 @@ public class GeoServerSecurityManager extends ProviderManager implements Applica
 
             // migrate from old security config
             try {
-                boolean migratedFrom21 = migrateFrom21();
-                removeErroneousAccessDeniedPage();
-                migrateFrom22(migratedFrom21);
-                migrateFrom23();
-                migrateFrom24();                
+                Version securityVersion = getSecurityVersion();
+
+                boolean migratedFrom21 = false;
+                if (securityVersion.compareTo(VERSION_2_2) < 0) {
+                    migratedFrom21 = migrateFrom21();
+                }
+                if (securityVersion.compareTo(VERSION_2_3) < 0) {
+                    removeErroneousAccessDeniedPage();
+                    migrateFrom22(migratedFrom21);
+                }
+                if (securityVersion.compareTo(VERSION_2_4) < 0) {
+                    migrateFrom23();
+                }
+                if (securityVersion.compareTo(VERSION_2_5) < 0) {
+                    migrateFrom24();
+                }
+                if (securityVersion.compareTo(CURR_VERSION) < 0) {
+                    writeCurrentVersion();
+                }
             } catch (Exception e1) {
                 throw new RuntimeException(e1);
             }
@@ -365,6 +399,39 @@ public class GeoServerSecurityManager extends ProviderManager implements Applica
             } catch (Exception e) {
                 LOGGER.log(Level.WARNING, "Error destroying security manager", e);
             }
+        }
+    }
+
+    private Version getSecurityVersion() throws IOException {
+        Resource security = security();
+        if (security.getType() == Type.UNDEFINED) {
+            return BASE_VERSION;
+        }
+        Resource properties = security.get(VERSION_PROPERTIES);
+        if (properties.getType() == Type.UNDEFINED) {
+            return BASE_VERSION;
+        }
+        Properties p = new Properties();
+        try (InputStream is = properties.in()) {
+            p.load(is);
+        }
+        String version = p.getProperty(VERSION);
+        if (version != null) {
+            return new Version(version);
+        } else {
+            return BASE_VERSION;
+        }
+    }
+
+    private void writeCurrentVersion() throws IOException {
+        Resource security = security();
+        security.dir();
+        Resource properties = security.get(VERSION_PROPERTIES);
+        Properties p = new Properties();
+        p.put(VERSION, CURR_VERSION.toString());
+        try (OutputStream os = properties.out()) {
+            p.store(os,
+                    "Current version of the security directory. Do not remove or alter this file");
         }
     }
 
@@ -1428,7 +1495,7 @@ public class GeoServerSecurityManager extends ProviderManager implements Applica
     public SortedSet<String> listFilters(Class<?> type) throws IOException {
         SortedSet<String> configs = new TreeSet<String>();
         for (String name : listFilters()) {
-            SecurityFilterConfig config = (SecurityFilterConfig) loadFilterConfig(name);
+            SecurityFilterConfig config = loadFilterConfig(name);
             if (config.getClassName() == null) {
                 continue;
             }
@@ -2349,8 +2416,7 @@ public class GeoServerSecurityManager extends ProviderManager implements Applica
 
         
         //check for the default auth provider, create if necessary
-        GeoServerAuthenticationProvider authProvider = (GeoServerAuthenticationProvider) 
-            loadAuthenticationProvider(GeoServerAuthenticationProvider.DEFAULT_NAME);
+        GeoServerAuthenticationProvider authProvider = loadAuthenticationProvider(GeoServerAuthenticationProvider.DEFAULT_NAME);
         if (authProvider == null) {
             UsernamePasswordAuthenticationProviderConfig upAuthConfig = 
                     new UsernamePasswordAuthenticationProviderConfig();

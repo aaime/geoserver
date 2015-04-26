@@ -77,7 +77,7 @@ public abstract class ImporterTestSupport extends GeoServerSystemTestSupport {
     @Override
     protected void setUpTestData(SystemTestData testData) throws Exception {
         // no pre-existing test data needed for the importer
-        // super.setUpTestData(testData);
+        testData.setUpSecurity();
     }
     
     @After

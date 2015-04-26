@@ -48,6 +48,7 @@ public abstract class WMSCascadeTestSupport extends WMSTestSupport {
     @Override
     protected void setUpTestData(SystemTestData testData) throws Exception {
         // we only setup the cascaded WMS layer, so no call to super
+        testData.setUpSecurity();
     }
     
     @Override

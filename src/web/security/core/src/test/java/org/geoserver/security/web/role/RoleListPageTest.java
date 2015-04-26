@@ -5,7 +5,9 @@
  */
 package org.geoserver.security.web.role;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -128,6 +130,7 @@ public class RoleListPageTest extends AbstractTabbedListPageTest<GeoServerRole> 
     @Override
     protected void simulateDeleteSubmit() throws Exception {
                     
+        SortedSet<GeoServerRole> startRoles = gaService.getRoles();
         SelectionRoleRemovalLink link = (SelectionRoleRemovalLink) getRemoveLink();
         Method m = link.delegate.getClass().getDeclaredMethod("onSubmit", AjaxRequestTarget.class,Component.class);
         m.invoke(link.delegate, null,null);

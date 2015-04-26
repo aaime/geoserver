@@ -5,15 +5,12 @@
  */
 package org.geoserver.web.demo;
 
-import static org.junit.Assert.*;
-
-import java.io.Serializable;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.markup.html.form.ValidationErrorFeedback;
 import org.apache.wicket.util.tester.FormTester;
-import org.geoserver.data.test.MockData;
 import org.geoserver.data.test.SystemTestData;
 import org.geoserver.web.GeoServerWicketTestSupport;
 import org.geoserver.web.wicket.ParamResourceModel;
@@ -24,6 +21,7 @@ public class ReprojectPageTest extends GeoServerWicketTestSupport {
     @Override
     protected void setUpTestData(SystemTestData testData) throws Exception {
         // we don't need data configured in the catalog
+        testData.setUpSecurity();
     }
 
     @Test

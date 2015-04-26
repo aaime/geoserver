@@ -37,6 +37,7 @@ public class ThreadLocalsTransferTest extends GeoServerSystemTestSupport {
     @Override
     protected void setUpTestData(SystemTestData testData) throws Exception {
         // no test data needed for this test, only the spring context
+        testData.setUpSecurity();
     }
 
     @Before
