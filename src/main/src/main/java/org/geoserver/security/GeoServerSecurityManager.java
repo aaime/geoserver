@@ -67,7 +67,6 @@ import org.geoserver.platform.resource.Resource;
 import org.geoserver.platform.resource.Resource.Type;
 import org.geoserver.platform.resource.ResourceStore;
 import org.geoserver.platform.resource.Resources;
-import org.geoserver.security.GeoServerSecurityManager.FilterHelper;
 import org.geoserver.security.auth.AuthenticationCache;
 import org.geoserver.security.auth.GeoServerRootAuthenticationProvider;
 import org.geoserver.security.auth.GuavaAuthenticationCacheImpl;
@@ -288,6 +287,8 @@ public class GeoServerSecurityManager extends ProviderManager implements Applica
     /** rememmber me service */
     volatile RememberMeServices rememberMeService;
 
+    private XStreamPersister xp;
+
     public static final String REALM="GeoServer Realm";
     
     public GeoServerSecurityManager(GeoServerDataDirectory dataDir) throws Exception {
@@ -325,6 +326,7 @@ public class GeoServerSecurityManager extends ProviderManager implements Applica
     @Override
     public void setApplicationContext(ApplicationContext appContext) throws BeansException {
         this.appContext = appContext;
+        this.xp = buildPersister();
     }
 
     public ApplicationContext getApplicationContext() {
@@ -2769,6 +2771,15 @@ public class GeoServerSecurityManager extends ProviderManager implements Applica
      * creates the persister for security plugin configuration.
      */
     XStreamPersister persister() throws IOException{
+        // we should build this when the Spring context is setup, but some tests are
+        // not using Spring
+        if (xp == null) {
+            xp = buildPersister();
+        }
+        return xp;
+    }
+
+    private XStreamPersister buildPersister() {
         List<GeoServerSecurityProvider> all = lookupSecurityProviders();
         
         //create and configure an xstream persister to load the configuration files

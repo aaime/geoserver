@@ -5,7 +5,8 @@
  */
 package org.geoserver.test;
 
-import static junit.framework.Assert.*;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.fail;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -164,7 +165,7 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
     /**
      * credentials for mock requests
      */
-    protected String username, password; 
+    protected String username, password;
 
     protected final void setUp(SystemTestData testData) throws Exception {
         // setup quiet logging (we need to to this here because Data
@@ -1391,16 +1392,17 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
     protected DispatcherServlet getDispatcher() throws Exception {
         // create an instance of the spring dispatcher
         ServletContext context = applicationContext.getServletContext();
-        
+
         MockServletConfig config = new MockServletConfig();
         config.setServletContext(context);
         config.setServletName("dispatcher");
-        
-        DispatcherServlet dispatcher = new DispatcherServlet();
-        
-        dispatcher.setContextConfigLocation(GeoServerAbstractTestSupport.class.getResource("dispatcher-servlet.xml").toString());
+
+        DispatcherServlet dispatcher = new DispatcherServlet(applicationContext);
+
+        dispatcher.setContextConfigLocation(GeoServerAbstractTestSupport.class.getResource(
+                "dispatcher-servlet.xml").toString());
         dispatcher.init(config);
-        
+
         return dispatcher;
     }
  
