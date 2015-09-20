@@ -23,7 +23,8 @@ public class StatusPageTest extends GeoServerWicketTestSupport {
     @Test
     public void testValues() {
         tester.assertRenderedPage(StatusPage.class);
-        tester.assertLabel("locks", "0");
+        print(tester.getLastRenderedPage(), true, true);
+        tester.assertLabel("tabs:panel:locks", "0");
     }
     
     @Test
