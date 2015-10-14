@@ -62,7 +62,14 @@ public class StatusPage extends ServerAdminPage {
                 "StatusPage.Tab.Properties")) {
 
             public Panel getPanel(String panelID) {
-                return new PropertiesPanel(panelID);
+                return new PropertiesMapPanel(panelID, System.getProperties());
+            }
+        });
+        tabs.add(new AbstractTab(new org.apache.wicket.model.ResourceModel(
+                "StatusPage.Tab.Environment")) {
+
+            public Panel getPanel(String panelID) {
+                return new PropertiesMapPanel(panelID, System.getenv());
             }
         });
         
