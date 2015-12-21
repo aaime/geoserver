@@ -342,5 +342,12 @@
         <module>wps-download</module>
       </modules>
     </profile>	
+    <profile>
+      <id>param-forwarder</id>
+      <modules>
+        <module>param-forwarder</module>
+      </modules>
+    </profile>
+
   </profiles>
 </project>

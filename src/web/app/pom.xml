@@ -1146,6 +1146,16 @@
         </dependency>
       </dependencies>
     </profile>
+    <profile>
+      <id>param-forwarder</id>
+      <dependencies>
+        <dependency>
+          <groupId>org.geoserver.community</groupId>
+          <artifactId>gs-param-forwarder</artifactId>
+		  <version>${project.version}</version>
+        </dependency>
+      </dependencies>
+    </profile>
  </profiles>
 
 </project>
