@@ -24,7 +24,7 @@ public interface LayerGroupInfo extends PublishedInfo {
      */
     public enum Mode {
         /**
-         * The layer group is seen as a single exposed layer with a name.
+         * The layer group is seen as a single exposed layer with a name, does not actually contain the layers it's referencing
          */
         SINGLE {
             public String getName() {
@@ -71,7 +71,21 @@ public interface LayerGroupInfo extends PublishedInfo {
             public Integer getCode() {
                 return 3;
             }
+        },
+        /**
+         * The layer group is seen as a single exposed layer with a name, but contains the layers it's referencing, 
+         * thus hiding them from the caps document unless also shown in other tree mode layers 
+         */
+        OPAQUE_CONTAINER {
+            public String getName() {
+                return "Opaque Container";
+            }
+            
+            public Integer getCode() {
+                return 4;
+            }
         };
+        
 
         public abstract String getName();
         public abstract Integer getCode();
