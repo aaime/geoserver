@@ -60,9 +60,6 @@ import org.w3c.dom.NodeList;
  */
 public class CapabilitiesIntegrationTest extends WMSTestSupport {
     
-    static final String CONTAINER_GROUP = "containerGroup";
-    
-    static final String OPAQUE_GROUP = "opaqueGroup";
 
     public CapabilitiesIntegrationTest() {
         super();
@@ -95,29 +92,6 @@ public class CapabilitiesIntegrationTest extends WMSTestSupport {
         LayerInfo lakesLayer = catalog.getLayerByName(MockData.LAKES.getLocalPart());
         lakesLayer.setDefaultStyle(lakesStyle);
         catalog.save(lakesLayer);
-        
-        // create a group containing the other group
-        LayerGroupInfo containerGroup = catalog.getFactory().createLayerGroup();
-        LayerGroupInfo nature = catalog.getLayerGroupByName(NATURE_GROUP);
-        containerGroup.setName(CONTAINER_GROUP);
-        containerGroup.setMode(Mode.CONTAINER);
-        containerGroup.getLayers().add(nature);
-        CatalogBuilder cb = new CatalogBuilder(catalog);
-        cb.calculateLayerGroupBounds(containerGroup);
-        catalog.add(containerGroup);
-        
-        // setup an opaque group too
-        LayerGroupInfo opaqueGroup = catalog.getFactory().createLayerGroup();
-        LayerInfo buildings = catalog.getLayerByName(getLayerId(MockData.BUILDINGS));
-        LayerInfo bridges = catalog.getLayerByName(getLayerId(MockData.BRIDGES));
-        if(buildings != null && bridges != null) {
-            opaqueGroup.setName(OPAQUE_GROUP);
-            opaqueGroup.setMode(Mode.OPAQUE_CONTAINER);;
-            opaqueGroup.getLayers().add(buildings);
-            opaqueGroup.getLayers().add(bridges);
-            cb.calculateLayerGroupBounds(opaqueGroup);
-            catalog.add(opaqueGroup);
-        }
     }
     
     @Override
@@ -162,7 +136,7 @@ public class CapabilitiesIntegrationTest extends WMSTestSupport {
 
     @org.junit.Test 
     public void testLayerCount() throws Exception {
-        int expectedLayerCount = getExpectedLayerCount();
+        int expectedLayerCount = getExpectedTopLayerCount();
 
         
         Document dom = dom(get("wms?request=GetCapabilities&version=1.3.0"), true);
@@ -174,20 +148,6 @@ public class CapabilitiesIntegrationTest extends WMSTestSupport {
 
 		assertEquals(expectedLayerCount /* the layers under the opaque group */, nodeLayers.getLength());
     }
-
-	private int getExpectedLayerCount() {
-		List<LayerInfo> layers = new ArrayList<LayerInfo>(getCatalog().getLayers());
-        for (ListIterator<LayerInfo> it = layers.listIterator(); it.hasNext();) {
-            LayerInfo next = it.next();
-            if (!next.enabled() || next.getName().equals(MockData.GEOMETRYLESS.getLocalPart())) {
-                it.remove();
-            }
-        }
-        List<LayerGroupInfo> groups = getCatalog().getLayerGroups();
-		int expectedLayerCount = layers.size() + groups.size() - 1 /* nested layer group */ - 2;
-		return expectedLayerCount;
-	}
-
     @org.junit.Test 
     public void testWorkspaceQualified() throws Exception {
         Document dom = dom(get("cite/wms?request=getCapabilities&version=1.3.0"), true);
@@ -686,7 +646,7 @@ public class CapabilitiesIntegrationTest extends WMSTestSupport {
             // now check the layer count too, we just hid everything in the container layer
             List<LayerInfo> nestedLayers = new LayerGroupHelper(container).allLayers();
             System.out.println(nestedLayers);
-			int expectedLayerCount = getExpectedLayerCount() 
+			int expectedLayerCount = getExpectedTopLayerCount() 
             		// layers gone due to the nesting
             		- nestedLayers.size() 
             		/* container has been nested and disappeared*/

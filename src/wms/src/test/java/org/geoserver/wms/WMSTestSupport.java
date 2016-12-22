@@ -23,6 +23,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
@@ -39,6 +40,7 @@ import org.geoserver.catalog.FeatureTypeInfo;
 import org.geoserver.catalog.LayerGroupInfo;
 import org.geoserver.catalog.LayerInfo;
 import org.geoserver.catalog.ResourceInfo;
+import org.geoserver.catalog.LayerGroupInfo.Mode;
 import org.geoserver.data.test.MockData;
 import org.geoserver.data.test.SystemTestData;
 import org.geoserver.test.GeoServerSystemTestSupport;
@@ -72,6 +74,10 @@ import com.vividsolutions.jts.geom.Envelope;
 public abstract class WMSTestSupport extends GeoServerSystemTestSupport {
 
     protected static final String NATURE_GROUP = "nature";
+    
+    protected static final String CONTAINER_GROUP = "containerGroup";
+    
+    protected static final String OPAQUE_GROUP = "opaqueGroup";
 
     protected static final int SHOW_TIMEOUT = 2000;
 
@@ -136,7 +142,32 @@ public abstract class WMSTestSupport extends GeoServerSystemTestSupport {
         }
         testData.addStyle("default", "Default.sld",MockData.class, catalog);
         //"default", MockData.class.getResource("Default.sld")
-
+        
+        // create a group containing the other group
+        LayerGroupInfo containerGroup = catalog.getFactory().createLayerGroup();
+        LayerGroupInfo nature = catalog.getLayerGroupByName(NATURE_GROUP);
+        if(nature != null) {
+	        containerGroup.setName(CONTAINER_GROUP);
+	        containerGroup.setMode(Mode.CONTAINER);
+	        containerGroup.getLayers().add(nature);
+	        CatalogBuilder cb = new CatalogBuilder(catalog);
+	        cb.calculateLayerGroupBounds(containerGroup);
+	        catalog.add(containerGroup);
+        }
+        
+        // setup an opaque group too
+        LayerGroupInfo opaqueGroup = catalog.getFactory().createLayerGroup();
+        LayerInfo buildings = catalog.getLayerByName(getLayerId(MockData.ROAD_SEGMENTS));
+        LayerInfo neatline = catalog.getLayerByName(getLayerId(MockData.MAP_NEATLINE));
+        if(buildings != null && neatline != null) {
+            opaqueGroup.setName(OPAQUE_GROUP);
+            opaqueGroup.setMode(Mode.OPAQUE_CONTAINER);;
+            opaqueGroup.getLayers().add(buildings);
+            opaqueGroup.getLayers().add(neatline);
+	        CatalogBuilder cb = new CatalogBuilder(catalog);
+            cb.calculateLayerGroupBounds(opaqueGroup);
+            catalog.add(opaqueGroup);
+        }
     }
     
 
@@ -567,6 +598,19 @@ public abstract class WMSTestSupport extends GeoServerSystemTestSupport {
         catalog.add(group);
         
         return group;
-    }    
+    }
+
+	protected int getExpectedTopLayerCount() {
+		List<LayerInfo> layers = new ArrayList<LayerInfo>(getCatalog().getLayers());
+	    for (ListIterator<LayerInfo> it = layers.listIterator(); it.hasNext();) {
+	        LayerInfo next = it.next();
+	        if (!next.enabled() || next.getName().equals(MockData.GEOMETRYLESS.getLocalPart())) {
+	            it.remove();
+	        }
+	    }
+	    List<LayerGroupInfo> groups = getCatalog().getLayerGroups();
+		int expectedLayerCount = layers.size() + groups.size() - 1 /* nested layer group */ - 2;
+		return expectedLayerCount;
+	}    
         
 }
