@@ -36,6 +36,21 @@ public interface LayerGroupInfo extends PublishedInfo {
             }
         },
         /**
+         * The layer group is seen as a single exposed layer with a name, but contains the layers it's referencing, 
+         * thus hiding them from the caps document unless also shown in other tree mode layers 
+         */
+        OPAQUE_CONTAINER {
+            public String getName() {
+                return "Opaque Container";
+            }
+            
+            public Integer getCode() {
+            	// added last, but a cross in between SINGLE and NAMED semantically,
+            	// so added in this position
+                return 4;
+            }
+        },
+        /**
          * The layer group retains a Name in the layer tree, but also exposes its nested layers in the capabilities document.
          */
         NAMED {
@@ -70,19 +85,6 @@ public interface LayerGroupInfo extends PublishedInfo {
                             
             public Integer getCode() {
                 return 3;
-            }
-        },
-        /**
-         * The layer group is seen as a single exposed layer with a name, but contains the layers it's referencing, 
-         * thus hiding them from the caps document unless also shown in other tree mode layers 
-         */
-        OPAQUE_CONTAINER {
-            public String getName() {
-                return "Opaque Container";
-            }
-            
-            public Integer getCode() {
-                return 4;
             }
         };
         
