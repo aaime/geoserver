@@ -9,6 +9,7 @@ import static org.geoserver.security.impl.DataAccessRule.ANY;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -520,9 +521,14 @@ public class DefaultResourceAccessManager implements ResourceAccessManager, Data
                 if(directAccess && lg.getMode() == Mode.OPAQUE_CONTAINER) {
                 	groupAnalysis[1] = true;
                 } else {
-	                // ok, then we have a container group that is not denied, allow
-	                groupAnalysis[0] = true;
-                	break;
+	                // ok, then we have a container group that is not denied
+                	// if this is direct access still need to make sure none of its potential containers are basemaps
+                	if(directAccess && !groupAnalysis[1] && containedInBasemap(lg)) {
+                		groupAnalysis[1] = true;
+                	} else {
+		                groupAnalysis[0] = true;
+	                	break;
+                	}
                 }
             }
         }
@@ -530,7 +536,48 @@ public class DefaultResourceAccessManager implements ResourceAccessManager, Data
         return groupAnalysis;
     }
         
-    /**
+    private boolean containedInBasemap(LayerGroupInfo lg) {
+    	Set<LayerGroupInfo> groups = new HashSet<>();
+    	groups.add(lg);
+    	Set<LayerGroupInfo> visitedGroups = new HashSet<>(groups);
+    	
+    	// in sane setups this should converge quite quickly
+    	do {
+        	List<Filter> filters = groups.stream().map(g -> containingLayerGroupsFilter(g)).collect(Collectors.toList());
+        	Filter filter = Predicates.and(filters);
+
+	    	groups.clear();
+	    	try(CloseableIterator<LayerGroupInfo> it = rawCatalog.list(LayerGroupInfo.class, filter)) {
+	    		while(it.hasNext()) {
+	    			LayerGroupInfo g = it.next();
+	    			if(g.getMode() == Mode.OPAQUE_CONTAINER) {
+	    				return true;
+	    			} else if(!visitedGroups.contains(g)) {
+	    				groups.add(g);
+	    				visitedGroups.add(g);
+	    			}
+	    		}
+	    	}
+    	} while(groups.size() > 0);
+    	
+    	// if we reached here no group was found
+    	return false;
+	}
+
+	private Filter containingLayerGroupsFilter(LayerGroupInfo lg) {
+		Filter containsResource = Predicates.equal("layers.id", lg.getId(), MatchAction.ANY);
+        Filter global = Predicates.isNull("workspace");
+        Filter wsMatch = null;
+        if(lg.getWorkspace() != null) {
+            Filter inSameWorkspace = Predicates.equal("workspace.name", lg.getWorkspace().getName());
+            wsMatch = Predicates.or(global, inSameWorkspace);
+        } else {
+            wsMatch = global;
+        }
+        return Predicates.and(wsMatch, containsResource);
+	}
+
+	/**
      * Returns the possible location of the group in the secured tree based on name and workspace
      * @param layerGroup
      * @return
@@ -709,13 +756,6 @@ public class DefaultResourceAccessManager implements ResourceAccessManager, Data
             } 
         }
 
-        private void addGroupInfo(LayerGroupInfo lg) {
-            SecureTreeNode node = getNodeForGroup(lg);
-            if(node != null) {
-                updateContainedLayerIds(node, lg);
-            }
-        }
-
         @Override
         public void handleRemoveEvent(CatalogRemoveEvent event) throws CatalogException {
             if(event.getSource() instanceof LayerGroupInfo) {
@@ -754,6 +794,13 @@ public class DefaultResourceAccessManager implements ResourceAccessManager, Data
         public void reloaded() {
             // force reloading the rules and thus rebuild the layer group cache
             rebuildAuthorizationTree(true);
+        }
+        
+        private void addGroupInfo(LayerGroupInfo lg) {
+            SecureTreeNode node = getNodeForGroup(lg);
+            if(node != null) {
+                updateContainedLayerIds(node, lg);
+            }
         }
         
         private void clearGroupInfo(LayerGroupInfo lg) {
