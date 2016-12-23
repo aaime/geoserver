@@ -8,6 +8,7 @@ package org.geoserver.security.impl;
 import static org.geoserver.security.impl.DataAccessRule.ANY;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -178,7 +179,7 @@ public class DefaultResourceAccessManager implements ResourceAccessManager, Data
 
     }
 
-    public boolean canAccess(Authentication user, ResourceInfo resource, AccessMode mode) {
+    public boolean canAccess(Authentication user, ResourceInfo resource, AccessMode mode, boolean directAccess) {
         checkPropertyFile();
         String workspace;
         final String resourceName = resource.getName();
@@ -202,35 +203,40 @@ public class DefaultResourceAccessManager implements ResourceAccessManager, Data
 
         // check if there is any containing group that has security rules, if not, the deepest
         // catalog rule wins
-        List<SecureTreeNode> nodes = getNodesContainingResource(resource);
-        if(nodes.isEmpty()) {
-            return catalogNodeAllowsAccess;
-        }
+        List<SecureTreeNode> nodeContainingResource = getNodesContainingResource(resource);
         
         // if we have at least one containing tree that is secured and authorizes access, then 
         // we have a winner
-        if(nodes.stream().anyMatch(n -> n.canAccess(user, mode) && n.getDepth() > catalogNodeDepth)) {
-            return true;
-        }
+		if (nodeContainingResource.stream().anyMatch(n ->
+				// allows access
+				n.canAccess(user, mode)
+				// overrides catalog rule
+				&& n.getDepth() > catalogNodeDepth
+				// and it's not a basemap rule while the layer is being accessed directly
+				&& (!directAccess || n.getGroupMode() != LayerGroupInfo.Mode.OPAQUE_CONTAINER))) {
+			return true;
+		}
         
-        // if we get here, it means there is at least one secured tree node that denies access
-        // but we can still have one group that contains the layer, and that's not even mentioned
-        // in the security rules, that will authorize the layer anyways
+        // if we get here, we have to check containment in the layer groups that are not mentioned
+		// in security rules
         Filter containsResource = Predicates.equal("layers.resource.id", resource.getId(), MatchAction.ANY);
         Filter notSingle = Predicates.notEqual("mode", LayerGroupInfo.Mode.SINGLE);
         Filter global = Predicates.isNull("workspace");
         Filter inSameWorkspace = Predicates.equal("workspace.name", workspace);
-        // add a check on the depth here
         Filter wsMatch = Predicates.or(global, inSameWorkspace);
-        Filter groupFilter = Predicates.and(wsMatch, notSingle, containsResource);
-        if(hasContainerGroupNotDenied(user, nodes, groupFilter, catalogNodeDepth)) {
+    	Filter groupFilter = Predicates.and(wsMatch, notSingle, containsResource);
+    	boolean[] containingGroupsAnalysis = analyzeContainingGroups(user, nodeContainingResource, groupFilter, catalogNodeDepth, directAccess);
+        if(containingGroupsAnalysis[0]) {
             return true;
         }
         // ok, no overrides, see if there was a more specific lg node denying access, otherwise go
         // for the catalog one
-        if(nodes.stream().anyMatch(n -> !n.canAccess(user, mode) && n.getDepth() > catalogNodeDepth)) {
+        if(nodeContainingResource.stream().anyMatch(n -> !n.canAccess(user, mode) && n.getDepth() > catalogNodeDepth)) {
             return false;
-        } else { 
+        } else if(catalogNodeAllowsAccess && directAccess) {
+        	// we got up to this point, we can still have a basemap blocking access to the layer
+        	return !containingGroupsAnalysis[1];
+        } else  {
             return catalogNodeAllowsAccess;
         }
     }
@@ -321,7 +327,6 @@ public class DefaultResourceAccessManager implements ResourceAccessManager, Data
                 if ("*".equals(layer)) {
                     node = ws;
                 } else if(rule.isGlobalGroupRule()) {
-                    ws.setContainerLayerGroup(true);
                     updateContainedLayerIds(ws, null, workspace);
                     node = ws;
                 } else {
@@ -350,7 +355,7 @@ public class DefaultResourceAccessManager implements ResourceAccessManager, Data
         LayerGroupInfo lg = rawCatalog.getLayerGroupByName(workspace, groupName);
         if(lg == null || lg.getMode() == Mode.SINGLE) {
             node.setContainedCatalogIds(null);
-            node.setContainerLayerGroup(false);
+            node.setGroupMode(null);
         } else {
             LayerGroupHelper helper = new LayerGroupHelper(lg);
             Set<String> ids = helper.allLayers().stream().filter(layer -> layer != null && layer.getResource() != null)
@@ -361,7 +366,7 @@ public class DefaultResourceAccessManager implements ResourceAccessManager, Data
                 }
             });
             node.setContainedCatalogIds(ids);
-            node.setContainerLayerGroup(true);
+            node.setGroupMode(lg.getMode());
         }
     }
     
@@ -375,7 +380,7 @@ public class DefaultResourceAccessManager implements ResourceAccessManager, Data
         
     }
 
-    public DataAccessLimits getAccessLimits(Authentication user, LayerInfo layer) {
+    public DataAccessLimits getAccessLimits(Authentication user, LayerInfo layer, List<LayerGroupInfo> context) {
         boolean read = canAccess(user, layer, AccessMode.READ);
         boolean write = canAccess(user, layer, AccessMode.WRITE);
         Filter readFilter = read ? Filter.INCLUDE : Filter.EXCLUDE;
@@ -440,27 +445,26 @@ public class DefaultResourceAccessManager implements ResourceAccessManager, Data
     }
 
     @Override
-    public LayerGroupAccessLimits getAccessLimits(Authentication user, LayerGroupInfo layerGroup) {
+    public LayerGroupAccessLimits getAccessLimits(Authentication user, LayerGroupInfo layerGroup, List<LayerGroupInfo> containers) {
         String[] path = getLayerGroupPath(layerGroup);
         SecureTreeNode node = root.getDeepestNode(path);
         if(node != null && !node.canAccess(user, AccessMode.READ)) {
             return new LayerGroupAccessLimits(getMode());
         }
-        // there is still a chance the group is contained only in a hidden parent group
 
         // check if there is any containing group that has security rules
-        List<SecureTreeNode> nodes = getNodesContainingGroup(layerGroup);
-        if(nodes.isEmpty()) {
-            return null; // allow access
-        }
+        List<SecureTreeNode> nodesContainingGroup = getNodesContainingGroup(layerGroup);
         
         // if we have at least one containing tree that is secured and authorizes access, then 
         // we have a winner
-        if(nodes.stream().anyMatch(n -> n.canAccess(user, AccessMode.READ))) {
+        boolean directAccess = containers.isEmpty();
+        if(nodesContainingGroup.stream().anyMatch(n -> n.canAccess(user, AccessMode.READ) 
+        		&& (!directAccess || n.getGroupMode() != LayerGroupInfo.Mode.OPAQUE_CONTAINER))) {
             return null; // allow access
         }
         
-        // if we get here, it means there is at least one secured tree node that denies access
+        // if we get here, it means that either there are no containing groups at all, 
+        // or there is at least one secured tree node that denies access
         // but we can still have one group that contains the layer, and that's not even mentioned
         // in the security rules, that will authorize the layer anyways
         Filter containsResource = Predicates.equal("layers.id", layerGroup.getId(), MatchAction.ANY);
@@ -474,17 +478,22 @@ public class DefaultResourceAccessManager implements ResourceAccessManager, Data
             wsMatch = global;
         }
         Filter groupFilter = Predicates.and(wsMatch, notSingle, containsResource);
-        if(hasContainerGroupNotDenied(user, nodes, groupFilter, node.getDepth())) {
+        boolean[] groupAnalysis = analyzeContainingGroups(user, nodesContainingGroup, groupFilter, node.getDepth(), containers.isEmpty());
+		if (// an authorizing non restricted group has been found
+				groupAnalysis[0]
+				// no denying rule and no containing basemaps
+				|| (nodesContainingGroup.isEmpty() && !groupAnalysis[1])) {
             return null; // allow access
         }
         // could not find an authorized layer group that will allow authorization, so not authorized
         return new LayerGroupAccessLimits(getMode());
     }
 
-    private boolean hasContainerGroupNotDenied(Authentication user, List<SecureTreeNode> nodes, Filter groupFilter, int minimumDepth) {
-        if(minimumDepth >= SecureTreeNode.RESOURCE_DEPTH) {
-            return false;
+    private boolean[] analyzeContainingGroups(Authentication user, List<SecureTreeNode> nodes, Filter groupFilter, int minimumDepth, boolean directAccess) {
+        if(minimumDepth >= SecureTreeNode.RESOURCE_DEPTH && !directAccess) {
+            return new boolean[] {false, false};
         }
+        boolean[] groupAnalysis = new boolean[2];
         try(CloseableIterator<LayerGroupInfo> it = rawCatalog.list(LayerGroupInfo.class, groupFilter)) {
             while(it.hasNext()) {
                 LayerGroupInfo lg = it.next();
@@ -507,14 +516,20 @@ public class DefaultResourceAccessManager implements ResourceAccessManager, Data
                 if(getAccessLimits(user, lg) != null) {
                     continue;
                 }
-                // ok, then we have a container group that is not denied, allow
-                return true;
+                // in direct access a basemap layer does not actually allow access
+                if(directAccess && lg.getMode() == Mode.OPAQUE_CONTAINER) {
+                	groupAnalysis[1] = true;
+                } else {
+	                // ok, then we have a container group that is not denied, allow
+	                groupAnalysis[0] = true;
+                	break;
+                }
             }
         }
         
-        return false;
+        return groupAnalysis;
     }
-    
+        
     /**
      * Returns the possible location of the group in the secured tree based on name and workspace
      * @param layerGroup
@@ -748,13 +763,30 @@ public class DefaultResourceAccessManager implements ResourceAccessManager, Data
 
         private void clearGroupInfo(SecureTreeNode node) {
             if(node != null) {
-                node.setContainerLayerGroup(false);
+                node.setGroupMode(null);
                 node.setContainedCatalogIds(null);
             }
         }
         
         
     }
+    
+    // backwards compatibility methods
+
+	@Override
+	public boolean canAccess(Authentication user, ResourceInfo resource, AccessMode mode) {
+		return canAccess(user, resource, mode, true);
+	}
+
+	@Override
+	public DataAccessLimits getAccessLimits(Authentication user, LayerInfo layer) {
+		return getAccessLimits(user, layer, Collections.emptyList());
+	}
+
+	@Override
+	public LayerGroupAccessLimits getAccessLimits(Authentication user, LayerGroupInfo layerGroup) {
+		return getAccessLimits(user, layerGroup, Collections.emptyList());
+	}
 
     
 

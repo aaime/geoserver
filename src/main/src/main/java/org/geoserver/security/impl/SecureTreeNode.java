@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.geoserver.catalog.LayerGroupInfo;
 import org.geoserver.security.AccessMode;
 import org.geoserver.security.GeoServerSecurityFilterChainProxy;
 import org.springframework.security.core.Authentication;
@@ -55,8 +56,6 @@ public class SecureTreeNode {
     Map<String, SecureTreeNode> children = new HashMap<String, SecureTreeNode>();
 
     SecureTreeNode parent;
-    
-    boolean containerLayerGroup = false;
 
     /**
      * A map from access mode to set of roles that can perform that kind of
@@ -78,6 +77,11 @@ public class SecureTreeNode {
      * of full layers to avoid memory boundless for non in-memory catalogs) 
      */
     Set<String> containedCatalogIds;
+    
+    /**
+     * The mode for the layer group
+     */
+    LayerGroupInfo.Mode groupMode;
 
     /**
      * Builds a child of the specified parent node
@@ -234,7 +238,7 @@ public class SecureTreeNode {
     
     private void collectLayerGroupNodesForCatalogId(String catalogId, List<SecureTreeNode> result) {
         // add this node if it contains the catalog id
-        if(containerLayerGroup && containedCatalogIds != null && containedCatalogIds.contains(catalogId)) {
+        if(isContainerLayerGroup() && containedCatalogIds != null && containedCatalogIds.contains(catalogId)) {
             result.add(this);
         } 
         // recurse
@@ -243,7 +247,7 @@ public class SecureTreeNode {
         }
     }
 
-    /**
+	/**
      * Utility method that drills down from the current node using the specified
      * list of child names, and returns an element only if it fully matches the provided path
      * 
@@ -277,17 +281,9 @@ public class SecureTreeNode {
      * @return
      */
     public boolean isContainerLayerGroup() {
-        return containerLayerGroup;
+        return groupMode != null && groupMode != LayerGroupInfo.Mode.SINGLE;
     }
 
-    /**
-     * Flags this node as a container layer group (named or container tree)
-     * @param isGlobalLayerGroup
-     */
-    public void setContainerLayerGroup(boolean isGlobalLayerGroup) {
-        this.containerLayerGroup = isGlobalLayerGroup;
-    }
-    
     public Set<String> getContainedCatalogIds() {
         return containedCatalogIds;
     }
@@ -300,8 +296,8 @@ public class SecureTreeNode {
     public String toString() {
         // customized toString to avoid printing the whole tree recursively, this one prints only
         // the info in the current level
-        return "SecureTreeNode [childrenCount=" + children.size() + ", hasParent=" + (parent != null) + ", layerGroup="
-                + containerLayerGroup + ", authorizedRoles=" + authorizedRoles + ", containedCatalogIds="
+        return "SecureTreeNode [childrenCount=" + children.size() + ", hasParent=" + (parent != null) + ",  groupMode="
+                + groupMode + ", authorizedRoles=" + authorizedRoles + ", containedCatalogIds="
                 + containedCatalogIds + "]";
     }
     
@@ -321,5 +317,13 @@ public class SecureTreeNode {
         
         return depth;
     }
+    
+    public LayerGroupInfo.Mode getGroupMode() {
+		return groupMode;
+	}
+
+	public void setGroupMode(LayerGroupInfo.Mode groupMode) {
+		this.groupMode = groupMode;
+	}
 
 }

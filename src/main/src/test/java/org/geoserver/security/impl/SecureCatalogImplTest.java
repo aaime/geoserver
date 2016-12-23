@@ -5,7 +5,9 @@
  */
 package org.geoserver.security.impl;
 
+import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
@@ -35,6 +37,7 @@ import java.util.logging.Logger;
 
 import javax.annotation.Nullable;
 
+import org.easymock.EasyMock;
 import org.geoserver.catalog.Catalog;
 import org.geoserver.catalog.CatalogInfo;
 import org.geoserver.catalog.CoverageInfo;
@@ -67,6 +70,7 @@ import org.geoserver.security.decorators.SecuredFeatureTypeInfo;
 import org.geoserver.security.decorators.SecuredLayerGroupInfo;
 import org.geoserver.security.decorators.SecuredLayerInfo;
 import org.geoserver.security.decorators.SecuredWMSLayerInfo;
+import org.geotools.geometry.jts.EmptyIterator;
 import org.geotools.util.logging.Logging;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
@@ -618,7 +622,9 @@ public class SecureCatalogImplTest extends AbstractAuthorizationTest {
         
         Catalog eoCatalog = createNiceMock(Catalog.class);
         expect(eoCatalog.getLayerGroupByName("topp", eoRoadsLayerGroup.getName())).andReturn(eoRoadsLayerGroup).anyTimes();
-        expect(eoCatalog.getLayerGroupByName("topp", eoStatesLayerGroup.getName())).andReturn(eoStatesLayerGroup).anyTimes();        
+        expect(eoCatalog.getLayerGroupByName("topp", eoStatesLayerGroup.getName())).andReturn(eoStatesLayerGroup).anyTimes();     
+        expect(eoCatalog.list(eq(LayerGroupInfo.class), anyObject(Filter.class))).
+        	andReturn(new CloseableIteratorAdapter<LayerGroupInfo>(Collections.emptyIterator())).anyTimes();
         replay(eoCatalog);
         this.catalog = eoCatalog;
         extensions.singleton("catalog", eoCatalog, Catalog.class);
