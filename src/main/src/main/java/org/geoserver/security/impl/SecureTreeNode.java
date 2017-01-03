@@ -73,17 +73,6 @@ public class SecureTreeNode {
     Map<AccessMode, Set<String>> authorizedRoles = new HashMap<AccessMode, Set<String>>();
     
     /**
-     * Cache of contained layer ids for nodes that are a match for a layer group (we keep ids instead
-     * of full layers to avoid memory boundless for non in-memory catalogs) 
-     */
-    Set<String> containedCatalogIds;
-    
-    /**
-     * The mode for the layer group
-     */
-    LayerGroupInfo.Mode groupMode;
-
-    /**
      * Builds a child of the specified parent node
      * 
      * @param parent
@@ -224,30 +213,8 @@ public class SecureTreeNode {
         return curr;
     }
     
-    /**
-     * Returns all the layer group nodes containing the specified catalog id
-     * @param id
-     * @return
-     */
-    public List<SecureTreeNode> getLayerGroupNodesForCatalogId(String catalogId) {
-        List<SecureTreeNode> result = new ArrayList<>();
-        collectLayerGroupNodesForCatalogId(catalogId, result);
-        
-        return result;
-    }
     
-    private void collectLayerGroupNodesForCatalogId(String catalogId, List<SecureTreeNode> result) {
-        // add this node if it contains the catalog id
-        if(isContainerLayerGroup() && containedCatalogIds != null && containedCatalogIds.contains(catalogId)) {
-            result.add(this);
-        } 
-        // recurse
-        for (SecureTreeNode child : children.values()) {
-            collectLayerGroupNodesForCatalogId(catalogId, result);
-        }
-    }
-
-	/**
+    /**
      * Utility method that drills down from the current node using the specified
      * list of child names, and returns an element only if it fully matches the provided path
      * 
@@ -276,29 +243,12 @@ public class SecureTreeNode {
         return children;
     }
 
-    /**
-     * Indicates that this node is supposed to match a container layer group (named or container tree)
-     * @return
-     */
-    public boolean isContainerLayerGroup() {
-        return groupMode != null && groupMode != LayerGroupInfo.Mode.SINGLE;
-    }
-
-    public Set<String> getContainedCatalogIds() {
-        return containedCatalogIds;
-    }
-
-    public void setContainedCatalogIds(Set<String> containedLayerIds) {
-        this.containedCatalogIds = containedLayerIds;
-    }
-
     @Override
     public String toString() {
         // customized toString to avoid printing the whole tree recursively, this one prints only
         // the info in the current level
-        return "SecureTreeNode [childrenCount=" + children.size() + ", hasParent=" + (parent != null) + ",  groupMode="
-                + groupMode + ", authorizedRoles=" + authorizedRoles + ", containedCatalogIds="
-                + containedCatalogIds + "]";
+        return "SecureTreeNode [childrenCount=" + children.size() + ", hasParent=" 
+            + (parent != null) + ", authorizedRoles=" + authorizedRoles + "]";
     }
     
     /**
@@ -318,12 +268,4 @@ public class SecureTreeNode {
         return depth;
     }
     
-    public LayerGroupInfo.Mode getGroupMode() {
-		return groupMode;
-	}
-
-	public void setGroupMode(LayerGroupInfo.Mode groupMode) {
-		this.groupMode = groupMode;
-	}
-
 }

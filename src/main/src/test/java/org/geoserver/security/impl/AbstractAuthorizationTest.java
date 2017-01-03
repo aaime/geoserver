@@ -277,6 +277,7 @@ public abstract class AbstractAuthorizationTest extends SecureObjectsTest {
         expect(layer.getPrefixedName()).andReturn(ws.getName() + ":" + name).anyTimes();
         expect(layer.prefixedName()).andReturn(ws.getName() + ":" + name).anyTimes();
         expect(layer.getResource()).andReturn(resource).anyTimes();
+        expect(layer.getId()).andReturn(name + "-lid").anyTimes();
         if (!advertised) expect(layer.isAdvertised()).andReturn(advertised).anyTimes();
         replay(layer);
 
@@ -414,20 +415,32 @@ public abstract class AbstractAuthorizationTest extends SecureObjectsTest {
         expect(catalog.getStyles()).andReturn(Arrays.asList(pointStyle, lineStyle)).anyTimes();
         expect(catalog.getStylesByWorkspace(toppWs)).andReturn(Arrays.asList(pointStyle, lineStyle)).anyTimes();
         expect(catalog.getStylesByWorkspace(nurcWs)).andReturn(Arrays.asList(pointStyle)).anyTimes();
-        expect(catalog.getLayerGroups()).andReturn(Arrays.asList(layerGroupGlobal, layerGroupTopp, 
-                layerGroupWithSomeLockedLayer, namedTreeA, containerTreeB, singleGroupC, nestedContainerE)).anyTimes();
+        List<LayerGroupInfo> layerGroups = Arrays.asList(layerGroupGlobal, layerGroupTopp, 
+                layerGroupWithSomeLockedLayer, namedTreeA, containerTreeB, singleGroupC, wsContainerD, nestedContainerE);
+        expect(catalog.getLayerGroups()).andReturn(layerGroups).anyTimes();
+        for (LayerGroupInfo lg : layerGroups) {
+            expect(catalog.getLayerGroup(lg.getId())).andReturn(lg).anyTimes();
+            if(lg.getWorkspace() == null) {
+                expect(catalog.getLayerGroupByName(lg.getName())).andReturn(lg).anyTimes();
+                expect(catalog.getLayerGroupByName(NULL_STRING, lg.getName())).andReturn(lg).anyTimes();
+            } else {
+                expect(catalog.getLayerGroupByName(lg.getWorkspace(), lg.getName())).andReturn(lg).anyTimes();
+                expect(catalog.getLayerGroupByName(lg.getWorkspace().getName(), lg.getName())).andReturn(lg).anyTimes();
+            }
+        }
+        
         expect(catalog.getLayerGroupsByWorkspace("topp")).andReturn(Arrays.asList(new LayerGroupInfo[] { layerGroupTopp, layerGroupWithSomeLockedLayer })).anyTimes();
         expect(catalog.getLayerGroupsByWorkspace("nurc")).andReturn(Arrays.asList(layerGroupGlobal)).anyTimes();
-        expect(catalog.getLayerGroupByName("topp", layerGroupWithSomeLockedLayer.getName())).andReturn(layerGroupWithSomeLockedLayer).anyTimes();
-        expect(catalog.getLayerGroupByName(namedTreeA.getName())).andReturn(namedTreeA).anyTimes();
-        expect(catalog.getLayerGroupByName(containerTreeB.getName())).andReturn(containerTreeB).anyTimes();
-        expect(catalog.getLayerGroupByName(singleGroupC.getName())).andReturn(singleGroupC).anyTimes();
-        expect(catalog.getLayerGroupByName(nestedContainerE.getName())).andReturn(nestedContainerE).anyTimes();
-        expect(catalog.getLayerGroupByName(NULL_STRING, namedTreeA.getName())).andReturn(namedTreeA).anyTimes();
-        expect(catalog.getLayerGroupByName(NULL_STRING, containerTreeB.getName())).andReturn(containerTreeB).anyTimes();
-        expect(catalog.getLayerGroupByName(NULL_STRING, singleGroupC.getName())).andReturn(singleGroupC).anyTimes();
-        expect(catalog.getLayerGroupByName(NULL_STRING, nestedContainerE.getName())).andReturn(nestedContainerE).anyTimes();
-        expect(catalog.getLayerGroupByName("nurc", wsContainerD.getName())).andReturn(wsContainerD).anyTimes();
+//        expect(catalog.getLayerGroupByName("topp", layerGroupWithSomeLockedLayer.getName())).andReturn(layerGroupWithSomeLockedLayer).anyTimes();
+//        expect(catalog.getLayerGroupByName(namedTreeA.getName())).andReturn(namedTreeA).anyTimes();
+//        expect(catalog.getLayerGroupByName(containerTreeB.getName())).andReturn(containerTreeB).anyTimes();
+//        expect(catalog.getLayerGroupByName(singleGroupC.getName())).andReturn(singleGroupC).anyTimes();
+//        expect(catalog.getLayerGroupByName(nestedContainerE.getName())).andReturn(nestedContainerE).anyTimes();
+//        expect(catalog.getLayerGroupByName(NULL_STRING, namedTreeA.getName())).andReturn(namedTreeA).anyTimes();
+//        expect(catalog.getLayerGroupByName(NULL_STRING, containerTreeB.getName())).andReturn(containerTreeB).anyTimes();
+//        expect(catalog.getLayerGroupByName(NULL_STRING, singleGroupC.getName())).andReturn(singleGroupC).anyTimes();
+//        expect(catalog.getLayerGroupByName(NULL_STRING, nestedContainerE.getName())).andReturn(nestedContainerE).anyTimes();
+//        expect(catalog.getLayerGroupByName("nurc", wsContainerD.getName())).andReturn(wsContainerD).anyTimes();
         expect(catalog.list(eq(LayerGroupInfo.class), anyObject(Filter.class))).andAnswer(() -> { 
             List<LayerGroupInfo> groups = catalog.getLayerGroups();
             Filter f = (Filter) EasyMock.getCurrentArguments()[1];
