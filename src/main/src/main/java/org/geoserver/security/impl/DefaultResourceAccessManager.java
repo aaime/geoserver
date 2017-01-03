@@ -254,53 +254,7 @@ public class DefaultResourceAccessManager implements ResourceAccessManager, Data
             SecureTreeNode node = getNodeForGroup(gi);
             return node == null && canAccess(user, gi, directAccess);
         });
-        
-//        // do we have at least one path that authorizes access to this group? need to check container by container
-//        if() {
-//            return true;
-//        }
-//        
-//        return catalogNodeAllowsAccess;
-        
-//        // grab the groups containing the resource, if any. If none, there is no group related logic
-//        // to apply
-//        List<SecuredGroupData> secureGroups = getSecuredGroupsForResource(resource);
-//        if(secureGroups.isEmpty()) {
-//            return catalogNodeAllowsAccess;
-//        }
-//
-//        // if we have at least one containing tree that is secured and authorizes access, then
-//        // the resource can be accessed
-//        return secureGroups.stream().anyMatch(sg -> 
-//                // allows access
-//                sg.canAccess(user, mode)
-//                // overrides the catalog rule
-//                && sg.getNode().getDepth() > catalogNodeDepth
-//                // and it's not a basemap rule while the layer is being accessed directly
-//                && (!directAccess || sg.getMode() != LayerGroupInfo.Mode.OPAQUE_CONTAINER));
-        
-//        // if we get here, we have to check containment in the layer groups that are not mentioned
-//		// in security rules
-//        Filter containsResource = Predicates.equal("layers.resource.id", resource.getId(), MatchAction.ANY);
-//        Filter notSingle = Predicates.notEqual("mode", LayerGroupInfo.Mode.SINGLE);
-//        Filter global = Predicates.isNull("workspace");
-//        Filter inSameWorkspace = Predicates.equal("workspace.name", workspace);
-//        Filter wsMatch = Predicates.or(global, inSameWorkspace);
-//    	Filter groupFilter = Predicates.and(wsMatch, notSingle, containsResource);
-//    	boolean[] containingGroupsAnalysis = analyzeContainingGroups(user, nodeContainingResource, groupFilter, catalogNodeDepth, directAccess);
-//        if(containingGroupsAnalysis[0]) {
-//            return true;
-//        }
-//        // ok, no overrides, see if there was a more specific lg node denying access, otherwise go
-//        // for the catalog one
-//        if(nodeContainingResource.stream().anyMatch(n -> !n.canAccess(user, mode) && n.getDepth() > catalogNodeDepth)) {
-//            return false;
-//        } else if(catalogNodeAllowsAccess && directAccess) {
-//        	// we got up to this point, we can still have a basemap blocking access to the layer
-//        	return !containingGroupsAnalysis[1];
-//        } else  {
-//            return catalogNodeAllowsAccess;
-//        }
+
     }
     
     private SecureTreeNode getNodeForGroup(LayerGroupInfo lg) {
@@ -314,34 +268,6 @@ public class DefaultResourceAccessManager implements ResourceAccessManager, Data
         return node;
     }
     
-//    private List<SecuredGroupData> getSecuredGroupsForResource(ResourceInfo r) {
-//        Collection<LayerGroupSummary> summaries = groupsCache.getGroupsForResource(r);
-//        return toSecuredSummaries(summaries);
-//    }
-//    
-//    private List<SecuredGroupData> getSecuredGroupsForGroup(LayerGroupInfo lg) {
-//        Collection<LayerGroupSummary> summaries = groupsCache.getGroupsContaining(lg);
-//        return toSecuredSummaries(summaries);
-//    }
-//    
-//    private List<SecuredGroupData> toSecuredSummaries(Collection<LayerGroupSummary> summaries) {
-//        return summaries.stream()
-//                // filter out groups whose mode is single, or ws specific ones that are hidden by same named layers
-//                .filter(gs -> gs.getMode() != LayerGroupInfo.Mode.SINGLE
-//                        && (gs.getWorkspace() == null || rawCatalog
-//                                .getLayerGroupByName(gs.getWorkspace(), gs.getName()) == null))
-//                // map onto secure tree nodes
-//                .map(gs -> {
-//                    SecureTreeNode node = root.getNode(gs.getPath());
-//                    return new SecuredGroupData(gs, node);
-//
-//                })
-//                // filter out elements that were mapped to null
-//                .filter(k -> k != null)
-//                // and finally collect
-//                .collect(Collectors.toList());
-//    }
-
     private boolean layerGroupContainmentCheckRequired() {
         // first, is it WMS?
         Request request = Dispatcher.REQUEST.get();
