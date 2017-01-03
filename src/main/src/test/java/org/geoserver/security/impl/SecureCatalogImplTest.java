@@ -616,8 +616,8 @@ public class SecureCatalogImplTest extends AbstractAuthorizationTest {
     
     @Test
     public void testEoLayerGroupMustBeHiddenIfItsRootLayerIsHidden() throws Exception {
-        LayerGroupInfo eoRoadsLayerGroup = buildLayerGroup("eoRoadsLayerGroup", LayerGroupInfo.Mode.EO, roadsLayer, lineStyle, toppWs, statesLayer);
-        LayerGroupInfo eoStatesLayerGroup = buildLayerGroup("eoStatesLayerGroup", LayerGroupInfo.Mode.EO, statesLayer, lineStyle, toppWs, roadsLayer);
+        LayerGroupInfo eoRoadsLayerGroup = buildEOLayerGroup("eoRoadsLayerGroup", roadsLayer, lineStyle, toppWs, statesLayer);
+        LayerGroupInfo eoStatesLayerGroup = buildEOLayerGroup("eoStatesLayerGroup", statesLayer, lineStyle, toppWs, roadsLayer);
         
         Catalog eoCatalog = createNiceMock(Catalog.class);
         expect(eoCatalog.getLayerGroupByName("topp", eoRoadsLayerGroup.getName())).andReturn(eoRoadsLayerGroup).anyTimes();

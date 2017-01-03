@@ -177,7 +177,7 @@ public class DefaultResourceAccessManager implements ResourceAccessManager, Data
         return false;
     }
 
-    public boolean canAccess(Authentication user, LayerInfo layer, AccessMode mode) {
+    public boolean canAccess(Authentication user, LayerInfo layer, AccessMode mode, boolean directAccess) {
         checkPropertyFile();
         if (layer.getResource() == null) {
             LOGGER.log(Level.FINE, "Layer " + layer + " has no attached resource, "
@@ -185,7 +185,7 @@ public class DefaultResourceAccessManager implements ResourceAccessManager, Data
             // it's a layer whose resource we don't know about
             return true;
         } else {
-            return canAccess(user, layer.getResource(), mode);
+            return canAccess(user, layer.getResource(), mode, directAccess);
         }
 
     }
@@ -213,19 +213,19 @@ public class DefaultResourceAccessManager implements ResourceAccessManager, Data
         }
         
         // grab the groups containing the resource, if any. If none, there is no group related logic to apply
-        Collection<LayerGroupSummary> directContainers  = groupsCache.getGroupsForResource(resource);
-        if(directContainers.isEmpty()) {
+        Collection<LayerGroupSummary> containers  = groupsCache.getGroupsForResource(resource);
+        if(containers.isEmpty()) {
             return rulesAllowAccess;
         }
         
         // there are groups, so there might be more specific rules overriding the catalog one, search for them
-        List<LayerGroupSummary> groupOverrides = directContainers.stream().filter(sg -> {
+        List<LayerGroupSummary> groupOverrides = containers.stream().filter(sg -> {
             LayerGroupInfo gi = rawCatalog.getLayerGroup(sg.getId());
             if(gi == null) {
                 return false;
             }
             SecureTreeNode node = getNodeForGroup(gi);
-            return node != null && node.getDepth() > catalogNodeDepth;
+            return (node != null && node.getDepth() > catalogNodeDepth) || (sg.getMode() == Mode.OPAQUE_CONTAINER);
         }).collect(Collectors.toList());
         if(!groupOverrides.isEmpty()) {
             // if there are overrides, see if at least one of them allows access
@@ -234,7 +234,7 @@ public class DefaultResourceAccessManager implements ResourceAccessManager, Data
                     return false;
                 }
                 LayerGroupInfo gi = rawCatalog.getLayerGroup(sg.getId());
-                return gi != null && canAccess(user, gi, directAccess);
+                return gi != null && canAccess(user, gi, directAccess) && (!directAccess || allowsAccessViaNonOpaqueGroup(gi, resource));
             });
         }
         
@@ -243,7 +243,7 @@ public class DefaultResourceAccessManager implements ResourceAccessManager, Data
         }
         
         // the rules allow no access, but there might still be a non secured layer group allowing access to the resource
-        return directContainers.stream().anyMatch(sg -> {
+        return containers.stream().anyMatch(sg -> {
             if(directAccess && sg.getMode() == Mode.OPAQUE_CONTAINER) {
                 return false;
             }
@@ -252,11 +252,32 @@ public class DefaultResourceAccessManager implements ResourceAccessManager, Data
                 return false;
             }
             SecureTreeNode node = getNodeForGroup(gi);
-            return node == null && canAccess(user, gi, directAccess);
+            return node == null && canAccess(user, gi, directAccess) && (!directAccess || allowsAccessViaNonOpaqueGroup(gi, resource));
         });
 
     }
     
+    /**
+     * Returns true if there is a path from the group to the resource that does not involve crossing
+     * a opaque group
+     */
+    private boolean allowsAccessViaNonOpaqueGroup(LayerGroupInfo gi, ResourceInfo resource) {
+        for (PublishedInfo pi : gi.getLayers()) {
+            if(pi instanceof LayerInfo) {
+                if(resource.equals(((LayerInfo) pi).getResource())) {
+                    return true;
+                }
+            } else {
+                LayerGroupInfo lg = (LayerGroupInfo) pi;
+                if(lg.getMode() != LayerGroupInfo.Mode.OPAQUE_CONTAINER && allowsAccessViaNonOpaqueGroup(lg, resource)) {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }
+
     private SecureTreeNode getNodeForGroup(LayerGroupInfo lg) {
         SecureTreeNode node;
         if(lg.getWorkspace() == null) {
@@ -341,8 +362,9 @@ public class DefaultResourceAccessManager implements ResourceAccessManager, Data
     }
 
     public DataAccessLimits getAccessLimits(Authentication user, LayerInfo layer, List<LayerGroupInfo> context) {
-        boolean read = canAccess(user, layer, AccessMode.READ);
-        boolean write = canAccess(user, layer, AccessMode.WRITE);
+        final boolean directAccess = context == null || context.isEmpty();
+        boolean read = canAccess(user, layer, AccessMode.READ, directAccess);
+        boolean write = canAccess(user, layer, AccessMode.WRITE, directAccess);
         Filter readFilter = read ? Filter.INCLUDE : Filter.EXCLUDE;
         Filter writeFilter = write ? Filter.INCLUDE : Filter.EXCLUDE;
         return buildLimits(layer.getResource().getClass(), readFilter, writeFilter);
@@ -599,6 +621,11 @@ public class DefaultResourceAccessManager implements ResourceAccessManager, Data
     public boolean canAccess(Authentication user, ResourceInfo resource, AccessMode mode) {
         return canAccess(user, resource, mode, true);
     }
+    
+    @Override
+    public boolean canAccess(Authentication user, LayerInfo layer, AccessMode mode) {
+        return canAccess(user, layer, mode, true);
+    }
 
     @Override
     public DataAccessLimits getAccessLimits(Authentication user, LayerInfo layer) {
@@ -609,6 +636,7 @@ public class DefaultResourceAccessManager implements ResourceAccessManager, Data
     public LayerGroupAccessLimits getAccessLimits(Authentication user, LayerGroupInfo layerGroup) {
         return getAccessLimits(user, layerGroup, Collections.emptyList());
     }
+
 
     
 
