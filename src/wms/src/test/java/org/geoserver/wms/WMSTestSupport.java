@@ -154,7 +154,9 @@ public abstract class WMSTestSupport extends GeoServerSystemTestSupport {
 	        cb.calculateLayerGroupBounds(containerGroup);
 	        catalog.add(containerGroup);
         }
-        
+    }
+
+    protected void setupOpaqueGroup(Catalog catalog) throws Exception {
         // setup an opaque group too
         LayerGroupInfo opaqueGroup = catalog.getFactory().createLayerGroup();
         LayerInfo buildings = catalog.getLayerByName(getLayerId(MockData.ROAD_SEGMENTS));

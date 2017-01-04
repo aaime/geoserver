@@ -92,6 +92,8 @@ public class CapabilitiesIntegrationTest extends WMSTestSupport {
         LayerInfo lakesLayer = catalog.getLayerByName(MockData.LAKES.getLocalPart());
         lakesLayer.setDefaultStyle(lakesStyle);
         catalog.save(lakesLayer);
+        
+        setupOpaqueGroup(catalog);
     }
     
     @Override

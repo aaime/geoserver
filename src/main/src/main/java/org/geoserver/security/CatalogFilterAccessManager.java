@@ -55,6 +55,14 @@ public class CatalogFilterAccessManager extends ResourceAccessManagerWrapper {
         }
         return super.getAccessLimits(user, layer);
     }
+    
+    @Override
+    public DataAccessLimits getAccessLimits(Authentication user, LayerInfo layer, List<LayerGroupInfo> containers) {
+        if (hideLayer(layer) || hideResource(layer.getResource())) {
+            return hide(layer.getResource());
+        }
+        return super.getAccessLimits(user, layer, containers);
+    }
 
     @Override
     public DataAccessLimits getAccessLimits(Authentication user, ResourceInfo resource) {
@@ -91,6 +99,16 @@ public class CatalogFilterAccessManager extends ResourceAccessManagerWrapper {
         }
         else {
             return super.getAccessLimits(user, layerGroup);
+        }
+    }
+    
+    @Override
+    public LayerGroupAccessLimits getAccessLimits(Authentication user, LayerGroupInfo layerGroup, List<LayerGroupInfo> containers) {
+        if (hideLayerGroup(layerGroup)) {
+            return new LayerGroupAccessLimits(CatalogMode.HIDE);
+        }
+        else {
+            return super.getAccessLimits(user, layerGroup, containers);
         }
     }
     
