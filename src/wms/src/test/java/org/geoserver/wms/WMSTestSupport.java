@@ -43,6 +43,9 @@ import org.geoserver.catalog.ResourceInfo;
 import org.geoserver.catalog.LayerGroupInfo.Mode;
 import org.geoserver.data.test.MockData;
 import org.geoserver.data.test.SystemTestData;
+import org.geoserver.ows.Dispatcher;
+import org.geoserver.ows.Request;
+import org.geoserver.platform.GeoServerExtensions;
 import org.geoserver.test.GeoServerSystemTestSupport;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.data.FeatureSource;
@@ -54,7 +57,6 @@ import org.geotools.styling.Style;
 import org.geotools.xml.transform.TransformerBase;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
-import org.vfny.geoserver.Request;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
@@ -124,6 +126,7 @@ public abstract class WMSTestSupport extends GeoServerSystemTestSupport {
         
 
     }
+    
     @Override
     protected void onSetUp(SystemTestData testData) throws Exception {
         super.onSetUp(testData);
@@ -146,25 +149,25 @@ public abstract class WMSTestSupport extends GeoServerSystemTestSupport {
         // create a group containing the other group
         LayerGroupInfo containerGroup = catalog.getFactory().createLayerGroup();
         LayerGroupInfo nature = catalog.getLayerGroupByName(NATURE_GROUP);
-        if(nature != null) {
-	        containerGroup.setName(CONTAINER_GROUP);
-	        containerGroup.setMode(Mode.CONTAINER);
-	        containerGroup.getLayers().add(nature);
-	        CatalogBuilder cb = new CatalogBuilder(catalog);
-	        cb.calculateLayerGroupBounds(containerGroup);
-	        catalog.add(containerGroup);
+        if (nature != null) {
+            containerGroup.setName(CONTAINER_GROUP);
+            containerGroup.setMode(Mode.CONTAINER);
+            containerGroup.getLayers().add(nature);
+            CatalogBuilder cb = new CatalogBuilder(catalog);
+            cb.calculateLayerGroupBounds(containerGroup);
+            catalog.add(containerGroup);
         }
     }
 
     protected void setupOpaqueGroup(Catalog catalog) throws Exception {
         // setup an opaque group too
         LayerGroupInfo opaqueGroup = catalog.getFactory().createLayerGroup();
-        LayerInfo buildings = catalog.getLayerByName(getLayerId(MockData.ROAD_SEGMENTS));
+        LayerInfo roadSegments = catalog.getLayerByName(getLayerId(MockData.ROAD_SEGMENTS));
         LayerInfo neatline = catalog.getLayerByName(getLayerId(MockData.MAP_NEATLINE));
-        if(buildings != null && neatline != null) {
+        if(roadSegments != null && neatline != null) {
             opaqueGroup.setName(OPAQUE_GROUP);
             opaqueGroup.setMode(Mode.OPAQUE_CONTAINER);;
-            opaqueGroup.getLayers().add(buildings);
+            opaqueGroup.getLayers().add(roadSegments);
             opaqueGroup.getLayers().add(neatline);
 	        CatalogBuilder cb = new CatalogBuilder(catalog);
             cb.calculateLayerGroupBounds(opaqueGroup);
@@ -602,17 +605,19 @@ public abstract class WMSTestSupport extends GeoServerSystemTestSupport {
         return group;
     }
 
-	protected int getExpectedTopLayerCount() {
-		List<LayerInfo> layers = new ArrayList<LayerInfo>(getCatalog().getLayers());
-	    for (ListIterator<LayerInfo> it = layers.listIterator(); it.hasNext();) {
-	        LayerInfo next = it.next();
-	        if (!next.enabled() || next.getName().equals(MockData.GEOMETRYLESS.getLocalPart())) {
-	            it.remove();
-	        }
-	    }
-	    List<LayerGroupInfo> groups = getCatalog().getLayerGroups();
-		int expectedLayerCount = layers.size() + groups.size() - 1 /* nested layer group */ - 2;
-		return expectedLayerCount;
-	}    
-        
+    protected int getRawTopLayerCount() {
+        Catalog rawCatalog = (Catalog) GeoServerExtensions.bean("rawCatalog");
+        List<LayerInfo> layers = new ArrayList<LayerInfo>(rawCatalog.getLayers());
+        for (ListIterator<LayerInfo> it = layers.listIterator(); it.hasNext();) {
+            LayerInfo next = it.next();
+            if (!next.enabled() || next.getName().equals(MockData.GEOMETRYLESS.getLocalPart())) {
+                it.remove();
+            }
+        }
+        List<LayerGroupInfo> groups = rawCatalog.getLayerGroups();
+        int opaqueDelta = groups.stream().anyMatch(lg -> OPAQUE_GROUP.equals(lg.getName())) ? 2 : 0;
+        int expectedLayerCount = layers.size() + groups.size() - 1 /* nested layer group */ - opaqueDelta;
+        return expectedLayerCount;
+    }
+
 }

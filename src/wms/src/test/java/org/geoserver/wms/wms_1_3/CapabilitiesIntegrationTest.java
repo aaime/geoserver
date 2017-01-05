@@ -9,11 +9,11 @@ import static org.custommonkey.xmlunit.XMLAssert.assertXpathEvaluatesTo;
 import static org.custommonkey.xmlunit.XMLAssert.assertXpathExists;
 import static org.custommonkey.xmlunit.XMLAssert.assertXpathNotExists;
 import static org.custommonkey.xmlunit.XMLUnit.newXpathEngine;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 
 import org.custommonkey.xmlunit.XMLUnit;
@@ -33,7 +33,6 @@ import org.geoserver.catalog.PublishedInfo;
 import org.geoserver.catalog.ResourceInfo;
 import org.geoserver.catalog.StyleInfo;
 import org.geoserver.catalog.WorkspaceInfo;
-import org.geoserver.catalog.LayerGroupInfo.Mode;
 import org.geoserver.config.ContactInfo;
 import org.geoserver.config.GeoServerInfo;
 import org.geoserver.data.test.MockData;
@@ -138,7 +137,7 @@ public class CapabilitiesIntegrationTest extends WMSTestSupport {
 
     @org.junit.Test 
     public void testLayerCount() throws Exception {
-        int expectedLayerCount = getExpectedTopLayerCount();
+        int expectedLayerCount = getRawTopLayerCount();
 
         
         Document dom = dom(get("wms?request=GetCapabilities&version=1.3.0"), true);
@@ -626,16 +625,16 @@ public class CapabilitiesIntegrationTest extends WMSTestSupport {
     
     @Test
     public void testNestedGroupInOpaqueGroup() throws Exception {
-    	Catalog catalog = getCatalog();
-    	
-    	// nest container inside opaque, this should make it disappear from the caps
-    	LayerGroupInfo container = catalog.getLayerGroupByName(CONTAINER_GROUP);
-    	LayerGroupInfo opaque = catalog.getLayerGroupByName(OPAQUE_GROUP);
-    	opaque.getLayers().add(container);
-    	opaque.getStyles().add(null);
-    	catalog.save(opaque);
-    	
-    	try {
+        Catalog catalog = getCatalog();
+
+        // nest container inside opaque, this should make it disappear from the caps
+        LayerGroupInfo container = catalog.getLayerGroupByName(CONTAINER_GROUP);
+        LayerGroupInfo opaque = catalog.getLayerGroupByName(OPAQUE_GROUP);
+        opaque.getLayers().add(container);
+        opaque.getStyles().add(null);
+        catalog.save(opaque);
+
+        try {
             Document dom = getAsDOM("wms?request=GetCapabilities&version=1.3.0");
             // print(dom);
 
@@ -643,27 +642,29 @@ public class CapabilitiesIntegrationTest extends WMSTestSupport {
             assertXpathEvaluatesTo("1", "count(//wms:Layer[wms:Name='opaqueGroup'])", dom);
             for (PublishedInfo p : getCatalog().getLayerGroupByName(OPAQUE_GROUP).getLayers()) {
                 assertXpathNotExists("//wms:Layer[wms:Name='" + p.prefixedName() + "']", dom);
-            };
-            
+            }
+            ;
+
             // now check the layer count too, we just hid everything in the container layer
             List<LayerInfo> nestedLayers = new LayerGroupHelper(container).allLayers();
-            System.out.println(nestedLayers);
-			int expectedLayerCount = getExpectedTopLayerCount() 
-            		// layers gone due to the nesting
-            		- nestedLayers.size() 
-            		/* container has been nested and disappeared*/
-            		- 1;
+            // System.out.println(nestedLayers);
+            int expectedLayerCount = getRawTopLayerCount()
+                    // layers gone due to the nesting
+                    - nestedLayers.size()
+                    /* container has been nested and disappeared */
+                    - 1;
             XpathEngine xpath = XMLUnit.newXpathEngine();
             NodeList nodeLayers = xpath.getMatchingNodes(
                     "/wms:WMS_Capabilities/wms:Capability/wms:Layer/wms:Layer", dom);
 
-    		assertEquals(expectedLayerCount /* the layers under the opaque group */, nodeLayers.getLength());
-    	} finally {
-    		// restore the configuration
-    		opaque.getLayers().remove(container);
-    		opaque.getStyles().remove(opaque.getStyles().size() - 1);
-    		catalog.save(opaque);
-    	}
+            assertEquals(expectedLayerCount /* the layers under the opaque group */,
+                    nodeLayers.getLength());
+        } finally {
+            // restore the configuration
+            opaque.getLayers().remove(container);
+            opaque.getStyles().remove(opaque.getStyles().size() - 1);
+            catalog.save(opaque);
+        }
     }
 
 }

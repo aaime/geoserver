@@ -117,14 +117,15 @@ public class CapabilitiesTest extends WMSTestSupport {
     @Test
     public void testLayerCount() throws Exception {
         Document dom = dom(get("wms?request=getCapabilities&version=1.1.1"), true);
+        print(dom);
 
         XpathEngine xpath = XMLUnit.newXpathEngine();
         NodeList nodeLayers = xpath.getMatchingNodes("/WMT_MS_Capabilities/Capability/Layer/Layer",
                 dom);
 
-        assertEquals(getExpectedTopLayerCount(), nodeLayers.getLength());
+        assertEquals(getRawTopLayerCount(), nodeLayers.getLength());
     }
-
+    
     @Test
     public void testNonAdvertisedLayer() throws Exception {
         String layerId = getLayerId(MockData.BUILDINGS);
@@ -566,7 +567,7 @@ public class CapabilitiesTest extends WMSTestSupport {
     @Test
     public void testNestedGroupInOpaqueGroup() throws Exception {
         Catalog catalog = getCatalog();
-
+        
         // nest container inside opaque, this should make it disappear from the caps
         LayerGroupInfo container = catalog.getLayerGroupByName(CONTAINER_GROUP);
         LayerGroupInfo opaque = catalog.getLayerGroupByName(OPAQUE_GROUP);
@@ -583,12 +584,11 @@ public class CapabilitiesTest extends WMSTestSupport {
             for (PublishedInfo p : getCatalog().getLayerGroupByName(OPAQUE_GROUP).getLayers()) {
                 assertXpathNotExists("//Layer[Name='" + p.prefixedName() + "']", dom);
             }
-            ;
 
-            // now check the layer count too, we just hid everything in the container layer
+            // now check the layer count too, we just hide everything in the container layer
             List<LayerInfo> nestedLayers = new LayerGroupHelper(container).allLayers();
-            System.out.println(nestedLayers);
-            int expectedLayerCount = getExpectedTopLayerCount()
+
+            int expectedLayerCount = getRawTopLayerCount()
                     // layers gone due to the nesting
                     - nestedLayers.size()
                     /* container has been nested and disappeared */

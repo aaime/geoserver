@@ -213,7 +213,7 @@ public class DefaultResourceAccessManager implements ResourceAccessManager, Data
         }
         
         // grab the groups containing the resource, if any. If none, there is no group related logic to apply
-        Collection<LayerGroupSummary> containers  = groupsCache.getGroupsForResource(resource);
+        Collection<LayerGroupSummary> containers  = groupsCache.getContainerGroupsFor(resource);
         if(containers.isEmpty()) {
             return rulesAllowAccess;
         }
@@ -442,7 +442,7 @@ public class DefaultResourceAccessManager implements ResourceAccessManager, Data
             allowAccess = false;
         } else {
             // grab the groups containing the group, if any. If none, there is no group related logic to apply
-            Collection<LayerGroupSummary> directContainers  = groupsCache.getGroupsContaining(layerGroup);
+            Collection<LayerGroupSummary> directContainers  = groupsCache.getContainerGroupsFor(layerGroup);
             if(directContainers.isEmpty()) {
                 allowAccess = true;
             } else {
