@@ -1,0 +1,111 @@
+---
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: GeoServer Importer Extension - Main
+  description: The Importer extension gives a GeoServer administrator an alternate, more-streamlined method for uploading and configuring new layers. The main endpoint manages individual import jobs. The importer extension is an optional install and may not be available on all deployments of GeoServer
+
+paths:
+  /imports/{importId}/tasks/{taskId}/transforms:
+    get:
+      operationId: getTransforms
+      summary: Retrieve the list of transformations of a task with id {taskId} within import with id {importId}
+      produces:
+        - application/json
+        - text/html
+      parameters:
+        - $ref: "#/parameters/ExpandParameter"
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "importer.yaml/definitions/Transforms"
+          examples:
+            application/json:
+              '{
+                "transforms": [
+                  {
+                    "type": "ReprojectTransform",
+                    "href": "http://localhost:8080/geoserver/rest/imports/0/tasks/1/transforms/0",
+                    "source": null,
+                    "target": "EPSG:4326"
+                  },
+                  {
+                    "type": "DateFormatTransform",
+                    "href": "http://localhost:8080/geoserver/rest/imports/0/tasks/1/transforms/1",
+                    "field": "date",
+                    "format": "yyyyMMdd"
+                  }
+                ]
+              }'
+    post:
+      operationId: postTransform
+      summary: Create a new transormation and append it inside a task with id {taskId} within import with id {importId}
+      consumes:
+        - application/json
+        - text/json
+      produces:
+        - application/json
+        - text/html
+      parameters:
+        - $ref: "#/parameters/ExpandParameter"
+        - $ref: "#/parameters/TransformParameter"
+      responses:
+        201:
+          description: Created
+          headers:
+            Location:
+              description: href to the newly created transform
+              type: string
+  /imports/{importId}/tasks/{taskId}/transforms/{transformId}:
+    get:
+      operationId: getTransform
+      summary: Retrieve a transformation identified by {transformId} inside a task with id {taskId} within import with id {importId}
+      produces:
+        - application/json
+        - text/html
+      parameters:
+        - $ref: "#/parameters/ExpandParameter"
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "importer.yaml/definitions/Transform"
+    put:
+      operationId: putTransform
+      summary: Modifies the definition of a transformation identified by {transformId} inside a task with id {taskId} within import with id {importId}
+      consumes:
+        - application/json
+        - text/json
+      produces:
+        - application/json
+        - text/html
+      parameters:
+        - $ref: "#/parameters/ExpandParameter"
+        - $ref: "#/parameters/TransformParameter"
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "importer.yaml/definitions/Transform"
+    delete:
+      operationId: deleteTransform
+      summary:  Removes the transformation identified by {transformId} inside a task with id {taskId} within import with id {importId}
+      responses:
+        200:
+          description: OK
+
+parameters:
+  ExpandParameter:
+    name: expand
+    type: string
+    in: path
+    description: 'What level to expand the response object to. Can be "self" (expand only the response object and its immediate children), "all" (expand all children), "none" (don''t include any children), or a nonnegative integer, indicating the depth of children to expand to. Defaults to "self" or "none", depending on the request.'
+    required: false
+  TransformParameter:
+    name: transformBody
+    description: The transform to add.
+    in: body
+    required: true          
+    schema:
+      $ref: "importer.yaml/definitions/Transform"
