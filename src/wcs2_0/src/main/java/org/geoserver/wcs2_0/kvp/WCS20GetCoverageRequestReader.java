@@ -31,7 +31,7 @@ public class WCS20GetCoverageRequestReader extends EMFKvpRequestReader {
 
     private static final Wcs20Factory WCS20_FACTORY = Wcs20Factory.eINSTANCE;
 
-    private static final String GEOTIFF_NS = "http://www.opengis.net/wcs/geotiff/1.0";
+    public static final String GEOTIFF_NS = "http://www.opengis.net/gmlcov/geotiff/1.0";
 
     private static final String CRS_NS = "http://www.opengis.net/wcs/service-extension/crs/1.0";
 

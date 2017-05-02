@@ -10,23 +10,22 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.opengis.wcs20.ExtensionItemType;
-import net.opengis.wcs20.ExtensionType;
-import net.opengis.wcs20.GetCoverageType;
-
 import org.eclipse.emf.common.util.EList;
-import org.geoserver.catalog.Catalog;
-import org.geoserver.config.GeoServer;
 import org.geoserver.ows.Response;
-import org.geoserver.platform.GeoServerExtensions;
 import org.geoserver.platform.OWS20Exception.OWSExceptionCode;
 import org.geoserver.platform.Operation;
 import org.geoserver.wcs.responses.CoverageResponseDelegate;
 import org.geoserver.wcs.responses.CoverageResponseDelegateFinder;
 import org.geoserver.wcs2_0.exception.WCS20Exception;
-import org.geoserver.wcs2_0.util.NCNameResourceCodec;
+import org.geoserver.wcs2_0.kvp.WCS20GetCoverageRequestReader;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.opengis.coverage.grid.GridCoverage;
+
+import net.opengis.wcs20.ExtensionItemType;
+import net.opengis.wcs20.ExtensionType;
+import net.opengis.wcs20.GetCoverageType;
+import net.opengis.wcs20.impl.ExtensionItemTypeImpl;
+import net.opengis.wcs20.impl.ExtensionTypeImpl;
 
 /**
  * Returns a single coverage encoded in the specified output format (eventually the native one)
@@ -88,8 +87,23 @@ public class WCS20GetCoverageResponse extends Response {
         final ExtensionType extension = getCoverage.getExtension();
         if (extension != null) {
             final EList<ExtensionItemType> extensions = extension.getContents();
-            for (ExtensionItemType ext:extensions) {
-                encodingParameters.put(ext.getName(), ext.getSimpleContent());
+            for (ExtensionItemType ext : extensions) {
+                // bridge code since the spec changed, in the future we might want to add them schema in geotools,
+                // generate the EMF bindings and parse it that way
+                if(ext.getName().equals("parameters") && WCS20GetCoverageRequestReader.GEOTIFF_NS.equals(ext.getNamespace())) {
+                    Object content = (((ExtensionItemTypeImpl) ext).basicGetObjectContent());
+                    if(content instanceof Map) {
+                        for (Map.Entry<String, Object> entry : ((Map<String, Object>) content).entrySet()) {
+                            String key = entry.getKey();
+                            Object v = entry.getValue();
+                            if(value != null) {
+                                encodingParameters.put(key, String.valueOf(v));
+                            }
+                        }
+                    }
+                } else {
+                    encodingParameters.put(ext.getName(), ext.getSimpleContent());
+                }
             }            
         }
 
