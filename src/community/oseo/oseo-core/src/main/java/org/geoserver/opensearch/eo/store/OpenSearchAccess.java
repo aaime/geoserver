@@ -103,6 +103,11 @@ public interface OpenSearchAccess extends DataAccess<FeatureType, Feature> {
      * in the wild, since there is no option that's absolutely unique
      */
     String BAND_LAYER_SEPARATOR = "__";
+    
+    /** 
+     * The suffix for the product footprint layer
+     */
+    String FOOTPRINT_LAYER_SUFFIX = "__FOOTPRINTS";
 
     /**
      * Returns the feature source backing collections (dynamic, as the store has to respect the namespace URI given by GeoServer)

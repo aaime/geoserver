@@ -13,7 +13,7 @@ public class CollectionLayer {
     String workspace;
 
     String layer;
-
+    
     boolean separateBands;
 
     String[] bands;

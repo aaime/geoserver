@@ -260,17 +260,20 @@ public class JDBCOpenSearchAccessTest {
     public void testTypeNames() throws Exception {
         List<Name> names = osAccess.getNames();
         // product, collection, SENTINEL1, SENTINEL2, LANDSAT8
-        assertEquals(16, names.size());
+        assertEquals(19, names.size());
         Set<String> localNames = new HashSet<>();
         for (Name name : names) {
             assertEquals(TEST_NAMESPACE, name.getNamespaceURI());
             localNames.add(name.getLocalPart());
         }
+        System.out.println(localNames);
         assertThat(localNames,
-                containsInAnyOrder("collection", "product", "SENTINEL1", "LANDSAT8",
+                containsInAnyOrder("collection", "product", "SENTINEL1", "SENTINEL1__FOOTPRINTS", "LANDSAT8",
+                        "LANDSAT8__FOOTPRINTS",
                         "SENTINEL2__B01", "SENTINEL2__B02", "SENTINEL2__B03", "SENTINEL2__B04",
                         "SENTINEL2__B05", "SENTINEL2__B06", "SENTINEL2__B07", "SENTINEL2__B08",
-                        "SENTINEL2__B09", "SENTINEL2__B10", "SENTINEL2__B11", "SENTINEL2__B12"));
+                        "SENTINEL2__B09", "SENTINEL2__B10", "SENTINEL2__B11", "SENTINEL2__B12",
+                        "SENTINEL2__FOOTPRINTS"));
     }
 
     @Test
@@ -318,6 +321,56 @@ public class JDBCOpenSearchAccessTest {
             assertTrue(id.matches("\\w+\\.\\d+"));
         }, null);
     }
+    
+    @Test
+    public void testSentinel2Footprints() throws Exception {
+        FeatureSource<FeatureType, Feature> featureSource = osAccess
+                .getFeatureSource(new NameImpl(TEST_NAMESPACE, "SENTINEL2__FOOTPRINTS"));
+        FeatureCollection<FeatureType, Feature> fc = featureSource.getFeatures();
+        assertCollectionFootprintsSchema(fc.getSchema(), OPTICAL);
+        assertThat(fc.size(), greaterThan(1));
+        fc.accepts(f -> {
+            // check the primary key has been mapped
+            assertThat(f, instanceOf(SimpleFeature.class));
+            SimpleFeature sf = (SimpleFeature) f;
+            final String id = sf.getID();
+            assertTrue(id.matches("SENTINEL2__FOOTPRINTS\\..+"));
+        }, null);
+    }
+    
+    private void assertCollectionFootprintsSchema(FeatureType schema, ProductClass expectedClass)
+            throws IOException {
+        assertThat(schema, instanceOf(SimpleFeatureType.class));
+        SimpleFeatureType ft = (SimpleFeatureType) schema;
+        // check there are no foreign attributes
+        Map<String, Class> mappings = new HashMap<>();
+        for (AttributeDescriptor ad : ft.getAttributeDescriptors()) {
+            final String adName = ad.getLocalName();
+            for (ProductClass pc : ProductClass.values()) {
+                if (pc == EOP_GENERIC || pc == expectedClass) {
+                    continue;
+                } else {
+                    assertThat(adName, not(startsWith(pc.getPrefix())));
+                }
+                mappings.put(adName, ad.getType().getBinding());
+            }
+        }
+        // check the product attributes are alive and well
+        assertThat(mappings.keySet(), hasItem(equalToIgnoringCase("eoIdentifier")));
+        assertThat(mappings.keySet(), hasItem(equalToIgnoringCase("footprint")));
+        // check the class specific attributes are there
+        assertThat(mappings.keySet(), hasItem(startsWith(expectedClass.getPrefix())));
+        // check the generic EOPs are there too
+        assertThat(mappings.keySet(), hasItem(startsWith("eo")));
+        // check timestart/timeend
+        assertThat(mappings.keySet(), hasItem("timeStart"));
+        assertThat(mappings.keySet(), hasItem("timeEnd"));
+        // verify the geometry is properly mapped
+        assertThat(mappings, hasEntry(equalToIgnoringCase("footprint"), equalTo(Polygon.class)));
+        // check that we have the extra properties for hetero mosaics
+        assertThat(mappings, hasEntry(equalTo("crs"), equalTo(String.class)));
+    }
+
 
     private void assertGranulesViewSchema(FeatureType schema, ProductClass expectedClass)
             throws IOException {

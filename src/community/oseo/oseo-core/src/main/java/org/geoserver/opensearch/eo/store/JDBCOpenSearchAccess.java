@@ -352,6 +352,7 @@ public class JDBCOpenSearchAccess implements OpenSearchAccess {
                 // a single feature type per 
                 names.add(new NameImpl(namespaceURI, name));
             }
+            names.add(new NameImpl(namespaceURI, name + OpenSearchAccess.FOOTPRINT_LAYER_SUFFIX));
         });
         return new ArrayList<>(names);
     }
@@ -396,11 +397,128 @@ public class JDBCOpenSearchAccess implements OpenSearchAccess {
             return getProductSource();
         }
         if (Objects.equal(namespaceURI, typeName.getNamespaceURI()) && getNames().contains(typeName)) {
-            // silly generics...
-            return (FeatureSource) getCollectionGranulesSource(typeName.getLocalPart());
+            if(typeName.getLocalPart().endsWith(OpenSearchAccess.FOOTPRINT_LAYER_SUFFIX)) {
+                return (FeatureSource) getCollectionProductFootrints(typeName.getLocalPart());
+            } else {
+                return (FeatureSource) getCollectionGranulesSource(typeName.getLocalPart());
+            }
         }
         
         throw new IOException("Schema '" + typeName + "' does not exist.");
+    }
+    
+    public SimpleFeatureSource getCollectionProductFootrints(String typeName) throws IOException {
+        String collection = typeName.substring(0, typeName.length() - OpenSearchAccess.FOOTPRINT_LAYER_SUFFIX.length());
+        
+        // using joining for this one is hard because we need a flat representation
+        // and be able to run filters on all attributes in whatever combination, the JOIN
+        // support from GeoTools is too weak to do that. We'll setup a reusable virtual table instead
+        JDBCDataStore delegate = getRawDelegateStore();
+        SQLDialect dialect = delegate.getSQLDialect();
+
+        // a bit of craziness to avoid depending on the case of the table name
+        String productTableName = null;
+        String collectionTableName = null;
+        for (String name : delegate.getTypeNames()) {
+            if (JDBCOpenSearchAccess.PRODUCT.equalsIgnoreCase(name)) {
+                productTableName = name;
+            } else if (JDBCOpenSearchAccess.COLLECTION.equalsIgnoreCase(name)) {
+                collectionTableName = name;
+            }
+        }
+        checkName(productTableName, JDBCOpenSearchAccess.PRODUCT);
+        checkName(collectionTableName, JDBCOpenSearchAccess.COLLECTION);
+
+        // get the product type, if any (might be a virtual collection)
+        SimpleFeature collectionFeature = getCollectionFeature(collection, delegate,
+                collectionTableName);
+        String sensorType = (String) collectionFeature.getAttribute("eoSensorType");
+        ProductClass productClass = null;
+        if (sensorType != null) {
+            productClass = OpenSearchAccess.ProductClass.valueOf(sensorType);
+        }
+
+        final String dbSchema = delegate.getDatabaseSchema();
+        // build the joining SQL
+        StringJoiner attributes = new StringJoiner(", ");
+        // collection attributes
+        ContentFeatureSource collectionSource = delegate.getFeatureSource(collectionTableName);
+        for (AttributeDescriptor ad : collectionSource.getSchema().getAttributeDescriptors()) {
+            if (ad.getLocalName().startsWith(JDBCOpenSearchAccess.EO_PREFIX)) {
+                String column = encodeColumn(dialect, "collection", ad.getLocalName());
+                if (ad.getLocalName().equals("eoIdentifier")) {
+                    attributes.add(column + " as \"collectionEoIdentifier\"");
+                } else if (!"eoAcquisitionStation".equals(ad.getLocalName())) {
+                    // add everything that's not duplicate
+                    attributes.add(column);
+                }
+            }
+        }
+        
+        // product attributes
+        ContentFeatureSource productSource = delegate.getFeatureSource(productTableName);
+        for (AttributeDescriptor ad : productSource.getSchema().getAttributeDescriptors()) {
+            final String localName = ad.getLocalName();
+            if (localName.startsWith(JDBCOpenSearchAccess.EO_PREFIX)
+                    || "timeStart".equals(localName) || "timeEnd".equals(localName)
+                    || "crs".equals(localName) || "footprint".equals(localName)
+                    || (productClass != null && localName.startsWith(productClass.getPrefix()))
+                    || (productClass == null && matchesAnyProductClass(localName))) {
+                String column = encodeColumn(dialect, "product", localName);
+                attributes.add(column);
+            } 
+        }
+
+        StringBuffer sb = new StringBuffer("SELECT ");
+        sb.append(attributes.toString());
+        sb.append("\n");
+        sb.append(" FROM ");
+        encodeTableName(dialect, dbSchema, productTableName, sb);
+        sb.append(" as product JOIN ");
+        encodeTableName(dialect, dbSchema, collectionTableName, sb);
+        sb.append(" as collection ON product.\"eoParentIdentifier\" = collection.\"eoIdentifier\"");
+        // comparing with false on purpose, allows to defaul to true if primary is null or empty
+        boolean primaryTable = !Boolean.FALSE.equals(collectionFeature.getAttribute("primary"));
+        if(primaryTable) {
+            sb.append(" WHERE ");
+            sb.append(" collection.\"id\" = " + collectionFeature.getAttribute("id"));
+        } 
+
+        VirtualTable vt = new VirtualTable(typeName, sb.toString());
+        vt.addGeometryMetadatata("footprint", Polygon.class, 4326);
+        vt.setPrimaryKeyColumns(Arrays.asList("eoIdentifier"));
+
+        // now check if the virtual collection is already there
+        Map<String, VirtualTable> existingVirtualTables = delegate.getVirtualTables();
+        VirtualTable existing = existingVirtualTables.get(typeName);
+        if (existing != null) {
+            // was it updated in the meantime?
+            if (!existing.equals(vt)) {
+                delegate.dropVirtualTable(collectionTableName);
+                existing = null;
+            }
+        }
+        if (existing == null) {
+            delegate.createVirtualTable(vt);
+        }
+
+        SimpleFeatureSource fs = delegate.getFeatureSource(typeName);
+
+        // is it a virtual collection?
+        if (!primaryTable) {
+            String cqlFilter = (String) collectionFeature.getAttribute("productCqlFilter");
+            if (cqlFilter != null) {
+                try {
+                    Filter filter = ECQL.toFilter(cqlFilter);
+                    fs = DataUtilities.createView(fs,
+                            new Query(fs.getSchema().getTypeName(), filter));
+                } catch (CQLException | SchemaException e) {
+                    throw new IOException(e);
+                }
+            }
+        }
+
+        return fs;
     }
 
     public SimpleFeatureSource getCollectionGranulesSource(String typeName)

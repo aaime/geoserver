@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Logger;
-import java.util.stream.IntStream;
 
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
@@ -26,18 +25,18 @@ import org.geoserver.catalog.CatalogBuilder;
 import org.geoserver.catalog.CoverageInfo;
 import org.geoserver.catalog.CoverageStoreInfo;
 import org.geoserver.catalog.CoverageView;
+import org.geoserver.catalog.CoverageView.CompositionType;
+import org.geoserver.catalog.CoverageView.CoverageBand;
+import org.geoserver.catalog.CoverageView.InputCoverageBand;
 import org.geoserver.catalog.DataStoreInfo;
 import org.geoserver.catalog.DimensionDefaultValueSetting;
+import org.geoserver.catalog.DimensionDefaultValueSetting.Strategy;
 import org.geoserver.catalog.DimensionInfo;
 import org.geoserver.catalog.DimensionPresentation;
 import org.geoserver.catalog.LayerInfo;
 import org.geoserver.catalog.ResourceInfo;
 import org.geoserver.catalog.StoreInfo;
 import org.geoserver.catalog.StyleInfo;
-import org.geoserver.catalog.CoverageView.CompositionType;
-import org.geoserver.catalog.CoverageView.CoverageBand;
-import org.geoserver.catalog.CoverageView.InputCoverageBand;
-import org.geoserver.catalog.DimensionDefaultValueSetting.Strategy;
 import org.geoserver.catalog.impl.DimensionInfoImpl;
 import org.geoserver.opensearch.eo.OpenSearchAccessProvider;
 import org.geoserver.opensearch.eo.store.CollectionLayer;
@@ -145,6 +144,9 @@ class CollectionLayerManager {
                 + previousLayer.getLayer();
         Resource mosaicResource = rl.fromPath(relativePath);
         mosaicResource.delete();
+        
+        // see also if there is a footprint layer
+        
     }
 
     void createMosaicAndLayer(String collection, CollectionLayer layer) throws Exception {
