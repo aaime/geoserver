@@ -342,6 +342,7 @@ public class CoverageViewReader implements GridCoverage2DReader {
         // perform the band selects as needed
         int index = 0;
         int transformationChoice = index;
+        CoverageViewHandler.CoverageResolutionChooser resolutionChooser = handler.getCoverageResolutionChooser();
         for (CoverageBand band : mergedBands) {
             List<InputCoverageBand> selectedBands = band.getInputCoverageBands();
             
@@ -360,10 +361,7 @@ public class CoverageViewReader implements GridCoverage2DReader {
             }
             
             GridCoverage2D coverage = inputCoverages.get(coverageName);
-            if (coverageName.equalsIgnoreCase(handler.getReferenceName())) {
-                transformationChoice = index;
-            }
-            index++;
+
             // special case for dynamic alpha on single input, no need to actually select away the alpha
             Hints localHints = new Hints(hints);
             if (dynamicAlphaSource != null && mergedBands.size() == 1
@@ -375,6 +373,10 @@ public class CoverageViewReader implements GridCoverage2DReader {
 
             coverage = retainBands(bandIndices, coverage, localHints);
             coverages.add(coverage);
+            if (resolutionChooser.visit(coverage)) {
+                transformationChoice = index;
+            }
+            index++;
 
             if (LOGGER.isLoggable(Level.FINE)) {
                 LOGGER.log(Level.FINE, "Read coverage " + coverageName + ", result has envelope "

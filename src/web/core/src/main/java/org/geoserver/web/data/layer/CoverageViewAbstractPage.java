@@ -132,17 +132,8 @@ public abstract class CoverageViewAbstractPage extends GeoServerSecuredPage {
             }
             outputBands = new ArrayList<CoverageBand>(coverageView.getCoverageBands());
             name = coverageView.getName();
-            envelopeCompositionType = Optional.ofNullable(coverageView.getEnvelopeCompositionType()).orElseGet(() -> EnvelopeCompositionType.INTERSECTION);
-            selectedResolution = Optional.ofNullable(coverageView.getSelectedResolution()).orElseGet(() -> SelectedResolution.BEST);
-            if(selectedResolution == SelectedResolution.INDEX) {
-                int idx = coverageView.getSelectedResolutionIndex();
-                if(idx < availableCoverages.size()) {
-                    resolutionReferenceCoverage = availableCoverages.get(idx);
-                } else {
-                    resolutionReferenceCoverage = null;
-                }
-            }
-            
+            envelopeCompositionType = Optional.ofNullable(coverageView.getEnvelopeCompositionType()).orElse(EnvelopeCompositionType.INTERSECTION);
+            selectedResolution = Optional.ofNullable(coverageView.getSelectedResolution()).orElse(SelectedResolution.BEST);
         } else {
             outputBands = new ArrayList<CoverageBand>();
             newCoverage = true;
