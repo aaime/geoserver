@@ -251,8 +251,8 @@ public class GetFeature {
         }
         
         // WFS 2.0 validation, with locks "hits" is not allowed
-        if (WFSInfo.Version.V_20.compareTo(request.getVersion()) >= 0
-                && request.isLockRequest() && request.isResultTypeHits()) {
+        final boolean isV_20 = WFSInfo.Version.V_20.compareTo(request.getVersion()) >= 0;
+        if (isV_20 && request.isLockRequest() && request.isResultTypeHits()) {
             throw new WFSException("GetFeatureWithLock cannot be used with result type 'hits'", 
                     ServiceException.INVALID_PARAMETER_VALUE, "resultType");
         }
@@ -640,7 +640,7 @@ public class GetFeature {
                 if (!isNumberMatchedSkipped) {
                         if (calculateSize
                                 && (queryMaxFeatures == Integer.MAX_VALUE || size < queryMaxFeatures)
-                                && offset <= 0) {
+                                && offset <= 0 && !isV_20) {
                         totalCountExecutors.add(new CountExecutor(size));
                     } else {
                         org.geotools.data.Query qTotal = toDataQuery(query, filter, 0,
@@ -693,8 +693,9 @@ public class GetFeature {
             // where the client has limited the result set size, so we compute it lazily
             if (isNumberMatchedSkipped) {
                 totalCount = BigInteger.valueOf(-1);
-            } else if(count < maxFeatures && calculateSize) {
+            } else if(count < maxFeatures && calculateSize && !isV_20) {
                  // optimization: if count < max features then total count == count
+                 // can't use this optimization for v2
                  totalCount = BigInteger.valueOf(count);
             } else {
                 // ok, in this case we're forced to run the queries to discover the actual total count
