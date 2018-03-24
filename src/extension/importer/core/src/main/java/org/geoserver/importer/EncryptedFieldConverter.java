@@ -7,11 +7,11 @@ package org.geoserver.importer;
 
 import org.geoserver.security.GeoServerSecurityManager;
 
+import com.thoughtworks.xstream.converters.basic.AbstractSingleValueConverter;
+
 /**
  * Encrypts/decrypts fields using GeoServer security manager help
  */
-import com.thoughtworks.xstream.converters.basic.AbstractSingleValueConverter;
-
 class EncryptedFieldConverter extends AbstractSingleValueConverter {
 
     private GeoServerSecurityManager securityManager;
