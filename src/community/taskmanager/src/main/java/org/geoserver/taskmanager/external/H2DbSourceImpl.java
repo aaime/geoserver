@@ -5,12 +5,6 @@
 package org.geoserver.taskmanager.external;
 
 import it.geosolutions.geoserver.rest.encoder.GSAbstractStoreEncoder;
-import org.geoserver.taskmanager.util.NamedImpl;
-import org.h2.tools.RunScript;
-import org.springframework.core.io.Resource;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import javax.annotation.PostConstruct;
-import javax.sql.DataSource;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,6 +13,12 @@ import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
+import javax.annotation.PostConstruct;
+import javax.sql.DataSource;
+import org.geoserver.taskmanager.util.NamedImpl;
+import org.h2.tools.RunScript;
+import org.springframework.core.io.Resource;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 /**
  * DbSource for Postgres.

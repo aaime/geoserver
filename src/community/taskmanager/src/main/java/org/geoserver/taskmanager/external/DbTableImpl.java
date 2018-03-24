@@ -6,16 +6,15 @@ package org.geoserver.taskmanager.external;
 
 /**
  * Represents a table in a db (implementation).
- * 
- * @author Niels Charlier
  *
+ * @author Niels Charlier
  */
 public class DbTableImpl implements DbTable {
-    
+
     private DbSource dbSource;
-    
+
     private String tableName;
-    
+
     public DbTableImpl(DbSource dbSource, String tableName) {
         this.dbSource = dbSource;
         this.tableName = tableName;
@@ -42,24 +41,16 @@ public class DbTableImpl implements DbTable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
         DbTableImpl other = (DbTableImpl) obj;
         if (dbSource == null) {
-            if (other.dbSource != null)
-                return false;
-        } else if (!dbSource.equals(other.dbSource))
-            return false;
+            if (other.dbSource != null) return false;
+        } else if (!dbSource.equals(other.dbSource)) return false;
         if (tableName == null) {
-            if (other.tableName != null)
-                return false;
-        } else if (!tableName.equals(other.tableName))
-            return false;
+            if (other.tableName != null) return false;
+        } else if (!tableName.equals(other.tableName)) return false;
         return true;
     }
-
 }

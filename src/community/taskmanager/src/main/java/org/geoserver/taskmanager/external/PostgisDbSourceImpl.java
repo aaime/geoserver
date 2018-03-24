@@ -4,40 +4,36 @@
  */
 package org.geoserver.taskmanager.external;
 
+import it.geosolutions.geoserver.rest.encoder.GSAbstractStoreEncoder;
+import it.geosolutions.geoserver.rest.encoder.datastore.GSPostGISDatastoreEncoder;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.sql.DataSource;
-
 import org.geoserver.taskmanager.util.NamedImpl;
 import org.geoserver.taskmanager.util.SqlUtil;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
-
-import it.geosolutions.geoserver.rest.encoder.GSAbstractStoreEncoder;
-import it.geosolutions.geoserver.rest.encoder.datastore.GSPostGISDatastoreEncoder;
 import org.geotools.data.postgis.PostgisNGDataStoreFactory;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 /**
  * DbSource for Postgres.
- * 
- * @author Niels Charlier
  *
+ * @author Niels Charlier
  */
 public class PostgisDbSourceImpl extends NamedImpl implements DbSource {
-    
+
     private String host;
-    
+
     private int port = 5432;
-    
+
     private String db;
-    
+
     private boolean ssl = false;
-    
+
     private String schema;
-    
+
     private String username;
-    
+
     private String password;
 
     public String getHost() {
@@ -96,7 +92,6 @@ public class PostgisDbSourceImpl extends NamedImpl implements DbSource {
         this.password = password;
     }
 
-
     @Override
     public DataSource getDataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
@@ -125,7 +120,7 @@ public class PostgisDbSourceImpl extends NamedImpl implements DbSource {
         encoder.setPassword(password);
         return encoder;
     }
-    
+
     @Override
     public Map<String, Serializable> getParameters() {
         Map<String, Serializable> params = new HashMap<String, Serializable>();
@@ -164,13 +159,13 @@ public class PostgisDbSourceImpl extends NamedImpl implements DbSource {
         }
         Process pr = Runtime.getRuntime().exec(
                 "pg_dump --dbname=" + url + " --table " + (schema == null ? "" : schema + ".") + realTableName);
-        
+
         //to do: remove the search_path from the script
         //+ replace all names (table, sequences, indexes, constraints) to temporary names
-        
+
         return pr.getInputStream();
     }
-    
+
     @Override
     public OutputStream script() throws IOException {
         String url = "jdbc:postgresql://" + username + ":" + password + "@" + host + ":" + port + "/" + db;

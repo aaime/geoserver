@@ -8,9 +8,7 @@ import org.geoserver.config.GeoServer;
 import org.geoserver.platform.Operation;
 import org.geoserver.wfs3.ContentsDocument;
 
-/**
- * JSON/YAML encoding for the API document
- */
+/** JSON/YAML encoding for the API document */
 public class ContentsDocumentResponse extends JacksonResponse {
 
     public ContentsDocumentResponse(GeoServer gs) {

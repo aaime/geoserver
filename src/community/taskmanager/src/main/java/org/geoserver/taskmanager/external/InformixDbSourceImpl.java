@@ -5,18 +5,15 @@
 package org.geoserver.taskmanager.external;
 
 import it.geosolutions.geoserver.rest.encoder.GSAbstractStoreEncoder;
+import java.io.Serializable;
+import java.util.Map;
+import javax.sql.DataSource;
 import org.geoserver.taskmanager.util.NamedImpl;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
-import javax.sql.DataSource;
-
-import java.io.Serializable;
-import java.util.Map;
-
 /**
- * The informix datasource that only takes the connection url and driver class as input in
- * addition the the user name and password.
- * The schema attribute is optional.
+ * The informix datasource that only takes the connection url and driver class as input in addition
+ * the the user name and password. The schema attribute is optional.
  *
  * @author Timothy De Bock
  */
@@ -90,7 +87,7 @@ public class InformixDbSourceImpl extends NamedImpl implements DbSource {
 
     @Override
     public Map<String, Serializable> getParameters() {
-      throw new UnsupportedOperationException("Informix datasource cannot be used as a store.");
+        throw new UnsupportedOperationException("Informix datasource cannot be used as a store.");
     }
 
     @Override

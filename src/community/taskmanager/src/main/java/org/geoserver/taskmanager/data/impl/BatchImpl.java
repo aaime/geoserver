@@ -6,7 +6,6 @@ package org.geoserver.taskmanager.data.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,7 +19,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-
 import org.geoserver.taskmanager.data.Batch;
 import org.geoserver.taskmanager.data.BatchElement;
 import org.geoserver.taskmanager.data.BatchRun;
@@ -30,51 +28,53 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 
-/**
- * @author Niels Charlier
- *
- */
-@Entity 
-@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "name", "configuration", "removeStamp" }),
-        @UniqueConstraint(columnNames = { "nameNoConfig", "removeStamp" })})
-@FilterDef(name="activeElementFilter", defaultCondition="removeStamp = 0")
+/** @author Niels Charlier */
+@Entity
+@Table(
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"name", "configuration", "removeStamp"}),
+        @UniqueConstraint(columnNames = {"nameNoConfig", "removeStamp"})
+    }
+)
+@FilterDef(name = "activeElementFilter", defaultCondition = "removeStamp = 0")
 public class BatchImpl extends BaseImpl implements Batch {
 
     private static final long serialVersionUID = 3321130631692899821L;
 
     @Id
     @Column
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    
-    @OneToMany(fetch = FetchType.EAGER, targetEntity = BatchElementImpl.class, mappedBy = "batch", 
-            cascade = CascadeType.ALL)
+
+    @OneToMany(
+        fetch = FetchType.EAGER,
+        targetEntity = BatchElementImpl.class,
+        mappedBy = "batch",
+        cascade = CascadeType.ALL
+    )
     @OrderBy("index, id")
-    @Filter(name="activeElementFilter")
+    @Filter(name = "activeElementFilter")
     @Fetch(FetchMode.SUBSELECT)
     List<BatchElement> elements = new ArrayList<BatchElement>();
-    
-    @Column
-    String workspace;
-        
+
+    @Column String workspace;
+
     @Column(nullable = false)
     String name;
 
-    //stupid work-around
-    //duplicate of name only set if configuration == null, just for unique constraint
-    @Column
-    String nameNoConfig; 
+    // stupid work-around
+    // duplicate of name only set if configuration == null, just for unique constraint
+    @Column String nameNoConfig;
 
     @ManyToOne
     @JoinColumn(name = "configuration", nullable = true)
     private ConfigurationImpl configuration;
-    
-    @Column
-    String description;
-    
+
+    @Column String description;
+
     @Column(nullable = true)
     String frequency;
-    
+
     @Column(nullable = false)
     Boolean enabled = true;
 
@@ -84,7 +84,7 @@ public class BatchImpl extends BaseImpl implements Batch {
     @OneToMany(targetEntity = BatchRunImpl.class, mappedBy = "batch", cascade = CascadeType.ALL)
     @OrderBy("id")
     List<BatchRun> batchRuns = new ArrayList<BatchRun>();
-    
+
     @Override
     public Long getId() {
         return id;
@@ -108,7 +108,7 @@ public class BatchImpl extends BaseImpl implements Batch {
     public void setFrequency(String frequency) {
         this.frequency = frequency;
     }
-    
+
     @Override
     public String getWorkspace() {
         return workspace;
@@ -146,7 +146,7 @@ public class BatchImpl extends BaseImpl implements Batch {
             nameNoConfig = null;
         }
     }
-    
+
     @Override
     public boolean isEnabled() {
         return enabled;
@@ -156,7 +156,7 @@ public class BatchImpl extends BaseImpl implements Batch {
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
-    
+
     @Override
     public String getDescription() {
         return description;

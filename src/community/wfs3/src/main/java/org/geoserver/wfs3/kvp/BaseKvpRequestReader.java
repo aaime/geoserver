@@ -4,18 +4,14 @@
  */
 package org.geoserver.wfs3.kvp;
 
+import java.util.Map;
 import org.geoserver.ows.Dispatcher;
 import org.geoserver.ows.KvpRequestReader;
 import org.geoserver.ows.Request;
-import org.springframework.http.HttpHeaders;
 
-import java.util.Map;
-
-/**
- * Support class for common WFS3 KVP parsing needs
- */
+/** Support class for common WFS3 KVP parsing needs */
 public abstract class BaseKvpRequestReader extends KvpRequestReader {
-    
+
     /**
      * Creats the new kvp request reader.
      *
@@ -34,16 +30,18 @@ public abstract class BaseKvpRequestReader extends KvpRequestReader {
         } else if (request != null) {
             // ignoring for the moment, until the HTML output formats are ready, otherwise
             // it won't show up in the browser
-//            String header = dispatcherRequest.getHttpRequest().getHeader(HttpHeaders.ACCEPT);
-//            if (header != null) {
-//                String[] formats = header.split("\\s*,\\s*");
-//                // TODO: check supported formats and pick the first that's actually supported
-//                String format = formats[0];
-//                setFormat(kvp, rawKvp, format);
-//            }
+            //            String header =
+            // dispatcherRequest.getHttpRequest().getHeader(HttpHeaders.ACCEPT);
+            //            if (header != null) {
+            //                String[] formats = header.split("\\s*,\\s*");
+            //                // TODO: check supported formats and pick the first that's actually
+            // supported
+            //                String format = formats[0];
+            //                setFormat(kvp, rawKvp, format);
+            //            }
         }
-        
-        return super.read(request, kvp, rawKvp);                            
+
+        return super.read(request, kvp, rawKvp);
     }
 
     public void setFormat(Map kvp, Map rawKvp, Object format) {

@@ -5,21 +5,15 @@
 package org.geoserver.taskmanager.web.action;
 
 import java.io.Serializable;
-
 import org.geoserver.taskmanager.util.Named;
 import org.geoserver.taskmanager.web.ConfigurationPage;
 
-/**
- * 
- * @author Niels Charlier
- *
- */
+/** @author Niels Charlier */
 public interface Action extends Named, Serializable {
-    
+
     String execute(ConfigurationPage onPage, String value);
 
     default boolean accept(String value) {
         return true;
     }
-
 }

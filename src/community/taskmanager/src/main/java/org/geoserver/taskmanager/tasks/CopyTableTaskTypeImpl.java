@@ -5,7 +5,6 @@
 package org.geoserver.taskmanager.tasks;
 
 import java.sql.Connection;
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -19,9 +18,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.annotation.PostConstruct;
-
 import org.geoserver.taskmanager.external.DbSource;
 import org.geoserver.taskmanager.external.DbTable;
 import org.geoserver.taskmanager.external.DbTableImpl;
@@ -61,19 +58,26 @@ public class CopyTableTaskTypeImpl implements TaskType {
 
     private static final int BATCH_SIZE = 1000;
 
-    @Autowired
-    protected ExtTypes extTypes;
+    @Autowired protected ExtTypes extTypes;
 
     private final Map<String, ParameterInfo> paramInfo = new LinkedHashMap<String, ParameterInfo>();
 
     @PostConstruct
     public void initParamInfo() {
-        paramInfo.put(PARAM_SOURCE_DB_NAME, new ParameterInfo(PARAM_SOURCE_DB_NAME, extTypes.dbName, true));
-        paramInfo.put(PARAM_TARGET_DB_NAME, new ParameterInfo(PARAM_TARGET_DB_NAME, extTypes.dbName, true));
-        paramInfo.put(PARAM_TABLE_NAME, new ParameterInfo(PARAM_TABLE_NAME, extTypes.tableName(), true)
-                .dependsOn(paramInfo.get(PARAM_SOURCE_DB_NAME)));
-        paramInfo.put(PARAM_TARGET_TABLE_NAME, new ParameterInfo(PARAM_TARGET_TABLE_NAME, extTypes.tableName(), false)
-                .dependsOn(paramInfo.get(PARAM_TARGET_DB_NAME)));
+        paramInfo.put(
+                PARAM_SOURCE_DB_NAME,
+                new ParameterInfo(PARAM_SOURCE_DB_NAME, extTypes.dbName, true));
+        paramInfo.put(
+                PARAM_TARGET_DB_NAME,
+                new ParameterInfo(PARAM_TARGET_DB_NAME, extTypes.dbName, true));
+        paramInfo.put(
+                PARAM_TABLE_NAME,
+                new ParameterInfo(PARAM_TABLE_NAME, extTypes.tableName(), true)
+                        .dependsOn(paramInfo.get(PARAM_SOURCE_DB_NAME)));
+        paramInfo.put(
+                PARAM_TARGET_TABLE_NAME,
+                new ParameterInfo(PARAM_TARGET_TABLE_NAME, extTypes.tableName(), false)
+                        .dependsOn(paramInfo.get(PARAM_TARGET_DB_NAME)));
     }
 
     @Override
@@ -83,18 +87,21 @@ public class CopyTableTaskTypeImpl implements TaskType {
 
     @Override
     public TaskResult run(TaskContext ctx) throws TaskException {
-        //TODO: check for ctx.isInterruptMe() in loops and cancel task
-        
+        // TODO: check for ctx.isInterruptMe() in loops and cancel task
+
         final DbSource sourcedb = (DbSource) ctx.getParameterValues().get(PARAM_SOURCE_DB_NAME);
         final DbSource targetdb = (DbSource) ctx.getParameterValues().get(PARAM_TARGET_DB_NAME);
-        final DbTable table = (DbTable) ctx.getBatchContext().get(ctx.getParameterValues().get(PARAM_TABLE_NAME));
+        final DbTable table =
+                (DbTable) ctx.getBatchContext().get(ctx.getParameterValues().get(PARAM_TABLE_NAME));
 
-        final DbTable targetTable = ctx.getParameterValues().containsKey(PARAM_TARGET_TABLE_NAME) ?
-                (DbTable) ctx.getParameterValues().get(PARAM_TARGET_TABLE_NAME) :
-                new DbTableImpl(targetdb, table.getTableName());
-        final String tempTableName = SqlUtil.qualified(
-                SqlUtil.schema(targetTable.getTableName()),
-                "_temp_" + UUID.randomUUID().toString().replace('-', '_'));
+        final DbTable targetTable =
+                ctx.getParameterValues().containsKey(PARAM_TARGET_TABLE_NAME)
+                        ? (DbTable) ctx.getParameterValues().get(PARAM_TARGET_TABLE_NAME)
+                        : new DbTableImpl(targetdb, table.getTableName());
+        final String tempTableName =
+                SqlUtil.qualified(
+                        SqlUtil.schema(targetTable.getTableName()),
+                        "_temp_" + UUID.randomUUID().toString().replace('-', '_'));
         ctx.getBatchContext().put(targetTable, new DbTableImpl(targetdb, tempTableName));
 
         try (Connection sourceConn = sourcedb.getDataSource().getConnection()) {
@@ -102,37 +109,38 @@ public class CopyTableTaskTypeImpl implements TaskType {
             try (Connection destConn = targetdb.getDataSource().getConnection()) {
                 try (Statement stmt = sourceConn.createStatement()) {
                     stmt.setFetchSize(BATCH_SIZE);
-                    try (ResultSet rs = stmt.executeQuery(
-                            "SELECT * FROM " + sourcedb.getDialect().quote(table.getTableName()))) {
+                    try (ResultSet rs =
+                            stmt.executeQuery(
+                                    "SELECT * FROM "
+                                            + sourcedb.getDialect().quote(table.getTableName()))) {
 
                         ResultSetMetaData rsmd = rs.getMetaData();
 
-                        String sqlCreateSchemaIfNotExists = targetdb.getDialect().createSchema(
-                                destConn,
-                                SqlUtil.schema(tempTableName));
+                        String sqlCreateSchemaIfNotExists =
+                                targetdb.getDialect()
+                                        .createSchema(destConn, SqlUtil.schema(tempTableName));
 
                         // create the temp table structure
                         StringBuilder sb = new StringBuilder(sqlCreateSchemaIfNotExists);
-                        sb.append("CREATE TABLE ").append(tempTableName)
-                                .append(" ( ");
+                        sb.append("CREATE TABLE ").append(tempTableName).append(" ( ");
                         int columnCount = rsmd.getColumnCount();
 
                         for (int i = 1; i <= columnCount; i++) {
                             String columnName = targetdb.getDialect().quote(rsmd.getColumnLabel(i));
                             String typeName = rsmd.getColumnTypeName(i);
                             sb.append(columnName).append(" ").append(typeName);
-                            if(("char".equals(typeName) || "varchar".equals(typeName))
+                            if (("char".equals(typeName) || "varchar".equals(typeName))
                                     && rsmd.getColumnDisplaySize(i) > 0
                                     && rsmd.getColumnDisplaySize(i) < Integer.MAX_VALUE) {
                                 sb.append(" (").append(rsmd.getColumnDisplaySize(i)).append(" ) ");
                             }
                             switch (sourcedb.getDialect().isNullable(rsmd.isNullable(i))) {
-                            case ResultSetMetaData.columnNoNulls:
-                                sb.append(" NOT NULL");
-                                break;
-                            case ResultSetMetaData.columnNullable:
-                                sb.append(" NULL");
-                                break;
+                                case ResultSetMetaData.columnNoNulls:
+                                    sb.append(" NOT NULL");
+                                    break;
+                                case ResultSetMetaData.columnNullable:
+                                    sb.append(" NULL");
+                                    break;
                             }
                             sb.append(", ");
                         }
@@ -147,31 +155,38 @@ public class CopyTableTaskTypeImpl implements TaskType {
                         sb.setLength(sb.length() - 2);
                         sb.append(" ); ");
 
-                        //creating indexes
-                        Map<String, Set<String>> indexAndColumnMap = getIndexesColumns(sourceConn, table.getTableName());
-                        Set<String> uniqueIndexes = getUniqueIndexes(sourceConn, table.getTableName());
-                        Set<String> spatialColumns = sourcedb.getDialect().getSpatialColumns(sourceConn,
-                                geTableName(sourceConn, table.getTableName()));
-
+                        // creating indexes
+                        Map<String, Set<String>> indexAndColumnMap =
+                                getIndexesColumns(sourceConn, table.getTableName());
+                        Set<String> uniqueIndexes =
+                                getUniqueIndexes(sourceConn, table.getTableName());
+                        Set<String> spatialColumns =
+                                sourcedb.getDialect()
+                                        .getSpatialColumns(
+                                                sourceConn,
+                                                geTableName(sourceConn, table.getTableName()));
 
                         for (String indexName : indexAndColumnMap.keySet()) {
                             Set<String> columnNames = indexAndColumnMap.get(indexName);
-                            boolean isSpatialIndex = columnNames.size() == 1
-                                    && spatialColumns.contains(columnNames.iterator().next());
+                            boolean isSpatialIndex =
+                                    columnNames.size() == 1
+                                            && spatialColumns.contains(
+                                                    columnNames.iterator().next());
 
-                            sb.append(sourcedb.getDialect().createIndex(
-                                    tempTableName,
-                                    columnNames,
-                                    isSpatialIndex,
-                                    uniqueIndexes.contains(indexName)));
+                            sb.append(
+                                    sourcedb.getDialect()
+                                            .createIndex(
+                                                    tempTableName,
+                                                    columnNames,
+                                                    isSpatialIndex,
+                                                    uniqueIndexes.contains(indexName)));
                         }
-                        //we are copying a view and need to create the spatial index.
-                        if(indexAndColumnMap.isEmpty() && !spatialColumns.isEmpty()){
-                            sb.append(sourcedb.getDialect().createIndex(
-                                    tempTableName,
-                                    spatialColumns,
-                                    true,
-                                    false));
+                        // we are copying a view and need to create the spatial index.
+                        if (indexAndColumnMap.isEmpty() && !spatialColumns.isEmpty()) {
+                            sb.append(
+                                    sourcedb.getDialect()
+                                            .createIndex(
+                                                    tempTableName, spatialColumns, true, false));
                         }
 
                         String dump = sb.toString();
@@ -182,8 +197,10 @@ public class CopyTableTaskTypeImpl implements TaskType {
                         }
 
                         // copy the data
-                        sb = new StringBuilder("INSERT INTO ").append(tempTableName)
-                                .append(" VALUES (");
+                        sb =
+                                new StringBuilder("INSERT INTO ")
+                                        .append(tempTableName)
+                                        .append(" VALUES (");
                         for (int i = 0; i < columnCount; i++) {
                             if (i > 0) {
                                 sb.append(",");
@@ -224,7 +241,8 @@ public class CopyTableTaskTypeImpl implements TaskType {
             // clean-up if necessary
             try (Connection conn = targetdb.getDataSource().getConnection()) {
                 try (Statement stmt = conn.createStatement()) {
-                    stmt.executeUpdate("DROP TABLE IF EXISTS " + targetdb.getDialect().quote(tempTableName));
+                    stmt.executeUpdate(
+                            "DROP TABLE IF EXISTS " + targetdb.getDialect().quote(tempTableName));
                 }
             } catch (SQLException e2) {
             }
@@ -237,12 +255,19 @@ public class CopyTableTaskTypeImpl implements TaskType {
             public void commit() throws TaskException {
                 try (Connection conn = targetdb.getDataSource().getConnection()) {
                     try (Statement stmt = conn.createStatement()) {
-                        stmt.executeUpdate("DROP TABLE IF EXISTS " + targetdb.getDialect().quote(
-                                targetTable.getTableName()));
-                        stmt.executeUpdate("ALTER TABLE " + tempTableName + " RENAME TO " +
-                                targetdb.getDialect().quote(SqlUtil.notQualified(targetTable.getTableName())));
+                        stmt.executeUpdate(
+                                "DROP TABLE IF EXISTS "
+                                        + targetdb.getDialect().quote(targetTable.getTableName()));
+                        stmt.executeUpdate(
+                                "ALTER TABLE "
+                                        + tempTableName
+                                        + " RENAME TO "
+                                        + targetdb.getDialect()
+                                                .quote(
+                                                        SqlUtil.notQualified(
+                                                                targetTable.getTableName())));
                     }
-                    
+
                     ctx.getBatchContext().delete(targetTable);
                 } catch (SQLException e) {
                     throw new TaskException(e);
@@ -253,13 +278,13 @@ public class CopyTableTaskTypeImpl implements TaskType {
             public void rollback() throws TaskException {
                 try (Connection conn = targetdb.getDataSource().getConnection()) {
                     try (Statement stmt = conn.createStatement()) {
-                        stmt.executeUpdate("DROP TABLE " + targetdb.getDialect().quote(tempTableName) + "");
+                        stmt.executeUpdate(
+                                "DROP TABLE " + targetdb.getDialect().quote(tempTableName) + "");
                     }
                 } catch (SQLException e) {
                     throw new TaskException(e);
                 }
             }
-
         };
     }
 
@@ -267,13 +292,16 @@ public class CopyTableTaskTypeImpl implements TaskType {
     public void cleanup(TaskContext ctx) throws TaskException {
         final DbTable table = (DbTable) ctx.getParameterValues().get(PARAM_TABLE_NAME);
         final DbSource targetDb = (DbSource) ctx.getParameterValues().get(PARAM_TARGET_DB_NAME);
-        final DbTable targetTable = ctx.getParameterValues().containsKey(PARAM_TARGET_TABLE_NAME) ?
-                (DbTable) ctx.getParameterValues().get(PARAM_TARGET_TABLE_NAME) :
-                new DbTableImpl(targetDb, table.getTableName());
+        final DbTable targetTable =
+                ctx.getParameterValues().containsKey(PARAM_TARGET_TABLE_NAME)
+                        ? (DbTable) ctx.getParameterValues().get(PARAM_TARGET_TABLE_NAME)
+                        : new DbTableImpl(targetDb, table.getTableName());
 
         try (Connection conn = targetDb.getDataSource().getConnection()) {
             try (Statement stmt = conn.createStatement()) {
-                stmt.executeUpdate("DROP TABLE IF EXISTS " + targetDb.getDialect().quote(targetTable.getTableName()));
+                stmt.executeUpdate(
+                        "DROP TABLE IF EXISTS "
+                                + targetDb.getDialect().quote(targetTable.getTableName()));
             }
         } catch (SQLException e) {
             throw new TaskException(e);
@@ -292,17 +320,18 @@ public class CopyTableTaskTypeImpl implements TaskType {
         try (ResultSet rsPrimaryKeys = conn.getMetaData().getPrimaryKeys(null, schema, name)) {
             StringBuilder sb = new StringBuilder();
             while (rsPrimaryKeys.next()) {
-                sb.append(rsPrimaryKeys.getString("COLUMN_NAME"))
-                        .append(", ");
+                sb.append(rsPrimaryKeys.getString("COLUMN_NAME")).append(", ");
             }
             if (sb.length() > 2) {
                 sb.setLength(sb.length() - 2);
             }
-            //if there is no primary key column defined. Check if there is a generated key column available
+            // if there is no primary key column defined. Check if there is a generated key column
+            // available
             if (sb.length() < 2) {
                 ResultSet rsColumns = conn.getMetaData().getColumns(null, schema, name, null);
                 while (rsColumns.next()) {
-                    if (GENERATE_ID_COLUMN_NAME.equalsIgnoreCase(rsColumns.getString("COLUMN_NAME"))) {
+                    if (GENERATE_ID_COLUMN_NAME.equalsIgnoreCase(
+                            rsColumns.getString("COLUMN_NAME"))) {
                         return GENERATE_ID_COLUMN_NAME;
                     }
                 }
@@ -316,7 +345,6 @@ public class CopyTableTaskTypeImpl implements TaskType {
         String schema = getSchema(conn, tableName);
         String name = geTableName(conn, tableName);
 
-
         Set<String> result = new HashSet<String>();
 
         try (ResultSet rs = conn.getMetaData().getIndexInfo(null, schema, name, true, false)) {
@@ -328,7 +356,8 @@ public class CopyTableTaskTypeImpl implements TaskType {
         return result;
     }
 
-    private Map<String, Set<String>> getIndexesColumns(Connection conn, String tableName) throws SQLException {
+    private Map<String, Set<String>> getIndexesColumns(Connection conn, String tableName)
+            throws SQLException {
         String schema = getSchema(conn, tableName);
         String name = geTableName(conn, tableName);
 
@@ -370,5 +399,4 @@ public class CopyTableTaskTypeImpl implements TaskType {
         }
         return schema;
     }
-
 }

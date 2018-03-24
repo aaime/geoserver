@@ -4,11 +4,12 @@
  */
 package org.geoserver.taskmanager.tasks;
 
+import it.geosolutions.geoserver.rest.GeoServerRESTManager;
+import it.geosolutions.geoserver.rest.encoder.GSResourceEncoder;
+import it.geosolutions.geoserver.rest.encoder.feature.GSFeatureTypeEncoder;
 import java.io.IOException;
 import java.util.Map;
-
 import javax.annotation.PostConstruct;
-
 import org.geoserver.catalog.StoreInfo;
 import org.geoserver.taskmanager.external.DbSource;
 import org.geoserver.taskmanager.external.DbTable;
@@ -17,10 +18,6 @@ import org.geoserver.taskmanager.schedule.ParameterInfo;
 import org.geoserver.taskmanager.schedule.TaskException;
 import org.geoserver.taskmanager.util.SqlUtil;
 import org.springframework.stereotype.Component;
-
-import it.geosolutions.geoserver.rest.GeoServerRESTManager;
-import it.geosolutions.geoserver.rest.encoder.GSResourceEncoder;
-import it.geosolutions.geoserver.rest.encoder.feature.GSFeatureTypeEncoder;
 
 @Component
 public class DbRemotePublicationTaskTypeImpl extends AbstractRemotePublicationTaskTypeImpl {
@@ -37,8 +34,9 @@ public class DbRemotePublicationTaskTypeImpl extends AbstractRemotePublicationTa
         super.initParamInfo();
         ParameterInfo dbInfo = new ParameterInfo(PARAM_DB_NAME, extTypes.dbName, true);
         paramInfo.put(PARAM_DB_NAME, dbInfo);
-        paramInfo.put(PARAM_TABLE_NAME, new ParameterInfo(PARAM_TABLE_NAME, extTypes.tableName(), false)
-                .dependsOn(dbInfo));
+        paramInfo.put(
+                PARAM_TABLE_NAME,
+                new ParameterInfo(PARAM_TABLE_NAME, extTypes.tableName(), false).dependsOn(dbInfo));
     }
 
     @Override
@@ -47,16 +45,27 @@ public class DbRemotePublicationTaskTypeImpl extends AbstractRemotePublicationTa
     }
 
     @Override
-    protected boolean createStore(ExternalGS extGS, GeoServerRESTManager restManager,
-            StoreInfo store, Map<String, Object> parameterValues) throws IOException, TaskException {
+    protected boolean createStore(
+            ExternalGS extGS,
+            GeoServerRESTManager restManager,
+            StoreInfo store,
+            Map<String, Object> parameterValues)
+            throws IOException, TaskException {
         try {
             final DbSource db = (DbSource) parameterValues.get(PARAM_DB_NAME);
             final DbTable table = (DbTable) parameterValues.get(PARAM_TABLE_NAME);
-            return restManager.getStoreManager().create(store.getWorkspace().getName(),
-                    db.postProcess(db.getStoreEncoder(store.getName()), table));
+            return restManager
+                    .getStoreManager()
+                    .create(
+                            store.getWorkspace().getName(),
+                            db.postProcess(db.getStoreEncoder(store.getName()), table));
         } catch (UnsupportedOperationException e) {
-            throw new TaskException("Failed to create store " + store.getWorkspace().getName() + ":"
-                    + store.getName(), e);
+            throw new TaskException(
+                    "Failed to create store "
+                            + store.getWorkspace().getName()
+                            + ":"
+                            + store.getName(),
+                    e);
         }
     }
 
@@ -72,5 +81,4 @@ public class DbRemotePublicationTaskTypeImpl extends AbstractRemotePublicationTa
             ((GSFeatureTypeEncoder) re).setNativeName(SqlUtil.notQualified(table.getTableName()));
         }
     }
-
 }

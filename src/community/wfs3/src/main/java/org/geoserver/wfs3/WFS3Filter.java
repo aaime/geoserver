@@ -4,15 +4,13 @@
  */
 package org.geoserver.wfs3;
 
-import org.geoserver.catalog.Catalog;
-import org.geoserver.catalog.LayerInfo;
-import org.geoserver.filters.GeoServerFilter;
-import org.geoserver.ows.HttpErrorCodeException;
-import org.geoserver.wfs.kvp.BBoxKvpParser;
-import org.geotools.geometry.jts.ReferencedEnvelope;
-import org.geotools.util.logging.Logging;
-import org.springframework.http.HttpStatus;
-
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
@@ -22,21 +20,22 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.ws.RequestWrapper;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
+import org.geoserver.catalog.Catalog;
+import org.geoserver.catalog.LayerInfo;
+import org.geoserver.filters.GeoServerFilter;
+import org.geoserver.ows.HttpErrorCodeException;
+import org.geoserver.wfs.kvp.BBoxKvpParser;
+import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.util.logging.Logging;
+import org.springframework.http.HttpStatus;
 
 /**
- * Simple hack to bridge part of the path based approach in WFS 3 to traditional OWS mappings.
- * If this is somehow generalized and brought into the main dispatcher, check OSEOFilter as well (in the OpenSearch
- * module)
+ * Simple hack to bridge part of the path based approach in WFS 3 to traditional OWS mappings. If
+ * this is somehow generalized and brought into the main dispatcher, check OSEOFilter as well (in
+ * the OpenSearch module)
  */
 public class WFS3Filter implements GeoServerFilter {
-    
+
     static final Logger LOGGER = Logging.getLogger(WFS3Filter.class);
 
     private final Catalog catalog;
@@ -58,14 +57,14 @@ public class WFS3Filter implements GeoServerFilter {
             if (requestNeedsWrapper(requestHTTP)) {
                 try {
                     request = new RequestWrapper(requestHTTP);
-                } catch(HttpErrorCodeException exception) {
-                    ((HttpServletResponse) response).sendError(exception.getErrorCode(), exception.getMessage());
+                } catch (HttpErrorCodeException exception) {
+                    ((HttpServletResponse) response)
+                            .sendError(exception.getErrorCode(), exception.getMessage());
                     return;
                 }
             }
         }
         chain.doFilter(request, response);
-
     }
 
     private boolean requestNeedsWrapper(HttpServletRequest requestHTTP) {
@@ -102,7 +101,8 @@ public class WFS3Filter implements GeoServerFilter {
                 if (pathInfo.contains("/")) {
                     String[] split = pathInfo.split("/");
                     if (split.length > 2) {
-                        throw new HttpErrorCodeException(HttpStatus.NOT_FOUND.value(), "Invalid path " + pathInfo);
+                        throw new HttpErrorCodeException(
+                                HttpStatus.NOT_FOUND.value(), "Invalid path " + pathInfo);
                     }
                     pathInfo = split[0];
                     featureId = split[1];
@@ -112,12 +112,14 @@ public class WFS3Filter implements GeoServerFilter {
                     request = "getFeature";
                     typeName = layers.get(0).prefixedName();
                 } else {
-                    throw new HttpErrorCodeException(HttpStatus.NOT_FOUND.value(), "Could not find layer " + pathInfo);
+                    throw new HttpErrorCodeException(
+                            HttpStatus.NOT_FOUND.value(), "Could not find layer " + pathInfo);
                 }
             } else {
-                throw new HttpErrorCodeException(HttpStatus.NOT_FOUND.value(), "Unsupported path " + pathInfo);
+                throw new HttpErrorCodeException(
+                        HttpStatus.NOT_FOUND.value(), "Unsupported path " + pathInfo);
             }
-            
+
             mapped = request != null;
 
             // everythign defaults to JSON in WFS3
@@ -125,9 +127,9 @@ public class WFS3Filter implements GeoServerFilter {
             if (f != null) {
                 if ("json".equalsIgnoreCase(f)) {
                     this.outputFormat = BaseRequest.JSON_MIME;
-                } else if("yaml".equalsIgnoreCase(f)) {
+                } else if ("yaml".equalsIgnoreCase(f)) {
                     this.outputFormat = BaseRequest.YAML_MIME;
-                } else if("html".equalsIgnoreCase(f)) {
+                } else if ("html".equalsIgnoreCase(f)) {
                     this.outputFormat = BaseRequest.HTML_MIME;
                 } else {
                     this.outputFormat = f;
@@ -162,7 +164,8 @@ public class WFS3Filter implements GeoServerFilter {
                     BBoxKvpParser parser = new BBoxKvpParser();
                     ReferencedEnvelope envelope = (ReferencedEnvelope) parser.parse(bbox);
                     // if 2D and lacking a CRS, force WGS84
-                    if (envelope.getCoordinateReferenceSystem() == null && envelope.getDimension() == 2) {
+                    if (envelope.getCoordinateReferenceSystem() == null
+                            && envelope.getDimension() == 2) {
                         filtered.put("bbox", bbox + ",EPSG:4326");
                     }
                 } catch (Exception expected) {
@@ -197,5 +200,4 @@ public class WFS3Filter implements GeoServerFilter {
             }
         }
     }
-
 }

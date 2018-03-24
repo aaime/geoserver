@@ -7,17 +7,13 @@ package org.geoserver.taskmanager.web.action;
 import org.geoserver.taskmanager.web.ConfigurationPage;
 import org.springframework.stereotype.Component;
 
-/**
- * 
- * @author Niels Charlier
- *
- */
+/** @author Niels Charlier */
 @Component
 public class FileUploadAction implements Action {
-    
+
     private static final long serialVersionUID = 4996136164811697150L;
-    
-    private final static String NAME = "FileUpload";
+
+    private static final String NAME = "FileUpload";
 
     @Override
     public String getName() {
@@ -28,5 +24,4 @@ public class FileUploadAction implements Action {
     public String execute(ConfigurationPage onPage, String value) {
         return value;
     }
-
 }

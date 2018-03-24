@@ -5,7 +5,6 @@
 package org.geoserver.wfs3;
 
 import net.sf.json.JSON;
-import org.geoserver.test.GeoServerSystemTestSupport;
 import org.junit.Test;
 
 public class ApiTest extends WFS3TestSupport {

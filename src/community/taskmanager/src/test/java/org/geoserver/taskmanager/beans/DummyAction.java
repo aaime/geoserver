@@ -4,11 +4,11 @@
  */
 package org.geoserver.taskmanager.beans;
 
-import org.springframework.stereotype.Component;
 import org.geoserver.taskmanager.web.ConfigurationPage;
 import org.geoserver.taskmanager.web.action.Action;
+import org.springframework.stereotype.Component;
 
-@Component 
+@Component
 public class DummyAction implements Action {
 
     private static final long serialVersionUID = 2055260073253741911L;
@@ -22,5 +22,4 @@ public class DummyAction implements Action {
     public String execute(ConfigurationPage onPage, String value) {
         return null;
     }
-
 }

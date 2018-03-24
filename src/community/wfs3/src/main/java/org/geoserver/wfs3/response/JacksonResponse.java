@@ -7,21 +7,16 @@ package org.geoserver.wfs3.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Optional;
 import org.geoserver.config.GeoServer;
 import org.geoserver.platform.Operation;
 import org.geoserver.platform.ServiceException;
 import org.geoserver.wfs.response.WFSResponse;
-import org.geoserver.wfs3.APIDocument;
-import org.geoserver.wfs3.APIRequest;
 import org.geoserver.wfs3.BaseRequest;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Optional;
-
-/**
- * Response encoding outputs in JSON/YAML using Jackson
- */
+/** Response encoding outputs in JSON/YAML using Jackson */
 public abstract class JacksonResponse extends WFSResponse {
 
     public JacksonResponse(GeoServer gs, Class targetClass) {
@@ -59,7 +54,8 @@ public abstract class JacksonResponse extends WFSResponse {
     }
 
     @Override
-    public void write(Object value, OutputStream output, Operation operation) throws IOException, ServiceException {
+    public void write(Object value, OutputStream output, Operation operation)
+            throws IOException, ServiceException {
         ObjectMapper mapper;
         if (isYamlFormat(operation)) {
             YAMLFactory factory = new YAMLFactory();
@@ -78,6 +74,7 @@ public abstract class JacksonResponse extends WFSResponse {
 
     /**
      * Just the name of the file to be returned (no extension)
+     *
      * @return
      */
     protected abstract String getFileName(Object value, Operation operation);

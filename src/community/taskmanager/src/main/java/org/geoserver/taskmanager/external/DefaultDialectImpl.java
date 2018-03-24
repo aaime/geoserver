@@ -4,18 +4,17 @@
  */
 package org.geoserver.taskmanager.external;
 
-
 import java.sql.Connection;
 import java.util.Collections;
 import java.util.Set;
-
 import org.geoserver.taskmanager.util.SqlUtil;
 
 /**
  * Default implementation for the Dialect interface.
- * 
- * This should work with most databases, but it also limits the functionality of the task manager.
- * 
+ *
+ * <p>This should work with most databases, but it also limits the functionality of the task
+ * manager.
+ *
  * @author Timothy De Bock
  */
 public class DefaultDialectImpl implements Dialect {
@@ -31,12 +30,16 @@ public class DefaultDialectImpl implements Dialect {
     }
 
     @Override
-    public String createIndex(String tableName, Set<String> columnNames, boolean isSpatialIndex, boolean isUniqueIndex) {
+    public String createIndex(
+            String tableName,
+            Set<String> columnNames,
+            boolean isSpatialIndex,
+            boolean isUniqueIndex) {
         StringBuilder sb = new StringBuilder();
         sb.append("CREATE INDEX ");
         sb.append(" ON ");
         sb.append(tableName);
-        //regular index
+        // regular index
         sb.append(" (");
         for (String columnName : columnNames) {
             sb.append(columnName);
@@ -59,9 +62,8 @@ public class DefaultDialectImpl implements Dialect {
 
     @Override
     public String createSchema(Connection connection, String schema) {
-        StringBuilder sb = new StringBuilder("CREATE SCHEMA IF NOT EXISTS ")
-                .append(schema)
-                .append(" ;");
+        StringBuilder sb =
+                new StringBuilder("CREATE SCHEMA IF NOT EXISTS ").append(schema).append(" ;");
         return sb.toString();
     }
 

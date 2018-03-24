@@ -4,17 +4,12 @@
  */
 package org.geoserver.wfs3.kvp;
 
-import org.geoserver.wfs3.APIRequest;
 import org.geoserver.wfs3.ContentRequest;
 
-/**
- * Parses a "content" request
- */
+/** Parses a "content" request */
 public class ContentRequestKVPReader extends BaseKvpRequestReader {
 
     public ContentRequestKVPReader() {
         super(ContentRequest.class);
     }
-    
-    
 }

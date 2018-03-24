@@ -9,19 +9,25 @@ import java.util.Date;
 
 /**
  * A particular run of a task within a batch.
- * 
- * @author Niels Charlier
  *
+ * @author Niels Charlier
  */
-public interface Run extends Serializable, Identifiable {    
+public interface Run extends Serializable, Identifiable {
 
-    public enum Status { RUNNING, FAILED, ROLLED_BACK, READY_TO_COMMIT, COMMITTING, 
-        COMMITTED, NOT_ROLLED_BACK, NOT_COMMITTED;
-        
+    public enum Status {
+        RUNNING,
+        FAILED,
+        ROLLED_BACK,
+        READY_TO_COMMIT,
+        COMMITTING,
+        COMMITTED,
+        NOT_ROLLED_BACK,
+        NOT_COMMITTED;
+
         public boolean isClosed() {
-            return this != Status.RUNNING 
-            && this != Status.READY_TO_COMMIT
-            && this != Status.COMMITTING;
+            return this != Status.RUNNING
+                    && this != Status.READY_TO_COMMIT
+                    && this != Status.COMMITTING;
         }
     }
 
@@ -40,13 +46,12 @@ public interface Run extends Serializable, Identifiable {
     BatchElement getBatchElement();
 
     void setBatchElement(BatchElement batchElement);
-    
+
     String getMessage();
 
     void setMessage(String message);
-    
-    BatchRun getBatchRun();
-    
-    void setBatchRun(BatchRun br);
 
+    BatchRun getBatchRun();
+
+    void setBatchRun(BatchRun br);
 }

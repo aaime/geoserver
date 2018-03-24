@@ -1,5 +1,9 @@
 package org.geoserver.wfs3;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 import org.geoserver.catalog.Catalog;
 import org.geoserver.catalog.FeatureTypeInfo;
 import org.geoserver.catalog.util.CloseableIterator;
@@ -10,17 +14,12 @@ import org.geoserver.wfs.WFSInfo;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.opengis.filter.Filter;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
 /**
- * A class representing the WFS3 server "contents" in a way that Jackson can easily translate to JSON/YAML (and
- * can be used as a Freemarker template model)
+ * A class representing the WFS3 server "contents" in a way that Jackson can easily translate to
+ * JSON/YAML (and can be used as a Freemarker template model)
  */
 public class ContentsDocument {
-    
+
     public static final String REL_SELF = "self";
     public static final String REL_ALTERNATE = "alternate";
     public static final String REL_SERVICE = "service";
@@ -33,8 +32,7 @@ public class ContentsDocument {
         String type;
         String title;
 
-        public Link() {
-        }
+        public Link() {}
 
         public Link(String href, String rel, String type, String title) {
             this.href = href;
@@ -75,7 +73,7 @@ public class ContentsDocument {
             this.title = title;
         }
     }
-    
+
     static class Collection {
         String collectionId;
         String title;
@@ -122,14 +120,13 @@ public class ContentsDocument {
         public void addLink(Link link) {
             links.add(link);
         }
-
     }
-    
+
     private final Catalog catalog;
     private final WFSInfo wfs;
     private final List<Link> links = new ArrayList<>();
     private final ContentRequest request;
-    
+
     public ContentsDocument(ContentRequest request, WFSInfo wfs, Catalog catalog) {
         this.wfs = wfs;
         this.catalog = catalog;
@@ -139,33 +136,63 @@ public class ContentsDocument {
 
         // setting up the contents link
         String baseUrl = request.getBaseUrl();
-        String contentsUrl = ResponseUtils.buildURL(baseUrl, "wfs3/", null, URLMangler.URLType.SERVICE);
-        addLink(new ContentsDocument.Link(contentsUrl, ContentsDocument.REL_SELF, BaseRequest.JSON_MIME, "This" +
-                " document"));
+        String contentsUrl =
+                ResponseUtils.buildURL(baseUrl, "wfs3/", null, URLMangler.URLType.SERVICE);
+        addLink(
+                new ContentsDocument.Link(
+                        contentsUrl,
+                        ContentsDocument.REL_SELF,
+                        BaseRequest.JSON_MIME,
+                        "This" + " document"));
         // uncomment when HTML format is supported
-//        String contentsHtmlUrl = ResponseUtils.buildURL(baseUrl, "wfs3/", Collections.singletonMap("f", "html"),
-//                URLMangler.URLType.SERVICE);
-//        addLink(new ContentsDocument.Link(contentsHtmlUrl, ContentsDocument.REL_ALTERNATE, BaseRequest
-//                .HTML_MIME, "This document as HTML"));
-        String contentsYamlUrl = ResponseUtils.buildURL(baseUrl, "wfs3/", Collections.singletonMap("f", "yaml"),
-                URLMangler.URLType.SERVICE);
-        addLink(new ContentsDocument.Link(contentsYamlUrl, ContentsDocument.REL_ALTERNATE, BaseRequest
-                .YAML_MIME, "This document as YAML"));
+        //        String contentsHtmlUrl = ResponseUtils.buildURL(baseUrl, "wfs3/",
+        // Collections.singletonMap("f", "html"),
+        //                URLMangler.URLType.SERVICE);
+        //        addLink(new ContentsDocument.Link(contentsHtmlUrl, ContentsDocument.REL_ALTERNATE,
+        // BaseRequest
+        //                .HTML_MIME, "This document as HTML"));
+        String contentsYamlUrl =
+                ResponseUtils.buildURL(
+                        baseUrl,
+                        "wfs3/",
+                        Collections.singletonMap("f", "yaml"),
+                        URLMangler.URLType.SERVICE);
+        addLink(
+                new ContentsDocument.Link(
+                        contentsYamlUrl,
+                        ContentsDocument.REL_ALTERNATE,
+                        BaseRequest.YAML_MIME,
+                        "This document as YAML"));
 
         // setting up the API links
-        String apiUrl = ResponseUtils.buildURL(baseUrl, "wfs3/api", null, URLMangler.URLType.SERVICE);
-        addLink(new ContentsDocument.Link(apiUrl, ContentsDocument.REL_SERVICE, BaseRequest.JSON_MIME, "The " +
-                "OpenAPI definition as JSON"));
-//        String apiHtmlUrl = ResponseUtils.buildURL(baseUrl, "wfs3/api", Collections.singletonMap("f", "html"),
-//                URLMangler.URLType.SERVICE);
-//        addLink(new ContentsDocument.Link(apiHtmlUrl, ContentsDocument.REL_SERVICE, BaseRequest.HTML_MIME,
-//                "The OpenAPI definition as HTML"));
-        String apiYamlUrl = ResponseUtils.buildURL(baseUrl, "wfs3/api", Collections.singletonMap("f", "yaml"),
-                URLMangler.URLType.SERVICE);
-        addLink(new ContentsDocument.Link(apiYamlUrl, ContentsDocument.REL_SERVICE, BaseRequest.YAML_MIME,
-                "The OpenAPI definition as YAML"));
+        String apiUrl =
+                ResponseUtils.buildURL(baseUrl, "wfs3/api", null, URLMangler.URLType.SERVICE);
+        addLink(
+                new ContentsDocument.Link(
+                        apiUrl,
+                        ContentsDocument.REL_SERVICE,
+                        BaseRequest.JSON_MIME,
+                        "The " + "OpenAPI definition as JSON"));
+        //        String apiHtmlUrl = ResponseUtils.buildURL(baseUrl, "wfs3/api",
+        // Collections.singletonMap("f", "html"),
+        //                URLMangler.URLType.SERVICE);
+        //        addLink(new ContentsDocument.Link(apiHtmlUrl, ContentsDocument.REL_SERVICE,
+        // BaseRequest.HTML_MIME,
+        //                "The OpenAPI definition as HTML"));
+        String apiYamlUrl =
+                ResponseUtils.buildURL(
+                        baseUrl,
+                        "wfs3/api",
+                        Collections.singletonMap("f", "yaml"),
+                        URLMangler.URLType.SERVICE);
+        addLink(
+                new ContentsDocument.Link(
+                        apiYamlUrl,
+                        ContentsDocument.REL_SERVICE,
+                        BaseRequest.YAML_MIME,
+                        "The OpenAPI definition as YAML"));
     }
-    
+
     public void addLink(Link link) {
         links.add(link);
     }
@@ -173,11 +200,12 @@ public class ContentsDocument {
     public List<Link> getLinks() {
         return links;
     }
-    
+
     public Iterator<Collection> getCollections() {
-        CloseableIterator<FeatureTypeInfo> featureTypes = catalog.list(FeatureTypeInfo.class, Filter.INCLUDE);
+        CloseableIterator<FeatureTypeInfo> featureTypes =
+                catalog.list(FeatureTypeInfo.class, Filter.INCLUDE);
         return new Iterator<Collection>() {
-            
+
             Collection next;
 
             @Override
@@ -185,7 +213,7 @@ public class ContentsDocument {
                 if (next != null) {
                     return true;
                 }
-                
+
                 boolean hasNext = featureTypes.hasNext();
                 if (!hasNext) {
                     featureTypes.close();
@@ -195,9 +223,10 @@ public class ContentsDocument {
                         FeatureTypeInfo featureType = featureTypes.next();
                         next = mapToCollection(featureType);
                         return true;
-                    } catch(Exception e) {
+                    } catch (Exception e) {
                         featureTypes.close();
-                        throw new ServiceException("Failed to iterate over the feature types in the catalog", e);
+                        throw new ServiceException(
+                                "Failed to iterate over the feature types in the catalog", e);
                     }
                 }
             }
@@ -213,24 +242,34 @@ public class ContentsDocument {
 
     private Collection mapToCollection(FeatureTypeInfo featureType) {
         Collection collection = new Collection();
-        
+
         // basic info
         String collectionId = NCNameResourceCodec.encode(featureType);
         collection.setCollectionId(collectionId);
         collection.setTitle(featureType.getTitle());
         collection.setDescription(featureType.getDescription());
         ReferencedEnvelope bbox = featureType.getLatLonBoundingBox();
-        collection.setExtent(new double[] {bbox.getMinX(), bbox.getMinY(), bbox.getMaxX(), bbox.getMaxY()});
-        
+        collection.setExtent(
+                new double[] {bbox.getMinX(), bbox.getMinY(), bbox.getMaxX(), bbox.getMaxY()});
+
         // links
         List<String> formats = DefaultWebFeatureService30.getAvailableFormats();
         String baseUrl = request.getBaseUrl();
         for (String format : formats) {
-            String apiUrl = ResponseUtils.buildURL(baseUrl, "wfs3/" + collectionId, Collections.singletonMap("f", format), URLMangler.URLType.SERVICE);
-            collection.addLink(new ContentsDocument.Link(apiUrl, ContentsDocument.REL_ABOUT, format, collectionId + " as " + format));
+            String apiUrl =
+                    ResponseUtils.buildURL(
+                            baseUrl,
+                            "wfs3/" + collectionId,
+                            Collections.singletonMap("f", format),
+                            URLMangler.URLType.SERVICE);
+            collection.addLink(
+                    new ContentsDocument.Link(
+                            apiUrl,
+                            ContentsDocument.REL_ABOUT,
+                            format,
+                            collectionId + " as " + format));
         }
 
         return collection;
     }
-
 }

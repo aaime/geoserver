@@ -7,21 +7,20 @@ package org.geoserver.taskmanager.data;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-
 import org.geoserver.taskmanager.data.Run.Status;
 
 public interface BatchRun extends Serializable, Identifiable {
-    
+
     Batch getBatch();
-    
+
     void setBatch(Batch batch);
-    
+
     List<Run> getRuns();
 
     boolean isInterruptMe();
 
     void setInterruptMe(boolean interruptMe);
-    
+
     default Date getStart() {
         return getRuns().isEmpty() ? null : getRuns().get(0).getStart();
     }
@@ -52,13 +51,11 @@ public interface BatchRun extends Serializable, Identifiable {
                     return getRuns().get(i).getMessage();
                 }
             }
-            return null;            
+            return null;
         }
     }
 
     String getSchedulerReference();
 
     void setSchedulerReference(String qReference);
-
-
 }

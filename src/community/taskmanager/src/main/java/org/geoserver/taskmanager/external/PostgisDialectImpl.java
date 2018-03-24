@@ -4,9 +4,6 @@
  */
 package org.geoserver.taskmanager.external;
 
-import org.geoserver.taskmanager.util.SqlUtil;
-import org.geotools.util.logging.Logging;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,10 +11,12 @@ import java.sql.Statement;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
+import org.geoserver.taskmanager.util.SqlUtil;
+import org.geotools.util.logging.Logging;
 
 /**
  * Postgis Dialect.
- * 
+ *
  * @author Timothy De Bock
  */
 public class PostgisDialectImpl extends DefaultDialectImpl {
@@ -30,7 +29,11 @@ public class PostgisDialectImpl extends DefaultDialectImpl {
     }
 
     @Override
-    public String createIndex(String tableName, Set<String> columnNames, boolean isSpatialIndex, boolean isUniqueIndex) {
+    public String createIndex(
+            String tableName,
+            Set<String> columnNames,
+            boolean isSpatialIndex,
+            boolean isUniqueIndex) {
 
         StringBuilder sb = new StringBuilder();
         sb.append("CREATE ");
@@ -38,7 +41,7 @@ public class PostgisDialectImpl extends DefaultDialectImpl {
             sb.append(" UNIQUE");
         }
         sb.append(" INDEX ");
-        //sb.append(indexName);
+        // sb.append(indexName);
         sb.append(" ON ");
         sb.append(tableName);
 
@@ -62,8 +65,12 @@ public class PostgisDialectImpl extends DefaultDialectImpl {
     public Set<String> getSpatialColumns(Connection sourceConn, String tableName) {
         HashSet<String> spatialColumns = new HashSet<>();
         try (Statement stmt = sourceConn.createStatement()) {
-            try (ResultSet rs = stmt.executeQuery("SELECT * FROM geometry_columns " +
-                    " WHERE geometry_columns.f_table_name='" + tableName + "' ")) {
+            try (ResultSet rs =
+                    stmt.executeQuery(
+                            "SELECT * FROM geometry_columns "
+                                    + " WHERE geometry_columns.f_table_name='"
+                                    + tableName
+                                    + "' ")) {
                 if (rs.next()) {
                     spatialColumns.add(rs.getString("f_geometry_column"));
                 }

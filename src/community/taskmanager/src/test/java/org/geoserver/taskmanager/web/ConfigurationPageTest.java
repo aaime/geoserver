@@ -22,12 +22,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class ConfigurationPageTest extends AbstractWicketTaskManagerTest {
-    
+
     private TaskManagerFactory fac;
     private TaskManagerDao dao;
     private TaskManagerDataUtil util;
     private TaskManagerTaskUtil tutil;
-    
+
     @Before
     public void before() {
         fac = TaskManagerBeans.get().getFac();
@@ -36,37 +36,37 @@ public class ConfigurationPageTest extends AbstractWicketTaskManagerTest {
         tutil = TaskManagerBeans.get().getTaskUtil();
         login();
     }
-    
+
     public Configuration createConfiguration() {
-        Configuration config = fac.createConfiguration();  
+        Configuration config = fac.createConfiguration();
         config.setName("test_template");
         config.setDescription("my new configuration");
-        
+
         Task task1 = tutil.initTask(CopyTableTaskTypeImpl.NAME, "task1");
         util.addTaskToConfiguration(config, task1);
-        
+
         Task task2 = tutil.initTask(CreateViewTaskTypeImpl.NAME, "task2");
         util.addTaskToConfiguration(config, task2);
-        
+
         Task task3 = tutil.initTask(DbRemotePublicationTaskTypeImpl.NAME, "task3");
         util.addTaskToConfiguration(config, task3);
-        
+
         return dao.save(config);
     }
-        
+
     @SuppressWarnings("unchecked")
     @Test
-    public void testCreate() {        
+    public void testCreate() {
         ConfigurationPage page = new ConfigurationPage(createConfiguration());
-        
+
         tester.startPage(page);
         tester.assertRenderedPage(ConfigurationPage.class);
-        
-        TextField<String> descr = (TextField<String>) tester.getComponentFromLastRenderedPage("configurationForm:description");
+
+        TextField<String> descr =
+                (TextField<String>)
+                        tester.getComponentFromLastRenderedPage("configurationForm:description");
         assertEquals("my new configuration", descr.getModelObject());
-        
+
         dao.delete(dao.getConfiguration("test_template"));
     }
-    
-
 }
