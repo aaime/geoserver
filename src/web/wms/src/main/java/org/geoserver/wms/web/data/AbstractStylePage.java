@@ -435,6 +435,8 @@ public abstract class AbstractStylePage extends GeoServerSecuredPage {
                 return link;
             }
         };
+        tabbedPanel.setMarkupId("style-context");
+        tabbedPanel.setOutputMarkupId(true);
         
         styleForm.add(tabbedPanel);
         
@@ -443,6 +445,7 @@ public abstract class AbstractStylePage extends GeoServerSecuredPage {
                 .getCodeMirrorEditMode(), new PropertyModel<String>(this, "rawStyle")));
         // force the id otherwise this blasted thing won't be usable from other forms
         editor.setTextAreaMarkupId("editor");
+        editor.setMarkupId("style-editor");
         editor.setOutputMarkupId(true);
         editor.setRequired(true);
         styleForm.add(editor);
