@@ -7,7 +7,6 @@ package org.geoserver.web;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
 import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.request.http.WebRequest;
 import org.geoserver.security.GeoServerSecurityFilterChainProxy;
