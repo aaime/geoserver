@@ -5,11 +5,14 @@
  */
 package org.geoserver.wms.map;
 
-import java.awt.Graphics;
-import java.util.Timer;
-import java.util.TimerTask;
 import org.geoserver.wms.WebMap;
 import org.geotools.renderer.GTRenderer;
+
+import java.awt.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 /**
  * An utility class that can be used to set a strict timeout on rendering operations: if the timeout
@@ -20,13 +23,16 @@ import org.geotools.renderer.GTRenderer;
  */
 public class RenderingTimeoutEnforcer {
 
+    private static final ScheduledExecutorService SCHEDULER =
+            Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors());
+
     long timeout;
     GTRenderer renderer;
     Graphics graphics;
-    Timer timer;
     boolean timedOut = false;
     boolean saveMap;
     WebMap map = null;
+    private ScheduledFuture<?> future;
 
     public RenderingTimeoutEnforcer(long timeout, GTRenderer renderer, Graphics graphics) {
         this(timeout, renderer, graphics, false);
@@ -48,23 +54,20 @@ public class RenderingTimeoutEnforcer {
 
     /** Starts checking the rendering timeout (if timeout is positive, does nothing otherwise) */
     public void start() {
-        if (timer != null)
+        if (future != null)
             throw new IllegalStateException("The timeout enforcer has already been started");
 
         if (timeout > 0) {
             timedOut = false;
-            timer = new Timer();
-            timer.schedule(new StopRenderingTask(), timeout);
+            this.future =
+                    SCHEDULER.schedule(new StopRenderingTask(), timeout, TimeUnit.MILLISECONDS);
         }
     }
 
     /** Stops the timeout check */
     public void stop() {
-        if (timer != null) {
-            timer.cancel();
-            timer.purge();
-            // timer.getTheHellOutOfDodge();
-            timer = null;
+        if (future != null) {
+            future.cancel(true);
         }
     }
 
@@ -73,7 +76,7 @@ public class RenderingTimeoutEnforcer {
         return timedOut;
     }
 
-    class StopRenderingTask extends TimerTask {
+    class StopRenderingTask implements Runnable {
 
         @Override
         public void run() {

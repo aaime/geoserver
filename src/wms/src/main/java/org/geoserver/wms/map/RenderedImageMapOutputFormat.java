@@ -28,6 +28,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -141,7 +143,7 @@ public class RenderedImageMapOutputFormat extends AbstractMapOutputFormat {
         GridCoverage2DReader reader;
         Object params;
     }
-
+    
     private static final Interpolation NN_INTERPOLATION = new InterpolationNearest();
 
     private static final Interpolation BIL_INTERPOLATION = new InterpolationBilinear();
