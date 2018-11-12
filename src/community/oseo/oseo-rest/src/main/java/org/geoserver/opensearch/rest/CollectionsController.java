@@ -345,7 +345,7 @@ public class CollectionsController extends AbstractOpenSearchController {
         produces = {MediaType.APPLICATION_JSON_VALUE}
     )
     @ResponseBody
-    public CollectionLayer getCollectionLayer(
+    public CollectionLayer getDefaultCollectionLayer(
             HttpServletRequest request,
             @PathVariable(name = "collection", required = true) String collection)
             throws IOException {
@@ -366,7 +366,7 @@ public class CollectionsController extends AbstractOpenSearchController {
     private Name getCollectionLayerPropertyName() throws IOException {
         String namespaceURI =
                 getOpenSearchAccess().getCollectionSource().getSchema().getName().getNamespaceURI();
-        final Name layerPropertyName = new NameImpl(namespaceURI, OpenSearchAccess.LAYER);
+        final Name layerPropertyName = new NameImpl(namespaceURI, OpenSearchAccess.LAYERS);
         return layerPropertyName;
     }
 

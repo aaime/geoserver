@@ -5,6 +5,7 @@
 package org.geoserver.opensearch.eo.store;
 
 import static org.geoserver.opensearch.eo.store.JDBCOpenSearchAccess.FF;
+import static org.geoserver.opensearch.eo.store.OpenSearchAccess.LAYERS_PROPERTY_NAME;
 import static org.geoserver.opensearch.eo.store.OpenSearchAccess.METADATA_PROPERTY_NAME;
 import static org.geoserver.opensearch.eo.store.OpenSearchAccess.OGC_LINKS_PROPERTY_NAME;
 
@@ -23,6 +24,7 @@ import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import org.geotools.data.DataAccess;
 import org.geotools.data.DataSourceException;
 import org.geotools.data.DataStore;
@@ -70,6 +72,7 @@ import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
+import org.w3.xlink.Simple;
 
 /**
  * Base class for the collection and product specific feature source wrappers
@@ -106,25 +109,34 @@ public abstract class AbstractMappingStore implements FeatureStore<FeatureType, 
 
     private Transaction transaction;
 
-    private final Name LAYER_PROPERTY_NAME;
-
     public AbstractMappingStore(
             JDBCOpenSearchAccess openSearchAccess, FeatureType collectionFeatureType)
             throws IOException {
-        this.LAYER_PROPERTY_NAME =
-                new NameImpl(openSearchAccess.getNamespaceURI(), OpenSearchAccess.LAYER);
-
         this.openSearchAccess = openSearchAccess;
         this.schema = collectionFeatureType;
         this.propertyMapper = new SourcePropertyMapper(schema);
         this.defaultSort = buildDefaultSort(schema);
         this.linkFeatureType = buildLinkFeatureType();
-        this.collectionLayerFeatureType =
-                (SimpleFeatureType)
-                        openSearchAccess
-                                .collectionFeatureType
-                                .getDescriptor(LAYER_PROPERTY_NAME)
-                                .getType();
+        this.collectionLayerFeatureType = buildCollectionLayerFeatureType();
+    }
+
+    protected SimpleFeatureType buildCollectionLayerFeatureType() throws IOException {
+        SimpleFeatureType source = openSearchAccess.getDelegateStore().getSchema("collection_layer");
+        try {
+            SimpleFeatureTypeBuilder b = new SimpleFeatureTypeBuilder();
+            for (AttributeDescriptor ad : source.getAttributeDescriptors()) {
+                if ("bands".equals(ad.getLocalName()) || "browseBands".equals(ad.getLocalName())) {
+                    b.add(ad.getLocalName(), String[].class);
+                } else {
+                    b.add(ad);
+                }
+            }
+
+            b.setName(LAYERS_PROPERTY_NAME);
+            return b.buildFeatureType();
+        } catch (Exception e) {
+            throw new DataSourceException("Could not build the renamed feature type.", e);
+        }
     }
 
     protected SimpleFeatureType buildLinkFeatureType() throws IOException {
@@ -148,8 +160,8 @@ public abstract class AbstractMappingStore implements FeatureStore<FeatureType, 
     protected SortBy[] buildDefaultSort(FeatureType schema) {
         String timeStart = propertyMapper.getSourceName("timeStart");
         String identifier = propertyMapper.getSourceName("identifier");
-        return new SortBy[] {
-            FF.sort(timeStart, SortOrder.DESCENDING), FF.sort(identifier, SortOrder.ASCENDING)
+        return new SortBy[]{
+                FF.sort(timeStart, SortOrder.DESCENDING), FF.sort(identifier, SortOrder.ASCENDING)
         };
     }
 
@@ -325,7 +337,8 @@ public abstract class AbstractMappingStore implements FeatureStore<FeatureType, 
             }
 
             // same for output layer, if necessary
-            if (hasOutputProperty(query, LAYER_PROPERTY_NAME, false)) {
+            if (hasOutputProperty(query, LAYERS_PROPERTY_NAME, false)
+                    || hasOutputProperty(query, LAYERS_PROPERTY_NAME, false)) {
                 Filter filter = FF.equal(FF.property("id"), FF.property("layer.cid"), true);
                 final String layerTable = getCollectionLayerTable();
                 Join join = new Join(layerTable, filter);
@@ -361,7 +374,7 @@ public abstract class AbstractMappingStore implements FeatureStore<FeatureType, 
     }
 
     /**
-     * Name of the table to join in case the {@link OpenSearchAccess#LAYER} property is requested
+     * Name of the table to join in case the {@link OpenSearchAccess#LAYERS} property is requested
      *
      * @return
      */
@@ -418,7 +431,7 @@ public abstract class AbstractMappingStore implements FeatureStore<FeatureType, 
         for (PropertyName pn : query.getProperties()) {
             if (localPart.equals(pn.getPropertyName())
                     && (pn.getNamespaceContext() == null
-                            || namespaceURI.equals(pn.getNamespaceContext().getURI("")))) {
+                    || namespaceURI.equals(pn.getNamespaceContext().getURI("")))) {
                 return true;
             }
         }
@@ -466,28 +479,45 @@ public abstract class AbstractMappingStore implements FeatureStore<FeatureType, 
         mapPropertiesToComplex(builder, fi);
 
         // the OGC links can be more than one
-        Object link = fi.getAttribute("link");
-        while (link instanceof SimpleFeature) {
-            // retype the feature to have the right name
-            SimpleFeature linkFeature =
-                    SimpleFeatureBuilder.retype((SimpleFeature) link, linkFeatureType);
-            builder.append(OGC_LINKS_PROPERTY_NAME, linkFeature);
+        Set<SimpleFeature> links = new LinkedHashSet<>();
+        Set<SimpleFeature> layers = new LinkedHashSet<>();
+        for (; ; ) {
+            Object link = fi.getAttribute("link");
+            Object layer = fi.getAttribute("layer");
 
-            // see if there are more links
+            // handle joined layer if any
+            if (layer instanceof SimpleFeature) {
+                layers.add((SimpleFeature) layer);
+            }
+
+            if (link instanceof SimpleFeature) {
+                links.add((SimpleFeature) link);
+            }
+
             if (it.hasNext()) {
                 SimpleFeature next = it.next();
-                // same feature?
-                if (next.getID().equals(fi.getID())) {
-                    link = next.getAttribute("link");
-                } else {
+                if (!next.getID().equals(fi.getID())) {
                     // moved to the next feature, push it back,
                     // we're done for the current one
                     it.pushBack();
                     break;
+                } else {
+                    fi = next;
                 }
             } else {
                 break;
             }
+        }
+
+        for (SimpleFeature layerFeature : layers) {
+            SimpleFeature retyped = retypeLayerFeature(layerFeature);
+            builder.append(LAYERS_PROPERTY_NAME, retyped);
+        }
+
+        for (SimpleFeature link : links) {
+            SimpleFeature linkFeature =
+                    SimpleFeatureBuilder.retype((SimpleFeature) link, linkFeatureType);
+            builder.append(OGC_LINKS_PROPERTY_NAME, linkFeature);
         }
 
         //
@@ -527,18 +557,6 @@ public abstract class AbstractMappingStore implements FeatureStore<FeatureType, 
             ab.setDescriptor((AttributeDescriptor) schema.getDescriptor(METADATA_PROPERTY_NAME));
             Attribute attribute = ab.buildSimple(null, metadataFeature.getAttribute("metadata"));
             builder.append(METADATA_PROPERTY_NAME, attribute);
-        }
-
-        // handle joined layer if any
-        Object layerValue = fi.getAttribute(OpenSearchAccess.LAYER);
-        if (layerValue instanceof SimpleFeature) {
-            SimpleFeature layerFeature = (SimpleFeature) layerValue;
-            SimpleFeature retyped = retypeLayerFeature(layerFeature);
-
-            ab.setDescriptor((AttributeDescriptor) schema.getDescriptor(LAYER_PROPERTY_NAME));
-            final Collection<Property> properties = retyped.getProperties();
-            Attribute attribute = ab.buildSimple(retyped.getID(), properties);
-            builder.append(LAYER_PROPERTY_NAME, attribute);
         }
     }
 
@@ -693,7 +711,7 @@ public abstract class AbstractMappingStore implements FeatureStore<FeatureType, 
     @Override
     public void modifyFeatures(Name attributeName, Object attributeValue, Filter filter)
             throws IOException {
-        modifyFeatures(new Name[] {attributeName}, new Object[] {attributeValue}, filter);
+        modifyFeatures(new Name[]{attributeName}, new Object[]{attributeValue}, filter);
     }
 
     @Override
@@ -754,13 +772,13 @@ public abstract class AbstractMappingStore implements FeatureStore<FeatureType, 
                 // this one done
                 continue;
             }
-            if (LAYER_PROPERTY_NAME.equals(name)) {
+            if (LAYERS_PROPERTY_NAME.equals(name)) {
                 final String tableName = getCollectionLayerTable();
                 modifySecondaryTable(
                         mappedFilter,
                         value,
                         tableName,
-                        id -> FF.id(FF.featureId(tableName + "." + id)),
+                        id -> FF.equal(FF.property("cid"), FF.literal(id), false),
                         (id, secondaryStore) -> {
                             SimpleFeatureBuilder fb =
                                     new SimpleFeatureBuilder(secondaryStore.getSchema());
@@ -769,7 +787,7 @@ public abstract class AbstractMappingStore implements FeatureStore<FeatureType, 
                                 String attributeName = p.getName().getLocalPart();
                                 Object attributeValue = p.getValue();
                                 if (("bands".equals(attributeName)
-                                                || "browseBands".equals(attributeName))
+                                        || "browseBands".equals(attributeName))
                                         && attributeValue instanceof String[]) {
                                     final String[] array = (String[]) attributeValue;
                                     attributeValue =
@@ -778,9 +796,9 @@ public abstract class AbstractMappingStore implements FeatureStore<FeatureType, 
                                 fb.set(attributeName, attributeValue);
                             }
                             fb.set("cid", id);
-                            SimpleFeature thumbnailFeature = fb.buildFeature(tableName + "." + id);
-                            thumbnailFeature.getUserData().put(Hints.USE_PROVIDED_FID, true);
-                            return DataUtilities.collection(thumbnailFeature);
+                            SimpleFeature layerFeature = fb.buildFeature(tableName + "." + id);
+                            layerFeature.getUserData().put(Hints.USE_PROVIDED_FID, true);
+                            return DataUtilities.collection(layerFeature);
                         });
 
                 // this one done
@@ -855,7 +873,8 @@ public abstract class AbstractMappingStore implements FeatureStore<FeatureType, 
      * Hooks for subclasses that need to track feature modification and deletion. By default it does
      * nothing.
      */
-    protected void featuresModified() {}
+    protected void featuresModified() {
+    }
 
     /**
      * Allows subclasses to handle other attributes mapped in secondary tables
@@ -871,6 +890,19 @@ public abstract class AbstractMappingStore implements FeatureStore<FeatureType, 
         return false;
     }
 
+    /**
+     * Modifies the contents of a secondary table by removing the old values completely and adding
+     * the new mapped values as built by the feature build
+     *
+     * @param mainTypeFilter               The filter to locate the main object
+     * @param value                        The value to be mapped and replaced
+     * @param tableName                    The secondary table name
+     * @param secondaryTableFilterSupplier A supplier going from the the main filter to the
+     *                                     secondary table one
+     * @param featureBuilder               Transforms the complex feature value in a feature collection for the
+     *                                     secondary table, it will be inserted in place of the old values
+     * @throws IOException
+     */
     protected void modifySecondaryTable(
             Filter mainTypeFilter,
             Object value,

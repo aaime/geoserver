@@ -43,9 +43,14 @@ public interface OpenSearchAccess extends DataAccess<FeatureType, Feature> {
     public static Name QUICKLOOK_PROPERTY_NAME = new NameImpl(EO_NAMESPACE, "quicklook");
 
     /**
-     * Local part of the optional collection property containing the layer publishing information
+     * Local part of the optional collection property containing the layers publishing information
      */
-    public static String LAYER = "layer";
+    public static String LAYERS = "layers";
+
+    /**
+     * The optional property in collection containing the published layers
+     */
+    public static Name LAYERS_PROPERTY_NAME = new NameImpl(EO_NAMESPACE, LAYERS);
 
     /**
      * Local part of the HTML description property. The namespace is the one assigned to the store,

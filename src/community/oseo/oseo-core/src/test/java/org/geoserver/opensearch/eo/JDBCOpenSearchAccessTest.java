@@ -85,8 +85,6 @@ public class JDBCOpenSearchAccessTest {
 
     private static FilterFactory2 FF = CommonFactoryFinder.getFilterFactory2();
 
-    static final Name LAYER_NAME = new NameImpl(TEST_NAMESPACE, OpenSearchAccess.LAYER);
-
     public static final ProductClass GS_PRODUCT =
             new ProductClass("geoServer", "gs", "http://www.geoserver.org/eo/test");
 
@@ -452,13 +450,13 @@ public class JDBCOpenSearchAccessTest {
         FeatureType schema = osAccess.getCollectionSource().getSchema();
         Name name = schema.getName();
         assertEquals(TEST_NAMESPACE, name.getNamespaceURI());
-        final PropertyDescriptor layerDescriptor = schema.getDescriptor(LAYER_NAME);
+        final PropertyDescriptor layerDescriptor = schema.getDescriptor(LAYERS_NAME);
         assertNotNull(layerDescriptor);
 
         // read it
         FeatureSource<FeatureType, Feature> source = osAccess.getCollectionSource();
         Query q = new Query();
-        q.setProperties(Arrays.asList(FF.property(LAYER_NAME)));
+        q.setProperties(Arrays.asList(FF.property(LAYERS_NAME)));
         q.setFilter(
                 FF.equal(
                         FF.property(new NameImpl(OpenSearchAccess.EO_NAMESPACE, "identifier")),
@@ -469,7 +467,7 @@ public class JDBCOpenSearchAccessTest {
         // get the collection and check it
         Feature collection = DataUtilities.first(features);
         assertNotNull(collection);
-        Property layerProperty = collection.getProperty(LAYER_NAME);
+        Property layerProperty = collection.getProperty(LAYERS_NAME);
         final Feature layerValue = (Feature) layerProperty;
         assertThat(layerValue, notNullValue());
 
@@ -496,7 +494,7 @@ public class JDBCOpenSearchAccessTest {
         FeatureStore<FeatureType, Feature> store =
                 (FeatureStore<FeatureType, Feature>) osAccess.getCollectionSource();
         Query q = new Query();
-        q.setProperties(Arrays.asList(FF.property(LAYER_NAME)));
+        q.setProperties(Arrays.asList(FF.property(LAYERS_NAME)));
         final PropertyIsEqualTo filter =
                 FF.equal(
                         FF.property(new NameImpl(OpenSearchAccess.EO_NAMESPACE, "identifier")),
@@ -517,7 +515,7 @@ public class JDBCOpenSearchAccessTest {
         setAttribute(layerValue, "mosaicCRS", "EPSG:3857");
 
         // update the feature
-        store.modifyFeatures(new Name[] {LAYER_NAME}, new Object[] {layerValue}, filter);
+        store.modifyFeatures(new Name[] {LAYERS_NAME}, new Object[] {layerValue}, filter);
 
         // read it back and check
         final Feature layerValue2 = getLayerPropertyFromCollection(store.getFeatures(q));
@@ -556,7 +554,7 @@ public class JDBCOpenSearchAccessTest {
         // get the simple feature representing the layer publishing info
         Feature collection = DataUtilities.first(features);
         assertNotNull(collection);
-        Property layerProperty = collection.getProperty(LAYER_NAME);
+        Property layerProperty = collection.getProperty(LAYERS_NAME);
         assertThat(layerProperty, notNullValue());
         final Feature layerValue = (Feature) layerProperty;
         return layerValue;
@@ -568,7 +566,7 @@ public class JDBCOpenSearchAccessTest {
         FeatureStore<FeatureType, Feature> store =
                 (FeatureStore<FeatureType, Feature>) osAccess.getCollectionSource();
         Query q = new Query();
-        q.setProperties(Arrays.asList(FF.property(LAYER_NAME)));
+        q.setProperties(Arrays.asList(FF.property(LAYERS_NAME)));
         final PropertyIsEqualTo filter =
                 FF.equal(
                         FF.property(new NameImpl(OpenSearchAccess.EO_NAMESPACE, "identifier")),
@@ -577,12 +575,12 @@ public class JDBCOpenSearchAccessTest {
         q.setFilter(filter);
 
         // update the feature to remove the layer information
-        store.modifyFeatures(new Name[] {LAYER_NAME}, new Object[] {null}, filter);
+        store.modifyFeatures(new Name[] {OpenSearchAccess.LAYERS_PROPERTY_NAME}, new Object[] {null}, filter);
 
         // read it back and check it's not set
         Feature collection = DataUtilities.first(store.getFeatures(q));
         assertNotNull(collection);
-        Property layerProperty = collection.getProperty(LAYER_NAME);
+        Property layerProperty = collection.getProperty(LAYERS_NAME);
         assertNull(layerProperty);
     }
 }

@@ -5,8 +5,16 @@
 package org.geoserver.opensearch.eo.store;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.geotools.feature.FeatureCollection;
 import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureVisitor;
 import org.opengis.feature.Property;
+import org.opengis.feature.simple.SimpleFeature;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class CollectionLayer {
 
@@ -109,28 +117,31 @@ public class CollectionLayer {
     }
 
     /**
-     * Builds a CollectionLayer bean from the {@link OpenSearchAccess#LAYER} property of a
+     * Builds a CollectionLayer bean from the {@link OpenSearchAccess#LAYERS} property of a
      * Collection feature.
      *
      * @param feature
      * @return The layer, or null if the property was not found
      */
-    public static CollectionLayer buildCollectionLayerFromFeature(Feature feature) {
+    public static List<CollectionLayer> buildCollectionLayersFromFeature(Feature feature) throws IOException {
         // map to a single bean
-        CollectionLayer layer = null;
-        Property p = feature.getProperty(OpenSearchAccess.LAYER);
-        if (p != null && p instanceof Feature) {
-            Feature lf = (Feature) p;
-            layer = new CollectionLayer();
-            layer.setWorkspace((String) getAttribute(lf, "workspace"));
-            layer.setLayer((String) getAttribute(lf, "layer"));
-            layer.setSeparateBands(Boolean.TRUE.equals(getAttribute(lf, "separateBands")));
-            layer.setBands((String[]) getAttribute(lf, "bands"));
-            layer.setBrowseBands((String[]) getAttribute(lf, "browseBands"));
-            layer.setHeterogeneousCRS(Boolean.TRUE.equals(getAttribute(lf, "heterogeneousCRS")));
-            layer.setMosaicCRS((String) getAttribute(lf, "mosaicCRS"));
+        List<CollectionLayer> result = new ArrayList<>();
+        Collection<Property> layers = feature.getProperties(OpenSearchAccess.LAYERS);
+        if (layers != null) {
+            for (Property p : layers) {
+                SimpleFeature lf = (SimpleFeature) p;
+                CollectionLayer layer = new CollectionLayer();
+                layer.setWorkspace((String) getAttribute(lf, "workspace"));
+                layer.setLayer((String) getAttribute(lf, "layer"));
+                layer.setSeparateBands(Boolean.TRUE.equals(getAttribute(lf, "separateBands")));
+                layer.setBands((String[]) getAttribute(lf, "bands"));
+                layer.setBrowseBands((String[]) getAttribute(lf, "browseBands"));
+                layer.setHeterogeneousCRS(Boolean.TRUE.equals(getAttribute(lf, "heterogeneousCRS")));
+                layer.setMosaicCRS((String) getAttribute(lf, "mosaicCRS"));
+                result.add(layer);
+            }
         }
-        return layer;
+        return result;
     }
 
     private static Object getAttribute(Feature sf, String name) {

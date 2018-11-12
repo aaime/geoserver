@@ -176,13 +176,10 @@ public class JDBCOpenSearchAccess implements OpenSearchAccess {
         typeBuilder.add(metadataDescriptor);
 
         // adding the layer publishing property
-        Name layerPropertyName = new NameImpl(this.namespaceURI, OpenSearchAccess.LAYER);
+        Name layerPropertyName = new NameImpl(this.namespaceURI, OpenSearchAccess.LAYERS);
         AttributeDescriptor layerDescriptor =
-                buildFeatureDescriptor(
-                        layerPropertyName,
-                        buildCollectionLayerFeatureType(layerPropertyName),
-                        0,
-                        1);
+                buildFeatureListDescriptor(
+                        LAYERS_PROPERTY_NAME, delegate.getSchema("collection_ogclink"));
         typeBuilder.add(layerDescriptor);
 
         // map OGC links
@@ -194,25 +191,6 @@ public class JDBCOpenSearchAccess implements OpenSearchAccess {
         typeBuilder.setName(COLLECTION);
         typeBuilder.setNamespaceURI(namespaceURI);
         return typeBuilder.feature();
-    }
-
-    protected SimpleFeatureType buildCollectionLayerFeatureType(Name name) throws IOException {
-        SimpleFeatureType source = getDelegateStore().getSchema("collection_layer");
-        try {
-            SimpleFeatureTypeBuilder b = new SimpleFeatureTypeBuilder();
-            for (AttributeDescriptor ad : source.getAttributeDescriptors()) {
-                if ("bands".equals(ad.getLocalName()) || "browseBands".equals(ad.getLocalName())) {
-                    b.add(ad.getLocalName(), String[].class);
-                } else {
-                    b.add(ad);
-                }
-            }
-
-            b.setName(name);
-            return b.buildFeatureType();
-        } catch (Exception e) {
-            throw new DataSourceException("Could not build the renamed feature type.", e);
-        }
     }
 
     private AttributeDescriptor buildSimpleDescriptor(Name name, Class binding) {
@@ -366,41 +344,49 @@ public class JDBCOpenSearchAccess implements OpenSearchAccess {
 
         getCollectionPublishingConfigurations()
                 .forEach(
-                        (name, layer) -> {
-                            if (layer != null
-                                    && layer.isSeparateBands()
-                                    && layer.getBands() != null
-                                    && layer.getBands().length > 0) {
-                                // one feature type per band needed to setup a coverage view
-                                for (String band : layer.getBands()) {
-                                    names.add(
-                                            new NameImpl(
-                                                    namespaceURI,
-                                                    name
-                                                            + OpenSearchAccess.BAND_LAYER_SEPARATOR
-                                                            + band));
+                        (name, layers) -> {
+                            for (CollectionLayer layer : layers) {
+                                if (layer != null
+                                        && layer.isSeparateBands()
+                                        && layer.getBands() != null
+                                        && layer.getBands().length > 0) {
+                                    // one feature type per band needed to setup a coverage view
+                                    for (String band : layer.getBands()) {
+                                        names.add(
+                                                new NameImpl(
+                                                        namespaceURI,
+                                                        name
+                                                                + OpenSearchAccess.BAND_LAYER_SEPARATOR
+                                                                + band));
+                                    }
+                                } else {
+                                    // a single feature type per
+                                    names.add(new NameImpl(namespaceURI, name));
                                 }
-                            } else {
-                                // a single feature type per
-                                names.add(new NameImpl(namespaceURI, name));
                             }
                         });
         return new ArrayList<>(names);
     }
 
-    private Map<String, CollectionLayer> getCollectionPublishingConfigurations()
+    private Map<String, List<CollectionLayer>> getCollectionPublishingConfigurations()
             throws IOException {
         FeatureSource<FeatureType, Feature> collectionSource = getCollectionSource();
         Query query = new Query(collectionSource.getName().getLocalPart());
-        query.setPropertyNames(new String[] {COLLECTION_NAME, LAYER});
+        query.setPropertyNames(new String[] {COLLECTION_NAME, LAYERS});
         FeatureCollection<FeatureType, Feature> features = collectionSource.getFeatures(query);
-        Map<String, CollectionLayer> result = new LinkedHashMap<>();
+        Map<String, List<CollectionLayer>> result = new LinkedHashMap<>();
         features.accepts(
                 f -> {
                     Property p = f.getProperty(COLLECTION_NAME);
                     String name = (String) p.getValue();
-                    CollectionLayer config = CollectionLayer.buildCollectionLayerFromFeature(f);
-                    result.put(name, config);
+                    List<CollectionLayer> configs = null;
+                    try {
+                        configs = CollectionLayer.buildCollectionLayersFromFeature(f);
+                        result.put(name, configs);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
                 },
                 null);
         return result;
