@@ -787,6 +787,29 @@ public class ClassifierTest extends SLDServiceBaseTest {
     }
 
     @Test
+    public void testQuantileOpenIntervalsSrtm() throws Exception {
+        final String restPath =
+                RestBaseController.ROOT_PATH
+                        + "/sldservice/cite:srtm/"
+                        + getServiceUrl()
+                        + ".xml?"
+                        + "method=quantile&intervals=5&ramp=jet&fullSLD=true&open=true";
+        Document dom = getAsDOM(restPath, 200);
+        RasterSymbolizer rs = getRasterSymbolizer(dom);
+        ColorMap cm = rs.getColorMap();
+        ColorMapEntry[] entries = cm.getColorMapEntries();
+        assertEquals(5, entries.length);
+        // the expected values are from the pixel perfect quantile classification,
+        // the tolerance is added to allow the histogram based classification to
+        // pass the test, while ensuring it's not too far away
+        assertEntry(entries[0], 237, "< 243.820312", "#0000FF", 1, 10);
+        assertEntry(entries[1], 441, ">= 243.820312 AND < 447.5", "#FFFF00", 1, 10);
+        assertEntry(entries[2], 640, ">= 447.5 AND < 644.15625", "#FFAA00", 1, 10);
+        assertEntry(entries[3], 894, ">= 644.15625 AND < 897", "#FF5500", 1, 10);
+        assertEntry(entries[4], Double.MAX_VALUE, ">= 897", "#FF0000", 1);
+    }
+
+    @Test
     public void testQuantileContinuousSrtm() throws Exception {
         final String restPath =
                 RestBaseController.ROOT_PATH
@@ -807,6 +830,31 @@ public class ClassifierTest extends SLDServiceBaseTest {
         assertEntry(entries[2], 536, "538.804688", "#FFAA00", 1, 10);
         assertEntry(entries[3], 825, "826.765625", "#FF5500", 1, 10);
         assertEntry(entries[4], 1796, "1796", "#FF0000", 1);
+    }
+
+    /**
+     * Same as testQuantileContinuousSrtm, but with reversed colormap
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testQuantileContinuousSrtmReverse() throws Exception {
+        final String restPath =
+                RestBaseController.ROOT_PATH
+                        + "/sldservice/cite:srtm/"
+                        + getServiceUrl()
+                        + ".xml?"
+                        + "method=quantile&intervals=5&ramp=jet&fullSLD=true&continuous=true&reverse=true";
+        Document dom = getAsDOM(restPath, 200);
+        RasterSymbolizer rs = getRasterSymbolizer(dom);
+        ColorMap cm = rs.getColorMap();
+        ColorMapEntry[] entries = cm.getColorMapEntries();
+        assertEquals(5, entries.length);
+        assertEntry(entries[0], -2, "-2", "#FF0000", 1);
+        assertEntry(entries[1], 292, "292.984375", "#FF5500", 1, 10);
+        assertEntry(entries[2], 536, "538.804688", "#FFAA00", 1, 10);
+        assertEntry(entries[3], 825, "826.765625", "#FFFF00", 1, 10);
+        assertEntry(entries[4], 1796, "1796", "#0000FF", 1);
     }
 
     @Test
