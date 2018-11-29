@@ -6,6 +6,10 @@ package org.geoserver.sldservice.utils.classifier;
 
 import static java.util.Locale.ENGLISH;
 
+import it.geosolutions.jaiext.classbreaks.ClassBreaksDescriptor;
+import it.geosolutions.jaiext.classbreaks.ClassBreaksRIF;
+import it.geosolutions.jaiext.classbreaks.Classification;
+import it.geosolutions.jaiext.classbreaks.ClassificationMethod;
 import java.awt.*;
 import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
@@ -20,10 +24,6 @@ import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.factory.GeoTools;
 import org.geotools.filter.function.RangedClassifier;
 import org.geotools.image.ImageWorker;
-import org.geotools.process.classify.ClassificationMethod;
-import org.geotools.process.raster.classify.Classification;
-import org.geotools.processing.jai.ClassBreaksDescriptor;
-import org.geotools.processing.jai.ClassBreaksRIF;
 import org.geotools.styling.ColorMap;
 import org.geotools.styling.ColorMapEntry;
 import org.geotools.styling.StyleFactory;
