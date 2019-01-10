@@ -26,8 +26,10 @@ import org.geoserver.catalog.CoverageInfo;
 import org.geoserver.catalog.FeatureTypeInfo;
 import org.geoserver.catalog.StyleInfo;
 import org.geoserver.data.test.MockData;
+import org.geoserver.wms.GetLegendGraphic;
 import org.geoserver.wms.GetLegendGraphicRequest;
 import org.geoserver.wms.GetLegendGraphicRequest.LegendRequest;
+import org.geoserver.wms.WMS;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.factory.CommonFactoryFinder;
@@ -48,6 +50,7 @@ import org.geotools.styling.Rule;
 import org.geotools.styling.SLDParser;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleFactory;
+import org.junit.Before;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.opengis.coverage.grid.GridCoverage;
@@ -63,8 +66,14 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Gabriel Roldan
  * @version $Id$
  */
-public class AbstractLegendGraphicOutputFormatTest extends BaseLegendTest {
+public class BufferedImageLegendGraphicOutputFormatTest
+        extends BaseLegendTest<BufferedImageLegendGraphicBuilder> {
+    @Before
+    public void setLegendProducer() throws Exception {
+        this.legendProducer = new BufferedImageLegendGraphicBuilder();
 
+        service = new GetLegendGraphic(getWMS());
+    }
     /**
      * Tests that a legend is produced for the explicitly specified rule, when the FeatureTypeStyle
      * has more than one rule, and one of them is requested by the RULE parameter.
@@ -213,7 +222,7 @@ public class AbstractLegendGraphicOutputFormatTest extends BaseLegendTest {
         assertNotBlank("testMultipleLayers", image, LegendUtils.DEFAULT_BG_COLOR);
         int height = image.getHeight();
 
-        LegendRequest legend = req.new LegendRequest(ftInfo.getFeatureType());
+        LegendRequest legend = req.new LegendRequest(ftInfo.getFeatureType(), req.getWms());
         legend.setStyle(
                 getCatalog().getStyleByName(MockData.ROAD_SEGMENTS.getLocalPart()).getStyle());
         req.getLegends().add(legend);
@@ -276,7 +285,7 @@ public class AbstractLegendGraphicOutputFormatTest extends BaseLegendTest {
         assertNotBlank("testMultipleLayers", image, LegendUtils.DEFAULT_BG_COLOR);
         int height = image.getHeight();
 
-        LegendRequest legend = req.new LegendRequest(ftInfo.getFeatureType());
+        LegendRequest legend = req.new LegendRequest(ftInfo.getFeatureType(), WMS.get());
         legend.setStyle(cat.getStyleByName(MockData.ROAD_SEGMENTS.getLocalPart()).getStyle());
         req.getLegends().add(legend);
 
@@ -552,15 +561,10 @@ public class AbstractLegendGraphicOutputFormatTest extends BaseLegendTest {
         builder.add(new GeometryDescriptorImpl(gt, new NameImpl("GEOMETRY"), 0, 1, false, null));
 
         FeatureType fType = builder.buildFeatureType();
-        List<FeatureType> layers = new ArrayList<FeatureType>();
-        layers.add(fType);
 
-        req.setLayers(layers);
+        req.setLayer(fType);
 
-        List<Style> styles = new ArrayList<Style>();
-        req.setStyles(styles);
-
-        styles.add(readSLD("MixedGeometry.sld"));
+        req.setStyle(readSLD("MixedGeometry.sld"));
 
         this.legendProducer.buildLegendGraphic(req);
 
@@ -636,7 +640,7 @@ public class AbstractLegendGraphicOutputFormatTest extends BaseLegendTest {
     /** Tests that symbols relative sizes are proportional. */
     @org.junit.Test
     public void testProportionalSymbolSize() throws Exception {
-        GetLegendGraphicRequest req = new GetLegendGraphicRequest();
+        GetLegendGraphicRequest req = new GetLegendGraphicRequest(null);
 
         FeatureTypeInfo ftInfo =
                 getCatalog()
@@ -677,7 +681,8 @@ public class AbstractLegendGraphicOutputFormatTest extends BaseLegendTest {
     /** Tests that symbols relative sizes are proportional. */
     @org.junit.Test
     public void testProportionalSymbolThickBorder() throws Exception {
-        GetLegendGraphicRequest req = new GetLegendGraphicRequest();
+        GetLegendGraphicRequest req = new GetLegendGraphicRequest(null);
+        ;
 
         FeatureTypeInfo ftInfo =
                 getCatalog()
@@ -707,7 +712,8 @@ public class AbstractLegendGraphicOutputFormatTest extends BaseLegendTest {
     /** Tests that symbols relative sizes are proportional. */
     @org.junit.Test
     public void testProportionalSymbolsLine() throws Exception {
-        GetLegendGraphicRequest req = new GetLegendGraphicRequest();
+        GetLegendGraphicRequest req = new GetLegendGraphicRequest(null);
+        ;
 
         FeatureTypeInfo ftInfo =
                 getCatalog()
@@ -736,7 +742,8 @@ public class AbstractLegendGraphicOutputFormatTest extends BaseLegendTest {
     /** Tests that symbols relative sizes are proportional also if using uoms. */
     @org.junit.Test
     public void testProportionalSymbolSizeUOM() throws Exception {
-        GetLegendGraphicRequest req = new GetLegendGraphicRequest();
+        GetLegendGraphicRequest req = new GetLegendGraphicRequest(null);
+        ;
 
         FeatureTypeInfo ftInfo =
                 getCatalog()
@@ -780,7 +787,8 @@ public class AbstractLegendGraphicOutputFormatTest extends BaseLegendTest {
      */
     @org.junit.Test
     public void testProportionalSymbolSizePartialUOM() throws Exception {
-        GetLegendGraphicRequest req = new GetLegendGraphicRequest();
+        GetLegendGraphicRequest req = new GetLegendGraphicRequest(null);
+        ;
 
         req.setScale(RendererUtilities.calculatePixelsPerMeterRatio(10, Collections.EMPTY_MAP));
 
@@ -811,7 +819,8 @@ public class AbstractLegendGraphicOutputFormatTest extends BaseLegendTest {
     /** Tests that minSymbolSize legend option is respected. */
     @org.junit.Test
     public void testMinSymbolSize() throws Exception {
-        GetLegendGraphicRequest req = new GetLegendGraphicRequest();
+        GetLegendGraphicRequest req = new GetLegendGraphicRequest(null);
+        ;
 
         FeatureTypeInfo ftInfo =
                 getCatalog()
@@ -844,7 +853,8 @@ public class AbstractLegendGraphicOutputFormatTest extends BaseLegendTest {
     /** Tests that minSymbolSize legend option is respected. */
     @org.junit.Test
     public void testInternationalizedLabels() throws Exception {
-        GetLegendGraphicRequest req = new GetLegendGraphicRequest();
+        GetLegendGraphicRequest req = new GetLegendGraphicRequest(null);
+        ;
 
         Map<String, String> options = new HashMap<String, String>();
         options.put("forceLabels", "on");
@@ -861,19 +871,20 @@ public class AbstractLegendGraphicOutputFormatTest extends BaseLegendTest {
 
         BufferedImage image = this.legendProducer.buildLegendGraphic(req);
         int noLocalizedWidth = image.getWidth();
-
+        // ImageIO.write(image, "PNG", new File("/tmp/default.png"));
         req.setLocale(Locale.ITALIAN);
         image = this.legendProducer.buildLegendGraphic(req);
         // test that using localized labels we get a different label than when not using it
         int itWidth = image.getWidth();
         assertTrue(itWidth != noLocalizedWidth);
-
+        // ImageIO.write(image, "PNG", new File("/tmp/it.png"));
         req.setLocale(Locale.ENGLISH);
         image = this.legendProducer.buildLegendGraphic(req);
         // test that using localized labels we get a different label than when not using it
         int enWidth = image.getWidth();
         assertTrue(enWidth != noLocalizedWidth);
         assertTrue(enWidth != itWidth);
+        // ImageIO.write(image, "PNG", new File("/tmp/en.png"));
     }
 
     /**
@@ -885,7 +896,8 @@ public class AbstractLegendGraphicOutputFormatTest extends BaseLegendTest {
 
         Style transformStyle = readSLD("RenderingTransformRasterVector.sld");
 
-        GetLegendGraphicRequest req = new GetLegendGraphicRequest();
+        GetLegendGraphicRequest req = new GetLegendGraphicRequest(null);
+        ;
         CoverageInfo cInfo =
                 getCatalog()
                         .getCoverageByName(
@@ -962,7 +974,8 @@ public class AbstractLegendGraphicOutputFormatTest extends BaseLegendTest {
         double opacity = LegendUtils.getOpacity(entries[2]);
         assertEquals(0.5, opacity, 0.0);
 
-        GetLegendGraphicRequest req = new GetLegendGraphicRequest();
+        GetLegendGraphicRequest req = new GetLegendGraphicRequest(null);
+        ;
         CoverageInfo cInfo = getCatalog().getCoverageByName("world");
         assertNotNull(cInfo);
 
@@ -1007,7 +1020,8 @@ public class AbstractLegendGraphicOutputFormatTest extends BaseLegendTest {
 
         Style transformStyle = readSLD("RenderingTransformVectorRaster.sld");
 
-        GetLegendGraphicRequest req = new GetLegendGraphicRequest();
+        GetLegendGraphicRequest req = new GetLegendGraphicRequest(null);
+        ;
         FeatureTypeInfo ftInfo =
                 getCatalog()
                         .getFeatureTypeByName(
@@ -1040,7 +1054,8 @@ public class AbstractLegendGraphicOutputFormatTest extends BaseLegendTest {
 
         assertNotNull(externalGraphicStyle);
 
-        GetLegendGraphicRequest req = new GetLegendGraphicRequest();
+        GetLegendGraphicRequest req = new GetLegendGraphicRequest(null);
+        ;
         CoverageInfo cInfo = getCatalog().getCoverageByName("world");
         assertNotNull(cInfo);
 
@@ -1076,7 +1091,8 @@ public class AbstractLegendGraphicOutputFormatTest extends BaseLegendTest {
     /** Tests labelMargin legend option */
     @org.junit.Test
     public void testLabelMargin() throws Exception {
-        GetLegendGraphicRequest req = new GetLegendGraphicRequest();
+        GetLegendGraphicRequest req = new GetLegendGraphicRequest(null);
+        ;
 
         FeatureTypeInfo ftInfo =
                 getCatalog()
@@ -1130,7 +1146,8 @@ public class AbstractLegendGraphicOutputFormatTest extends BaseLegendTest {
         assertNotNull(symbolizer.getColorMap());
         assertEquals(3, symbolizer.getColorMap().getColorMapEntries().length);
 
-        GetLegendGraphicRequest req = new GetLegendGraphicRequest();
+        GetLegendGraphicRequest req = new GetLegendGraphicRequest(null);
+        ;
         CoverageInfo cInfo = getCatalog().getCoverageByName("world");
         assertNotNull(cInfo);
 
@@ -1170,7 +1187,8 @@ public class AbstractLegendGraphicOutputFormatTest extends BaseLegendTest {
     /** Tests that symbols relative sizes are proportional. */
     @org.junit.Test
     public void testThickPolygonBorder() throws Exception {
-        GetLegendGraphicRequest req = new GetLegendGraphicRequest();
+        GetLegendGraphicRequest req = new GetLegendGraphicRequest(null);
+        ;
         req.setWidth(20);
         req.setHeight(20);
 
@@ -1201,7 +1219,8 @@ public class AbstractLegendGraphicOutputFormatTest extends BaseLegendTest {
     /** Tests that symbols relative sizes are proportional. */
     @org.junit.Test
     public void testThickPolygonAsymmetricSymbol() throws Exception {
-        GetLegendGraphicRequest req = new GetLegendGraphicRequest();
+        GetLegendGraphicRequest req = new GetLegendGraphicRequest(null);
+        ;
         req.setWidth(40);
         req.setHeight(20);
 
@@ -1232,7 +1251,8 @@ public class AbstractLegendGraphicOutputFormatTest extends BaseLegendTest {
     /** Tests that symbols relative sizes are proportional. */
     @org.junit.Test
     public void testLargeCirclePlacement() throws Exception {
-        GetLegendGraphicRequest req = new GetLegendGraphicRequest();
+        GetLegendGraphicRequest req = new GetLegendGraphicRequest(null);
+        ;
         req.setWidth(48);
         req.setHeight(25);
 
@@ -1267,7 +1287,8 @@ public class AbstractLegendGraphicOutputFormatTest extends BaseLegendTest {
     /** Tests that symbols relative sizes are proportional. */
     @org.junit.Test
     public void testSimpleLine() throws Exception {
-        GetLegendGraphicRequest req = new GetLegendGraphicRequest();
+        GetLegendGraphicRequest req = new GetLegendGraphicRequest(null);
+        ;
         req.setWidth(20);
         req.setHeight(20);
 
