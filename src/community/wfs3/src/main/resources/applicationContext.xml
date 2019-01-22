@@ -30,6 +30,11 @@
         <value>tilingSchemes</value>
         <value>describeTilingScheme</value>
         <value>getTile</value>
+        <value>getStyles</value>
+        <value>postStyles</value>
+        <value>getStyle</value>
+        <value>putStyle</value>
+        <value>deleteStyle</value>
       </list>
     </constructor-arg>
     <property name="customCapabilitiesLink" value="../wfs3/"/>
@@ -97,6 +102,8 @@
   </bean>
   <bean id="tilingSchemesKvpRequestReader" class="org.geoserver.wfs3.kvp.TilingSchemesKVPReader"/>
   <bean id="tilingSchemeDetailKvpRequestReader" class="org.geoserver.wfs3.kvp.TilingSchemeDetailKVPReader"/>
+  <bean id="stylesKvpRequestReader" class="org.geoserver.wfs3.kvp.StylesRequestKVPReader"/>
+  <bean id="styleKvpRequestReader" class="org.geoserver.wfs3.kvp.StyleRequestKVPReader"/>
   
   <!-- response generation -->
   <bean id="openAPIResponse" class="org.geoserver.wfs3.response.OpenAPIResponse">
@@ -153,6 +160,12 @@
   </bean>
   <bean id="tilingSchemeDetailResponse" class="org.geoserver.wfs3.response.TilingSchemeDetailResponse">
     <constructor-arg ref="geoServer"/>
+  </bean>
+  <bean id="stylesDocumentResponse" class="org.geoserver.wfs3.response.StylesDocumentResponse">
+    <constructor-arg ref="geoServer"/>
+  </bean>
+  <bean id="styleDocumentResponse" class="org.geoserver.wfs3.response.StyleDocumentResponse">
+      <constructor-arg ref="catalog"/>
   </bean>
 
   <!-- Hack to map WFS3 requests parameters to OGC KVP lookalikes -->

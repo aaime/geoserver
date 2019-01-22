@@ -70,7 +70,7 @@ public class WFS3TestSupport extends GeoServerSystemTestSupport {
     }
 
     @Override
-    protected void onSetUp(SystemTestData testData) {
+    protected void onSetUp(SystemTestData testData) throws Exception {
         // init xmlunit
         Map<String, String> namespaces = new HashMap<>();
         namespaces.put("wfs", "http://www.opengis.net/wfs/3.0");

@@ -4,27 +4,28 @@
  */
 package org.geoserver.wfs3;
 
+import static org.geoserver.ows.URLMangler.URLType.SERVICE;
 import static org.geoserver.wfs3.response.ConformanceDocument.CORE;
 import static org.geoserver.wfs3.response.ConformanceDocument.GEOJSON;
 import static org.geoserver.wfs3.response.ConformanceDocument.GMLSF0;
 import static org.geoserver.wfs3.response.ConformanceDocument.OAS30;
 
-import io.swagger.v3.oas.models.OpenAPI;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Logger;
-import javax.xml.namespace.QName;
+import org.apache.commons.io.IOUtils;
 import org.geoserver.catalog.Catalog;
 import org.geoserver.catalog.FeatureTypeInfo;
+import org.geoserver.catalog.LayerInfo;
 import org.geoserver.catalog.NamespaceInfo;
+import org.geoserver.catalog.SLDHandler;
+import org.geoserver.catalog.StyleHandler;
+import org.geoserver.catalog.StyleInfo;
+import org.geoserver.catalog.Styles;
+import org.geoserver.catalog.WorkspaceInfo;
 import org.geoserver.config.GeoServer;
+import org.geoserver.config.GeoServerDataDirectory;
+import org.geoserver.ows.HttpErrorCodeException;
+import org.geoserver.ows.LocalWorkspace;
 import org.geoserver.ows.Response;
+import org.geoserver.ows.util.ResponseUtils;
 import org.geoserver.platform.GeoServerExtensions;
 import org.geoserver.platform.ServiceException;
 import org.geoserver.wfs.StoredQueryProvider;
@@ -37,19 +38,47 @@ import org.geoserver.wfs3.response.CollectionDocument;
 import org.geoserver.wfs3.response.CollectionsDocument;
 import org.geoserver.wfs3.response.ConformanceDocument;
 import org.geoserver.wfs3.response.LandingPageDocument;
+import org.geoserver.wfs3.response.Link;
+import org.geoserver.wfs3.response.StyleDocument;
+import org.geoserver.wfs3.response.StylesDocument;
 import org.geoserver.wfs3.response.TilingSchemeDescriptionDocument;
 import org.geoserver.wfs3.response.TilingSchemesDocument;
+import org.geotools.styling.Style;
+import org.geotools.styling.StyledLayerDescriptor;
 import org.geotools.util.logging.Logging;
 import org.geowebcache.config.DefaultGridsets;
 import org.opengis.filter.FilterFactory2;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Logger;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.xml.namespace.QName;
+
+import io.swagger.v3.oas.models.OpenAPI;
 
 /** WFS 3.0 implementation */
 public class DefaultWebFeatureService30 implements WebFeatureService30, ApplicationContextAware {
 
     private static final Logger LOGGER = Logging.getLogger(DefaultWebFeatureService30.class);
+    private final GeoServerDataDirectory dataDirectory;
     private FilterFactory2 filterFactory;
     private final GeoServer geoServer;
     private WebFeatureService20 wfs20;
@@ -65,6 +94,7 @@ public class DefaultWebFeatureService30 implements WebFeatureService30, Applicat
         this.geoServer = geoServer;
         this.wfs20 = wfs20;
         this.gridSets = gridSets;
+        this.dataDirectory = new GeoServerDataDirectory(geoServer.getCatalog().getResourceLoader());
     }
 
     public FilterFactory2 getFilterFactory() {
@@ -207,5 +237,163 @@ public class DefaultWebFeatureService30 implements WebFeatureService30, Applicat
 
     public void setApplicationContext(ApplicationContext context) throws BeansException {
         extensions = GeoServerExtensions.extensions(WFS3Extension.class, context);
+    }
+
+    @Override
+    public void postStyles(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        final String mimeType = request.getContentType();
+
+        final StyleHandler handler = Styles.handler(mimeType);
+        if (handler == null) {
+            throw new HttpErrorCodeException(
+                    HttpStatus.UNSUPPORTED_MEDIA_TYPE.value(),
+                    "Cannot handle a style of type " + mimeType);
+        }
+
+        final String styleBody = IOUtils.toString(request.getReader());
+        final Catalog catalog = getCatalog();
+        final StyledLayerDescriptor sld =
+                handler.parse(
+                        styleBody,
+                        handler.versionForMimeType(mimeType),
+                        dataDirectory.getResourceLocator(),
+                        catalog.getResourcePool().getEntityResolver());
+        String name = getStyleName(sld);
+        if (name == null) {
+            throw new HttpErrorCodeException(
+                    HttpStatus.BAD_REQUEST.value(), "Style does not have a name!");
+        }
+
+        final WorkspaceInfo wsInfo = LocalWorkspace.get();
+        if (catalog.getStyleByName(wsInfo, name) != null) {
+            throw new HttpErrorCodeException(
+                    HttpStatus.BAD_REQUEST.value(), "Style already exists!");
+        }
+
+        StyleInfo sinfo = catalog.getFactory().createStyle();
+        sinfo.setName(name);
+        sinfo.setFilename(name + "." + handler.getFileExtension());
+        sinfo.setFormat(handler.getFormat());
+        sinfo.setFormatVersion(handler.versionForMimeType(mimeType));
+        if (wsInfo != null) {
+            sinfo.setWorkspace(wsInfo);
+        }
+
+        try {
+            catalog.getResourcePool()
+                    .writeStyle(sinfo, new ByteArrayInputStream(styleBody.getBytes()));
+        } catch (Exception e) {
+            throw new HttpErrorCodeException(
+                    HttpStatus.INTERNAL_SERVER_ERROR.value(), "Error writing style");
+        }
+
+        catalog.add(sinfo);
+
+        // build and return the new path
+        ResponseUtils.appendPath(request.getContextPath());
+        final String baseURL = ResponseUtils.baseURL(request);
+        final String url =
+                ResponseUtils.buildURL(
+                        // URLType.SERVICE is important here, otherwise no ws localization
+                        baseURL, "wfs3/styles/" + name, null, SERVICE);
+        response.setStatus(HttpStatus.CREATED.value());
+        response.addHeader(HttpHeaders.LOCATION, url);
+    }
+
+    public String getStyleName(StyledLayerDescriptor sld) {
+        String name = sld.getName();
+        if (name == null) {
+            Style style = Styles.style(sld);
+            name = style.getName();
+        }
+        return name;
+    }
+
+    @Override
+    public StylesDocument getStyles(StylesRequest request) throws IOException {
+        List<StyleDocument> styles = new ArrayList<>();
+
+        // return only styles that are not associated to a layer, those will show up
+        // in the layer association instead
+        final Set<StyleInfo> blacklist = getLayerAssociatedStyles();
+        addBuiltInStyles(blacklist);
+        for (StyleInfo style : getCatalog().getStyles()) {
+            if (blacklist.contains(style)) {
+                continue;
+            }
+            StyleDocument sd = StyleDocument.build(style);
+            String styleFormat = style.getFormat();
+            if (styleFormat == null) {
+                styleFormat = "SLD";
+            }
+            // canonicalize
+            styleFormat = Styles.handler(styleFormat).mimeType(null);
+            // add link for native format
+            sd.addLink(buildLink(request, sd, styleFormat));
+            if (!SLDHandler.MIMETYPE_10.equalsIgnoreCase(styleFormat)) {
+                // add link for SLD 1.0 translation
+                sd.addLink(buildLink(request, sd, SLDHandler.MIMETYPE_10));
+            }
+
+            styles.add(sd);
+        }
+
+        return new StylesDocument(styles);
+    }
+
+    public void addBuiltInStyles(Set<StyleInfo> blacklist) {
+        accumulateStyle(blacklist, getCatalog().getStyleByName(StyleInfo.DEFAULT_POINT));
+        accumulateStyle(blacklist, getCatalog().getStyleByName(StyleInfo.DEFAULT_LINE));
+        accumulateStyle(blacklist, getCatalog().getStyleByName(StyleInfo.DEFAULT_POLYGON));
+        accumulateStyle(blacklist, getCatalog().getStyleByName(StyleInfo.DEFAULT_GENERIC));
+        accumulateStyle(blacklist, getCatalog().getStyleByName(StyleInfo.DEFAULT_RASTER));
+    }
+
+    public Link buildLink(StylesRequest request, StyleDocument sd, String styleFormat) {
+        String href =
+                ResponseUtils.buildURL(
+                        request.getBaseUrl(),
+                        "wfs3/styles/" + sd.getId(),
+                        Collections.singletonMap("f", styleFormat),
+                        SERVICE);
+        return new Link(href, "style", styleFormat, null);
+    }
+
+    /**
+     * Returns a list of styles that are not associated with any layer
+     *
+     * @return
+     */
+    private Set<StyleInfo> getLayerAssociatedStyles() {
+        Set<StyleInfo> result = new HashSet<>();
+        for (LayerInfo layer : getCatalog().getLayers()) {
+            accumulateStyle(result, layer.getDefaultStyle());
+            if (layer.getStyles() != null) {
+                for (StyleInfo style : layer.getStyles()) {
+                    accumulateStyle(result, style);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private void accumulateStyle(Set<StyleInfo> result, StyleInfo style) {
+        if (style != null) {
+            result.add(style);
+        }
+    }
+
+    @Override
+    public StyleInfo getStyle(StyleRequest request) throws IOException {
+        final StyleInfo style = getCatalog().getStyleByName(request.getStyleName());
+        if (style == null) {
+            throw new HttpErrorCodeException(
+                    HttpStatus.NOT_FOUND.value(),
+                    "Style " + request.getStyleName() + " could not be found");
+        }
+        
+        return style;
     }
 }
