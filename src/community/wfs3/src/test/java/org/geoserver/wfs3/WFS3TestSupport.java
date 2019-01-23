@@ -4,8 +4,6 @@
  */
 package org.geoserver.wfs3;
 
-import static org.hamcrest.CoreMatchers.anyOf;
-import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -26,7 +24,6 @@ import org.custommonkey.xmlunit.XMLUnit;
 import org.geoserver.data.test.CiteTestData;
 import org.geoserver.data.test.SystemTestData;
 import org.geoserver.test.GeoServerSystemTestSupport;
-import org.hamcrest.Matchers;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -53,8 +50,7 @@ public class WFS3TestSupport extends GeoServerSystemTestSupport {
 
     protected DocumentContext getAsJSONPath(MockHttpServletResponse response)
             throws UnsupportedEncodingException {
-        assertThat(
-                response.getContentType(), containsString("json"));
+        assertThat(response.getContentType(), containsString("json"));
         JsonContext json = (JsonContext) JsonPath.parse(response.getContentAsString());
         if (!isQuietTests()) {
             print(json(response));

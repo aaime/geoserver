@@ -18,7 +18,6 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 import org.apache.commons.io.IOUtils;
-import org.custommonkey.xmlunit.XMLAssert;
 import org.geoserver.catalog.Catalog;
 import org.geoserver.catalog.SLDHandler;
 import org.geoserver.catalog.StyleInfo;
@@ -28,15 +27,11 @@ import org.geoserver.data.test.SystemTestData;
 import org.geotools.styling.Mark;
 import org.geotools.styling.PointSymbolizer;
 import org.geotools.styling.Style;
-import org.geotools.styling.StyleFactoryImpl;
-import org.geotools.xml.styling.SLDParser;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.w3c.dom.Document;
-
-import javax.xml.transform.dom.DOMSource;
 
 public class StyleTest extends WFS3TestSupport {
 
@@ -49,9 +44,11 @@ public class StyleTest extends WFS3TestSupport {
     @Before
     public void cleanNewStyles() {
         final Catalog catalog = getCatalog();
-        Optional.ofNullable(catalog.getStyleByName("simplePoint")).ifPresent(s -> catalog.remove(s));
+        Optional.ofNullable(catalog.getStyleByName("simplePoint"))
+                .ifPresent(s -> catalog.remove(s));
         Optional.ofNullable(catalog.getStyleByName("testPoint")).ifPresent(s -> catalog.remove(s));
         Optional.ofNullable(catalog.getStyleByName("circles")).ifPresent(s -> catalog.remove(s));
+        Optional.ofNullable(catalog.getStyleByName("cssline")).ifPresent(s -> catalog.remove(s));
     }
 
     @Test
@@ -77,7 +74,10 @@ public class StyleTest extends WFS3TestSupport {
         assertXpathEvaluatesTo("SLD Cook Book: Dashed line", "//sld:UserStyle/sld:Title", dom);
         assertXpathEvaluatesTo("1", "count(//sld:Rule)", dom);
         assertXpathEvaluatesTo("1", "count(//sld:LineSymbolizer)", dom);
-        assertXpathEvaluatesTo("5.0 2.0", "//sld:LineSymbolizer/sld:Stroke/sld:CssParameter[@name='stroke-dasharray']", dom);
+        assertXpathEvaluatesTo(
+                "5 2",
+                "//sld:LineSymbolizer/sld:Stroke/sld:CssParameter[@name='stroke-dasharray']",
+                dom);
     }
 
     @Test
@@ -194,14 +194,14 @@ public class StyleTest extends WFS3TestSupport {
         assertEquals(
                 "http://localhost:8080/geoserver/wfs3/styles/circles?f=application%2Fvnd.ogc.sld%2Bxml",
                 doc.read(
-                        "styles[?(@.id=='circles')].links[?(@.rel=='style' && @.type=='application/vnd.ogc.sld+xml')].href",
-                        List.class)
+                                "styles[?(@.id=='circles')].links[?(@.rel=='style' && @.type=='application/vnd.ogc.sld+xml')].href",
+                                List.class)
                         .get(0));
         assertEquals(
                 "http://localhost:8080/geoserver/wfs3/styles/circles?f=application%2Fvnd.geoserver.mbstyle%2Bjson",
                 doc.read(
-                        "styles[?(@.id=='circles')].links[?(@.rel=='style' && @.type=='application/vnd.geoserver.mbstyle+json')].href",
-                        List.class)
+                                "styles[?(@.id=='circles')].links[?(@.rel=='style' && @.type=='application/vnd.geoserver.mbstyle+json')].href",
+                                List.class)
                         .get(0));
 
         // check we can get both styles, first SLD
@@ -210,10 +210,13 @@ public class StyleTest extends WFS3TestSupport {
         assertXpathEvaluatesTo("circles", "//sld:StyledLayerDescriptor/sld:Name", dom);
         assertXpathEvaluatesTo("1", "count(//sld:Rule)", dom);
         assertXpathEvaluatesTo("1", "count(//sld:PointSymbolizer)", dom);
-        assertXpathEvaluatesTo("circle", "//sld:PointSymbolizer/sld:Graphic/sld:Mark/sld:WellKnownName", dom);
+        assertXpathEvaluatesTo(
+                "circle", "//sld:PointSymbolizer/sld:Graphic/sld:Mark/sld:WellKnownName", dom);
 
         // .. then MBStyle
-        DocumentContext mbstyle = getAsJSONPath("wfs3/styles/circles?f=application%2Fvnd.geoserver.mbstyle%2Bjson", 200);
+        DocumentContext mbstyle =
+                getAsJSONPath(
+                        "wfs3/styles/circles?f=application%2Fvnd.geoserver.mbstyle%2Bjson", 200);
         assertEquals("circles", mbstyle.read("$.name"));
     }
 
@@ -237,14 +240,14 @@ public class StyleTest extends WFS3TestSupport {
         assertEquals(
                 "http://localhost:8080/geoserver/wfs3/styles/cssline?f=application%2Fvnd.ogc.sld%2Bxml",
                 doc.read(
-                        "styles[?(@.id=='cssline')].links[?(@.rel=='style' && @.type=='application/vnd.ogc.sld+xml')].href",
-                        List.class)
+                                "styles[?(@.id=='cssline')].links[?(@.rel=='style' && @.type=='application/vnd.ogc.sld+xml')].href",
+                                List.class)
                         .get(0));
         assertEquals(
                 "http://localhost:8080/geoserver/wfs3/styles/cssline?f=application%2Fvnd.geoserver.geocss%2Bcss",
                 doc.read(
-                        "styles[?(@.id=='cssline')].links[?(@.rel=='style' && @.type=='application/vnd.geoserver.geocss+css')].href",
-                        List.class)
+                                "styles[?(@.id=='cssline')].links[?(@.rel=='style' && @.type=='application/vnd.geoserver.geocss+css')].href",
+                                List.class)
                         .get(0));
 
         // check we can get both styles, first SLD
@@ -253,14 +256,16 @@ public class StyleTest extends WFS3TestSupport {
         assertXpathEvaluatesTo("cssline", "//sld:StyledLayerDescriptor/sld:Name", dom);
         assertXpathEvaluatesTo("1", "count(//sld:Rule)", dom);
         assertXpathEvaluatesTo("1", "count(//sld:LineSymbolizer)", dom);
-        assertXpathEvaluatesTo("3", "//sld:LineSymbolizer/sld:Stroke/sld:CssParameter[@name='stroke-width']", dom);
+        assertXpathEvaluatesTo(
+                "3", "//sld:LineSymbolizer/sld:Stroke/sld:CssParameter[@name='stroke-width']", dom);
 
         // .. then CSS
-        response = getAsServletResponse("wfs3/styles/cssline?f=application%2Fvnd.geoserver.geocss%2Bcss");
+        response =
+                getAsServletResponse(
+                        "wfs3/styles/cssline?f=application%2Fvnd.geoserver.geocss%2Bcss");
         assertEquals(200, response.getStatus());
-        assertEqualsIgnoreNewLineStyle("* {\n" +
-                "   stroke: black;\n" +
-                "   stroke-width: 3;\n" +
-                "}", response.getContentAsString());
+        assertEqualsIgnoreNewLineStyle(
+                "* {\n" + "   stroke: black;\n" + "   stroke-width: 3;\n" + "}",
+                response.getContentAsString());
     }
 }
