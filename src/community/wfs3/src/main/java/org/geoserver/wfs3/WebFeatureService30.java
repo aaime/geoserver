@@ -89,4 +89,6 @@ public interface WebFeatureService30 {
     void putStyle(
             HttpServletRequest request, HttpServletResponse response, PutStyleRequest putStyle)
             throws IOException;
+
+    void deleteStyle(DeleteStyleRequest request) throws IOException;
 }

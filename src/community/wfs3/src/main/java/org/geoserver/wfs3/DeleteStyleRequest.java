@@ -4,8 +4,8 @@
  */
 package org.geoserver.wfs3;
 
-/** Request for a specific style */
-public class GetStyleRequest extends BaseRequest {
+/** Request to remove a specific style */
+public class DeleteStyleRequest extends BaseRequest {
 
     String styleId;
 

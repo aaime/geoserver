@@ -63,21 +63,24 @@ public class StyleDocumentResponse extends Response {
         StyleInfo style = (StyleInfo) value;
         String requestedFormat = getRequestedFormat(request, style);
 
-        // if no conversion is needed, push out raw style
-        if (Objects.equals(requestedFormat, style.getFormat())) {
-            try (final BufferedReader reader = catalog.getResourcePool().readStyle(style)) {
-                IOUtils.copy(reader, new OutputStreamWriter(output));
-            }
-        }
-
-        // otherwise look up handler and convert if possible
         final StyleHandler handler = Styles.handler(requestedFormat);
-        if (handler == null || !(handler instanceof SLDHandler)) {
+        if (handler == null) {
             throw new HttpErrorCodeException(
                     HttpStatus.BAD_REQUEST.value(), "Cannot encode style in " + requestedFormat);
         }
-        final StyledLayerDescriptor sld = style.getSLD();
-        handler.encode(sld, null, true, output);
+
+        // if no conversion is needed, push out raw style
+        if (Objects.equals(handler.getFormat(), style.getFormat())) {
+            try (final BufferedReader reader = catalog.getResourcePool().readStyle(style)) {
+                OutputStreamWriter writer = new OutputStreamWriter(output);
+                IOUtils.copy(reader, writer);
+                writer.flush();
+            }
+        } else {
+            // otherwise convert if possible
+            final StyledLayerDescriptor sld = style.getSLD();
+            handler.encode(sld, null, true, output);
+        }
     }
 
     public String getRequestedFormat(GetStyleRequest request, StyleInfo style) {

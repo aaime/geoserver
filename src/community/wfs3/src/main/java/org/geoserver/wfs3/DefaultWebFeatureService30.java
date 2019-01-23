@@ -415,7 +415,7 @@ public class DefaultWebFeatureService30 implements WebFeatureService30, Applicat
             sinfo.setName(name);
             sinfo.setFilename(name + "." + handler.getFileExtension());
         }
-        ;
+
         sinfo.setFormat(handler.getFormat());
         sinfo.setFormatVersion(handler.versionForMimeType(mimeType));
         if (wsInfo != null) {
@@ -435,5 +435,17 @@ public class DefaultWebFeatureService30 implements WebFeatureService30, Applicat
         } else {
             catalog.save(sinfo);
         }
+    }
+
+    @Override
+    public void deleteStyle(DeleteStyleRequest request) throws IOException {
+        String name = request.getStyleId();
+        WorkspaceInfo ws = LocalWorkspace.get();
+        StyleInfo sinfo = getCatalog().getStyleByName(ws, name);
+        if (sinfo == null) {
+            throw new HttpErrorCodeException(
+                    HttpStatus.NOT_FOUND.value(), "Could not find style with id: " + name);
+        }
+        getCatalog().remove(sinfo);
     }
 }

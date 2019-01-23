@@ -6,6 +6,7 @@ package org.geoserver.wfs3;
 
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
@@ -25,6 +26,7 @@ import org.custommonkey.xmlunit.XMLUnit;
 import org.geoserver.data.test.CiteTestData;
 import org.geoserver.data.test.SystemTestData;
 import org.geoserver.test.GeoServerSystemTestSupport;
+import org.hamcrest.Matchers;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -52,8 +54,7 @@ public class WFS3TestSupport extends GeoServerSystemTestSupport {
     protected DocumentContext getAsJSONPath(MockHttpServletResponse response)
             throws UnsupportedEncodingException {
         assertThat(
-                response.getContentType(),
-                anyOf(startsWith("application/json"), startsWith("application/geo+json")));
+                response.getContentType(), containsString("json"));
         JsonContext json = (JsonContext) JsonPath.parse(response.getContentAsString());
         if (!isQuietTests()) {
             print(json(response));
@@ -75,6 +76,8 @@ public class WFS3TestSupport extends GeoServerSystemTestSupport {
         Map<String, String> namespaces = new HashMap<>();
         namespaces.put("wfs", "http://www.opengis.net/wfs/3.0");
         namespaces.put("atom", "http://www.w3.org/2005/Atom");
+        namespaces.put("sld", "http://www.opengis.net/sld");
+        namespaces.put("ogc", "http://www.opengis.net/ogc");
 
         CiteTestData.registerNamespaces(namespaces);
 

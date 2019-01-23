@@ -4,8 +4,12 @@
  */
 package org.geoserver.wfs3;
 
+import static org.custommonkey.xmlunit.XMLAssert.assertXpathEvaluatesTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.OK;
 
 import com.jayway.jsonpath.DocumentContext;
 import java.awt.*;
@@ -14,19 +18,24 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 import org.apache.commons.io.IOUtils;
+import org.custommonkey.xmlunit.XMLAssert;
 import org.geoserver.catalog.Catalog;
 import org.geoserver.catalog.SLDHandler;
 import org.geoserver.catalog.StyleInfo;
+import org.geoserver.community.mbstyle.MBStyleHandler;
 import org.geoserver.data.test.SystemTestData;
 import org.geotools.styling.Mark;
 import org.geotools.styling.PointSymbolizer;
 import org.geotools.styling.Style;
+import org.geotools.styling.StyleFactoryImpl;
+import org.geotools.xml.styling.SLDParser;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.w3c.dom.Document;
+
+import javax.xml.transform.dom.DOMSource;
 
 public class StyleTest extends WFS3TestSupport {
 
@@ -39,9 +48,9 @@ public class StyleTest extends WFS3TestSupport {
     @Before
     public void cleanNewStyles() {
         final Catalog catalog = getCatalog();
-        Optional.ofNullable(catalog.getStyleByName("simplePoint"))
-                .ifPresent(s -> catalog.remove(s));
+        Optional.ofNullable(catalog.getStyleByName("simplePoint")).ifPresent(s -> catalog.remove(s));
         Optional.ofNullable(catalog.getStyleByName("testPoint")).ifPresent(s -> catalog.remove(s));
+        Optional.ofNullable(catalog.getStyleByName("circles")).ifPresent(s -> catalog.remove(s));
     }
 
     @Test
@@ -61,10 +70,13 @@ public class StyleTest extends WFS3TestSupport {
     @Test
     public void testGetStyle() throws Exception {
         final MockHttpServletResponse response = getAsServletResponse("wfs3/styles/dashed?f=sld");
-        assertEquals(HttpStatus.OK.value(), response.getStatus());
+        assertEquals(OK.value(), response.getStatus());
         assertEquals(SLDHandler.MIMETYPE_10, response.getContentType());
         final Document dom = dom(response, true);
-        print(dom);
+        assertXpathEvaluatesTo("SLD Cook Book: Dashed line", "//sld:UserStyle/sld:Title", dom);
+        assertXpathEvaluatesTo("1", "count(//sld:Rule)", dom);
+        assertXpathEvaluatesTo("1", "count(//sld:LineSymbolizer)", dom);
+        assertXpathEvaluatesTo("5.0 2.0", "//sld:LineSymbolizer/sld:Stroke/sld:CssParameter[@name='stroke-dasharray']", dom);
     }
 
     @Test
@@ -139,5 +151,68 @@ public class StyleTest extends WFS3TestSupport {
         // check style creation
         final StyleInfo styleInfo = getCatalog().getStyleByName("testPoint");
         checkSimplePoint(styleInfo, Color.BLACK);
+    }
+
+    @Test
+    public void testDeleteNonExistingStyle() throws Exception {
+        MockHttpServletResponse response = deleteAsServletResponse("wfs3/styles/notThere");
+        assertEquals(NOT_FOUND.value(), response.getStatus());
+    }
+
+    @Test
+    public void testDeleteGlobalStyle() throws Exception {
+        // creates "testPoint"
+        testPutSLDStyleGlobal();
+        // remove it
+        MockHttpServletResponse response = deleteAsServletResponse("wfs3/styles/testPoint");
+        assertEquals(OK.value(), response.getStatus());
+
+        assertNull(getCatalog().getStyleByName("simplePoint"));
+    }
+
+    @Test
+    public void testMBStyle() throws Exception {
+        String styleBody = loadStyle("mbcircle.json");
+        // use a name not found in the style body
+        final MockHttpServletResponse response =
+                postAsServletResponse("wfs3/styles", styleBody, MBStyleHandler.MIME_TYPE);
+        assertEquals(201, response.getStatus());
+        assertEquals(
+                "http://localhost:8080/geoserver/wfs3/styles/circles",
+                response.getHeader(HttpHeaders.LOCATION));
+
+        // check style creation
+        final StyleInfo styleInfo = getCatalog().getStyleByName("circles");
+        assertNotNull(styleInfo);
+
+        // verify links for it
+        DocumentContext doc = getAsJSONPath("wfs3/styles", 200);
+        assertEquals(Integer.valueOf(2), doc.read("styles.length()", Integer.class));
+        assertEquals(1, doc.read("styles[?(@.id=='circles')]", List.class).size());
+        assertEquals(2, doc.read("styles[?(@.id=='circles')].links..href", List.class).size());
+        assertEquals(
+                "http://localhost:8080/geoserver/wfs3/styles/circles?f=application%2Fvnd.ogc.sld%2Bxml",
+                doc.read(
+                        "styles[?(@.id=='circles')].links[?(@.rel=='style' && @.type=='application/vnd.ogc.sld+xml')].href",
+                        List.class)
+                        .get(0));
+        assertEquals(
+                "http://localhost:8080/geoserver/wfs3/styles/circles?f=application%2Fvnd.geoserver.mbstyle%2Bjson",
+                doc.read(
+                        "styles[?(@.id=='circles')].links[?(@.rel=='style' && @.type=='application/vnd.geoserver.mbstyle+json')].href",
+                        List.class)
+                        .get(0));
+
+        // check we can get both styles, first SLD
+        Document dom = getAsDOM("wfs3/styles/circles?f=application%2Fvnd.ogc.sld%2Bxml", 200);
+        // print(dom);
+        assertXpathEvaluatesTo("circles", "//sld:StyledLayerDescriptor/sld:Name", dom);
+        assertXpathEvaluatesTo("1", "count(//sld:Rule)", dom);
+        assertXpathEvaluatesTo("1", "count(//sld:PointSymbolizer)", dom);
+        assertXpathEvaluatesTo("circle", "//sld:PointSymbolizer/sld:Graphic/sld:Mark/sld:WellKnownName", dom);
+
+        // .. then MBStyle
+        DocumentContext mbstyle = getAsJSONPath("wfs3/styles/circles?f=application%2Fvnd.geoserver.mbstyle%2Bjson", 200);
+        assertEquals("circles", mbstyle.read("$.name"));
     }
 }

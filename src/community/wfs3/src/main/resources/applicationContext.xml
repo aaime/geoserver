@@ -105,6 +105,7 @@
   <bean id="getStylesKvpRequestReader" class="org.geoserver.wfs3.kvp.GetStylesRequestKVPReader"/>
   <bean id="getStyleKvpRequestReader" class="org.geoserver.wfs3.kvp.GetStyleRequestKVPReader"/>
   <bean id="putStyleKvpRequestReader" class="org.geoserver.wfs3.kvp.PutStyleRequestKVPReader"/>
+  <bean id="deleteStyleKvpRequestReader" class="org.geoserver.wfs3.kvp.DeleteStyleRequestKVPReader"/>
 
   <!-- response generation -->
   <bean id="openAPIResponse" class="org.geoserver.wfs3.response.OpenAPIResponse">
