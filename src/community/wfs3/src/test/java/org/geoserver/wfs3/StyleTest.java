@@ -5,18 +5,24 @@
 package org.geoserver.wfs3;
 
 import static org.custommonkey.xmlunit.XMLAssert.assertXpathEvaluatesTo;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.DocumentContext;
+import io.swagger.v3.core.util.Json;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.PathItem;
+import io.swagger.v3.oas.models.Paths;
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
 import org.apache.commons.io.IOUtils;
 import org.geoserver.catalog.Catalog;
 import org.geoserver.catalog.SLDHandler;
@@ -24,6 +30,7 @@ import org.geoserver.catalog.StyleInfo;
 import org.geoserver.community.css.web.CssHandler;
 import org.geoserver.community.mbstyle.MBStyleHandler;
 import org.geoserver.data.test.SystemTestData;
+import org.geoserver.wfs3.response.OpenAPIResponse;
 import org.geotools.styling.Mark;
 import org.geotools.styling.PointSymbolizer;
 import org.geotools.styling.Style;
@@ -267,5 +274,45 @@ public class StyleTest extends WFS3TestSupport {
         assertEqualsIgnoreNewLineStyle(
                 "* {\n" + "   stroke: black;\n" + "   stroke-width: 3;\n" + "}",
                 response.getContentAsString());
+    }
+
+    @Test
+    public void testApiExtensions() throws Exception {
+        MockHttpServletResponse response = getAsMockHttpServletResponse("wfs3/api", 200);
+        assertEquals(OpenAPIResponse.OPEN_API_MIME, response.getContentType());
+        String json = response.getContentAsString();
+        LOGGER.log(Level.INFO, json);
+
+        ObjectMapper mapper = Json.mapper();
+        OpenAPI api = mapper.readValue(json, OpenAPI.class);
+
+        // check paths
+        Paths paths = api.getPaths();
+
+        // ... global styles
+        PathItem globalStyles = paths.get("/styles");
+        assertNotNull(globalStyles);
+        assertThat(globalStyles.getGet().getOperationId(), equalTo("getStyles"));
+        assertThat(globalStyles.getPost().getOperationId(), equalTo("addStyle"));
+
+        // ... global style
+        PathItem globalStyle = paths.get("/styles/{styleId}");
+        assertNotNull(globalStyle);
+        assertThat(globalStyle.getGet().getOperationId(), equalTo("getStyle"));
+        assertThat(globalStyle.getPut().getOperationId(), equalTo("replaceStyle"));
+        assertThat(globalStyle.getDelete().getOperationId(), equalTo("deleteStyle"));
+
+        // ... collection styles
+        PathItem collectionStyles = paths.get("/collections/{collectionId}/styles");
+        assertNotNull(collectionStyles);
+        assertThat(collectionStyles.getGet().getOperationId(), equalTo("getCollectionStyles"));
+        assertThat(collectionStyles.getPost().getOperationId(), equalTo("addCollectionStyle"));
+
+        // ... collection style
+        PathItem collectionStyle = paths.get("/collections/{collectionId}/styles/{styleId}");
+        assertNotNull(collectionStyle);
+        assertThat(collectionStyle.getGet().getOperationId(), equalTo("getCollectionStyle"));
+        assertThat(collectionStyle.getPut().getOperationId(), equalTo("replaceCollectionStyle"));
+        assertThat(collectionStyle.getDelete().getOperationId(), equalTo("deleteCollectionStyle"));
     }
 }

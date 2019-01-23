@@ -235,5 +235,6 @@
   </bean>
 
   <bean id="vectorTilesExtension" class="org.geoserver.wfs3.VectorTilesExtension"/>
+  <bean id="stylesExtension" class="org.geoserver.wfs3.StylesExtension"/>
 
 </beans>
