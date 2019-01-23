@@ -41,7 +41,6 @@
   </bean>
   <bean id="wfs30ServiceTarget" class="org.geoserver.wfs3.DefaultWebFeatureService30">
     <constructor-arg ref="geoServer"/>
-    <constructor-arg ref="wfsService20"/>
     <constructor-arg ref="wfs3DefaultGridsets" />
     <property name="filterFactory" ref="filterFactory"/>
   </bean>
@@ -97,7 +96,6 @@
   <bean id="getFeatureKvpRequestReader" class="org.geoserver.wfs3.kvp.GetFeatureKvpRequestReader">
     <constructor-arg index="0" ref="geoServer"/>
     <constructor-arg index="1" ref="filterFactory"/>
-    <constructor-arg index="2" ref="wfs3DefaultGridsets"/>
     <property name="tileData" ref="wfs3TileDataRequest" />
   </bean>
   <bean id="tilingSchemesKvpRequestReader" class="org.geoserver.wfs3.kvp.TilingSchemesKVPReader"/>

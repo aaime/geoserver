@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
@@ -48,7 +47,6 @@ import org.geoserver.platform.ServiceException;
 import org.geoserver.wfs.StoredQueryProvider;
 import org.geoserver.wfs.WFSGetFeatureOutputFormat;
 import org.geoserver.wfs.WFSInfo;
-import org.geoserver.wfs.WebFeatureService20;
 import org.geoserver.wfs.request.FeatureCollectionResponse;
 import org.geoserver.wfs.request.GetFeatureRequest;
 import org.geoserver.wfs3.response.CollectionDocument;
@@ -62,7 +60,6 @@ import org.geoserver.wfs3.response.TilingSchemeDescriptionDocument;
 import org.geoserver.wfs3.response.TilingSchemesDocument;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyledLayerDescriptor;
-import org.geotools.util.logging.Logging;
 import org.geowebcache.config.DefaultGridsets;
 import org.opengis.filter.FilterFactory2;
 import org.springframework.beans.BeansException;
@@ -74,22 +71,14 @@ import org.springframework.http.HttpStatus;
 /** WFS 3.0 implementation */
 public class DefaultWebFeatureService30 implements WebFeatureService30, ApplicationContextAware {
 
-    private static final Logger LOGGER = Logging.getLogger(DefaultWebFeatureService30.class);
     private final GeoServerDataDirectory dataDirectory;
     private FilterFactory2 filterFactory;
     private final GeoServer geoServer;
-    private WebFeatureService20 wfs20;
     private final DefaultGridsets gridSets;
     private List<WFS3Extension> extensions;
 
-    public DefaultWebFeatureService30(GeoServer geoServer, WebFeatureService20 wfs20) {
-        this(geoServer, wfs20, new DefaultGridsets(true, true));
-    }
-
-    public DefaultWebFeatureService30(
-            GeoServer geoServer, WebFeatureService20 wfs20, DefaultGridsets gridSets) {
+    public DefaultWebFeatureService30(GeoServer geoServer, DefaultGridsets gridSets) {
         this.geoServer = geoServer;
-        this.wfs20 = wfs20;
         this.gridSets = gridSets;
         this.dataDirectory = new GeoServerDataDirectory(geoServer.getCatalog().getResourceLoader());
     }
@@ -212,7 +201,7 @@ public class DefaultWebFeatureService30 implements WebFeatureService30, Applicat
 
     @Override
     public TilingSchemesDocument tilingSchemes(TilingSchemesRequest request) {
-        return new TilingSchemesDocument(geoServer, gridSets);
+        return new TilingSchemesDocument(gridSets);
     }
 
     @Override
@@ -229,7 +218,7 @@ public class DefaultWebFeatureService30 implements WebFeatureService30, Applicat
     @Override
     public TilingSchemeDescriptionDocument describeTilingScheme(
             TilingSchemeDescriptionRequest request) {
-        return new TilingSchemeDescriptionDocument(geoServer, request.getGridSet());
+        return new TilingSchemeDescriptionDocument(request.getGridSet());
     }
 
     public void setApplicationContext(ApplicationContext context) throws BeansException {
