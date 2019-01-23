@@ -5,15 +5,15 @@
 package org.geoserver.wfs3;
 
 /** Request for a specific style */
-public class StyleRequest extends BaseRequest {
+public class GetStyleRequest extends BaseRequest {
 
-    String styleName;
+    String styleId;
 
-    public String getStyleName() {
-        return styleName;
+    public String getStyleId() {
+        return styleId;
     }
 
-    public void setStyleName(String styleName) {
-        this.styleName = styleName;
+    public void setStyleId(String styleId) {
+        this.styleId = styleId;
     }
 }

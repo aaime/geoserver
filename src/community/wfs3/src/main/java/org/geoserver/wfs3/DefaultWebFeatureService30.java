@@ -10,6 +10,23 @@ import static org.geoserver.wfs3.response.ConformanceDocument.GEOJSON;
 import static org.geoserver.wfs3.response.ConformanceDocument.GMLSF0;
 import static org.geoserver.wfs3.response.ConformanceDocument.OAS30;
 
+import io.swagger.v3.oas.models.OpenAPI;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Logger;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.xml.namespace.QName;
 import org.apache.commons.io.IOUtils;
 import org.geoserver.catalog.Catalog;
 import org.geoserver.catalog.FeatureTypeInfo;
@@ -53,26 +70,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Logger;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.xml.namespace.QName;
-
-import io.swagger.v3.oas.models.OpenAPI;
 
 /** WFS 3.0 implementation */
 public class DefaultWebFeatureService30 implements WebFeatureService30, ApplicationContextAware {
@@ -243,16 +240,14 @@ public class DefaultWebFeatureService30 implements WebFeatureService30, Applicat
     public void postStyles(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         final String mimeType = request.getContentType();
-
         final StyleHandler handler = Styles.handler(mimeType);
         if (handler == null) {
             throw new HttpErrorCodeException(
                     HttpStatus.UNSUPPORTED_MEDIA_TYPE.value(),
                     "Cannot handle a style of type " + mimeType);
         }
-
-        final String styleBody = IOUtils.toString(request.getReader());
         final Catalog catalog = getCatalog();
+        final String styleBody = IOUtils.toString(request.getReader());
         final StyledLayerDescriptor sld =
                 handler.parse(
                         styleBody,
@@ -311,7 +306,7 @@ public class DefaultWebFeatureService30 implements WebFeatureService30, Applicat
     }
 
     @Override
-    public StylesDocument getStyles(StylesRequest request) throws IOException {
+    public StylesDocument getStyles(GetStylesRequest request) throws IOException {
         List<StyleDocument> styles = new ArrayList<>();
 
         // return only styles that are not associated to a layer, those will show up
@@ -350,7 +345,7 @@ public class DefaultWebFeatureService30 implements WebFeatureService30, Applicat
         accumulateStyle(blacklist, getCatalog().getStyleByName(StyleInfo.DEFAULT_RASTER));
     }
 
-    public Link buildLink(StylesRequest request, StyleDocument sd, String styleFormat) {
+    public Link buildLink(GetStylesRequest request, StyleDocument sd, String styleFormat) {
         String href =
                 ResponseUtils.buildURL(
                         request.getBaseUrl(),
@@ -386,14 +381,59 @@ public class DefaultWebFeatureService30 implements WebFeatureService30, Applicat
     }
 
     @Override
-    public StyleInfo getStyle(StyleRequest request) throws IOException {
-        final StyleInfo style = getCatalog().getStyleByName(request.getStyleName());
+    public StyleInfo getStyle(GetStyleRequest request) throws IOException {
+        final StyleInfo style = getCatalog().getStyleByName(request.getStyleId());
         if (style == null) {
             throw new HttpErrorCodeException(
                     HttpStatus.NOT_FOUND.value(),
-                    "Style " + request.getStyleName() + " could not be found");
+                    "Style " + request.getStyleId() + " could not be found");
         }
-        
+
         return style;
+    }
+
+    @Override
+    public void putStyle(
+            HttpServletRequest request, HttpServletResponse response, PutStyleRequest putStyle)
+            throws IOException {
+        final String mimeType = request.getContentType();
+        final StyleHandler handler = Styles.handler(mimeType);
+        if (handler == null) {
+            throw new HttpErrorCodeException(
+                    HttpStatus.UNSUPPORTED_MEDIA_TYPE.value(),
+                    "Cannot handle a style of type " + mimeType);
+        }
+        final Catalog catalog = getCatalog();
+        final String styleBody = IOUtils.toString(request.getReader());
+
+        final WorkspaceInfo wsInfo = LocalWorkspace.get();
+        String name = putStyle.getStyleId();
+        StyleInfo sinfo = catalog.getStyleByName(wsInfo, name);
+        boolean newStyle = sinfo == null;
+        if (newStyle) {
+            sinfo = catalog.getFactory().createStyle();
+            sinfo.setName(name);
+            sinfo.setFilename(name + "." + handler.getFileExtension());
+        }
+        ;
+        sinfo.setFormat(handler.getFormat());
+        sinfo.setFormatVersion(handler.versionForMimeType(mimeType));
+        if (wsInfo != null) {
+            sinfo.setWorkspace(wsInfo);
+        }
+
+        try {
+            catalog.getResourcePool()
+                    .writeStyle(sinfo, new ByteArrayInputStream(styleBody.getBytes()));
+        } catch (Exception e) {
+            throw new HttpErrorCodeException(
+                    HttpStatus.INTERNAL_SERVER_ERROR.value(), "Error writing style");
+        }
+
+        if (newStyle) {
+            catalog.add(sinfo);
+        } else {
+            catalog.save(sinfo);
+        }
     }
 }

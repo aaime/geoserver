@@ -5,7 +5,9 @@
 package org.geoserver.wfs3;
 
 import io.swagger.v3.oas.models.OpenAPI;
-
+import java.io.IOException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.geoserver.catalog.StyleInfo;
 import org.geoserver.wfs.request.FeatureCollectionResponse;
 import org.geoserver.wfs3.response.CollectionDocument;
@@ -16,11 +18,6 @@ import org.geoserver.wfs3.response.StylesDocument;
 import org.geoserver.wfs3.response.TilingSchemeDescriptionDocument;
 import org.geoserver.wfs3.response.TilingSchemesDocument;
 import org.geotools.util.Version;
-
-import java.io.IOException;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 public interface WebFeatureService30 {
 
@@ -82,10 +79,14 @@ public interface WebFeatureService30 {
 
     /** Queries Features for the requested tile coordinate */
     FeatureCollectionResponse getTile(GetFeatureType request);
-    
-    StylesDocument getStyles(StylesRequest request) throws IOException;
 
-    StyleInfo getStyle(StyleRequest request) throws IOException;
-    
+    StylesDocument getStyles(GetStylesRequest request) throws IOException;
+
+    StyleInfo getStyle(GetStyleRequest request) throws IOException;
+
     void postStyles(HttpServletRequest request, HttpServletResponse response) throws IOException;
+
+    void putStyle(
+            HttpServletRequest request, HttpServletResponse response, PutStyleRequest putStyle)
+            throws IOException;
 }

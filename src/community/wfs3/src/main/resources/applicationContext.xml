@@ -102,9 +102,10 @@
   </bean>
   <bean id="tilingSchemesKvpRequestReader" class="org.geoserver.wfs3.kvp.TilingSchemesKVPReader"/>
   <bean id="tilingSchemeDetailKvpRequestReader" class="org.geoserver.wfs3.kvp.TilingSchemeDetailKVPReader"/>
-  <bean id="stylesKvpRequestReader" class="org.geoserver.wfs3.kvp.StylesRequestKVPReader"/>
-  <bean id="styleKvpRequestReader" class="org.geoserver.wfs3.kvp.StyleRequestKVPReader"/>
-  
+  <bean id="getStylesKvpRequestReader" class="org.geoserver.wfs3.kvp.GetStylesRequestKVPReader"/>
+  <bean id="getStyleKvpRequestReader" class="org.geoserver.wfs3.kvp.GetStyleRequestKVPReader"/>
+  <bean id="putStyleKvpRequestReader" class="org.geoserver.wfs3.kvp.PutStyleRequestKVPReader"/>
+
   <!-- response generation -->
   <bean id="openAPIResponse" class="org.geoserver.wfs3.response.OpenAPIResponse">
     <constructor-arg ref="geoServer"/>

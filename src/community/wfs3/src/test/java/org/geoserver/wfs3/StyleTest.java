@@ -8,7 +8,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import com.jayway.jsonpath.DocumentContext;
-
+import java.awt.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Optional;
 import org.apache.commons.io.IOUtils;
 import org.geoserver.catalog.Catalog;
 import org.geoserver.catalog.SLDHandler;
@@ -24,11 +28,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.w3c.dom.Document;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Optional;
-
 public class StyleTest extends WFS3TestSupport {
 
     @Override
@@ -42,6 +41,7 @@ public class StyleTest extends WFS3TestSupport {
         final Catalog catalog = getCatalog();
         Optional.ofNullable(catalog.getStyleByName("simplePoint"))
                 .ifPresent(s -> catalog.remove(s));
+        Optional.ofNullable(catalog.getStyleByName("testPoint")).ifPresent(s -> catalog.remove(s));
     }
 
     @Test
@@ -60,8 +60,7 @@ public class StyleTest extends WFS3TestSupport {
 
     @Test
     public void testGetStyle() throws Exception {
-        final MockHttpServletResponse response = getAsServletResponse(
-                "wfs3/styles/dashed?f=sld");
+        final MockHttpServletResponse response = getAsServletResponse("wfs3/styles/dashed?f=sld");
         assertEquals(HttpStatus.OK.value(), response.getStatus());
         assertEquals(SLDHandler.MIMETYPE_10, response.getContentType());
         final Document dom = dom(response, true);
@@ -80,10 +79,10 @@ public class StyleTest extends WFS3TestSupport {
 
         // check style creation
         final StyleInfo styleInfo = getCatalog().getStyleByName("simplePoint");
-        checkSimplePoint(styleInfo);
+        checkSimplePoint(styleInfo, Color.RED);
     }
 
-    public void checkSimplePoint(StyleInfo styleInfo) throws IOException {
+    public void checkSimplePoint(StyleInfo styleInfo, Color expectedColor) throws IOException {
         assertNotNull(styleInfo);
         final Style style = styleInfo.getStyle();
         PointSymbolizer ps =
@@ -91,6 +90,7 @@ public class StyleTest extends WFS3TestSupport {
                         style.featureTypeStyles().get(0).rules().get(0).symbolizers().get(0);
         final Mark mark = (Mark) ps.getGraphic().graphicalSymbols().get(0);
         assertEquals("circle", mark.getWellKnownName().evaluate(null, String.class));
+        assertEquals(expectedColor, mark.getFill().getColor().evaluate(null, Color.class));
     }
 
     @Test
@@ -104,12 +104,40 @@ public class StyleTest extends WFS3TestSupport {
                 response.getHeader(HttpHeaders.LOCATION));
 
         final StyleInfo styleInfo = getCatalog().getStyleByName("cite", "simplePoint");
-        checkSimplePoint(styleInfo);
+        checkSimplePoint(styleInfo, Color.RED);
     }
 
     public String loadStyle(String fileName) throws IOException {
         try (InputStream is = StyleTest.class.getResourceAsStream(fileName)) {
             return IOUtils.toString(is, "UTF-8");
         }
+    }
+
+    @Test
+    public void testPutSLDStyleGlobal() throws Exception {
+        String styleBody = loadStyle("simplePoint.sld");
+        // use a name not found in the style body
+        final MockHttpServletResponse response =
+                putAsServletResponse("wfs3/styles/testPoint", styleBody, SLDHandler.MIMETYPE_10);
+        assertEquals(200, response.getStatus());
+
+        // check style creation
+        final StyleInfo styleInfo = getCatalog().getStyleByName("testPoint");
+        checkSimplePoint(styleInfo, Color.RED);
+    }
+
+    @Test
+    public void testPutSLDStyleModify() throws Exception {
+        testPutSLDStyleGlobal();
+
+        // use a different style body
+        String styleBody = loadStyle("simplePoint2.sld");
+        final MockHttpServletResponse response =
+                putAsServletResponse("wfs3/styles/testPoint", styleBody, SLDHandler.MIMETYPE_10);
+        assertEquals(200, response.getStatus());
+
+        // check style creation
+        final StyleInfo styleInfo = getCatalog().getStyleByName("testPoint");
+        checkSimplePoint(styleInfo, Color.BLACK);
     }
 }

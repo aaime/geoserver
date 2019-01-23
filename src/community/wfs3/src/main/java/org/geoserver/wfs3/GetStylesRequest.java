@@ -5,4 +5,4 @@
 package org.geoserver.wfs3;
 
 /** Request for the server contents */
-public class StylesRequest extends BaseRequest {}
+public class GetStylesRequest extends BaseRequest {}

@@ -95,7 +95,7 @@ public class WFS3Filter implements GeoServerFilter {
         private String level;
         private String row;
         private String col;
-        private String styleName;
+        private String styleId;
 
         private RequestWrapper(HttpServletRequest wrapped) {
             super(wrapped);
@@ -109,10 +109,10 @@ public class WFS3Filter implements GeoServerFilter {
             } else if (pathInfo.matches("/styles/?")) {
                 request = wrapped.getMethod().toLowerCase() + "Styles";
             } else if (pathInfo.matches("/styles/([^/]+)/?")) {
-                request = wrapped.getMethod().toLowerCase() + "Style"; 
+                request = wrapped.getMethod().toLowerCase() + "Style";
                 Matcher matcher = Pattern.compile("/styles/([^/]+)/?").matcher(pathInfo);
                 matcher.matches();
-                this.styleName = matcher.group(1);
+                this.styleId = matcher.group(1);
             } else if (pathInfo.matches("/tilingSchemes/([^/]+)/?")) {
                 request = "describeTilingScheme";
                 Matcher matcher = Pattern.compile("/tilingSchemes/([^/]+)/?").matcher(pathInfo);
@@ -361,7 +361,7 @@ public class WFS3Filter implements GeoServerFilter {
             if (level != null) filtered.put("level", new String[] {level});
             if (row != null) filtered.put("row", new String[] {row});
             if (col != null) filtered.put("col", new String[] {col});
-            if (styleName != null) filtered.put("styleName", new String[] {styleName});
+            if (styleId != null) filtered.put("styleId", new String[] {styleId});
             return filtered;
         }
 

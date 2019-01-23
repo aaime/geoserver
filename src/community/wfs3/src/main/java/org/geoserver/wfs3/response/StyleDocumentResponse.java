@@ -4,6 +4,13 @@
  */
 package org.geoserver.wfs3.response;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 import org.apache.commons.io.IOUtils;
 import org.geoserver.catalog.Catalog;
 import org.geoserver.catalog.SLDHandler;
@@ -14,18 +21,10 @@ import org.geoserver.ows.HttpErrorCodeException;
 import org.geoserver.ows.Response;
 import org.geoserver.platform.Operation;
 import org.geoserver.platform.ServiceException;
-import org.geoserver.wfs3.StyleRequest;
+import org.geoserver.wfs3.GetStyleRequest;
 import org.geotools.styling.StyledLayerDescriptor;
 import org.geotools.util.Version;
 import org.springframework.http.HttpStatus;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
 
 public class StyleDocumentResponse extends Response {
 
@@ -50,7 +49,7 @@ public class StyleDocumentResponse extends Response {
 
     @Override
     public String getMimeType(Object value, Operation operation) throws ServiceException {
-        StyleRequest request = (StyleRequest) operation.getParameters()[0];
+        GetStyleRequest request = (GetStyleRequest) operation.getParameters()[0];
         final StyleInfo style = (StyleInfo) value;
         String requestedFormat = getRequestedFormat(request, style);
         final StyleHandler handler = Styles.handler(requestedFormat);
@@ -60,7 +59,7 @@ public class StyleDocumentResponse extends Response {
     @Override
     public void write(Object value, OutputStream output, Operation operation)
             throws IOException, ServiceException {
-        StyleRequest request = (StyleRequest) operation.getParameters()[0];
+        GetStyleRequest request = (GetStyleRequest) operation.getParameters()[0];
         StyleInfo style = (StyleInfo) value;
         String requestedFormat = getRequestedFormat(request, style);
 
@@ -81,7 +80,7 @@ public class StyleDocumentResponse extends Response {
         handler.encode(sld, null, true, output);
     }
 
-    public String getRequestedFormat(StyleRequest request, StyleInfo style) {
+    public String getRequestedFormat(GetStyleRequest request, StyleInfo style) {
         String requestedFormat = request.getOutputFormat();
         if (requestedFormat == null) {
             requestedFormat = style.getFormat();

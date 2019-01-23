@@ -4,11 +4,10 @@
  */
 package org.geoserver.wfs3.response;
 
+import java.util.Objects;
 import org.geoserver.catalog.StyleInfo;
 import org.geoserver.ows.LocalWorkspace;
 import org.geoserver.wfs3.NCNameResourceCodec;
-
-import java.util.Objects;
 
 public class StyleDocument extends AbstractDocument {
 
