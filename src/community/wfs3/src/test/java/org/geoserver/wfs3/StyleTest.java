@@ -22,6 +22,7 @@ import org.custommonkey.xmlunit.XMLAssert;
 import org.geoserver.catalog.Catalog;
 import org.geoserver.catalog.SLDHandler;
 import org.geoserver.catalog.StyleInfo;
+import org.geoserver.community.css.web.CssHandler;
 import org.geoserver.community.mbstyle.MBStyleHandler;
 import org.geoserver.data.test.SystemTestData;
 import org.geotools.styling.Mark;
@@ -214,5 +215,52 @@ public class StyleTest extends WFS3TestSupport {
         // .. then MBStyle
         DocumentContext mbstyle = getAsJSONPath("wfs3/styles/circles?f=application%2Fvnd.geoserver.mbstyle%2Bjson", 200);
         assertEquals("circles", mbstyle.read("$.name"));
+    }
+
+    @Test
+    public void testCSS() throws Exception {
+        String styleBody = loadStyle("line.css");
+        // create style
+        MockHttpServletResponse response =
+                putAsServletResponse("wfs3/styles/cssline", styleBody, CssHandler.MIME_TYPE);
+        assertEquals(200, response.getStatus());
+
+        // check style creation
+        final StyleInfo styleInfo = getCatalog().getStyleByName("cssline");
+        assertNotNull(styleInfo);
+
+        // verify links for it
+        DocumentContext doc = getAsJSONPath("wfs3/styles", 200);
+        assertEquals(Integer.valueOf(2), doc.read("styles.length()", Integer.class));
+        assertEquals(1, doc.read("styles[?(@.id=='cssline')]", List.class).size());
+        assertEquals(2, doc.read("styles[?(@.id=='cssline')].links..href", List.class).size());
+        assertEquals(
+                "http://localhost:8080/geoserver/wfs3/styles/cssline?f=application%2Fvnd.ogc.sld%2Bxml",
+                doc.read(
+                        "styles[?(@.id=='cssline')].links[?(@.rel=='style' && @.type=='application/vnd.ogc.sld+xml')].href",
+                        List.class)
+                        .get(0));
+        assertEquals(
+                "http://localhost:8080/geoserver/wfs3/styles/cssline?f=application%2Fvnd.geoserver.geocss%2Bcss",
+                doc.read(
+                        "styles[?(@.id=='cssline')].links[?(@.rel=='style' && @.type=='application/vnd.geoserver.geocss+css')].href",
+                        List.class)
+                        .get(0));
+
+        // check we can get both styles, first SLD
+        Document dom = getAsDOM("wfs3/styles/cssline?f=application%2Fvnd.ogc.sld%2Bxml", 200);
+        // print(dom);
+        assertXpathEvaluatesTo("cssline", "//sld:StyledLayerDescriptor/sld:Name", dom);
+        assertXpathEvaluatesTo("1", "count(//sld:Rule)", dom);
+        assertXpathEvaluatesTo("1", "count(//sld:LineSymbolizer)", dom);
+        assertXpathEvaluatesTo("3", "//sld:LineSymbolizer/sld:Stroke/sld:CssParameter[@name='stroke-width']", dom);
+
+        // .. then CSS
+        response = getAsServletResponse("wfs3/styles/cssline?f=application%2Fvnd.geoserver.geocss%2Bcss");
+        assertEquals(200, response.getStatus());
+        assertEqualsIgnoreNewLineStyle("* {\n" +
+                "   stroke: black;\n" +
+                "   stroke-width: 3;\n" +
+                "}", response.getContentAsString());
     }
 }

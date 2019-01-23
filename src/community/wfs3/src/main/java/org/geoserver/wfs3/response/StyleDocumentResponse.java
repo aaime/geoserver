@@ -79,6 +79,9 @@ public class StyleDocumentResponse extends Response {
         } else {
             // otherwise convert if possible
             final StyledLayerDescriptor sld = style.getSLD();
+            if (sld.getName() == null || sld.getName().isEmpty()) {
+                sld.setName(style.getName());
+            }
             handler.encode(sld, null, true, output);
         }
     }
