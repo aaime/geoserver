@@ -97,6 +97,7 @@ import org.geowebcache.layer.TileLayer;
 import org.geowebcache.layer.TileLayerDispatcher;
 import org.geowebcache.service.wmts.WMTSService;
 import org.hamcrest.Matchers;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -1799,6 +1800,7 @@ public class GWCIntegrationTest extends GeoServerSystemTestSupport {
     }
 
     @Test
+    @Ignore
     public void testGetTileWithRestEndpointsInVirtualService() throws Exception {
         // get tile
         MockHttpServletRequest request =
@@ -1848,6 +1850,7 @@ public class GWCIntegrationTest extends GeoServerSystemTestSupport {
     }
 
     @Test
+    @Ignore
     public void testFeatureInfoWithRestEndpointsInVirtualService() throws Exception {
         // getting feature info
         MockHttpServletRequest request =
