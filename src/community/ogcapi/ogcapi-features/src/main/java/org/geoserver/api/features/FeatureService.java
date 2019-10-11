@@ -4,19 +4,9 @@
  */
 package org.geoserver.api.features;
 
-import io.swagger.v3.oas.models.OpenAPI;
-import java.io.IOException;
-import java.math.BigInteger;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import javax.xml.namespace.QName;
 import net.opengis.wfs20.Wfs20Factory;
+
+import org.geoserver.api.APIBBoxParser;
 import org.geoserver.api.APIDispatcher;
 import org.geoserver.api.APIRequestInfo;
 import org.geoserver.api.APIService;
@@ -35,7 +25,6 @@ import org.geoserver.wfs.request.FeatureCollectionResponse;
 import org.geoserver.wfs.request.GetFeatureRequest;
 import org.geoserver.wfs.request.Query;
 import org.geotools.factory.CommonFactoryFinder;
-import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.util.DateRange;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.Filter;
@@ -51,13 +40,26 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
+import java.io.IOException;
+import java.math.BigInteger;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.xml.namespace.QName;
+
+import io.swagger.v3.oas.models.OpenAPI;
+
 /** Implementation of OGC Features API service */
 @APIService(
-    service = "Features",
-    version = "1.0",
-    landingPage = "ogc/features",
-    serviceClass = WFSInfo.class
-)
+        service = "Features",
+        version = "1.0",
+        landingPage = "ogc/features",
+        serviceClass = WFSInfo.class)
 @RequestMapping(path = APIDispatcher.ROOT_PATH + "/features")
 public class FeatureService {
 
@@ -74,10 +76,6 @@ public class FeatureService {
 
     private final GeoServer geoServer;
 
-    // this could be done in an argument resolver returning a Filter, for example, however
-    // each protocol would need a different thing, so kept the KVP parser as a way to have
-    // private logic here
-    private FeaturesBBoxKvpParser bboxParser = new FeaturesBBoxKvpParser();
     private TimeParser timeParser = new TimeParser();
 
     public FeatureService(GeoServer geoServer) {
@@ -100,14 +98,13 @@ public class FeatureService {
     }
 
     @GetMapping(
-        path = "api",
-        name = "getApi",
-        produces = {
-            OpenAPIMessageConverter.OPEN_API_VALUE,
-            "application/x-yaml",
-            MediaType.TEXT_XML_VALUE
-        }
-    )
+            path = "api",
+            name = "getApi",
+            produces = {
+                OpenAPIMessageConverter.OPEN_API_VALUE,
+                "application/x-yaml",
+                MediaType.TEXT_XML_VALUE
+            })
     @ResponseBody
     @HTMLResponseBody(templateName = "api.ftl", fileName = "api.html")
     public OpenAPI api() {
@@ -185,7 +182,7 @@ public class FeatureService {
         query.setTypeNames(Arrays.asList(new QName(ft.getNamespace().getURI(), ft.getName())));
         List<Filter> filters = new ArrayList<>();
         if (bbox != null) {
-            filters.add(buildBBOXFilter(bbox));
+            filters.add(APIBBoxParser.toFilter(bbox));
         }
         if (time != null) {
             filters.add(buildTimeFilter(ft, time));
@@ -250,8 +247,7 @@ public class FeatureService {
 
     private List<String> getTimeProperties(FeatureTypeInfo ft) throws IOException {
         FeatureType schema = ft.getFeatureType();
-        return schema.getDescriptors()
-                .stream()
+        return schema.getDescriptors().stream()
                 .filter(pd -> Date.class.isAssignableFrom(pd.getType().getBinding()))
                 .map(pd -> pd.getName().getLocalPart())
                 .collect(Collectors.toList());
@@ -274,22 +270,6 @@ public class FeatureService {
             return filters.get(0);
         } else {
             return FF.or(filters);
-        }
-    }
-
-    public Filter buildBBOXFilter(@RequestParam(name = "bbox", required = false) String bbox)
-            throws Exception {
-        Object parsed = bboxParser.parse(bbox);
-        if (parsed instanceof ReferencedEnvelope) {
-            return FF.bbox(FF.property(""), (ReferencedEnvelope) parsed);
-        } else if (parsed instanceof ReferencedEnvelope[]) {
-            List<Filter> filters =
-                    Stream.of((ReferencedEnvelope[]) parsed)
-                            .map(e -> FF.bbox(FF.property(""), e))
-                            .collect(Collectors.toList());
-            return FF.or(filters);
-        } else {
-            throw new IllegalArgumentException("Could not understand parsed bbox " + parsed);
         }
     }
 

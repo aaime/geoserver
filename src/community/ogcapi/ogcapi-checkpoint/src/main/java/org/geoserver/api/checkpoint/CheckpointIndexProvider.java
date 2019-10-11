@@ -1,0 +1,176 @@
+/* (c) 2019 Open Source Geospatial Foundation - all rights reserved
+ * This code is licensed under the GPL 2.0 license, available at the root
+ * application directory.
+ */
+package org.geoserver.api.checkpoint;
+
+import org.geoserver.api.APIException;
+import org.geoserver.catalog.CoverageInfo;
+import org.geoserver.config.GeoServerDataDirectory;
+import org.geoserver.platform.resource.Resource;
+import org.geotools.data.DataStore;
+import org.geotools.data.DataUtilities;
+import org.geotools.data.Query;
+import org.geotools.data.h2.H2DataStoreFactory;
+import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.data.simple.SimpleFeatureStore;
+import org.geotools.factory.CommonFactoryFinder;
+import org.geotools.feature.simple.SimpleFeatureBuilder;
+import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotools.filter.spatial.ReprojectingFilterVisitor;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Polygon;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.FilterFactory2;
+import org.opengis.filter.PropertyIsGreaterThan;
+import org.opengis.filter.sort.SortBy;
+import org.opengis.filter.sort.SortOrder;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+@Component
+public class CheckpointIndexProvider {
+
+    private static final FilterFactory2 FF = CommonFactoryFinder.getFilterFactory2();
+
+    public static final String INITIAL_STATE = "Initial";
+    public static final String CHECKPOINT = "checkpoint";
+    public static final String FOOTPRINT = "footprint";
+    public static final String TIMESTAMP = "timestamp";
+
+    private final DataStore checkpointIndex;
+
+    public CheckpointIndexProvider(GeoServerDataDirectory dd) throws IOException {
+        this.checkpointIndex = getCheckpointDataStore(dd);
+    }
+
+    DataStore getCheckpointDataStore(GeoServerDataDirectory dd) throws IOException {
+        // make sure we have the directory
+        Resource checkpointDir = dd.get("checkpoint");
+        if (checkpointDir.getType() == Resource.Type.UNDEFINED) {
+            checkpointDir.dir();
+        }
+
+        // create the index --- TODO: make this configurable for clustered installations!!
+        Map<String, Object> params = new HashMap<>();
+        params.put("dbtype", "h2");
+        params.put("database", checkpointDir.get("index").path());
+        H2DataStoreFactory factory = new H2DataStoreFactory();
+        return factory.createDataStore(params);
+    }
+
+    /**
+     * Looks up the feature type associated to the coverage. Uses the identifier as it's stable
+     * across renames and workspace moves
+     */
+    SimpleFeatureStore getStoreForCoverage(CoverageInfo ci, boolean createIfMissing)
+            throws IOException {
+        String typeName = ci.getId();
+        if (!Arrays.asList(checkpointIndex.getTypeNames()).contains(typeName) && createIfMissing) {
+            SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
+            tb.add(CHECKPOINT, String.class);
+            tb.add(TIMESTAMP, Timestamp.class);
+            tb.add(FOOTPRINT, MultiPolygon.class, ci.getCRS());
+            tb.setName(typeName);
+            SimpleFeatureType type = tb.buildFeatureType();
+            checkpointIndex.createSchema(type);
+        }
+
+        return (SimpleFeatureStore) checkpointIndex.getFeatureSource(typeName);
+    }
+
+    void addCheckpoint(CoverageInfo ci, SimpleFeature feature) throws IOException {
+        SimpleFeatureStore store = getStoreForCoverage(ci, true);
+        SimpleFeatureBuilder fb = new SimpleFeatureBuilder(store.getSchema());
+        String checkpoint = UUID.randomUUID().toString();
+        fb.set(CHECKPOINT, checkpoint);
+        fb.set(TIMESTAMP, new Timestamp(System.currentTimeMillis()));
+        fb.set(FOOTPRINT, getFootprint(feature));
+        SimpleFeature checkPointFeature = fb.buildFeature(null);
+        store.addFeatures(DataUtilities.collection(checkPointFeature));
+    }
+
+    private Geometry getFootprint(SimpleFeature feature) {
+        Geometry featureGeometry = (Geometry) feature.getDefaultGeometry();
+        if (featureGeometry instanceof MultiPolygon) {
+            return featureGeometry;
+        } else if (featureGeometry instanceof Polygon) {
+            return featureGeometry
+                    .getFactory()
+                    .createMultiPolygon(new Polygon[] {(Polygon) featureGeometry});
+        } else {
+            throw new IllegalArgumentException(
+                    "Unexpected geometry (type) from checkpoint: " + featureGeometry);
+        }
+    }
+
+    /**
+     * Returns the list of checkpoint featues for the given coverage, checkpoint and spatial filter.
+     * Will throw an {@link org.geoserver.api.APIException} if the checkpoint is not known to the
+     * server.
+     *
+     * @param ci Returns the modified areas for this coverage info
+     * @param checkpoint The reference checkpoint from which to start
+     * @param spatialFilter The eventual spatial filter to consider selecting the modified areas
+     * @return The list of modifications, or null if nothing changed
+     */
+    public SimpleFeatureCollection getModifiedAreas(
+            CoverageInfo ci, String checkpoint, Filter spatialFilter) throws IOException {
+        SimpleFeatureStore store = getStoreForCoverage(ci, false);
+        // if no changes recorded yet, return everything
+        if (store == null) {
+            return null;
+        }
+        
+        // make sure 
+        if (spatialFilter != null) {
+            ReprojectingFilterVisitor visitor = new ReprojectingFilterVisitor(FF, store.getSchema());
+            spatialFilter = (Filter) spatialFilter.accept(visitor, null);
+        }
+
+        if (INITIAL_STATE.equals(checkpoint)) {
+            return store.getFeatures(spatialFilter);
+        }
+
+        // get the time for the reference checkpoint
+        Timestamp reference = getTimestampForCheckpoint(store, checkpoint);
+
+        // return all features that are after the checkpoint, and in the desired area
+        Query q = new Query();
+        PropertyIsGreaterThan timeFilter =
+                FF.greater(FF.property(TIMESTAMP), FF.literal(reference));
+        if (spatialFilter != Filter.INCLUDE) {
+            q.setFilter(FF.and(timeFilter, spatialFilter));
+        } else {
+            q.setFilter(timeFilter);
+        }
+        q.setSortBy(new SortBy[] {FF.sort(TIMESTAMP, SortOrder.ASCENDING)});
+        return store.getFeatures(q);
+    }
+
+    private Timestamp getTimestampForCheckpoint(SimpleFeatureStore store, String checkpoint)
+            throws IOException {
+        SimpleFeatureCollection fc =
+                store.getFeatures(FF.equals(FF.property(CHECKPOINT), FF.literal(checkpoint)));
+        SimpleFeature first = DataUtilities.first(fc);
+        if (first == null) {
+            throw new APIException(
+                    "InvalidParameterValue",
+                    "Checkpoint " + checkpoint + " cannot be found in change history",
+                    HttpStatus.BAD_REQUEST);
+        }
+
+        return (Timestamp) first.getAttribute(TIMESTAMP);
+    }
+}
