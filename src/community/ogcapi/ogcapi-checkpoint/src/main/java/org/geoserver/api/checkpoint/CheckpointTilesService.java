@@ -18,14 +18,21 @@ import org.geoserver.gwc.GWC;
 import org.geoserver.wms.capabilities.CapabilityUtil;
 import org.geotools.coverage.grid.io.StructuredGridCoverage2DReader;
 import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.data.simple.SimpleFeatureIterator;
+import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.referencing.CRS;
 import org.geotools.util.NumberRange;
 import org.geowebcache.GeoWebCacheException;
 import org.geowebcache.filter.parameters.ParameterFilter;
 import org.geowebcache.grid.GridSet;
 import org.geowebcache.grid.GridSubset;
 import org.geowebcache.layer.TileLayer;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,7 +42,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 /** Extension to the Tiles service allowing to retrieve checkpoints */
@@ -47,18 +56,12 @@ import java.util.Optional;
 @RequestMapping(path = APIDispatcher.ROOT_PATH + "/tiles")
 public class CheckpointTilesService {
 
+    public static final String CHANGESET_MIME = "application/changeset+json";
     private final CheckpointIndexProvider indexProvider;
     private final Catalog catalog;
     private final GWC gwc;
 
-    public enum MultiTileType {
-        url,
-        tiles,
-        full
-    };
-
     public enum ChangeSetType {
-        full("full"),
         summary("summary"),
         pack("package");
         String name;
@@ -68,6 +71,10 @@ public class CheckpointTilesService {
         }
 
         public static ChangeSetType fromName(String changeSetType) {
+            if (changeSetType == null) {
+                return null;
+            }
+
             for (ChangeSetType value : values()) {
                 if (changeSetType.equals(value.name)) {
                     return value;
@@ -91,7 +98,7 @@ public class CheckpointTilesService {
     @GetMapping(
             path = "/collections/{collectionId}/map/{styleId}/tiles/{tileMatrixSetId}",
             name = "getRenderedCollectionTiles",
-            produces = "application/changeset+json")
+            produces = CHANGESET_MIME)
     @ResponseBody
     public Object getMultiTiles(
             @PathVariable(name = "collectionId") String collectionId,
@@ -100,7 +107,6 @@ public class CheckpointTilesService {
             @RequestParam(name = "scaleDenominator", required = false) String scaleDenominatorSpec,
             @RequestParam(name = "bbox", required = false) String bboxSpec,
             @RequestParam(name = "f-tile", required = false) String tileFormat,
-            @RequestParam(name = "multiTileType", required = false) MultiTileType multiTileType,
             @RequestParam(name = "checkPoint", required = false, defaultValue = INITIAL_STATE)
                     String checkpoint,
             @RequestParam(name = "changeSetType", required = false) String changeSetTypeName)
@@ -128,20 +134,46 @@ public class CheckpointTilesService {
             }
         }
 
+        // compute the changed bboxes
+        List<ReferencedEnvelope> extentOfChangedItems = new ArrayList<>();
+        try (SimpleFeatureIterator fi = areas.features()) {
+            while (fi.hasNext()) {
+                // TODO: if they are multipolygons, would make sense to split them
+                Envelope envelope =
+                        ((Geometry) fi.next().getDefaultGeometry()).getEnvelopeInternal();
+                ReferencedEnvelope re =
+                        new ReferencedEnvelope(
+                                envelope, areas.getSchema().getCoordinateReferenceSystem());
+                CoordinateReferenceSystem gridsetCRS =
+                        CRS.decode("EPSG:" + gridset.getSrs().getNumber(), true);
+                try {
+                    // TODO: might want to use the projection handler to avoid impossible
+                    // reprojections
+                    ReferencedEnvelope boundsInGridsetCRS = re.transform(gridsetCRS, true);
+                    extentOfChangedItems.add(boundsInGridsetCRS);
+                } catch (TransformException e) {
+                    throw new APIException(
+                            "InternalError",
+                            "Failed to reproject extent of changed items to gridset crs",
+                            HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+            }
+        }
+
         NumberRange<Double> scaleRange =
                 CapabilityUtil.searchMinMaxScaleDenominator(Collections.singleton(style));
         ModifiedTiles modifiedTiles =
                 new ModifiedTiles(
-                        ci, tileLayer, gridset, areas, APIBBoxParser.parse(bboxSpec), scaleRange);
-        if (changeSetType == null || changeSetType == ChangeSetType.full) {
-            ChangeSet changeSet = new ChangeSet(checkpoint, modifiedTiles.getModifiedTiles());
-            changeSet.setScaleOfChangedItems(scaleRange);
-            return changeSet;
-        } else {
-            ChangeSetSummary summary =
-                    new ChangeSetSummary(checkpoint, modifiedTiles.getModifiedTiles());
-            return summary;
-        }
+                        ci,
+                        tileLayer,
+                        tileLayer.getGridSubset(tileMatrixSetId),
+                        areas,
+                        APIBBoxParser.parse(bboxSpec),
+                        scaleRange);
+        ChangeSet changeSet =
+                new ChangeSet(checkpoint, extentOfChangedItems, modifiedTiles.getModifiedTiles());
+        changeSet.setScaleOfChangedItems(scaleRange);
+        return changeSet;
     }
 
     public StyleInfo getStyle(@PathVariable(name = "styleId") String styleId) {

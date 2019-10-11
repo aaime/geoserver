@@ -4,6 +4,9 @@
  */
 package org.geoserver.api.checkpoint;
 
+import static org.geoserver.api.checkpoint.CheckpointIndexProvider.INITIAL_STATE;
+import static org.geoserver.ows.util.ResponseUtils.urlEncode;
+import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.startsWith;
@@ -23,8 +26,12 @@ import org.geoserver.catalog.LayerInfo;
 import org.geoserver.data.test.MockData;
 import org.geoserver.data.test.MockTestData;
 import org.geoserver.data.test.SystemTestData;
+import org.geoserver.gwc.GWC;
+import org.geoserver.platform.GeoServerExtensions;
 import org.geotools.gce.imagemosaic.ImageMosaicFormat;
 import org.geotools.util.URLs;
+import org.geowebcache.config.XMLGridSubset;
+import org.geowebcache.layer.TileLayer;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -38,6 +45,7 @@ import javax.xml.namespace.QName;
 
 public class ChangesetTest extends OGCApiTestSupport {
 
+    static final double EPS = 1e-3;
     public static final String S2_STORE = "s2";
     static final QName S2 = new QName(MockTestData.SF_URI, S2_STORE, MockTestData.SF_PREFIX);
     private File s2TestData;
@@ -75,17 +83,102 @@ public class ChangesetTest extends OGCApiTestSupport {
         catalog.add(ci);
         LayerInfo layer = cb.buildLayer(ci);
         catalog.add(layer);
+
+        // configure tile caching for it
+        GWC gwc = GeoServerExtensions.bean(GWC.class);
+        TileLayer tileLayer = gwc.getTileLayer(catalog.getLayerByName(getLayerId(S2)));
+        XMLGridSubset editableWgs84 = new XMLGridSubset(tileLayer.removeGridSubset("EPSG:4326"));
+        editableWgs84.setZoomStart(0);
+        editableWgs84.setZoomStop(11);
+        tileLayer.addGridSubset(editableWgs84.getGridSubSet(gwc.getGridSetBroker()));
+        XMLGridSubset editableWebMercator = new XMLGridSubset(tileLayer.removeGridSubset("EPSG:900913"));
+        editableWebMercator.setZoomStart(0);
+        editableWebMercator.setZoomStop(11);
+        tileLayer.addGridSubset(editableWebMercator.getGridSubSet(gwc.getGridSetBroker()));
+        gwc.save(tileLayer);
     }
 
     @Test
-    public void testGetSummary() throws Exception {
+    public void testGetSummarySingle4326() throws Exception {
         // upload single image
         uploadImage("g2.tif");
-        
-        // TODO: get the summary, get the non summary, from the initial revision
-        // TODO: add two images and get the summary and non summary
-        // TODO: remove the index if the store gets removed (CatalogListener)
+
+        DocumentContext doc =
+                getAsJSONPath(
+                        "ogc/tiles/collections/sf:s2/map/raster/tiles/EPSG:4326?f="
+                                + urlEncode(CheckpointTilesService.CHANGESET_MIME),
+                        200);
+
+        // the doc contains the requested checkpoint
+        assertThat(doc.read("checkpoint"), equalTo(INITIAL_STATE));
+        assertThat(doc.read("summaryOfChangedItems[0].priority"), equalTo("medium"));
+        // area modified is small, for the zoom levels available
+        assertThat(doc.read("summaryOfChangedItems[0].count"), equalTo(18));
+        // single modified extent
+        assertThat(doc.read("extentOfChangedItems.size()"), equalTo(1));
+        assertThat(doc.read("extentOfChangedItems[0].crs"), equalTo("http://www.opengis.net/def/crs/OGC/1.3/CRS84"));
+        assertThat(doc.read("extentOfChangedItems[0].bbox[0]"), closeTo(11.683611, EPS));
+        assertThat(doc.read("extentOfChangedItems[0].bbox[1]"), closeTo(47.63776, EPS));
+        assertThat(doc.read("extentOfChangedItems[0].bbox[2]"), closeTo(11.861294, EPS));
+        assertThat(doc.read("extentOfChangedItems[0].bbox[3]"), closeTo(47.754253, EPS));
     }
+
+    @Test
+    public void testGetSummarySingle3857() throws Exception {
+        // upload single image
+        uploadImage("g2.tif");
+
+        DocumentContext doc =
+                getAsJSONPath(
+                        "ogc/tiles/collections/sf:s2/map/raster/tiles/EPSG:900913?f="
+                                + urlEncode(CheckpointTilesService.CHANGESET_MIME),
+                        200);
+
+        // the doc contains the requested checkpoint
+        assertThat(doc.read("checkpoint"), equalTo(INITIAL_STATE));
+        assertThat(doc.read("summaryOfChangedItems[0].priority"), equalTo("medium"));
+        // area modified is small, for the zoom levels available
+        assertThat(doc.read("summaryOfChangedItems[0].count"), equalTo(16));
+        // single modified extent
+        assertThat(doc.read("extentOfChangedItems.size()"), equalTo(1));
+        assertThat(doc.read("extentOfChangedItems[0].crs"), equalTo("urn:ogc:def:crs:EPSG::900913"));
+        assertThat(doc.read("extentOfChangedItems[0].bbox[0]"), closeTo(1300613, 1));
+        assertThat(doc.read("extentOfChangedItems[0].bbox[1]"), closeTo(6046801, 1));
+        assertThat(doc.read("extentOfChangedItems[0].bbox[2]"), closeTo(1320393, 1));
+        assertThat(doc.read("extentOfChangedItems[0].bbox[3]"), closeTo(6066068, 1));
+    }
+
+    @Test
+    public void testGetSummaryTwo4326() throws Exception {
+        // upload two images (toghether they cover the same bbox as g2)
+        uploadImage("g3.tif");
+        uploadImage("g4.tif");
+
+        DocumentContext doc =
+                getAsJSONPath(
+                        "ogc/tiles/collections/sf:s2/map/raster/tiles/EPSG:4326?f="
+                                + urlEncode(CheckpointTilesService.CHANGESET_MIME),
+                        200);
+
+        // the doc contains the requested checkpoint
+        assertThat(doc.read("checkpoint"), equalTo(INITIAL_STATE));
+        assertThat(doc.read("summaryOfChangedItems[0].priority"), equalTo("medium"));
+        // area modified is small, for the zoom levels available
+        assertThat(doc.read("summaryOfChangedItems[0].count"), equalTo(18));
+        // single modified extent
+        assertThat(doc.read("extentOfChangedItems.size()"), equalTo(2));
+        assertThat(doc.read("extentOfChangedItems[0].crs"), equalTo("http://www.opengis.net/def/crs/OGC/1.3/CRS84"));
+        assertThat(doc.read("extentOfChangedItems[0].bbox[0]"), closeTo(11.683482, EPS));
+        assertThat(doc.read("extentOfChangedItems[0].bbox[1]"), closeTo(47.637856, EPS));
+        assertThat(doc.read("extentOfChangedItems[0].bbox[2]"), closeTo(11.861166, EPS));
+        assertThat(doc.read("extentOfChangedItems[0].bbox[3]"), closeTo(47.754345, EPS));
+        assertThat(doc.read("extentOfChangedItems[1].crs"), equalTo("http://www.opengis.net/def/crs/OGC/1.3/CRS84"));
+        assertThat(doc.read("extentOfChangedItems[1].bbox[0]"), closeTo(11.683616, EPS));
+        assertThat(doc.read("extentOfChangedItems[1].bbox[1]"), closeTo(47.63785, EPS));
+        assertThat(doc.read("extentOfChangedItems[1].bbox[2]"), closeTo(11.8612995, EPS));
+        assertThat(doc.read("extentOfChangedItems[1].bbox[3]"), closeTo(47.75434, EPS));
+    }
+
 
     private void uploadImage(String fileName) throws Exception {
         String s2 = getLayerId(S2);
@@ -103,14 +196,15 @@ public class ChangesetTest extends OGCApiTestSupport {
 
         // check it's really there
         DocumentContext json =
-                getAsJSONPath( response.getHeader("Location").substring("http://ocalhost:8080/geoserver/".length()),
+                getAsJSONPath(
+                        response.getHeader("Location")
+                                .substring("http://localhost:8080/geoserver/".length()),
                         200);
         assertThat(json.read("type"), equalTo("Feature"));
         assertThat(json.read("id"), startsWith("s2."));
-        // in case of no date, the unix epoch is used 
+        // in case of no date, the unix epoch is used
         assertThat(json.read("properties.datetime"), equalTo("1970-01-01T00:00:00Z"));
-        assertThat(
-                json.read("assets[0].href"), endsWith(fileName));
+        assertThat(json.read("assets[0].href"), endsWith(fileName));
     }
 
     public byte[] getBytes(String file) throws IOException {

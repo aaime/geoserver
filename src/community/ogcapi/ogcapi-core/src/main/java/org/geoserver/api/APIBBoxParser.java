@@ -75,6 +75,9 @@ public class APIBBoxParser {
     /** Parses a BBOX with the given CRS, if null {@link DefaultGeographicCRS#WGS84} will be used */
     public static ReferencedEnvelope[] parse(String value, CoordinateReferenceSystem crs)
             throws FactoryException {
+        if (value == null || value.trim().isEmpty()) {
+            return null;
+        }
         List unparsed = KvpUtils.readFlat(value, KvpUtils.INNER_DELIMETER);
 
         // check to make sure that the bounding box has 4 coordinates

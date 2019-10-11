@@ -48,7 +48,7 @@ public class ModifiedTiles {
     public ModifiedTiles(
             CoverageInfo coverageInfo,
             TileLayer tileLayer,
-            GridSet gridSet,
+            GridSubset gridSet,
             SimpleFeatureCollection changes,
             ReferencedEnvelope[] boundingBoxes,
             NumberRange<Double> scaleRange)
@@ -57,20 +57,20 @@ public class ModifiedTiles {
         this.tileLayer = tileLayer;
 
         CoordinateReferenceSystem gridsetCrs =
-                CRS.decode("EPSG:" + gridSet.getSrs().getNumber(), true);
+                CRS.decode("EPSG:" + gridSet.getSRS().getNumber(), true);
         List<ReferencedEnvelope> bboxesInGridsetCrs = transformBounds(boundingBoxes, gridsetCrs);
 
         this.zoomStart = scaleRange == null ? 0 : getMinZoom(gridSet, scaleRange.getMinimum());
         this.zoomEnd =
                 scaleRange == null
-                        ? gridSet.getNumLevels() - 1
-                        : getMaxZoom(gridSet, scaleRange.getMinimum());
+                        ? gridSet.getZoomStop()
+                        : getMaxZoom(gridSet, scaleRange.getMaximum());
 
         fillGridSubsets(gridSet, changes, gridsetCrs, bboxesInGridsetCrs);
     }
 
     private void fillGridSubsets(
-            GridSet gridSet,
+            GridSubset subset,
             SimpleFeatureCollection changes,
             CoordinateReferenceSystem gridsetCrs,
             List<ReferencedEnvelope> bboxesInGridsetCrs)
@@ -89,7 +89,7 @@ public class ModifiedTiles {
                             if (bboxesInGridsetCrs == null || bboxesInGridsetCrs.isEmpty()) {
                                 subsets.add(
                                         toGridSubset(
-                                                gridSet,
+                                                subset.getGridSet(),
                                                 transformed.getEnvelopeInternal(),
                                                 zoomStart,
                                                 zoomEnd));
@@ -100,7 +100,7 @@ public class ModifiedTiles {
                                     if (!intersection.isEmpty()) {
                                         subsets.add(
                                                 toGridSubset(
-                                                        gridSet, intersection, zoomStart, zoomEnd));
+                                                        subset.getGridSet(), intersection, zoomStart, zoomEnd));
                                     }
                                 }
                             }
@@ -116,13 +116,13 @@ public class ModifiedTiles {
                 null);
     }
 
-    private int getMinZoom(GridSet gridSet, double scaleRangeMinimum) {
+    private int getMinZoom(GridSubset subset, double scaleRangeMinimum) {
         if (scaleRangeMinimum <= 0) {
             return 0;
         }
-        int z = 0;
-        for (; z < gridSet.getNumLevels(); z++) {
-            Grid grid = gridSet.getGrid(z);
+        int z = subset.getZoomStart();
+        for (; z <= subset.getZoomStop(); z++) {
+            Grid grid = subset.getGridSet().getGrid(z);
             if (grid.getScaleDenominator() > scaleRangeMinimum) {
                 break;
             }
@@ -131,17 +131,16 @@ public class ModifiedTiles {
         return z > 0 ? z - 1 : 0;
     }
 
-    private int getMaxZoom(GridSet gridSet, double scaleRangeMaximum) {
-        int max = gridSet.getNumLevels() - 1;
-        int z = max;
-        for (; z >= 0; z--) {
-            Grid grid = gridSet.getGrid(z);
+    private int getMaxZoom(GridSubset subset, double scaleRangeMaximum) {
+        int z = subset.getZoomStop();
+        for (; z >= subset.getZoomStart(); z--) {
+            Grid grid = subset.getGridSet().getGrid(z);
             if (grid.getScaleDenominator() < scaleRangeMaximum) {
                 break;
             }
         }
 
-        return z < max ? z + 1 : max;
+        return z < subset.getZoomStop() ? z + 1 : subset.getZoomStop();
     }
 
     private List<ReferencedEnvelope> transformBounds(
@@ -198,6 +197,7 @@ public class ModifiedTiles {
         Iterator<long[]> tiles = getTiles();
         long count = 0;
         while (tiles.hasNext()) {
+            tiles.next();
             count++;
         }
 

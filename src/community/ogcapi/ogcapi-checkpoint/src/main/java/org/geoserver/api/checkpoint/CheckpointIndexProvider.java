@@ -32,6 +32,7 @@ import org.opengis.filter.sort.SortOrder;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Arrays;
@@ -65,7 +66,7 @@ public class CheckpointIndexProvider {
         // create the index --- TODO: make this configurable for clustered installations!!
         Map<String, Object> params = new HashMap<>();
         params.put("dbtype", "h2");
-        params.put("database", checkpointDir.get("index").path());
+        params.put("database", new File(checkpointDir.dir(), "index").getAbsolutePath());
         H2DataStoreFactory factory = new H2DataStoreFactory();
         return factory.createDataStore(params);
     }

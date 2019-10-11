@@ -4,11 +4,49 @@
  */
 package org.geoserver.api.checkpoint;
 
+import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.util.NumberRange;
 
-public class ChangeSet extends ChangeSetSummary {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
-    private class ScaleOfChangedItems {
+/** Summary of changesets according to the Testbed 15 Delta updates */
+public class ChangeSet {
+
+    enum Priority {
+        high,
+        medium,
+        low
+    };
+
+    public static class ChangedItem {
+        Priority priority;
+        long count;
+
+        public ChangedItem(Priority priority, long count) {
+            this.priority = priority;
+            this.count = count;
+        }
+
+        public Priority getPriority() {
+            return priority;
+        }
+
+        public long getCount() {
+            return count;
+        }
+
+        @Override
+        public String toString() {
+            return "ChangedItem{" +
+                    "priority=" + priority +
+                    ", count=" + count +
+                    '}';
+        }
+    }
+
+    public static class ScaleOfChangedItems {
         Double minScaleDenominator;
         Double maxScaleDenominator;
 
@@ -28,12 +66,49 @@ public class ChangeSet extends ChangeSetSummary {
         public Double getMaxScaleDenominator() {
             return maxScaleDenominator;
         }
+
+        @Override
+        public String toString() {
+            return "ScaleOfChangedItems{" +
+                    "minScaleDenominator=" + minScaleDenominator +
+                    ", maxScaleDenominator=" + maxScaleDenominator +
+                    '}';
+        }
     }
 
+    String checkpoint;
+    List<ChangedItem> summaryOfChangedItems = new ArrayList<>();
+    List<BoundsAndCRS> extentOfChangedItems;
     ScaleOfChangedItems scaleOfChangedItems;
 
-    public ChangeSet(String checkpoint, long changedItems) {
-        super(checkpoint, changedItems);
+    public ChangeSet(
+            String checkpoint, List<ReferencedEnvelope> extentOfChangedItems, long changedItems) {
+        this.checkpoint = checkpoint;
+        this.summaryOfChangedItems.add(new ChangedItem(Priority.medium, changedItems));
+        this.extentOfChangedItems =
+                extentOfChangedItems.stream()
+                        .map(re -> new BoundsAndCRS(re))
+                        .collect(Collectors.toList());
+    }
+
+    public String getCheckpoint() {
+        return checkpoint;
+    }
+
+    public void setCheckpoint(String checkpoint) {
+        this.checkpoint = checkpoint;
+    }
+
+    public List<ChangedItem> getSummaryOfChangedItems() {
+        return summaryOfChangedItems;
+    }
+
+    public void setSummaryOfChangedItems(List<ChangedItem> summaryOfChangedItems) {
+        this.summaryOfChangedItems = summaryOfChangedItems;
+    }
+
+    public List<BoundsAndCRS> getExtentOfChangedItems() {
+        return extentOfChangedItems;
     }
 
     public ScaleOfChangedItems getScaleOfChangedItems() {
@@ -48,4 +123,8 @@ public class ChangeSet extends ChangeSetSummary {
     public void setScaleOfChangedItems(ScaleOfChangedItems scaleOfChangedItems) {
         this.scaleOfChangedItems = scaleOfChangedItems;
     }
+    
+    
 }
+
+
