@@ -57,6 +57,7 @@ import java.util.Optional;
 public class CheckpointTilesService {
 
     public static final String CHANGESET_MIME = "application/changeset+json";
+    public static final String GET_RENDERED_COLLECTION_TILES = "getRenderedCollectionTiles";
     private final CheckpointIndexProvider indexProvider;
     private final Catalog catalog;
     private final GWC gwc;
@@ -97,7 +98,7 @@ public class CheckpointTilesService {
 
     @GetMapping(
             path = "/collections/{collectionId}/map/{styleId}/tiles/{tileMatrixSetId}",
-            name = "getRenderedCollectionTiles",
+            name = GET_RENDERED_COLLECTION_TILES,
             produces = CHANGESET_MIME)
     @ResponseBody
     public Object getMultiTiles(
@@ -114,7 +115,7 @@ public class CheckpointTilesService {
         ChangeSetType changeSetType = ChangeSetType.fromName(changeSetTypeName);
         Filter spatialFilter = APIBBoxParser.toFilter(bboxSpec);
         // collection must be a structured coverage and a tile layer at the same time
-        CoverageInfo ci = getStructuredCoverageInfo(collectionId);
+        CoverageInfo ci = getStructuredCoverageInfo(collectionId, true);
         TileLayer tileLayer = getTileLayer(collectionId);
         validateStyle(tileLayer, styleId);
         validateGridset(tileLayer, tileMatrixSetId);
@@ -185,7 +186,8 @@ public class CheckpointTilesService {
         return styleInfo;
     }
 
-    private CoverageInfo getStructuredCoverageInfo(String collectionId) throws IOException {
+    CoverageInfo getStructuredCoverageInfo(String collectionId, boolean failIfNotFound)
+            throws IOException {
         org.geoserver.catalog.CoverageInfo coverageInfo = catalog.getCoverageByName(collectionId);
         if (coverageInfo != null
                 && coverageInfo.getGridCoverageReader(null, null)
@@ -193,8 +195,14 @@ public class CheckpointTilesService {
             return coverageInfo;
         }
 
-        throw new APIException(
-                "NotFound", "Could not locate collection " + collectionId, HttpStatus.NOT_FOUND);
+        if (failIfNotFound) {
+            throw new APIException(
+                    "NotFound",
+                    "Could not locate collection " + collectionId,
+                    HttpStatus.NOT_FOUND);
+        } else {
+            return null;
+        }
     }
 
     private TileLayer getTileLayer(String collectionId) {

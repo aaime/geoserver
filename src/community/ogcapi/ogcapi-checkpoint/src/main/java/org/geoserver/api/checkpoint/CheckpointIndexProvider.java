@@ -34,6 +34,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -173,5 +174,24 @@ public class CheckpointIndexProvider {
         }
 
         return (Timestamp) first.getAttribute(TIMESTAMP);
+    }
+
+    public String getLatestCheckpoint(CoverageInfo ci) throws IOException {
+        SimpleFeatureStore store = getStoreForCoverage(ci, false);
+        if (store == null) {
+            return INITIAL_STATE;
+        }
+        
+        Query q = new Query(store.getName().getLocalPart());
+        q.setSortBy(new SortBy[] {FF.sort(TIMESTAMP, SortOrder.DESCENDING)});
+        q.setMaxFeatures(1);
+        SimpleFeatureCollection fc = store.getFeatures(q);
+        SimpleFeature latestCheckpoint = DataUtilities.first(fc);
+        if (latestCheckpoint == null) {
+            return INITIAL_STATE;
+        } else {
+            return (String) latestCheckpoint.getAttribute(CHECKPOINT);
+        }
+
     }
 }

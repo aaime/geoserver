@@ -32,6 +32,7 @@ import org.geotools.gce.imagemosaic.ImageMosaicFormat;
 import org.geotools.util.URLs;
 import org.geowebcache.config.XMLGridSubset;
 import org.geowebcache.layer.TileLayer;
+import org.jsoup.nodes.Document;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -213,5 +214,17 @@ public class ChangesetTest extends OGCApiTestSupport {
             payload = IOUtils.toByteArray(is);
         }
         return payload;
+    }
+
+    
+    protected Document getChangesAsJSoup(String collectionId, String tileMatrixId, String extraParameters) throws Exception {
+        // build the request and check the checkpoint
+        return super.getAsJSoup("ogc/tiles/collections/sf:s2/map/raster/tiles/EPSG:900913?f="
+                + urlEncode(CheckpointTilesService.CHANGESET_MIME));
+    }
+
+    private String getLatestCheckpoint(String collectionId) throws IOException {
+        CheckpointIndexProvider provider = GeoServerExtensions.bean(CheckpointIndexProvider.class);
+        return provider.getLatestCheckpoint(getCatalog().getCoverageByName(collectionId));
     }
 }
