@@ -6,7 +6,10 @@
 package org.geoserver.gwc.web.layer;
 
 import com.google.common.base.Function;
+import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -19,6 +22,8 @@ import org.apache.wicket.request.resource.ResourceReference;
 import org.geoserver.catalog.Catalog;
 import org.geoserver.catalog.LayerGroupInfo;
 import org.geoserver.catalog.LayerInfo;
+import org.geoserver.catalog.Predicates;
+import org.geoserver.catalog.util.CloseableIterator;
 import org.geoserver.gwc.GWC;
 import org.geoserver.gwc.config.GWCConfig;
 import org.geoserver.gwc.layer.GeoServerTileLayer;
@@ -62,6 +67,31 @@ class UnconfiguredCachedLayersProvider extends GeoServerDataProvider<TileLayer> 
     static final List<Property<TileLayer>> PROPERTIES =
             Collections.unmodifiableList(Arrays.asList(TYPE, NAME, ENABLED));
 
+    @Override
+    public long size() {
+        Stopwatch sw = Stopwatch.createStarted();
+        long size = super.size();
+        System.err.printf("--> size():%,d (%s)%n", size, sw.stop());
+        return size;
+    }
+    
+    @Override
+    protected List<TileLayer> getFilteredItems() {
+        Stopwatch sw = Stopwatch.createStarted();
+        List<TileLayer> items = super.getFilteredItems();
+        System.err.printf("--> size():%,d (%s)%n", items.size(), sw.stop());
+        return items;
+    }
+
+    
+    @Override
+    public int fullSize() {
+        Stopwatch sw = Stopwatch.createStarted();
+        int size = super.fullSize();
+        System.err.printf("--> fullSize():%,d (%s)%n", size, sw.stop());
+        return size;
+        }
+    
     /**
      * Provides a list of transient TileLayers for the LayerInfo and LayerGroupInfo objects in
      * Catalog that don't already have a configured TileLayer on their metadata map.
@@ -77,7 +107,7 @@ class UnconfiguredCachedLayersProvider extends GeoServerDataProvider<TileLayer> 
 
         defaults.setCacheLayersByDefault(true);
 
-        List<String> unconfiguredLayerIds = getUnconfiguredLayers();
+        List<String> unconfiguredLayerIds = getUnconfiguredLayersIds();
 
         List<TileLayer> layers =
                 Lists.transform(
@@ -108,7 +138,7 @@ class UnconfiguredCachedLayersProvider extends GeoServerDataProvider<TileLayer> 
         return layers;
     }
 
-    private List<String> getUnconfiguredLayers() {
+    private List<String> getUnconfiguredLayersIds() {
         Catalog catalog = getCatalog();
         List<String> layerIds = new LinkedList<String>();
 
