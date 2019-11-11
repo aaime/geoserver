@@ -5,16 +5,17 @@
  */
 package org.geoserver.gwc.web.layer;
 
-import com.google.common.base.Function;
-import com.google.common.base.Stopwatch;
-import com.google.common.collect.Lists;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.apache.wicket.extensions.markup.html.repeater.util.SortParam;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
@@ -23,141 +24,158 @@ import org.geoserver.catalog.Catalog;
 import org.geoserver.catalog.LayerGroupInfo;
 import org.geoserver.catalog.LayerInfo;
 import org.geoserver.catalog.Predicates;
+import org.geoserver.catalog.PublishedInfo;
 import org.geoserver.catalog.util.CloseableIterator;
+import org.geoserver.catalog.util.CloseableIteratorAdapter;
 import org.geoserver.gwc.GWC;
 import org.geoserver.gwc.config.GWCConfig;
 import org.geoserver.gwc.layer.GeoServerTileLayer;
 import org.geoserver.gwc.web.GWCIconFactory;
 import org.geoserver.web.wicket.GeoServerDataProvider;
+import org.geotools.util.logging.Logging;
 import org.geowebcache.grid.GridSetBroker;
 import org.geowebcache.layer.TileLayer;
+import org.opengis.filter.Filter;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.collect.Streams;
 
 /** @author groldan */
 class UnconfiguredCachedLayersProvider extends GeoServerDataProvider<TileLayer> {
 
     private static final long serialVersionUID = -8599398086587516574L;
 
-    static final Property<TileLayer> TYPE =
-            new AbstractProperty<TileLayer>("type") {
+    private static final Logger LOGGER = Logging.getLogger(UnconfiguredCachedLayersProvider.class);
 
-                private static final long serialVersionUID = 3215255763580377079L;
+    static final Property<TileLayer> TYPE = new AbstractProperty<TileLayer>("type") {
 
+        private static final long serialVersionUID = 3215255763580377079L;
+
+        @Override
+        public ResourceReference getPropertyValue(TileLayer item) {
+            return GWCIconFactory.getSpecificLayerIcon(item);
+        }
+
+        @Override
+        public Comparator<TileLayer> getComparator() {
+            return new Comparator<TileLayer>() {
                 @Override
-                public ResourceReference getPropertyValue(TileLayer item) {
-                    return GWCIconFactory.getSpecificLayerIcon(item);
-                }
-
-                @Override
-                public Comparator<TileLayer> getComparator() {
-                    return new Comparator<TileLayer>() {
-                        @Override
-                        public int compare(TileLayer o1, TileLayer o2) {
-                            ResourceReference r1 = getPropertyValue(o1);
-                            ResourceReference r2 = getPropertyValue(o2);
-                            return r1.getName().compareTo(r2.getName());
-                        }
-                    };
+                public int compare(TileLayer o1, TileLayer o2) {
+                    ResourceReference r1 = getPropertyValue(o1);
+                    ResourceReference r2 = getPropertyValue(o2);
+                    return r1.getName().compareTo(r2.getName());
                 }
             };
+        }
+    };
 
     static final Property<TileLayer> NAME = new BeanProperty<TileLayer>("name", "name");
 
     static final Property<TileLayer> ENABLED = new BeanProperty<TileLayer>("enabled", "enabled");
 
-    static final List<Property<TileLayer>> PROPERTIES =
-            Collections.unmodifiableList(Arrays.asList(TYPE, NAME, ENABLED));
+    static final List<Property<TileLayer>> PROPERTIES = Collections
+            .unmodifiableList(Arrays.asList(TYPE, NAME, ENABLED));
+
+    private static final String KEY_SIZE = "key.size";
+    private final Cache<String, Integer> cache;
+
+    private GWCConfig defaults;
+
+    public UnconfiguredCachedLayersProvider() {
+        super();
+        // Initialization of an inner cache in order to avoid to calculate several times
+        // the size() method in a time minor than a second
+        CacheBuilder<Object, Object> builder = CacheBuilder.newBuilder();
+        cache = builder.expireAfterWrite(1, TimeUnit.SECONDS).build();
+
+        defaults = GWC.get().getConfig().saneConfig().clone();
+        defaults.setCacheLayersByDefault(true);
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Provides a page of transient TileLayers for the LayerInfo and LayerGroupInfo
+     * objects in Catalog that don't already have a configured TileLayer on their
+     * metadata map and that match the page {@link #getFilter() filter}, in the
+     * specified {@link #getSort() sort order}.
+     */
+    @Override
+    public Iterator<TileLayer> iterator(long first, long count) {
+        final SortParam<Object> sort = getSort();
+        final Filter filter = getFilter();
+        final Stream<TileLayer> stream;
+        if (sort == null) {
+            stream = unconfiguredLayers(filter).skip(first).limit(count).map(this::createUnconfiguredTileLayer);
+        } else {
+            Comparator<TileLayer> comparator = getComparator(sort);
+            stream = unconfiguredLayers(filter).map(this::createUnconfiguredTileLayer).sorted(comparator).skip(first)
+                    .limit(count);
+        }
+        return new CloseableIteratorAdapter<TileLayer>(stream.iterator(), () -> stream.close());
+    }
+
+    @Override
+    public int fullSize() {
+        return size(Predicates.acceptAll());
+    }
 
     @Override
     public long size() {
-        Stopwatch sw = Stopwatch.createStarted();
-        long size = super.size();
-        System.err.printf("--> size():%,d (%s)%n", size, sw.stop());
-        return size;
-    }
-    
-    @Override
-    protected List<TileLayer> getFilteredItems() {
-        Stopwatch sw = Stopwatch.createStarted();
-        List<TileLayer> items = super.getFilteredItems();
-        System.err.printf("--> size():%,d (%s)%n", items.size(), sw.stop());
-        return items;
+        try {
+            return cache.get(KEY_SIZE, () -> size(getFilter()));
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e.getCause());
+        }
     }
 
-    
-    @Override
-    public int fullSize() {
-        Stopwatch sw = Stopwatch.createStarted();
-        int size = super.fullSize();
-        System.err.printf("--> fullSize():%,d (%s)%n", size, sw.stop());
-        return size;
+    private int size(Filter filter) {
+        int size;
+        try (Stream<PublishedInfo> unconfigured = unconfiguredLayers(filter)) {
+            size = (int) unconfigured.count();
         }
-    
+        return size;
+    }
+
+    @Override
+    protected List<TileLayer> getFilteredItems() {
+        throw new UnsupportedOperationException("should not be called, iterator(int, int) and size() overridden");
+    }
+
     /**
-     * Provides a list of transient TileLayers for the LayerInfo and LayerGroupInfo objects in
-     * Catalog that don't already have a configured TileLayer on their metadata map.
+     * Provides a list of transient TileLayers for the LayerInfo and LayerGroupInfo
+     * objects in Catalog that don't already have a configured TileLayer on their
+     * metadata map.
      *
      * @see org.geoserver.web.wicket.GeoServerDataProvider#getItems()
      */
     @Override
     protected List<TileLayer> getItems() {
-        final GWC gwc = GWC.get();
-        final GWCConfig defaults = gwc.getConfig().saneConfig().clone();
-        final GridSetBroker gridsets = gwc.getGridSetBroker();
-        final Catalog catalog = getCatalog();
-
-        defaults.setCacheLayersByDefault(true);
-
-        List<String> unconfiguredLayerIds = getUnconfiguredLayersIds();
-
-        List<TileLayer> layers =
-                Lists.transform(
-                        unconfiguredLayerIds,
-                        new Function<String, TileLayer>() {
-                            @Override
-                            public TileLayer apply(String input) {
-                                GeoServerTileLayer geoServerTileLayer;
-
-                                LayerInfo layer = catalog.getLayer(input);
-                                if (layer != null) {
-                                    geoServerTileLayer =
-                                            new GeoServerTileLayer(layer, defaults, gridsets);
-                                } else {
-                                    LayerGroupInfo layerGroup = catalog.getLayerGroup(input);
-                                    geoServerTileLayer =
-                                            new GeoServerTileLayer(layerGroup, defaults, gridsets);
-                                }
-                                /*
-                                 * Set it to enabled regardless of the default settins, so it only shows up
-                                 * as disabled if the actual layer/groupinfo is disabled
-                                 */
-                                geoServerTileLayer.getInfo().setEnabled(true);
-                                return geoServerTileLayer;
-                            }
-                        });
-
-        return layers;
+        LOGGER.info("should not be called, fullSize() and getFilteredItems() overridden");
+        return unconfiguredLayers(Predicates.acceptAll()).map(this::createUnconfiguredTileLayer)
+                .collect(Collectors.toList());
     }
 
-    private List<String> getUnconfiguredLayersIds() {
-        Catalog catalog = getCatalog();
-        List<String> layerIds = new LinkedList<String>();
+    private TileLayer createUnconfiguredTileLayer(PublishedInfo info) {
+        return new GeoServerTileLayer(info, defaults, GWC.get().getGridSetBroker());
+    }
 
-        GWC gwc = GWC.get();
+    private Stream<PublishedInfo> unconfiguredLayers(Filter filter) {
+        final Catalog catalog = getCatalog();
+        final CloseableIterator<LayerInfo> layers = catalog.list(LayerInfo.class, filter);
+        final CloseableIterator<LayerGroupInfo> groups = catalog.list(LayerGroupInfo.class, filter);
 
-        List<LayerInfo> layers = catalog.getLayers();
-        for (LayerInfo l : layers) {
-            if (!gwc.hasTileLayer(l)) {
-                layerIds.add(l.getId());
-            }
-        }
+        Stream<PublishedInfo> all = Stream.concat(Streams.stream(layers), Streams.stream(groups));
+        all = all.filter(this::isUnconfigured).onClose(() -> {
+            layers.close();
+            groups.close();
+        });
+        return all;
+    }
 
-        List<LayerGroupInfo> layerGroups = catalog.getLayerGroups();
-        for (LayerGroupInfo lg : layerGroups) {
-            if (!gwc.hasTileLayer(lg)) {
-                layerIds.add(lg.getId());
-            }
-        }
-        return layerIds;
+    private boolean isUnconfigured(PublishedInfo info) {
+        return !GWC.get().hasTileLayer(info);
     }
 
     /** @see org.geoserver.web.wicket.GeoServerDataProvider#getProperties() */
@@ -166,7 +184,9 @@ class UnconfiguredCachedLayersProvider extends GeoServerDataProvider<TileLayer> 
         return PROPERTIES;
     }
 
-    /** @see org.geoserver.web.wicket.GeoServerDataProvider#newModel(java.lang.Object) */
+    /**
+     * @see org.geoserver.web.wicket.GeoServerDataProvider#newModel(java.lang.Object)
+     */
     public IModel<TileLayer> newModel(final TileLayer tileLayer) {
         return new UnconfiguredTileLayerDetachableModel(((TileLayer) tileLayer).getName());
     }
@@ -190,8 +210,6 @@ class UnconfiguredCachedLayersProvider extends GeoServerDataProvider<TileLayer> 
         @Override
         protected TileLayer load() {
             final GWC gwc = GWC.get();
-            final GWCConfig defaults = gwc.getConfig().saneConfig().clone();
-            defaults.setCacheLayersByDefault(true);
             final GridSetBroker gridsets = gwc.getGridSetBroker();
             Catalog catalog = getCatalog();
 
