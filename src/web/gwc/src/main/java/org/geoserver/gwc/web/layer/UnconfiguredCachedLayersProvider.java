@@ -5,6 +5,9 @@
  */
 package org.geoserver.gwc.web.layer;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.collect.Streams;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -15,11 +18,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import org.apache.wicket.extensions.markup.html.repeater.util.SortParam;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.geoserver.catalog.Catalog;
 import org.geoserver.catalog.LayerGroupInfo;
 import org.geoserver.catalog.LayerInfo;
@@ -37,10 +38,6 @@ import org.geowebcache.grid.GridSetBroker;
 import org.geowebcache.layer.TileLayer;
 import org.opengis.filter.Filter;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.collect.Streams;
-
 /** @author groldan */
 class UnconfiguredCachedLayersProvider extends GeoServerDataProvider<TileLayer> {
 
@@ -48,34 +45,35 @@ class UnconfiguredCachedLayersProvider extends GeoServerDataProvider<TileLayer> 
 
     private static final Logger LOGGER = Logging.getLogger(UnconfiguredCachedLayersProvider.class);
 
-    static final Property<TileLayer> TYPE = new AbstractProperty<TileLayer>("type") {
+    static final Property<TileLayer> TYPE =
+            new AbstractProperty<TileLayer>("type") {
 
-        private static final long serialVersionUID = 3215255763580377079L;
+                private static final long serialVersionUID = 3215255763580377079L;
 
-        @Override
-        public ResourceReference getPropertyValue(TileLayer item) {
-            return GWCIconFactory.getSpecificLayerIcon(item);
-        }
-
-        @Override
-        public Comparator<TileLayer> getComparator() {
-            return new Comparator<TileLayer>() {
                 @Override
-                public int compare(TileLayer o1, TileLayer o2) {
-                    ResourceReference r1 = getPropertyValue(o1);
-                    ResourceReference r2 = getPropertyValue(o2);
-                    return r1.getName().compareTo(r2.getName());
+                public GWCIconFactory.CachedLayerType getPropertyValue(TileLayer item) {
+                    return GWCIconFactory.getCachedLayerType(item);
+                }
+
+                @Override
+                public Comparator<TileLayer> getComparator() {
+                    return new Comparator<TileLayer>() {
+                        @Override
+                        public int compare(TileLayer o1, TileLayer o2) {
+                            GWCIconFactory.CachedLayerType r1 = getPropertyValue(o1);
+                            GWCIconFactory.CachedLayerType r2 = getPropertyValue(o2);
+                            return r1.compareTo(r2);
+                        }
+                    };
                 }
             };
-        }
-    };
 
     static final Property<TileLayer> NAME = new BeanProperty<TileLayer>("name", "name");
 
     static final Property<TileLayer> ENABLED = new BeanProperty<TileLayer>("enabled", "enabled");
 
-    static final List<Property<TileLayer>> PROPERTIES = Collections
-            .unmodifiableList(Arrays.asList(TYPE, NAME, ENABLED));
+    static final List<Property<TileLayer>> PROPERTIES =
+            Collections.unmodifiableList(Arrays.asList(TYPE, NAME, ENABLED));
 
     private static final String KEY_SIZE = "key.size";
     private final Cache<String, Integer> cache;
@@ -95,11 +93,10 @@ class UnconfiguredCachedLayersProvider extends GeoServerDataProvider<TileLayer> 
 
     /**
      * {@inheritDoc}
-     * <p>
-     * Provides a page of transient TileLayers for the LayerInfo and LayerGroupInfo
-     * objects in Catalog that don't already have a configured TileLayer on their
-     * metadata map and that match the page {@link #getFilter() filter}, in the
-     * specified {@link #getSort() sort order}.
+     *
+     * <p>Provides a page of transient TileLayers for the LayerInfo and LayerGroupInfo objects in
+     * Catalog that don't already have a configured TileLayer on their metadata map and that match
+     * the page {@link #getFilter() filter}, in the specified {@link #getSort() sort order}.
      */
     @Override
     public Iterator<TileLayer> iterator(long first, long count) {
@@ -107,11 +104,19 @@ class UnconfiguredCachedLayersProvider extends GeoServerDataProvider<TileLayer> 
         final Filter filter = getFilter();
         final Stream<TileLayer> stream;
         if (sort == null) {
-            stream = unconfiguredLayers(filter).skip(first).limit(count).map(this::createUnconfiguredTileLayer);
+            stream =
+                    unconfiguredLayers(filter)
+                            .skip(first)
+                            .limit(count)
+                            .map(this::createUnconfiguredTileLayer);
         } else {
             Comparator<TileLayer> comparator = getComparator(sort);
-            stream = unconfiguredLayers(filter).map(this::createUnconfiguredTileLayer).sorted(comparator).skip(first)
-                    .limit(count);
+            stream =
+                    unconfiguredLayers(filter)
+                            .map(this::createUnconfiguredTileLayer)
+                            .sorted(comparator)
+                            .skip(first)
+                            .limit(count);
         }
         return new CloseableIteratorAdapter<TileLayer>(stream.iterator(), () -> stream.close());
     }
@@ -140,20 +145,21 @@ class UnconfiguredCachedLayersProvider extends GeoServerDataProvider<TileLayer> 
 
     @Override
     protected List<TileLayer> getFilteredItems() {
-        throw new UnsupportedOperationException("should not be called, iterator(int, int) and size() overridden");
+        throw new UnsupportedOperationException(
+                "should not be called, iterator(int, int) and size() overridden");
     }
 
     /**
-     * Provides a list of transient TileLayers for the LayerInfo and LayerGroupInfo
-     * objects in Catalog that don't already have a configured TileLayer on their
-     * metadata map.
+     * Provides a list of transient TileLayers for the LayerInfo and LayerGroupInfo objects in
+     * Catalog that don't already have a configured TileLayer on their metadata map.
      *
      * @see org.geoserver.web.wicket.GeoServerDataProvider#getItems()
      */
     @Override
     protected List<TileLayer> getItems() {
         LOGGER.info("should not be called, fullSize() and getFilteredItems() overridden");
-        return unconfiguredLayers(Predicates.acceptAll()).map(this::createUnconfiguredTileLayer)
+        return unconfiguredLayers(Predicates.acceptAll())
+                .map(this::createUnconfiguredTileLayer)
                 .collect(Collectors.toList());
     }
 
@@ -167,10 +173,13 @@ class UnconfiguredCachedLayersProvider extends GeoServerDataProvider<TileLayer> 
         final CloseableIterator<LayerGroupInfo> groups = catalog.list(LayerGroupInfo.class, filter);
 
         Stream<PublishedInfo> all = Stream.concat(Streams.stream(layers), Streams.stream(groups));
-        all = all.filter(this::isUnconfigured).onClose(() -> {
-            layers.close();
-            groups.close();
-        });
+        all =
+                all.filter(this::isUnconfigured)
+                        .onClose(
+                                () -> {
+                                    layers.close();
+                                    groups.close();
+                                });
         return all;
     }
 
@@ -184,9 +193,7 @@ class UnconfiguredCachedLayersProvider extends GeoServerDataProvider<TileLayer> 
         return PROPERTIES;
     }
 
-    /**
-     * @see org.geoserver.web.wicket.GeoServerDataProvider#newModel(java.lang.Object)
-     */
+    /** @see org.geoserver.web.wicket.GeoServerDataProvider#newModel(java.lang.Object) */
     public IModel<TileLayer> newModel(final TileLayer tileLayer) {
         return new UnconfiguredTileLayerDetachableModel(((TileLayer) tileLayer).getName());
     }
