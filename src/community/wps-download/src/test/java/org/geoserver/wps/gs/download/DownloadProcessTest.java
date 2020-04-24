@@ -1540,6 +1540,8 @@ public class DownloadProcessTest extends WPSTestSupport {
             // this comparison fail
             ImageAssert.assertEquals(referenceImage, gc.getRenderedImage(), 5);
 
+            // also make sure the referencing is the same
+            assertEquals(referenceGc.getEnvelope2D(), gc.getEnvelope2D());
         } finally {
             if (gc != null) {
                 CoverageCleanerCallback.disposeCoverage(gc);
