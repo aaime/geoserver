@@ -5,17 +5,19 @@
  */
 package org.geoserver.catalog;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
 import org.geoserver.catalog.event.CatalogListener;
 import org.geoserver.catalog.util.CloseableIterator;
 import org.geoserver.platform.GeoServerResourceLoader;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
+
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
  * The GeoServer catalog which provides access to meta information about the data served by
@@ -1324,6 +1326,31 @@ public interface Catalog extends CatalogInfo {
 
     /** Removes an existing workspace. */
     void remove(WorkspaceInfo workspace);
+
+    default void remove(CatalogInfo ci) {
+        if (ci == null) return;
+
+        if (ci instanceof WorkspaceInfo) {
+            remove((WorkspaceInfo) ci);
+        } else if (ci instanceof NamespaceInfo) {
+            remove((NamespaceInfo) ci);
+        } else if (ci instanceof StoreInfo) {
+            remove((StoreInfo) ci);
+        } else if (ci instanceof ResourceInfo) {
+            remove((ResourceInfo) ci);
+        } else if (ci instanceof LayerInfo) {
+            remove((LayerInfo) ci);
+        } else if (ci instanceof LayerGroupInfo) {
+            remove((LayerGroupInfo) ci);
+        } else if (ci instanceof StyleInfo) {
+            remove((StyleInfo) ci);
+        } else {
+            throw new IllegalArgumentException(
+                    "Unrecognized CatalogInfo type for "
+                            + ci
+                            + ", please extend the method accordingly");
+        }
+    }
 
     /** Saves changes to an existing workspace. */
     void save(WorkspaceInfo workspace);
