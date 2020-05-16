@@ -4,12 +4,16 @@
  */
 package org.geoserver.catalog.impl;
 
+import static org.geoserver.catalog.CatalogCloneVisitor.DEFAULT_COPY_PREFIX;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.Date;
 import org.geoserver.catalog.Catalog;
 import org.geoserver.catalog.CatalogBuilder;
 import org.geoserver.catalog.CatalogCloneVisitor;
@@ -42,10 +46,6 @@ import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.opengis.filter.FilterFactory2;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.Date;
 
 public class CatalogCloneVisitorTest extends CascadeVisitorAbstractTest {
 
@@ -85,7 +85,8 @@ public class CatalogCloneVisitorTest extends CascadeVisitorAbstractTest {
         MockHttpClient client = new MockHttpClient();
         URL wmsCapsURL = new URL(baseURL + "?service=WMS&request=GetCapabilities&version=1.1.0");
         client.expectGet(
-                wmsCapsURL, new MockHttpResponse(getClass().getResource("caps111.xml"), "text/xml"));
+                wmsCapsURL,
+                new MockHttpResponse(getClass().getResource("caps111.xml"), "text/xml"));
         TestHttpClientProvider.bind(client, wmsCapsURL);
 
         CatalogBuilder cb = new CatalogBuilder(getCatalog());
@@ -96,7 +97,7 @@ public class CatalogCloneVisitorTest extends CascadeVisitorAbstractTest {
         WMSLayerInfo wmsLayer = cb.buildWMSLayer(WMS_LAYER_NAME);
         catalog.add(wmsLayer);
         catalog.add(cb.buildLayer(wmsLayer));
-        
+
         // setup a WMTS store
         URL wmtsCapsURL = new URL(baseURL + "?REQUEST=GetCapabilities&VERSION=1.0.0&SERVICE=WMTS");
         client.expectGet(
@@ -336,7 +337,7 @@ public class CatalogCloneVisitorTest extends CascadeVisitorAbstractTest {
         CatalogCloneVisitor visitor = new CatalogCloneVisitor(catalog, true);
         store.accept(visitor);
 
-        assertWMTSStoreCopy(store, "CopyOf" + WMTS_STORE_NAME);
+        assertWMTSStoreCopy(store, DEFAULT_COPY_PREFIX + WMTS_STORE_NAME);
         assertLayerCopy(catalog.getLayerByName(WMTS_LAYER_NAME));
     }
 
@@ -345,6 +346,31 @@ public class CatalogCloneVisitorTest extends CascadeVisitorAbstractTest {
         assertNotNull(copy);
         assertEquals(store.getCapabilitiesURL(), copy.getCapabilitiesURL());
     }
-    
-    // TESTS MISSING: WORKSPACE AND LAYER GROUP! NASTY BIT, THEY NEED TO FOLLOW THE COPIED STYLES AND LAYERS
+
+    @Test
+    public void testCopyLayerGroup() throws Exception {
+        LayerGroupInfo group = catalog.getLayerGroupByName(LAKES_GROUP);
+        CatalogCloneVisitor visitor = new CatalogCloneVisitor(catalog, true);
+        group.accept(visitor);
+
+        LayerGroupInfo copy = catalog.getLayerGroupByName(DEFAULT_COPY_PREFIX + LAKES_GROUP);
+        assertNotNull(copy);
+        // layers were not deep cloned
+        assertEquals(group.getLayers(), copy.getLayers());
+    }
+
+    @Test
+    public void testCopyLayerGroupNested() throws Exception {
+        LayerGroupInfo group = catalog.getLayerGroupByName(NEST_GROUP);
+        CatalogCloneVisitor visitor = new CatalogCloneVisitor(catalog, true);
+        group.accept(visitor);
+
+        LayerGroupInfo copy = catalog.getLayerGroupByName(DEFAULT_COPY_PREFIX + NEST_GROUP);
+        assertNotNull(copy);
+        // layers were not deep cloned
+        assertEquals(group.getLayers(), copy.getLayers());
+    }
+
+    // TESTS MISSING: WORKSPACE AND LAYER GROUP! NASTY BIT, THEY NEED TO FOLLOW THE COPIED STYLES
+    // AND LAYERS
 }

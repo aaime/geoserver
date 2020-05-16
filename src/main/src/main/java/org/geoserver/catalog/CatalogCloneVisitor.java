@@ -5,18 +5,15 @@
 package org.geoserver.catalog;
 
 import com.google.common.base.Strings;
-
+import java.io.IOException;
+import java.util.Date;
+import java.util.List;
 import org.apache.commons.io.FilenameUtils;
 import org.geoserver.catalog.impl.WMSLayerInfoImpl;
 import org.geoserver.config.GeoServerDataDirectory;
 import org.geoserver.ows.util.OwsUtils;
 import org.geoserver.platform.resource.Resource;
 import org.geoserver.platform.resource.Resources;
-import org.geowebcache.layer.wms.WMSLayer;
-
-import java.io.IOException;
-import java.util.Date;
-import java.util.List;
 
 /**
  * A {@link CatalogVisitor} that can be used to copy {@link CatalogInfo} objects, eventually in a
@@ -24,9 +21,10 @@ import java.util.List;
  */
 public class CatalogCloneVisitor implements CatalogVisitor {
 
+    public static final String DEFAULT_COPY_PREFIX = "CopyOf";
     private final boolean recursive;
     Catalog catalog;
-    private String prefix = "CopyOf";
+    private String prefix = DEFAULT_COPY_PREFIX;
 
     /**
      * Creates a new non recursive cloner. Also see {@link
@@ -177,7 +175,7 @@ public class CatalogCloneVisitor implements CatalogVisitor {
         OwsUtils.copy(layer, target, LayerInfo.class);
         OwsUtils.set(target, "id", null);
         // avoid issues with automatic renaming of resources after the layer name
-        target.setResource(null);  
+        target.setResource(null);
 
         // copying the resource is mandatory, they must have the same name, so here
         // we go off-pattern, need the copy to set
@@ -274,7 +272,9 @@ public class CatalogCloneVisitor implements CatalogVisitor {
             ((WMSLayerInfoImpl) target).setStore(((WMSLayerInfo) source).getStore());
         }
         OwsUtils.copy(clazz.cast(source), clazz.cast(target), clazz);
-        OwsUtils.set(target, "id", null);
+        if (!(source instanceof LayerGroupInfo)) {
+            OwsUtils.set(target, "id", null);
+        }
         setUniqueName(clazz, source, target);
         Date date = new Date();
         target.setDateCreated(date);
