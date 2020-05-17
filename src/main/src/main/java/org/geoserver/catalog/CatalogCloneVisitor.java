@@ -292,4 +292,9 @@ public class CatalogCloneVisitor implements CatalogVisitor {
         }
         OwsUtils.set(target, "name", newName);
     }
+    
+    // TODO: add workspace cloning with a flag to turn off prefix and look for copied
+    // resources in groups -> layers, styles and groups, layers -> styles, layers -> resources.
+    // copy order is workspace, styles, resources, layers, groups ordered by dependency.
+    // probably to be done iteratively rathern than recursively?
 }
