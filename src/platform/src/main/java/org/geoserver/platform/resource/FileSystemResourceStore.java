@@ -14,6 +14,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.FileSystemException;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -456,7 +457,7 @@ public class FileSystemResourceStore implements ResourceStore {
                     throw new IllegalStateException(
                             "Path does not represent a configuration resource: " + path);
                 }
-            } catch (NoSuchFileException e) {
+            } catch (FileSystemException e) {
                 return Type.UNDEFINED;
             } catch (IOException e) {
                 throw new IllegalStateException(e);

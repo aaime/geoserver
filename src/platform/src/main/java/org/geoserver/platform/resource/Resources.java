@@ -5,6 +5,14 @@
  */
 package org.geoserver.platform.resource;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.geoserver.platform.GeoServerExtensions;
+import org.geoserver.platform.GeoServerResourceLoader;
+import org.geoserver.platform.resource.Resource.Type;
+import org.geoserver.util.Filter;
+import org.geotools.util.URLs;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -26,13 +34,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.geoserver.platform.GeoServerExtensions;
-import org.geoserver.platform.GeoServerResourceLoader;
-import org.geoserver.platform.resource.Resource.Type;
-import org.geoserver.util.Filter;
-import org.geotools.util.URLs;
 
 /**
  * Utility methods for working with {@link ResourceStore}.
@@ -336,10 +337,19 @@ public class Resources {
      */
     public static void copy(Resource data, Resource destination) throws IOException {
         if (data.getType() == Type.DIRECTORY) {
+            // dir to dir
             for (Resource child : data.list()) {
                 copy(child, destination.get(child.name()));
             }
+        } else if (destination.getType() == Type.DIRECTORY) {
+            // file to dir
+            Resource newResource = destination.get(data.name());
+            try (InputStream in = data.in();
+                    OutputStream out = newResource.out()) {
+                IOUtils.copy(in, out);
+            }
         } else {
+            // file to file
             try (InputStream in = data.in()) {
                 copy(in, destination);
             }

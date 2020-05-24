@@ -47,25 +47,25 @@ public class CascadeVisitorAbstractTest extends GeoServerSystemTestSupport {
 
         // add a layer group
         CatalogFactory factory = catalog.getFactory();
-        LayerGroupInfo globalGroup = factory.createLayerGroup();
-        globalGroup.setName(LAKES_GROUP);
-        globalGroup.getLayers().add(catalog.getLayerByName(getLayerId(LAKES)));
-        globalGroup.getLayers().add(catalog.getLayerByName(getLayerId(FORESTS)));
-        globalGroup.getLayers().add(catalog.getLayerByName(getLayerId(BRIDGES)));
-        globalGroup.getStyles().add(null);
-        globalGroup.getStyles().add(null);
-        globalGroup.getStyles().add(null);
-        catalog.add(globalGroup);
+        LayerGroupInfo lakesGroup = factory.createLayerGroup();
+        lakesGroup.setName(LAKES_GROUP);
+        lakesGroup.getLayers().add(catalog.getLayerByName(getLayerId(LAKES)));
+        lakesGroup.getLayers().add(catalog.getLayerByName(getLayerId(FORESTS)));
+        lakesGroup.getLayers().add(catalog.getLayerByName(getLayerId(BRIDGES)));
+        lakesGroup.getStyles().add(null);
+        lakesGroup.getStyles().add(null);
+        lakesGroup.getStyles().add(null);
+        catalog.add(lakesGroup);
 
-        // add a layer group containing a layer group
+        // add a layer group containing other layer groups
         LayerGroupInfo nestGroup = factory.createLayerGroup();
         nestGroup.setName(NEST_GROUP);
         nestGroup.getLayers().add(catalog.getLayerByName(getLayerId(LAKES)));
-        nestGroup.getLayers().add(globalGroup);
+        nestGroup.getLayers().add(lakesGroup);
         nestGroup.getStyles().add(null);
         nestGroup.getStyles().add(null);
         catalog.add(nestGroup);
-
+        
         // add a workspace specific style
         WorkspaceInfo ws = catalog.getWorkspaceByName(CITE_PREFIX);
         testData.addStyle(ws, WS_STYLE, "Streams.sld", SystemTestData.class, catalog);

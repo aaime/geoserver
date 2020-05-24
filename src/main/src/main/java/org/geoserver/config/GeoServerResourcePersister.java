@@ -4,15 +4,6 @@
  */
 package org.geoserver.config;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.logging.Logger;
-import org.apache.commons.io.IOUtils;
 import org.geoserver.catalog.Catalog;
 import org.geoserver.catalog.CatalogException;
 import org.geoserver.catalog.StyleInfo;
@@ -28,6 +19,13 @@ import org.geoserver.platform.resource.Resource;
 import org.geoserver.platform.resource.Resource.Type;
 import org.geoserver.platform.resource.Resources;
 import org.geotools.util.logging.Logging;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Handles the persistence of addition resources when changes happen to the catalog, such as rename,
@@ -80,7 +78,8 @@ public class GeoServerResourcePersister implements CatalogListener {
                             URI oldURI = new URI(old.path());
                             final URI relative = oldDirURI.relativize(oldURI);
                             final Resource target = newDir.get(relative.getPath()).parent();
-                            copyResToDir(old, target);
+                            if (target.getType() == Type.UNDEFINED) target.dir();
+                            Resources.copy(old, target);
                         }
                     }
 
@@ -131,13 +130,5 @@ public class GeoServerResourcePersister implements CatalogListener {
 
     private void moveResToDir(Resource r, Resource newDir) {
         rl.move(r.path(), newDir.get(r.name()).path());
-    }
-
-    private void copyResToDir(Resource r, Resource newDir) throws IOException {
-        Resource newR = newDir.get(r.name());
-        try (InputStream in = r.in();
-                OutputStream out = newR.out()) {
-            IOUtils.copy(in, out);
-        }
     }
 }

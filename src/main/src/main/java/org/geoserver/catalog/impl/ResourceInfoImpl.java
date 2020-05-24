@@ -289,6 +289,8 @@ public abstract class ResourceInfoImpl implements ResourceInfo {
     public String toString() {
         return new StringBuilder(getClass().getSimpleName())
                 .append('[')
+                .append(namespace.getPrefix())
+                .append(":")
                 .append(name)
                 .append(']')
                 .toString();

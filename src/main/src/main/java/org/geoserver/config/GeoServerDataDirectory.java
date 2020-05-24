@@ -786,8 +786,7 @@ public class GeoServerDataDirectory {
     }
 
     // SLD Manipulation
-
-    List<Resource> additionalStyleResources(StyleInfo s) throws IOException {
+    public List<Resource> additionalStyleResources(StyleInfo s) throws IOException {
         final List<Resource> resources = new ArrayList<Resource>();
         final Resource baseDir = get(s);
         try {
