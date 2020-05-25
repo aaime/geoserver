@@ -16,6 +16,7 @@ import org.geoserver.platform.resource.Resources;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -359,6 +360,62 @@ public class CatalogCloneVisitor implements CatalogVisitor {
     public void visit(LayerGroupInfo layerGroup) {
         LayerGroupInfo target = catalog.getFactory().createLayerGroup();
         copy(LayerGroupInfo.class, layerGroup, target);
+        if (layerGroup.getWorkspace() != null && targetWorkspace != null) {
+
+            // re-wire layer and group references to the cloned ones
+            List<PublishedInfo> adjustedLayers = new ArrayList<>();
+            for (PublishedInfo pi : target.getLayers()) {
+                if (pi instanceof LayerInfo) {
+                    LayerInfo layer = (LayerInfo) pi;
+                    LayerInfo targetLayer =
+                            catalog.getLayerByName(
+                                    targetWorkspace.getName() + ":" + layer.getName());
+                    adjustedLayers.add(targetLayer);
+                } else if (pi instanceof LayerGroupInfo) {
+                    LayerGroupInfo group = (LayerGroupInfo) pi;
+                    if (layerGroup.getWorkspace().equals(group.getWorkspace())) {
+                        LayerGroupInfo targetGroup =
+                                catalog.getLayerGroupByName(targetWorkspace, group.getName());
+                        adjustedLayers.add(targetGroup);
+                    } else {
+                        // must have been global, or broken config pointing to a different ws
+                        adjustedLayers.add(group);
+                    }
+                }
+            }
+            target.getLayers().clear();
+            target.getLayers().addAll(adjustedLayers);
+
+            // re-wire style references to the cloned ones
+            List<StyleInfo> adjustedStyles = new ArrayList<>();
+            for (StyleInfo style : target.getStyles()) {
+                if (style != null && style.getWorkspace() != null) {
+                    StyleInfo targetStyle =
+                            catalog.getStyleByName(targetWorkspace, style.getName());
+                    adjustedStyles.add(targetStyle);
+                } else {
+                    adjustedStyles.add(style);
+                }
+            }
+            target.styles().clear();
+            target.styles().addAll(adjustedStyles);
+
+            // root layer too
+            LayerInfo rootLayer = target.getRootLayer();
+            if (rootLayer != null) {
+                LayerInfo targetRootLayer =
+                        catalog.getLayerByName(
+                                targetWorkspace.getName() + ":" + rootLayer.getName());
+                target.setRootLayer(targetRootLayer);
+            }
+            StyleInfo rootLayerStyle = target.getRootLayerStyle();
+            if (rootLayerStyle != null && rootLayerStyle.getWorkspace() != null) {
+                StyleInfo targetStyle =
+                        catalog.getStyleByName(targetWorkspace, rootLayerStyle.getName());
+                target.setRootLayerStyle(targetStyle);
+            }
+        }
+
         catalog.add(target);
     }
 

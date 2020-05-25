@@ -158,10 +158,11 @@ public class CatalogCloneVisitorTest extends CascadeVisitorAbstractTest {
         CatalogFactory factory = catalog.getFactory();
         LayerGroupInfo wsGroup = factory.createLayerGroup();
         wsGroup.setName(WS_GROUP);
+        wsGroup.setWorkspace(ws);
         wsGroup.getLayers().add(catalog.getLayerGroupByName(LAKES_GROUP));
         wsGroup.getLayers().add(catalog.getLayerByName(getLayerId(STREAMS)));
         wsGroup.getStyles().add(null);
-        wsGroup.getStyles().add(null);
+        wsGroup.getStyles().add(referencesStyle);
         catalog.add(wsGroup);
     }
 

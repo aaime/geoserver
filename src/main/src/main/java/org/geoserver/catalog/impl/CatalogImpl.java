@@ -1017,7 +1017,7 @@ public class CatalogImpl implements Catalog {
                     "Layer group within a workspace ("
                             + ws.getName()
                             + ") can not contain resources from other workspace: "
-                            + r.getStore().getWorkspace().getName());
+                            + r.prefixedName());
         }
     }
 
