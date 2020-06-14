@@ -7,6 +7,7 @@ package org.geoserver.catalog.impl;
 import static org.geoserver.catalog.CatalogCloneVisitor.DEFAULT_COPY_PREFIX;
 import static org.geoserver.data.test.MockData.CITE_PREFIX;
 import static org.geoserver.data.test.MockData.STREAMS;
+import static org.geoserver.platform.resource.Resource.Type.DIRECTORY;
 import static org.geoserver.platform.resource.Resource.Type.RESOURCE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -15,6 +16,10 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Date;
 import org.apache.commons.io.FileUtils;
 import org.geoserver.catalog.CascadeDeleteVisitor;
 import org.geoserver.catalog.Catalog;
@@ -43,6 +48,7 @@ import org.geoserver.config.GeoServerDataDirectory;
 import org.geoserver.data.test.CiteTestData;
 import org.geoserver.data.test.MockData;
 import org.geoserver.data.test.SystemTestData;
+import org.geoserver.platform.resource.Resource;
 import org.geoserver.test.http.MockHttpClient;
 import org.geoserver.test.http.MockHttpResponse;
 import org.geotools.factory.CommonFactoryFinder;
@@ -53,11 +59,6 @@ import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.opengis.filter.FilterFactory2;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.Date;
 
 public class CatalogCloneVisitorTest extends CascadeVisitorAbstractTest {
 
@@ -154,7 +155,8 @@ public class CatalogCloneVisitorTest extends CascadeVisitorAbstractTest {
         assertTrue(svg.exists());
         FileUtils.copyFileToDirectory(svg, images);
 
-        // and a workspace specific group, with reference to a global group
+        // and a workspace specific group, with reference to another group
+        // (referencing a global group would not have worked
         CatalogFactory factory = catalog.getFactory();
         LayerGroupInfo wsGroup = factory.createLayerGroup();
         wsGroup.setName(WS_GROUP);
@@ -475,8 +477,17 @@ public class CatalogCloneVisitorTest extends CascadeVisitorAbstractTest {
         // check the ws specific group has been copied over
         LayerGroupInfo group = catalog.getLayerGroupByName(wsCloneName, WS_GROUP);
         assertNotNull(group);
-        // ... reference to global group unaffected
-        assertEquals(catalog.getLayerByName(LAKES_GROUP), group.getLayers().get(0));
+        // ... reference to global group was turned into a local copy because the group
+        // was referencing local layers that have been copied over (otherwise validation would fail,
+        // a group in CopyOfCite cannot transitively reference layers in Cite
+        assertEquals(
+                catalog.getLayerGroupByName(wsClone.getName(), LAKES_GROUP),
+                group.getLayers().get(0));
+
+        // check the referenced resource has been copied as well to the other workspace
+        Resource wsCloneStyles = getDataDirectory().getStyles(wsClone);
+        assertEquals(DIRECTORY, wsCloneStyles.getType());
+        assertEquals(RESOURCE, wsCloneStyles.get("images/rockFillSymbol.png").getType());
     }
 
     @Test

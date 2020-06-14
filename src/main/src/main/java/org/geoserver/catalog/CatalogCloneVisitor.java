@@ -5,14 +5,6 @@
 package org.geoserver.catalog;
 
 import com.google.common.base.Strings;
-
-import org.apache.commons.io.FilenameUtils;
-import org.geoserver.catalog.impl.WMSLayerInfoImpl;
-import org.geoserver.config.GeoServerDataDirectory;
-import org.geoserver.ows.util.OwsUtils;
-import org.geoserver.platform.resource.Resource;
-import org.geoserver.platform.resource.Resources;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -23,6 +15,12 @@ import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import org.apache.commons.io.FilenameUtils;
+import org.geoserver.catalog.impl.WMSLayerInfoImpl;
+import org.geoserver.config.GeoServerDataDirectory;
+import org.geoserver.ows.util.OwsUtils;
+import org.geoserver.platform.resource.Resource;
+import org.geoserver.platform.resource.Resources;
 
 /**
  * A {@link CatalogVisitor} that can be used to copy {@link CatalogInfo} objects, eventually in a
@@ -333,7 +331,7 @@ public class CatalogCloneVisitor implements CatalogVisitor {
             // now we can copy the style object too
             catalog.add(target);
 
-            // in case there are referred resources, they need to be copied over too
+            // in case there are referenced resources, they need to be copied over too
             if (targetWorkspace != null) {
                 // look for any resource files (image, etc...) and copy them over, don't move
                 // since they could be shared among other styles
@@ -358,9 +356,13 @@ public class CatalogCloneVisitor implements CatalogVisitor {
 
     @Override
     public void visit(LayerGroupInfo layerGroup) {
+        copyGroupInternal(layerGroup);
+    }
+
+    public LayerGroupInfo copyGroupInternal(LayerGroupInfo layerGroup) {
         LayerGroupInfo target = catalog.getFactory().createLayerGroup();
         copy(LayerGroupInfo.class, layerGroup, target);
-        if (layerGroup.getWorkspace() != null && targetWorkspace != null) {
+        if (targetWorkspace != null) {
 
             // re-wire layer and group references to the cloned ones
             List<PublishedInfo> adjustedLayers = new ArrayList<>();
@@ -378,8 +380,12 @@ public class CatalogCloneVisitor implements CatalogVisitor {
                                 catalog.getLayerGroupByName(targetWorkspace, group.getName());
                         adjustedLayers.add(targetGroup);
                     } else {
-                        // must have been global, or broken config pointing to a different ws
-                        adjustedLayers.add(group);
+                        // must have been global, and the global was referencing layers in the
+                        // workspace being cloned, otherwise it was invalid... cannot touch
+                        // the global workspace, but we can clone the global group into a workspaced
+                        // one...
+                        LayerGroupInfo groupCopy = copyGroupInternal(group);
+                        adjustedLayers.add(groupCopy);
                     }
                 }
             }
@@ -397,8 +403,8 @@ public class CatalogCloneVisitor implements CatalogVisitor {
                     adjustedStyles.add(style);
                 }
             }
-            target.styles().clear();
-            target.styles().addAll(adjustedStyles);
+            target.getStyles().clear();
+            target.getStyles().addAll(adjustedStyles);
 
             // root layer too
             LayerInfo rootLayer = target.getRootLayer();
@@ -417,6 +423,7 @@ public class CatalogCloneVisitor implements CatalogVisitor {
         }
 
         catalog.add(target);
+        return target;
     }
 
     @Override

@@ -5,6 +5,20 @@
  */
 package org.geoserver.catalog.impl;
 
+import java.io.IOException;
+import java.lang.reflect.Proxy;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.Stack;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
 import org.apache.commons.io.FilenameUtils;
 import org.geoserver.GeoServerConfigurationLock;
 import org.geoserver.catalog.Catalog;
@@ -71,21 +85,6 @@ import org.geotools.util.logging.Logging;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
-
-import java.io.IOException;
-import java.lang.reflect.Proxy;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.Stack;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
 
 /**
  * A default catalog implementation that is memory based.
@@ -1637,8 +1636,8 @@ public class CatalogImpl implements Catalog {
     public void removeListeners(Class listenerClass) {
         new ArrayList<>(listeners)
                 .stream()
-                        .filter(l -> listenerClass.isInstance(l))
-                        .forEach(l -> listeners.remove(l));
+                .filter(l -> listenerClass.isInstance(l))
+                .forEach(l -> listeners.remove(l));
     }
 
     public Iterator search(String cql) {

@@ -65,7 +65,7 @@ public class CascadeVisitorAbstractTest extends GeoServerSystemTestSupport {
         nestGroup.getStyles().add(null);
         nestGroup.getStyles().add(null);
         catalog.add(nestGroup);
-        
+
         // add a workspace specific style
         WorkspaceInfo ws = catalog.getWorkspaceByName(CITE_PREFIX);
         testData.addStyle(ws, WS_STYLE, "Streams.sld", SystemTestData.class, catalog);

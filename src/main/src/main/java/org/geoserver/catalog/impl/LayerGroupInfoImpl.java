@@ -332,6 +332,7 @@ public class LayerGroupInfoImpl implements LayerGroupInfo {
     public String toString() {
         return new StringBuilder(getClass().getSimpleName())
                 .append('[')
+                .append(workspace != null ? (workspace.getName() + ":") : "")
                 .append(name)
                 .append(']')
                 .toString();
