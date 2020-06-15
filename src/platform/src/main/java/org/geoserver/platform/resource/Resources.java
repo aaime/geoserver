@@ -5,14 +5,6 @@
  */
 package org.geoserver.platform.resource;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.geoserver.platform.GeoServerExtensions;
-import org.geoserver.platform.GeoServerResourceLoader;
-import org.geoserver.platform.resource.Resource.Type;
-import org.geoserver.util.Filter;
-import org.geotools.util.URLs;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -34,6 +26,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.geoserver.platform.GeoServerExtensions;
+import org.geoserver.platform.GeoServerResourceLoader;
+import org.geoserver.platform.resource.Resource.Type;
+import org.geoserver.util.Filter;
+import org.geotools.util.URLs;
 
 /**
  * Utility methods for working with {@link ResourceStore}.

@@ -427,9 +427,6 @@ public class CatalogCloneVisitorTest extends CascadeVisitorAbstractTest {
         assertEquals(group.getLayers(), copy.getLayers());
     }
 
-    // TESTS MISSING: WORKSPACE AND LAYER GROUP! NASTY BIT, THEY NEED TO FOLLOW THE COPIED STYLES
-    // AND LAYERS
-
     @Test
     public void testCopyWorkspace() throws Exception {
         WorkspaceInfo ws = catalog.getWorkspaceByName(CITE_PREFIX);
