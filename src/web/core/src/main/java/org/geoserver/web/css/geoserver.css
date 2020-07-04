@@ -1235,6 +1235,12 @@ background: transparent url(../img/icons/silk/add.png) scroll no-repeat left cen
 padding: 2px 0px 2px 20px;
 }
 
+.copy-link {
+background: transparent url(../img/icons/silk/page_copy.png) scroll no-repeat left center;
+padding: 2px 0px 2px 20px;
+}
+
+
 .remove-link {
 background: transparent url(../img/icons/silk/delete.png) scroll no-repeat left center;
 padding: 2px 0px 2px 20px;

@@ -19,6 +19,7 @@ import org.geoserver.catalog.WorkspaceInfo;
 import org.geoserver.web.CatalogIconFactory;
 import org.geoserver.web.ComponentAuthorizer;
 import org.geoserver.web.GeoServerSecuredPage;
+import org.geoserver.web.data.CopyLink;
 import org.geoserver.web.data.SelectionRemovalLink;
 import org.geoserver.web.wicket.DateTimeLabel;
 import org.geoserver.web.wicket.GeoServerDataProvider.Property;
@@ -93,6 +94,9 @@ public class WorkspacePage extends GeoServerSecuredPage {
 
         // the add button
         header.add(new BookmarkablePageLink<WorkspaceNewPage>("addNew", WorkspaceNewPage.class));
+
+        // the copy button
+        header.add(new CopyLink("copySelected", table));
 
         // the removal button
         header.add(removal = new SelectionRemovalLink("removeSelected", table, dialog));

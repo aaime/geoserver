@@ -18,6 +18,7 @@ import org.geoserver.catalog.LayerGroupInfo;
 import org.geoserver.web.CatalogIconFactory;
 import org.geoserver.web.ComponentAuthorizer;
 import org.geoserver.web.GeoServerSecuredPage;
+import org.geoserver.web.data.CopyLink;
 import org.geoserver.web.data.SelectionRemovalLink;
 import org.geoserver.web.data.workspace.WorkspaceEditPage;
 import org.geoserver.web.wicket.DateTimeLabel;
@@ -123,6 +124,9 @@ public class LayerGroupPage extends GeoServerSecuredPage {
         // the add button
         header.add(
                 new BookmarkablePageLink<LayerGroupEditPage>("addNew", LayerGroupEditPage.class));
+
+        // the copy button
+        header.add(new CopyLink("copySelected", table));
 
         // the removal button
         header.add(removal = new SelectionRemovalLink("removeSelected", table, dialog));
