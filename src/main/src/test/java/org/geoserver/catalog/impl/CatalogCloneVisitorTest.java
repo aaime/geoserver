@@ -16,6 +16,10 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Date;
 import org.apache.commons.io.FileUtils;
 import org.geoserver.catalog.CascadeDeleteVisitor;
 import org.geoserver.catalog.Catalog;
@@ -55,11 +59,6 @@ import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.opengis.filter.FilterFactory2;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.Date;
 
 public class CatalogCloneVisitorTest extends CascadeVisitorAbstractTest {
 
@@ -389,7 +388,7 @@ public class CatalogCloneVisitorTest extends CascadeVisitorAbstractTest {
         CatalogCloneVisitor visitor = new CatalogCloneVisitor(catalog, true);
         store.accept(visitor);
 
-        assertWMTSStoreCopy(store,  WMTS_STORE_NAME + DEFAULT_COPY_SUFFIX);
+        assertWMTSStoreCopy(store, WMTS_STORE_NAME + DEFAULT_COPY_SUFFIX);
         assertLayerCopy(catalog.getLayerByName(WMTS_LAYER_NAME));
     }
 
