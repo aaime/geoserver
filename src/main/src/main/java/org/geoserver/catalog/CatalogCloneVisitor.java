@@ -28,10 +28,10 @@ import org.geoserver.platform.resource.Resources;
  */
 public class CatalogCloneVisitor implements CatalogVisitor {
 
-    public static final String DEFAULT_COPY_PREFIX = "CopyOf";
+    public static final String DEFAULT_COPY_SUFFIX = "Copy";
     private final boolean recursive;
     Catalog catalog;
-    private String prefix = DEFAULT_COPY_PREFIX;
+    private String suffix = DEFAULT_COPY_SUFFIX;
     private WorkspaceInfo targetWorkspace;
     private StoreInfo targetStore;
 
@@ -58,21 +58,21 @@ public class CatalogCloneVisitor implements CatalogVisitor {
         this.recursive = recursive;
     }
 
-    /** Gets the prefix assigned to clone names (defaults to "CopyOf") */
-    public String getPrefix() {
-        return prefix;
+    /** Gets the suffix assigned to clone names (defaults to "Copy") */
+    public String getSuffix() {
+        return suffix;
     }
 
     /**
-     * Sets the prefix assigned to clone names. Ideally it should be short, without spaces and
+     * Sets the suffix assigned to clone names. Ideally it should be short, without spaces and
      * uncommon chars, as it may become part of a service visible resource
      *
-     * @param prefix
+     * @param suffix
      */
-    public void setPrefix(String prefix) {
-        if (Strings.isNullOrEmpty(prefix))
+    public void setSuffix(String suffix) {
+        if (Strings.isNullOrEmpty(suffix))
             throw new IllegalArgumentException("The prefix must be non null and not empty");
-        this.prefix = prefix;
+        this.suffix = suffix;
     }
 
     @Override
@@ -471,10 +471,10 @@ public class CatalogCloneVisitor implements CatalogVisitor {
             // uses prefix instead of name
             NamespaceInfo sourceNs = (NamespaceInfo) source;
             NamespaceInfo targetNs = (NamespaceInfo) target;
-            String newName = prefix + sourceNs.getName();
+            String newName = sourceNs.getName() + suffix;
             int i = 2;
             while (catalog.get(clazz, Predicates.equal("name", newName)) != null) {
-                newName = prefix + sourceNs.getName() + i;
+                newName = sourceNs.getName() + suffix + i;
                 i++;
             }
             targetNs.setPrefix(newName);
@@ -488,10 +488,10 @@ public class CatalogCloneVisitor implements CatalogVisitor {
             }
             targetNs.setURI(newURI);
         } else {
-            String newName = prefix + OwsUtils.get(source, "name");
+            String newName = OwsUtils.get(source, "name") + suffix;
             int i = 2;
             while (catalog.get(clazz, Predicates.equal("name", newName)) != null) {
-                newName = prefix + OwsUtils.get(source, "name") + i;
+                newName = OwsUtils.get(source, "name") + suffix + i;
                 i++;
             }
 

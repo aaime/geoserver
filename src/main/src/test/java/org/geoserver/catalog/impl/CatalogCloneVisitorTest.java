@@ -4,7 +4,7 @@
  */
 package org.geoserver.catalog.impl;
 
-import static org.geoserver.catalog.CatalogCloneVisitor.DEFAULT_COPY_PREFIX;
+import static org.geoserver.catalog.CatalogCloneVisitor.DEFAULT_COPY_SUFFIX;
 import static org.geoserver.data.test.MockData.CITE_PREFIX;
 import static org.geoserver.data.test.MockData.STREAMS;
 import static org.geoserver.platform.resource.Resource.Type.DIRECTORY;
@@ -16,10 +16,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.Date;
 import org.apache.commons.io.FileUtils;
 import org.geoserver.catalog.CascadeDeleteVisitor;
 import org.geoserver.catalog.Catalog;
@@ -60,9 +56,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opengis.filter.FilterFactory2;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Date;
+
 public class CatalogCloneVisitorTest extends CascadeVisitorAbstractTest {
 
-    static final String[] PREFIXES = new String[] {"CopyOf", "YetAnother"};
+    static final String[] SUFFIXES = new String[] {"Copy", "YetAnother"};
     static final String WS_GROUP = "citeGroup";
     static final FilterFactory2 FF = CommonFactoryFinder.getFilterFactory2();
     private static final Class[] CATALOG_INFO_TYPES = {
@@ -168,21 +169,16 @@ public class CatalogCloneVisitorTest extends CascadeVisitorAbstractTest {
         catalog.add(wsGroup);
     }
 
-    @Override
-    protected void onTearDown(SystemTestData testData) throws Exception {
-        super.onTearDown(testData);
-    }
-
     @Before
     public void resetChanges() throws IOException {
         this.catalog = getCatalog();
 
         // assumes whatever starts with the known prefixes needs to be removed
         CascadeDeleteVisitor remover = new CascadeDeleteVisitor(catalog);
-        for (String prefix : PREFIXES) {
+        for (String suffix : SUFFIXES) {
             for (Class type : CATALOG_INFO_TYPES) {
                 try (CloseableIterator<CatalogInfo> iterator =
-                        catalog.list(type, FF.like(FF.property("name"), prefix + "*"))) {
+                        catalog.list(type, FF.like(FF.property("name"), "*" + suffix))) {
                     while (iterator.hasNext()) {
                         CatalogInfo info = iterator.next();
                         // for styles we also need to remove the style file on
@@ -202,7 +198,7 @@ public class CatalogCloneVisitorTest extends CascadeVisitorAbstractTest {
         StyleInfo point = catalog.getStyleByName("point");
         point.accept(visitor);
 
-        assertStyleCopy("CopyOfpoint");
+        assertStyleCopy("pointCopy");
     }
 
     @Test
@@ -214,7 +210,7 @@ public class CatalogCloneVisitorTest extends CascadeVisitorAbstractTest {
         StyleInfo point = catalog.getStyleByName("point");
         point.accept(visitor);
 
-        assertStyleCopy("CopyOfpoint", "CopyOfpoint3");
+        assertStyleCopy("pointCopy", "point3Copy");
     }
 
     @Test
@@ -222,10 +218,10 @@ public class CatalogCloneVisitorTest extends CascadeVisitorAbstractTest {
         CatalogCloneVisitor visitor = new CatalogCloneVisitor(catalog);
         StyleInfo point = catalog.getStyleByName("point");
         point.accept(visitor);
-        assertStyleCopy("CopyOfpoint");
+        assertStyleCopy("pointCopy");
         for (int i = 2; i < 10; i++) {
             point.accept(visitor);
-            assertStyleCopy("CopyOfpoint" + i);
+            assertStyleCopy("pointCopy" + i);
         }
     }
 
@@ -265,12 +261,12 @@ public class CatalogCloneVisitorTest extends CascadeVisitorAbstractTest {
         assertLayerCopy(layer);
         for (int i = 2; i < 10; i++) {
             layer.accept(visitor);
-            assertLayerCopy(layer, "CopyOfLakes" + i);
+            assertLayerCopy(layer, "LakesCopy" + i);
         }
     }
 
     private void assertLayerCopy(LayerInfo layer) {
-        assertLayerCopy(layer, "CopyOf" + layer.getName());
+        assertLayerCopy(layer, layer.getName() + "Copy");
     }
 
     private void assertLayerCopy(LayerInfo layer, String expectedName) {
@@ -293,9 +289,9 @@ public class CatalogCloneVisitorTest extends CascadeVisitorAbstractTest {
         CatalogCloneVisitor visitor = new CatalogCloneVisitor(catalog);
         store.accept(visitor);
 
-        assertCoverageStoreCopy(store, "CopyOfDEM");
-        assertNull(catalog.getLayerByName("CopyOfDEM"));
-        assertNull(catalog.getCoverageByName("CopyOfDEM"));
+        assertCoverageStoreCopy(store, "DEMCopy");
+        assertNull(catalog.getLayerByName("DEMCopy"));
+        assertNull(catalog.getCoverageByName("DEMCopy"));
     }
 
     @Test
@@ -306,7 +302,7 @@ public class CatalogCloneVisitorTest extends CascadeVisitorAbstractTest {
         CatalogCloneVisitor visitor = new CatalogCloneVisitor(catalog, true);
         store.accept(visitor);
 
-        assertCoverageStoreCopy(store, "CopyOfDEM");
+        assertCoverageStoreCopy(store, "DEMCopy");
         assertLayerCopy(catalog.getLayerByName("DEM"));
     }
 
@@ -324,9 +320,9 @@ public class CatalogCloneVisitorTest extends CascadeVisitorAbstractTest {
         CatalogCloneVisitor visitor = new CatalogCloneVisitor(catalog);
         store.accept(visitor);
 
-        assertDataStoreCopy(store, "CopyOf" + CITE_PREFIX);
-        assertNull(catalog.getLayerByName("CopyOfLakes"));
-        assertNull(catalog.getFeatureTypeByName("CopyOfLakes"));
+        assertDataStoreCopy(store, CITE_PREFIX + "Copy");
+        assertNull(catalog.getLayerByName("LakesCopy"));
+        assertNull(catalog.getFeatureTypeByName("LakesCopy"));
     }
 
     @Test
@@ -335,7 +331,7 @@ public class CatalogCloneVisitorTest extends CascadeVisitorAbstractTest {
         CatalogCloneVisitor visitor = new CatalogCloneVisitor(catalog, true);
         store.accept(visitor);
 
-        assertDataStoreCopy(store, "CopyOfcite");
+        assertDataStoreCopy(store, "citeCopy");
         assertLayerCopy(catalog.getLayerByName("Lakes"));
         assertLayerCopy(catalog.getLayerByName("Bridges"));
         assertLayerCopy(catalog.getLayerByName("Forests"));
@@ -354,9 +350,9 @@ public class CatalogCloneVisitorTest extends CascadeVisitorAbstractTest {
         CatalogCloneVisitor visitor = new CatalogCloneVisitor(catalog);
         store.accept(visitor);
 
-        assertWMSStoreCopy(store, "CopyOf" + WMS_STORE_NAME);
-        assertNull(catalog.getLayerByName("CopyOf" + WMS_LAYER_NAME));
-        assertNull(catalog.getResourceByName("CopyOf" + WMS_LAYER_NAME, WMSLayerInfo.class));
+        assertWMSStoreCopy(store, WMS_STORE_NAME + "Copy");
+        assertNull(catalog.getLayerByName(WMS_LAYER_NAME + "Copy"));
+        assertNull(catalog.getResourceByName(WMS_LAYER_NAME + "Copy", WMSLayerInfo.class));
     }
 
     @Test
@@ -365,7 +361,7 @@ public class CatalogCloneVisitorTest extends CascadeVisitorAbstractTest {
         CatalogCloneVisitor visitor = new CatalogCloneVisitor(catalog, true);
         store.accept(visitor);
 
-        assertWMSStoreCopy(store, "CopyOf" + WMS_STORE_NAME);
+        assertWMSStoreCopy(store, WMS_STORE_NAME + "Copy");
         assertLayerCopy(catalog.getLayerByName(WMS_LAYER_NAME));
     }
 
@@ -382,9 +378,9 @@ public class CatalogCloneVisitorTest extends CascadeVisitorAbstractTest {
         CatalogCloneVisitor visitor = new CatalogCloneVisitor(catalog);
         store.accept(visitor);
 
-        assertWMTSStoreCopy(store, "CopyOf" + WMTS_STORE_NAME);
-        assertNull(catalog.getLayerByName("CopyOf" + WMTS_LAYER_NAME));
-        assertNull(catalog.getResourceByName("CopyOf" + WMTS_LAYER_NAME, WMTSLayerInfo.class));
+        assertWMTSStoreCopy(store, WMTS_STORE_NAME + "Copy");
+        assertNull(catalog.getLayerByName(WMTS_LAYER_NAME + "Copy"));
+        assertNull(catalog.getResourceByName(WMTS_LAYER_NAME + "Copy", WMTSLayerInfo.class));
     }
 
     @Test
@@ -393,7 +389,7 @@ public class CatalogCloneVisitorTest extends CascadeVisitorAbstractTest {
         CatalogCloneVisitor visitor = new CatalogCloneVisitor(catalog, true);
         store.accept(visitor);
 
-        assertWMTSStoreCopy(store, DEFAULT_COPY_PREFIX + WMTS_STORE_NAME);
+        assertWMTSStoreCopy(store,  WMTS_STORE_NAME + DEFAULT_COPY_SUFFIX);
         assertLayerCopy(catalog.getLayerByName(WMTS_LAYER_NAME));
     }
 
@@ -409,7 +405,7 @@ public class CatalogCloneVisitorTest extends CascadeVisitorAbstractTest {
         CatalogCloneVisitor visitor = new CatalogCloneVisitor(catalog, true);
         group.accept(visitor);
 
-        LayerGroupInfo copy = catalog.getLayerGroupByName(DEFAULT_COPY_PREFIX + LAKES_GROUP);
+        LayerGroupInfo copy = catalog.getLayerGroupByName(LAKES_GROUP + DEFAULT_COPY_SUFFIX);
         assertNotNull(copy);
         // layers were not deep cloned
         assertEquals(group.getLayers(), copy.getLayers());
@@ -421,7 +417,7 @@ public class CatalogCloneVisitorTest extends CascadeVisitorAbstractTest {
         CatalogCloneVisitor visitor = new CatalogCloneVisitor(catalog, true);
         group.accept(visitor);
 
-        LayerGroupInfo copy = catalog.getLayerGroupByName(DEFAULT_COPY_PREFIX + NEST_GROUP);
+        LayerGroupInfo copy = catalog.getLayerGroupByName(NEST_GROUP + DEFAULT_COPY_SUFFIX);
         assertNotNull(copy);
         // layers were not deep cloned
         assertEquals(group.getLayers(), copy.getLayers());
@@ -434,7 +430,7 @@ public class CatalogCloneVisitorTest extends CascadeVisitorAbstractTest {
         CatalogCloneVisitor visitor = new CatalogCloneVisitor(catalog, true);
         ws.accept(visitor);
 
-        WorkspaceInfo wsClone = catalog.getWorkspaceByName("CopyOf" + CITE_PREFIX);
+        WorkspaceInfo wsClone = catalog.getWorkspaceByName(CITE_PREFIX + "Copy");
         assertNotNull(wsClone);
         String wsCloneName = wsClone.getName();
         NamespaceInfo nsClone = catalog.getNamespaceByPrefix(wsCloneName);
