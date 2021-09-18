@@ -58,7 +58,7 @@
     </bean>
     
     <!-- extensions -->
-    <bean id="extensions" class="org.geoserver.platform.GeoServerExtensions"/>
+    <bean id="extensions" class="org.geoserver.platform.GeoServerExtensions" lazy-init="false"/>
 
     <!-- environments -->
     <bean id="environments" class="org.geoserver.platform.GeoServerEnvironment" depends-on="extensions"/>
@@ -252,7 +252,7 @@
   <bean id="languageURLMangler" class="org.geoserver.ows.LanguageURLMangler"/>
 
   <!-- xstream persister factory -->
-  <bean id="xstreamPersisterFactory" class="org.geoserver.config.util.XStreamPersisterFactory"/>
+  <bean id="xstreamPersisterFactory" class="org.geoserver.config.util.XStreamPersisterFactory" depends-on="extensions"/>
 
   <!-- workspace local callback -->
   <bean id="workspaceLocal" class="org.geoserver.ows.LocalWorkspaceCallback">

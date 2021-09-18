@@ -42,7 +42,7 @@ public class GeoserverOverridingWKTFactory extends FactoryUsingWKT {
         String cust_proj_file = System.getProperty(SYSTEM_DEFAULT_USER_PROJ_FILE);
         if (cust_proj_file == null) {
             GeoServerResourceLoader loader =
-                    GeoServerExtensions.bean(GeoServerResourceLoader.class);
+                    (GeoServerResourceLoader) GeoServerExtensions.bean("resourceLoader");
             if (loader != null) { // Not available for SystemTestData
                 Resource custom_proj = loader.get("user_projections/epsg_overrides.properties");
                 if (custom_proj.getType() == Type.RESOURCE) {

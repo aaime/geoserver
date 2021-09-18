@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletContext;
@@ -89,6 +90,16 @@ public class GeoServerExtensions implements ApplicationContextAware, Application
      * {@link #extensionNames(Class)} for code that does not have access to the application context.
      */
     static ApplicationContext context;
+
+    /**
+     * Makes GeoServerExtensions throw a {@link RuntimeException} if a lookup is performed without
+     * an application context available
+     */
+    static boolean strictLookups;
+
+    public static void setStrictLookups(boolean strictLookups) {
+        GeoServerExtensions.strictLookups = strictLookups;
+    }
 
     /**
      * Sets the web application context to be used for looking up extensions.
@@ -300,13 +311,14 @@ public class GeoServerExtensions implements ApplicationContextAware, Application
      * @return instance of the bean
      */
     public static final Object bean(String name) {
-        checkContext(GeoServerExtensions.context, name, true);
+        Object result;
         if (GeoServerExtensions.context != null) {
-            return getBean(GeoServerExtensions.context, name, true);
+            result = getBean(GeoServerExtensions.context, name, true);
         } else {
-            Object bean = singletonBeanCache.get(name);
-            return bean;
+            result = singletonBeanCache.get(name);
         }
+        if (result == null) checkContext(GeoServerExtensions.context, name, true);
+        return result;
     }
 
     /**
@@ -317,13 +329,14 @@ public class GeoServerExtensions implements ApplicationContextAware, Application
      * @return instance of the bean
      */
     public static final Object bean(String name, ApplicationContext context) {
-        checkContext(context, name, false);
+        Object result;
         if (context != null) {
-            return getBean(context, name, false);
+            result = getBean(context, name, false);
         } else {
-            Object bean = singletonBeanCache.get(name);
-            return bean;
+            result = singletonBeanCache.get(name);
         }
+        if (result == null) checkContext(GeoServerExtensions.context, name, true);
+        return result;
     }
 
     /**
@@ -418,28 +431,36 @@ public class GeoServerExtensions implements ApplicationContextAware, Application
         if (isGeoServerExtensionsContext) {
             if (context == null) {
                 if (isSpringContext) {
-                    LOGGER.warning(
+                    reportIssue(
                             "Extension lookup '"
                                     + bean
-                                    + "', prior to bean geoserverExtensions initialisation.");
+                                    + "', prior to bean geoserverExtensions initialisation.",
+                            LOGGER::warning);
                 } else {
                     // Test cases require <bean id="geoserverExtensions"
                     // class="org.geoserver.GeoServerExtensions">
                     // Or use of GeoServerExtensionsHelper
-                    LOGGER.fine(
+                    reportIssue(
                             "Extension lookup '"
                                     + bean
-                                    + "', bean not provided by GeoServerExtensionHelper or geoserverExtensions.");
+                                    + "', bean not provided by GeoServerExtensionHelper or geoserverExtensions.",
+                            LOGGER::fine);
                 }
             }
         } else {
             if (context == null) {
-                LOGGER.fine(
+                reportIssue(
                         "Extension lookup '"
                                 + bean
-                                + "', but provided ApplicationContext is unset.");
+                                + "', but provided ApplicationContext is unset.",
+                        LOGGER::fine);
             }
         }
+    }
+
+    private static void reportIssue(String message, Consumer<String> logger) {
+        if (strictLookups) throw new RuntimeException(message);
+        else logger.accept(message);
     }
 
     /**

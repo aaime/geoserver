@@ -265,6 +265,9 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
             // ignore on VM where this optimization does not apply
         }
 
+        // setup GeoServerExtensions lookup mode
+        setupGeoServerExtensionsLookups();
+
         // disable security manager to speed up tests, we are spending a lot of time in privileged
         // blocks
         System.setSecurityManager(null);
@@ -330,6 +333,14 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
 
             onSetUp(testData);
         }
+    }
+
+    /**
+     * Sets strict bean lookups, tests can override if a bean lookup without application context
+     * cannot be avoided
+     */
+    protected void setupGeoServerExtensionsLookups() {
+        GeoServerExtensions.setStrictLookups(true);
     }
 
     @Override

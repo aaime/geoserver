@@ -129,6 +129,8 @@ public class SystemTestData extends CiteTestData {
         data = IOUtils.createRandomDirectory("./target", "default", "data");
         data.delete();
         data.mkdir();
+
+        GeoServerExtensionsHelper.singleton("resourceLoader", new GeoServerResourceLoader(data));
     }
 
     public SystemTestData(File data) {
