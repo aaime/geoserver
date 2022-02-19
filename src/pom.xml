@@ -1864,7 +1864,7 @@
         <version>2.20.0</version>
         <executions>
           <execution>
-            <phase>validate</phase>
+            <phase>process-sources</phase>
             <goals>
               <goal>${spotless.action}</goal>
             </goals>
@@ -1877,6 +1877,23 @@
               <style>AOSP</style>
             </googleJavaFormat>
           </java>
+          <formats>
+            <format>
+              <includes>
+                <include>src/main/java/application*Context.xml</include>
+                <include>src/main/resources/application*Context.xml</include>
+                <include>src/test/resources/**/application*Context.xml</include>
+              </includes>
+              <eclipseWtp>
+                <type>XML</type>
+                <files>
+                  <file>${geoserverBaseDir}/../build/qa/xml-format.properties</file>
+                </files>
+                <version>4.13.0</version>
+              </eclipseWtp>
+            </format>
+          </formats>
+
           <upToDateChecking>
             <enabled>true</enabled>
             <indexFile>${project.basedir}/.spotless-index</indexFile>
