@@ -7,7 +7,7 @@ package org.geoserver.filters;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 
 /**
@@ -16,7 +16,7 @@ import javax.servlet.ServletInputStream;
  * @author David Winslow <dwinslow@openplans.org>
  */
 public class BufferedRequestStream extends ServletInputStream {
-    InputStream myInputStream;
+    ByteArrayInputStream myInputStream;
 
     public BufferedRequestStream(byte[] buff) throws IOException {
         myInputStream = new ByteArrayInputStream(buff);
@@ -40,6 +40,21 @@ public class BufferedRequestStream extends ServletInputStream {
         }
 
         return index - off;
+    }
+
+    @Override
+    public boolean isFinished() {
+        return myInputStream.available() == 0;
+    }
+
+    @Override
+    public boolean isReady() {
+        return true;
+    }
+
+    @Override
+    public void setReadListener(ReadListener readListener) {
+        // unsupported
     }
 
     @Override
