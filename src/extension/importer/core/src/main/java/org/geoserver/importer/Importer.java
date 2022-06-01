@@ -679,9 +679,8 @@ public class Importer implements DisposableBean, ApplicationListener {
             ImportTask task = new ImportTask(data);
             task.setDirect(false);
             task.setStore(targetStore);
+            task.setUpdateMode(UpdateMode.UPDATE);
             prep(task);
-            task.setState(State.READY);
-            task.setError(null);
             task.setTransform(new RasterTransformChain());
             context.addTask(task);
             LOGGER.log(Level.FINE, "Import task created {0}", task);
@@ -762,7 +761,7 @@ public class Importer implements DisposableBean, ApplicationListener {
         }
     }
 
-    boolean prep(ImportTask task) {
+    boolean prep(ImportTask task) throws IOException {
         if (task.getState() == ImportTask.State.COMPLETE) {
             return true;
         }
@@ -791,6 +790,15 @@ public class Importer implements DisposableBean, ApplicationListener {
             task.setError(new Exception(msg));
             task.setState(State.BAD_FORMAT);
             return false;
+        }
+
+        // bail out early in case of harvest
+        if (task.getStore() instanceof CoverageStoreInfo
+                && task.getStore().getId() != null
+                && isMultiCoverageInput(format, task.getData())) {
+            task.setState(State.READY);
+            task.setError(null);
+            return true;
         }
 
         if (task.getLayer() == null || task.getLayer().getResource() == null) {
