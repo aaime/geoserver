@@ -16,13 +16,13 @@ import org.geoserver.security.GeoServerSecurityFilterChainProxy;
 import org.geoserver.security.config.SecurityContextPersistenceFilterConfig;
 import org.geoserver.security.config.SecurityNamedServiceConfig;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 
 /**
  * Security context persitence filter
  *
  * @author mcr
  */
+@SuppressWarnings("deprecation")
 public class GeoServerSecurityContextPersistenceFilter extends GeoServerCompositeFilter {
 
     public static final String ALLOWSESSIONCREATION_ATTR = "_allowSessionCreation";
@@ -36,8 +36,9 @@ public class GeoServerSecurityContextPersistenceFilter extends GeoServerComposit
                 (SecurityContextPersistenceFilterConfig) config;
 
         HttpSessionSecurityContextRepository repo = new HttpSessionSecurityContextRepository();
-        SecurityContextPersistenceFilter filter =
-                new SecurityContextPersistenceFilter(repo) {
+        org.springframework.security.web.context.SecurityContextPersistenceFilter filter =
+                new org.springframework.security.web.context.SecurityContextPersistenceFilter(
+                        repo) {
                     @Override
                     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
                             throws IOException, ServletException {
