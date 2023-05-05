@@ -6,6 +6,7 @@
 package org.geoserver.wms.wms_1_3;
 
 import static org.custommonkey.xmlunit.XMLAssert.assertXpathEvaluatesTo;
+import static org.custommonkey.xmlunit.XMLAssert.assertXpathExists;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -35,6 +36,7 @@ import org.geoserver.data.test.SystemTestData;
 import org.geoserver.wms.WMSInfo;
 import org.geoserver.wms.WMSTestSupport;
 import org.geotools.xsd.XML;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.w3c.dom.Document;
@@ -333,5 +335,37 @@ public class CapabilitiesSystemTest extends WMSTestSupport {
             wms.setCiteCompliant(false);
             gs.save(wms);
         }
+    }
+
+    @Test
+    public void testCRSList() throws Exception {
+        Document dom = getAsDOM("wms?request=GetCapabilities&version=1.3.0");
+
+        // OGC custom CRS:84
+        assertXpathExists("//wms:CRS[text()='CRS:84']", dom);
+        // basics from EPSG database
+        assertXpathExists("//wms:CRS[text()='EPSG:4326']", dom);
+        assertXpathExists("//wms:CRS[text()='EPSG:32632']", dom);
+        // custom GeoServer extensions
+        assertXpathExists("//wms:CRS[text()='EPSG:900913']", dom);
+        assertXpathExists("//wms:CRS[text()='EPSG:404000']", dom);
+        // AUTO codes
+        assertXpathExists("//wms:CRS[text()='AUTO:42001']", dom);
+        assertXpathExists("//wms:CRS[text()='AUTO:42002']", dom);
+        assertXpathExists("//wms:CRS[text()='AUTO:42003']", dom);
+        assertXpathExists("//wms:CRS[text()='AUTO:42004']", dom);
+        // IAU codes (added in the classpath for tests only)
+        assertXpathExists("//wms:CRS[text()='IAU:1000']", dom);
+    }
+
+    @Test
+    @Ignore
+    public void testMarsLayers() throws Exception {
+        Document dom = getAsDOM("cite/wms?request=GetCapabilities&version=1.3.0&service=WMS");
+        print(dom);
+
+        // see that the viking layer is there with the expected CRS
+        assertXpathExists("//Layer[Name='viking' and CRS = 'IAU:49900']", dom);
+        assertXpathExists("//Layer[Name='viking']/BoundingBox[@CRS='IAU:49900']", dom);
     }
 }

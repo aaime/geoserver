@@ -33,6 +33,7 @@ import org.geoserver.config.ContactInfo;
 import org.geoserver.config.GeoServer;
 import org.geoserver.config.ResourceErrorHandling;
 import org.geoserver.config.SettingsInfo;
+import org.geoserver.crs.CapabilitiesCRSProvider;
 import org.geoserver.data.InternationalContentHelper;
 import org.geoserver.ows.URLMangler;
 import org.geoserver.platform.GeoServerExtensions;
@@ -306,15 +307,21 @@ public class WCS20GetCapabilitiesTransformer extends TransformerBase {
             // add the supported CRS
             Collection<String> codes;
             if (wcs.getSRS() == null || wcs.getSRS().isEmpty()) {
-                codes = CRS.getSupportedCodes("EPSG");
+                CapabilitiesCRSProvider crsProvider = new CapabilitiesCRSProvider();
+                crsProvider.getAuthorityExclusions().add("CRS");
+                crsProvider.setCodeMapper(
+                        (authority, code) ->
+                                "http://www.opengis.net/def/crs/" + authority + "/0/" + code);
+                codes = crsProvider.getCodes();
             } else {
-                codes = wcs.getSRS();
+                codes =
+                        wcs.getSRS().stream()
+                                .map(code -> mapCode(code))
+                                .collect(Collectors.toList());
             }
             start("crs:CrsMetadata");
             for (String code : codes) {
-                if (!code.equals("WGS84(DD)")) {
-                    element("crs:crsSupported", "http://www.opengis.net/def/crs/EPSG/0/" + code);
-                }
+                element("crs:crsSupported", code);
             }
             end("crs:CrsMetadata");
             // add the supported interpolation methods
@@ -331,6 +338,16 @@ public class WCS20GetCapabilitiesTransformer extends TransformerBase {
             end("wcs:Extension");
 
             end("wcs:ServiceMetadata");
+        }
+
+        private String mapCode(String code) {
+            int idx = code.indexOf(":");
+            if (idx == -1) {
+                return "http://www.opengis.net/def/crs/EPSG/0/" + code;
+            }
+            String authority = code.substring(0, idx);
+            String codeValue = code.substring(idx + 1);
+            return "http://www.opengis.net/def/crs/" + authority + "/0/" + codeValue;
         }
 
         /** Handles the service identification of the capabilities document. */
