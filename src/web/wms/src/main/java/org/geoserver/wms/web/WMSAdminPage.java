@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -66,6 +67,7 @@ import org.geoserver.wms.web.publish.LayerAuthoritiesAndIdentifiersPanel;
 import org.geotools.renderer.style.DynamicSymbolFactoryFinder;
 
 /** Edits the WMS service details */
+// TODO WICKET8 - Verify this page works OK
 @SuppressWarnings("serial")
 public class WMSAdminPage extends BaseServiceAdminPage<WMSInfo> {
 
@@ -415,9 +417,6 @@ public class WMSAdminPage extends BaseServiceAdminPage<WMSInfo> {
                 new IModel<Collection<String>>() {
 
                     @Override
-                    public void detach() {}
-
-                    @Override
                     public void setObject(Collection<String> object) {
                         markFactoryList.setObject(new ArrayList<>(object));
                     }
@@ -458,9 +457,6 @@ public class WMSAdminPage extends BaseServiceAdminPage<WMSInfo> {
 
     private IModel<List<String>> buildMarkFactoryListModel(MapModel<String> mapMarkFactoryList) {
         return new IModel<List<String>>() {
-
-            @Override
-            public void detach() {}
 
             @Override
             public List<String> getObject() {
@@ -508,9 +504,6 @@ public class WMSAdminPage extends BaseServiceAdminPage<WMSInfo> {
     private IModel<Boolean> buildEnableModel(
             LiveCollectionModel<String, List<String>> markFactoriesLiveCollectionModel) {
         return new IModel<Boolean>() {
-
-            @Override
-            public void detach() {}
 
             @Override
             public void setObject(Boolean object) {
@@ -615,7 +608,7 @@ public class WMSAdminPage extends BaseServiceAdminPage<WMSInfo> {
                     }
 
                     @Override
-                    public void onSubmit(AjaxRequestTarget target, Form form) {
+                    public void onSubmit(AjaxRequestTarget target) {
                         File file = null;
                         textField.processInput();
                         String input = textField.getConvertedInput();
@@ -627,14 +620,15 @@ public class WMSAdminPage extends BaseServiceAdminPage<WMSInfo> {
                                 new GeoServerFileChooser(modal.getContentId(), new Model<>(file)) {
                                     @Override
                                     protected void fileClicked(
-                                            File file, AjaxRequestTarget target) {
+                                            File file, Optional<AjaxRequestTarget> target) {
                                         // clear the raw input of the field won't show the new model
                                         // value
                                         textField.clearInput();
                                         textField.setModelObject(file.getAbsolutePath());
-
-                                        target.add(textField);
-                                        dialog.close(target);
+                                        if (target.isPresent()) {
+                                            target.get().add(textField);
+                                            dialog.close(target.get());
+                                        }
                                     };
                                 };
                         chooser.setFileTableHeight(null);
