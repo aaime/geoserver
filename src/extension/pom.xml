@@ -442,8 +442,7 @@
         <module>wps-jdbc</module>
         <module>mapml</module>
         <module>geopkg-output</module>
-        <!-- TODO WICKET8 - this won't build yet -->
-        <!-- <module>metadata</module> -->
+        <module>metadata</module>
       </modules>
     </profile>
 
@@ -494,8 +493,7 @@
         <module>wps-jdbc</module>
         <module>mapml</module>
         <module>geopkg-output</module>
-        <!-- TODO WICKET 8 - re-enable after it builds -->
-        <!-- <module>metadata</module> -->
+        <module>metadata</module>
       </modules>
     </profile>
   </profiles>
