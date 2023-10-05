@@ -4,8 +4,6 @@
  */
 package org.geoserver.taskmanager.web;
 
-import static org.geoserver.web.wicket.WicketHierarchyPrinter.print;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
