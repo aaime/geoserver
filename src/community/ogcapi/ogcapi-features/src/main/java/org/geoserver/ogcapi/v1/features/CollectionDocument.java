@@ -20,6 +20,7 @@ import org.geoserver.config.GeoServer;
 import org.geoserver.ogcapi.APIRequestInfo;
 import org.geoserver.ogcapi.AbstractCollectionDocument;
 import org.geoserver.ogcapi.CollectionExtents;
+import org.geoserver.ogcapi.HTMLResponseBody;
 import org.geoserver.ogcapi.Link;
 import org.geoserver.ogcapi.LinksBuilder;
 import org.geoserver.ogcapi.Queryables;
@@ -37,6 +38,7 @@ import org.springframework.http.MediaType;
 /** Description of a single collection, that will be serialized to JSON/XML/HTML */
 @JsonPropertyOrder({"id", "title", "description", "extent", "links"})
 @JacksonXmlRootElement(localName = "Collection", namespace = "http://www.opengis.net/wfs/3.0")
+@HTMLResponseBody(templateName = "collection.ftl", fileName = "collection.html")
 public class CollectionDocument extends AbstractCollectionDocument<FeatureTypeInfo> {
     static final Logger LOGGER = Logging.getLogger(CollectionDocument.class);
 

@@ -15,6 +15,8 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.geoserver.config.ServiceInfo;
 import org.geoserver.ows.Dispatcher;
 import org.geoserver.ows.URLMangler;
 import org.geoserver.ows.util.ResponseUtils;
@@ -198,16 +200,33 @@ public class APIRequestInfo {
      * been looked up, will otherwise throw a descriptive exception.
      */
     public String getServiceLandingPage() {
-        return Optional.ofNullable(Dispatcher.REQUEST.get())
-                .map(r -> r.getServiceDescriptor())
-                .map(sd -> sd.getService())
-                .map(s -> s.getClass())
-                .map(c -> APIDispatcher.getApiServiceAnnotation(c))
+        return getAPIService()
                 .map(a -> a.landingPage())
                 .orElseThrow(
                         () ->
                                 new RuntimeException(
                                         "Could not find a service base URL at this stage, maybe the service has not been dispatched yet"));
+    }
+
+    /**
+     * Returns the ServiceInfo class for the current service. Can be called only after the service has
+     * been looked up, will otherwise throw a descriptive exception.
+     */
+    public Class<? extends ServiceInfo> getServiceInfo() {
+        return getAPIService()
+                .map(a -> a.serviceClass())
+                .orElseThrow(
+                        () ->
+                                new RuntimeException(
+                                        "Could not find a ServiceInfo this stage, maybe the service has not been dispatched yet"));
+    }
+
+    private static Optional<APIService> getAPIService() {
+        return Optional.ofNullable(Dispatcher.REQUEST.get())
+                .map(r -> r.getServiceDescriptor())
+                .map(sd -> sd.getService())
+                .map(s -> s.getClass())
+                .map(c -> APIDispatcher.getApiServiceAnnotation(c));
     }
 
     /**

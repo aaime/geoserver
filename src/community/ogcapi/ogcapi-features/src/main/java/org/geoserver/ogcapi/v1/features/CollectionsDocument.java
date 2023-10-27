@@ -16,6 +16,7 @@ import org.geoserver.catalog.FeatureTypeInfo;
 import org.geoserver.catalog.util.CloseableIterator;
 import org.geoserver.config.GeoServer;
 import org.geoserver.ogcapi.AbstractDocument;
+import org.geoserver.ogcapi.HTMLResponseBody;
 import org.geoserver.ogcapi.Link;
 import org.geoserver.platform.ServiceException;
 import org.geotools.api.filter.Filter;
@@ -26,6 +27,7 @@ import org.geotools.api.filter.Filter;
  */
 @JacksonXmlRootElement(localName = "Collections", namespace = "http://www.opengis.net/wfs/3.0")
 @JsonPropertyOrder({"links", "collections"})
+@HTMLResponseBody(templateName = "collections.ftl", fileName = "collections.html")
 public class CollectionsDocument extends AbstractDocument {
 
     private final GeoServer geoServer;

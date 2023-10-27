@@ -9,12 +9,14 @@ import org.geoserver.catalog.Catalog;
 import org.geoserver.ogcapi.AbstractLandingPageDocumentNoConformance;
 import org.geoserver.ogcapi.ConformanceDocument;
 import org.geoserver.ogcapi.FunctionsDocument;
+import org.geoserver.ogcapi.HTMLResponseBody;
 import org.geoserver.ogcapi.Link;
 import org.geoserver.ogcapi.LinksBuilder;
 import org.geoserver.wfs.WFSInfo;
 
 /** A Features server landing page */
 @JsonPropertyOrder({"title", "description", "links"})
+@HTMLResponseBody(templateName = "landingPage.ftl", fileName = "landingPage.html")
 public class FeaturesLandingPage extends AbstractLandingPageDocumentNoConformance {
 
     public FeaturesLandingPage(WFSInfo wfs, Catalog catalog, String featuresBase) {

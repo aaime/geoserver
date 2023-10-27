@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 
 /** Annotates controller service methods to indicate the freemarker template to be used */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
+@Target({ElementType.METHOD, ElementType.TYPE})
 public @interface HTMLResponseBody {
 
     String templateName();

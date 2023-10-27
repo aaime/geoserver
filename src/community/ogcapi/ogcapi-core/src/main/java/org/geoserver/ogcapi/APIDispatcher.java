@@ -48,6 +48,8 @@ import org.springframework.http.converter.GenericHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.cbor.MappingJackson2CborHttpMessageConverter;
 import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
+import org.springframework.http.server.ServletServerHttpRequest;
+import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.validation.Validator;
 import org.springframework.web.accept.ContentNegotiationManager;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -100,6 +102,7 @@ public class APIDispatcher extends AbstractController {
     private List<APIExceptionHandler> exceptionHandlers;
 
     private final GeoServer geoServer;
+    private APIBodyMethodProcessor requestResponseBodyProcessor;
 
     public APIDispatcher(GeoServer geoServer) {
         // allow delete and put
@@ -231,6 +234,12 @@ public class APIDispatcher extends AbstractController {
                                 mavContainer.getModel().put(RESPONSE_OBJECT, returnValue);
                             }
                         }));
+        this.requestResponseBodyProcessor =
+                returnValueHandlers.stream()
+                        .filter(p -> p instanceof APIBodyMethodProcessor)
+                        .map(p -> (APIBodyMethodProcessor) p)
+                        .findFirst()
+                        .orElseThrow();
     }
 
     @SuppressWarnings("unchecked")
@@ -316,6 +325,19 @@ public class APIDispatcher extends AbstractController {
             // to be bridged to the OGC service responses sometimes (which do need the actual
             // response, not just its class)
             APIRequestInfo.get().setResult(returnValue);
+
+//            HTMLResponseBody htmlAnnotation =
+//                    handler.getMethod().getAnnotation(HTMLResponseBody.class);
+//            if (htmlAnnotation != null
+//                    && requestResponseBodyProcessor.getMediaTypeToUse(
+//                                    returnValue,
+//                                    handler.getReturnType(),
+//                                    new ServletServerHttpRequest(httpRequest),
+//                                    new ServletServerHttpResponse(httpResponse))
+//                            == MediaType.TEXT_HTML) {
+//                returnValue =
+//                        new HTMLResponse(returnValue, htmlAnnotation, handler.getReturnType());
+//            }
 
             returnValueHandlers.handleReturnValue(
                     returnValue,

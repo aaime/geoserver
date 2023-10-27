@@ -53,7 +53,6 @@ import org.geoserver.ogcapi.APIService;
 import org.geoserver.ogcapi.ConformanceDocument;
 import org.geoserver.ogcapi.DefaultContentType;
 import org.geoserver.ogcapi.FunctionsDocument;
-import org.geoserver.ogcapi.HTMLResponseBody;
 import org.geoserver.ogcapi.JSONSchemaMessageConverter;
 import org.geoserver.ogcapi.OGCAPIMediaTypes;
 import org.geoserver.ogcapi.Queryables;
@@ -203,7 +202,6 @@ public class FeatureService {
 
     @GetMapping(name = "getLandingPage")
     @ResponseBody
-    @HTMLResponseBody(templateName = "landingPage.ftl", fileName = "landingPage.html")
     public FeaturesLandingPage getLandingPage() {
         return new FeaturesLandingPage(getService(), getCatalog(), "ogc/features/v1");
     }
@@ -217,28 +215,24 @@ public class FeatureService {
                 MediaType.TEXT_XML_VALUE
             })
     @ResponseBody
-    @HTMLResponseBody(templateName = "api.ftl", fileName = "api.html")
     public OpenAPI api() throws IOException {
         return new FeaturesAPIBuilder().build(getService());
     }
 
     @GetMapping(path = "collections", name = "getCollections")
     @ResponseBody
-    @HTMLResponseBody(templateName = "collections.ftl", fileName = "collections.html")
     public CollectionsDocument getCollections() {
         return new CollectionsDocument(geoServer, getServiceCRSList());
     }
 
     @GetMapping(path = "functions", name = "getFunctions")
     @ResponseBody
-    @HTMLResponseBody(templateName = "functions.ftl", fileName = "functions.html")
     public FunctionsDocument getFunctions() {
         return new FunctionsDocument();
     }
 
     @GetMapping(path = "collections/{collectionId}", name = "describeCollection")
     @ResponseBody
-    @HTMLResponseBody(templateName = "collection.ftl", fileName = "collection.html")
     public CollectionDocument collection(@PathVariable(name = "collectionId") String collectionId)
             throws IOException {
         FeatureTypeInfo ft = getFeatureType(collectionId);
@@ -253,7 +247,6 @@ public class FeatureService {
             name = "getQueryables",
             produces = JSONSchemaMessageConverter.SCHEMA_TYPE_VALUE)
     @ResponseBody
-    @HTMLResponseBody(templateName = "queryables.ftl", fileName = "queryables.html")
     public Queryables queryables(@PathVariable(name = "collectionId") String collectionId)
             throws IOException {
         FeatureTypeInfo ft = getFeatureType(collectionId);
@@ -300,7 +293,6 @@ public class FeatureService {
 
     @GetMapping(path = "conformance", name = "getConformanceDeclaration")
     @ResponseBody
-    @HTMLResponseBody(templateName = "conformance.ftl", fileName = "conformance.html")
     public ConformanceDocument conformance() {
         List<String> classes =
                 Arrays.asList(

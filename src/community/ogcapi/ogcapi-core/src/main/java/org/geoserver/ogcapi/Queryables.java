@@ -16,6 +16,7 @@ import java.util.List;
  * A Queryables document is a schema, with a couple of additional properties
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@HTMLResponseBody(templateName = "queryables.ftl", fileName = "queryables.html")
 public class Queryables extends Schema<Object> {
 
     public static final String REL = "http://www.opengis.net/def/rel/ogc/1.0/queryables";

@@ -11,6 +11,7 @@ import java.util.List;
 import org.geoserver.ows.util.ResponseUtils;
 
 /** Represents the conformance response, responses will encode in the desired formats */
+@HTMLResponseBody(templateName = "conformance.ftl", fileName = "conformance.html")
 public class ConformanceDocument extends AbstractDocument {
 
     List<String> conformsTo;

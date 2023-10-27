@@ -5,24 +5,28 @@
 
 package org.geoserver.ogcapi;
 
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
-import java.util.HashMap;
+import io.swagger.v3.oas.models.OpenAPI;
 import org.geoserver.config.GeoServer;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
+import java.util.HashMap;
+
 /**
- * A converter used when the {@link HTMLResponseBody} is found, to simply apply a template to the
- * object returned by the controller method
- *
- * @param <T>
+ * A converter used to build a API browser using Swagger UI
  */
 @Component
-public class SimpleHTMLMessageConverter extends AbstractHTMLMessageConverter<Object> {
+public class APIHTMLMessageConverter extends AbstractHTMLMessageConverter<OpenAPI> {
+
+    @Override
+    public boolean canWrite(Class<?> clazz, MediaType mediaType) {
+        return super.canWrite(clazz, mediaType);
+    }
 
     /**
      * Builds a message converter
@@ -30,20 +34,19 @@ public class SimpleHTMLMessageConverter extends AbstractHTMLMessageConverter<Obj
      * @param support support
      * @param geoServer The
      */
-    public SimpleHTMLMessageConverter(FreemarkerTemplateSupport support, GeoServer geoServer) {
+    public APIHTMLMessageConverter(FreemarkerTemplateSupport support, GeoServer geoServer) {
         super(support, geoServer);
     }
 
     @Override
     protected boolean supports(Class<?> clazz) {
-        return clazz.isAnnotationPresent(HTMLResponseBody.class);
+        return OpenAPI.class.isAssignableFrom(clazz);
     }
 
     @Override
-    protected void writeInternal(Object value, HttpOutputMessage outputMessage)
+    protected void writeInternal(OpenAPI value, HttpOutputMessage outputMessage)
             throws IOException, HttpMessageNotWritableException {
         try {
-            HTMLResponseBody annotation = value.getClass().getAnnotation(HTMLResponseBody.class);
             APIRequestInfo requestInfo = APIRequestInfo.get();
             HashMap<String, Object> model =
                     setupModel(value, requestInfo.getServiceInfo());
@@ -53,8 +56,8 @@ public class SimpleHTMLMessageConverter extends AbstractHTMLMessageConverter<Obj
                     && defaultCharset != null) {
                 templateSupport.processTemplate(
                         null,
-                        annotation.templateName(),
-                        annotation.baseClass() == Object.class ? requestInfo.getService().getService().getClass() : annotation.baseClass(),
+                        "api.ftl",
+                        requestInfo.getService().getService().getClass(),
                         model,
                         new OutputStreamWriter(outputMessage.getBody(), defaultCharset),
                         defaultCharset);

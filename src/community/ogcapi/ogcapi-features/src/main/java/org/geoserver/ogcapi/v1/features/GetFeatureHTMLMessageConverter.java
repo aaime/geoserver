@@ -19,13 +19,13 @@ import org.geoserver.ogcapi.APIRequestInfo;
 import org.geoserver.ogcapi.AbstractHTMLMessageConverter;
 import org.geoserver.ogcapi.FreemarkerTemplateSupport;
 import org.geoserver.wfs.TypeInfoCollectionWrapper;
-import org.geoserver.wfs.WFSInfo;
 import org.geoserver.wfs.request.FeatureCollectionResponse;
 import org.geoserver.wfs.request.GetFeatureRequest;
 import org.geotools.api.feature.simple.SimpleFeatureType;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.util.logging.Logging;
 import org.springframework.http.HttpOutputMessage;
+import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.stereotype.Component;
 
@@ -36,7 +36,12 @@ public class GetFeatureHTMLMessageConverter extends AbstractHTMLMessageConverter
 
     public GetFeatureHTMLMessageConverter(
             FreemarkerTemplateSupport templateSupport, GeoServer geoServer) {
-        super(FeaturesResponse.class, WFSInfo.class, templateSupport, geoServer);
+        super(templateSupport, geoServer);
+    }
+
+    @Override
+    protected boolean supports(Class<?> clazz) {
+        return FeaturesResponse.class.isAssignableFrom(clazz);
     }
 
     private FeatureTypeInfo getResource(FeatureCollection collection) {

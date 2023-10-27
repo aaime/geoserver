@@ -16,7 +16,6 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.geoserver.config.GeoServer;
-import org.geoserver.config.ServiceInfo;
 import org.geoserver.ows.Dispatcher;
 import org.geoserver.ows.DispatcherCallback;
 import org.geoserver.ows.Request;
@@ -100,27 +99,28 @@ public class APIBodyMethodProcessor extends RequestResponseBodyMethodProcessor {
             return;
         }
 
-        HTMLResponseBody htmlResponseBody = returnType.getMethodAnnotation(HTMLResponseBody.class);
+        // HTMLResponseBody htmlResponseBody =
+        // returnType.getMethodAnnotation(HTMLResponseBody.class);
         MediaType mediaType = getMediaTypeToUse(value, returnType, inputMessage, outputMessage);
         HttpMessageConverter<T> converter;
-        if (htmlResponseBody != null && MediaType.TEXT_HTML.isCompatibleWith(mediaType)) {
-            // direct HTML encoding based on annotations
-            Class<?> baseClass = htmlResponseBody.baseClass();
-            if (baseClass == Object.class) {
-                baseClass = returnType.getContainingClass();
-            }
-            converter =
-                    new SimpleHTMLMessageConverter<>(
-                            value.getClass(),
-                            getServiceClass(returnType),
-                            baseClass,
-                            templateSupport,
-                            geoServer,
-                            htmlResponseBody.templateName());
-            mediaType = MediaType.TEXT_HTML;
-        } else {
-            converter = getMessageConverter(value, returnType, inputMessage, outputMessage);
-        }
+        //        if (htmlResponseBody != null && MediaType.TEXT_HTML.isCompatibleWith(mediaType)) {
+        //            // direct HTML encoding based on annotations
+        //            Class<?> baseClass = htmlResponseBody.baseClass();
+        //            if (baseClass == Object.class) {
+        //                baseClass = returnType.getContainingClass();
+        //            }
+        //            converter =
+        //                    new SimpleHTMLMessageConverter<>(
+        //                            value.getClass(),
+        //                            getServiceClass(returnType),
+        //                            baseClass,
+        //                            templateSupport,
+        //                            geoServer,
+        //                            htmlResponseBody.templateName());
+        //            mediaType = MediaType.TEXT_HTML;
+        //        } else {
+        converter = getMessageConverter(value, returnType, inputMessage, outputMessage);
+        // }
 
         // DispatcherCallback bridging
         final MediaType finalMediaType = mediaType;
@@ -161,15 +161,6 @@ public class APIBodyMethodProcessor extends RequestResponseBodyMethodProcessor {
                 .setContentType(
                         MediaType.parseMediaType(response.getMimeType(value, dr.getOperation())));
         response.write(value, servletResponse.getOutputStream(), dr.getOperation());
-    }
-
-    private Class<? extends ServiceInfo> getServiceClass(MethodParameter returnType) {
-        APIService apiService =
-                APIDispatcher.getApiServiceAnnotation(returnType.getContainingClass());
-        if (apiService != null) {
-            return apiService.serviceClass();
-        }
-        throw new RuntimeException("Could not find the APIService annotation in the controller");
     }
 
     private List<MediaType> getAcceptableMediaTypes(HttpServletRequest request)

@@ -42,28 +42,19 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
  */
 public abstract class AbstractHTMLMessageConverter<T> extends AbstractHttpMessageConverter<T> {
     static final Logger LOGGER = Logging.getLogger(AbstractHTMLMessageConverter.class);
-    protected final Class<?> binding;
     protected final GeoServer geoServer;
     protected final FreemarkerTemplateSupport templateSupport;
-    protected final Class<? extends ServiceInfo> serviceConfigurationClass;
 
     /**
      * Builds a message converter
      *
      * @param binding The bean meant to act as the model for the template
-     * @param serviceConfigurationClass The class holding the configuration for the service
      * @param templateSupport A loader used to locate templates
      * @param geoServer The
      */
-    public AbstractHTMLMessageConverter(
-            Class<?> binding,
-            Class<? extends ServiceInfo> serviceConfigurationClass,
-            FreemarkerTemplateSupport templateSupport,
-            GeoServer geoServer) {
+    public AbstractHTMLMessageConverter(FreemarkerTemplateSupport templateSupport, GeoServer geoServer) {
         super(MediaType.TEXT_HTML);
-        this.binding = binding;
         this.geoServer = geoServer;
-        this.serviceConfigurationClass = serviceConfigurationClass;
         this.templateSupport = templateSupport;
     }
 
@@ -72,10 +63,7 @@ public abstract class AbstractHTMLMessageConverter<T> extends AbstractHttpMessag
         return false;
     }
 
-    @Override
-    protected boolean supports(Class<?> clazz) {
-        return binding.isAssignableFrom(clazz);
-    }
+
 
     @Override
     protected T readInternal(Class<? extends T> clazz, HttpInputMessage inputMessage)
@@ -93,7 +81,8 @@ public abstract class AbstractHTMLMessageConverter<T> extends AbstractHttpMessag
      *   <li>baseURL: the GeoServer baseURL for link construction
      * </ul>
      */
-    protected HashMap<String, Object> setupModel(Object value) {
+    protected HashMap<String, Object> setupModel(
+            Object value, Class<? extends ServiceInfo> serviceConfigurationClass) {
         HashMap<String, Object> model = new HashMap<>();
         model.put("model", value);
         model.put("service", geoServer.getService(serviceConfigurationClass));

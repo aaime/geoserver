@@ -16,6 +16,7 @@ import org.locationtech.jts.geom.Geometry;
 
 /** A document enumerating the available functions */
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@HTMLResponseBody(templateName = "functions.ftl", fileName = "functions.html")
 public class FunctionsDocument {
 
     public static final String REL = "http://www.opengis.net/def/rel/ogc/1.0/functions";
