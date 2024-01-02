@@ -19,8 +19,7 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
  * @author Justin Deoliveira, The Open Planning Project, jdeolive@openplans.org
  */
 public class FeatureSourceUtils {
-    protected static final Logger LOGGER =
-            org.geotools.util.logging.Logging.getLogger("org.vfny.geoserver.feature");
+    protected static final Logger LOGGER = org.geotools.util.logging.Logging.getLogger("org.vfny.geoserver.feature");
 
     /**
      * Retreives the bounds for a feature source.
@@ -33,18 +32,15 @@ public class FeatureSourceUtils {
      * @return The bounds.
      * @throws IOException Execption calculating bounds on feature source.
      */
-    public static ReferencedEnvelope getBoundingBoxEnvelope(
-            FeatureSource<? extends FeatureType, ? extends Feature> fs) throws IOException {
+    public static ReferencedEnvelope getBoundingBoxEnvelope(FeatureSource<? extends FeatureType, ? extends Feature> fs)
+            throws IOException {
         ReferencedEnvelope ev = fs.getBounds();
 
         if ((ev == null) || ev.isNull()) {
             try {
                 ev = fs.getFeatures().getBounds();
             } catch (Throwable t) {
-                LOGGER.log(
-                        Level.FINE,
-                        "Could not compute the data bounding box. Returning an empty envelope",
-                        t);
+                LOGGER.log(Level.FINE, "Could not compute the data bounding box. Returning an empty envelope", t);
                 ev = new ReferencedEnvelope(fs.getSchema().getCoordinateReferenceSystem());
             }
         }

@@ -37,11 +37,10 @@ public class BindingLdapTemplate extends SpringSecurityLdapTemplate {
 
         try {
             DirContext ctx = getContextSource().getContext(username, password);
-            ContextExecutor ce =
-                    ctx1 -> {
-                        callback.executeWithContext(ctx1, null);
-                        return null;
-                    };
+            ContextExecutor ce = ctx1 -> {
+                callback.executeWithContext(ctx1, null);
+                return null;
+            };
             try {
                 ce.executeWithContext(ctx);
             } catch (javax.naming.NamingException e) {

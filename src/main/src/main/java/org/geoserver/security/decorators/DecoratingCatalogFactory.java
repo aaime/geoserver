@@ -34,8 +34,7 @@ import org.geotools.util.decorate.AbstractDecorator;
  *
  * @author Niels Charlier
  */
-public class DecoratingCatalogFactory extends AbstractDecorator<CatalogFactory>
-        implements CatalogFactory {
+public class DecoratingCatalogFactory extends AbstractDecorator<CatalogFactory> implements CatalogFactory {
 
     public DecoratingCatalogFactory(CatalogFactory delegate) {
         super(delegate);

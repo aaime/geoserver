@@ -54,8 +54,7 @@ public class GeoServerUserDao implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username)
-            throws UsernameNotFoundException, DataAccessException {
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
         checkUserMap();
 
         UserDetails user = userMap.get(username);
@@ -106,9 +105,7 @@ public class GeoServerUserDao implements UserDetailsService {
 
             // setup a sample service.properties
             Resource serviceFile = loader.get("security/service.properties");
-            try (InputStream is =
-                            GeoServerUserDao.class.getResourceAsStream(
-                                    "serviceTemplate.properties");
+            try (InputStream is = GeoServerUserDao.class.getResourceAsStream("serviceTemplate.properties");
                     OutputStream os = serviceFile.out()) {
                 byte[] buffer = new byte[1024];
                 int count = 0;
@@ -151,8 +148,7 @@ public class GeoServerUserDao implements UserDetailsService {
         checkUserMap();
 
         if (userMap.containsKey(user.getUsername()))
-            throw new IllegalArgumentException(
-                    "The user " + user.getUsername() + " already exists");
+            throw new IllegalArgumentException("The user " + user.getUsername() + " already exists");
         else userMap.put(user.getUsername(), user);
     }
 
@@ -161,9 +157,7 @@ public class GeoServerUserDao implements UserDetailsService {
         checkUserMap();
 
         if (userMap.containsKey(user.getUsername())) userMap.put(user.getUsername(), user);
-        else
-            throw new IllegalArgumentException(
-                    "The user " + user.getUsername() + " already exists");
+        else throw new IllegalArgumentException("The user " + user.getUsername() + " already exists");
     }
 
     /** Removes the specified user from the users list */
@@ -183,10 +177,7 @@ public class GeoServerUserDao implements UserDetailsService {
             p.store(os, null);
         } catch (Exception e) {
             if (e instanceof IOException) throw (IOException) e;
-            else
-                throw (IOException)
-                        new IOException("Could not write updated users list to file system")
-                                .initCause(e);
+            else throw (IOException) new IOException("Could not write updated users list to file system").initCause(e);
         }
     }
 
@@ -209,12 +200,7 @@ public class GeoServerUserDao implements UserDetailsService {
             // if the parsing succeeded turn that into a user object
             UserAttribute attr = (UserAttribute) configAttribEd.getValue();
             if (attr != null) {
-                User user =
-                        createUserObject(
-                                username,
-                                attr.getPassword(),
-                                attr.isEnabled(),
-                                attr.getAuthorities());
+                User user = createUserObject(username, attr.getPassword(), attr.isEnabled(), attr.getAuthorities());
                 users.put(username, user);
             }
         }
@@ -222,10 +208,7 @@ public class GeoServerUserDao implements UserDetailsService {
     }
 
     protected User createUserObject(
-            String username,
-            String password,
-            boolean isEnabled,
-            List<GrantedAuthority> authorities) {
+            String username, String password, boolean isEnabled, List<GrantedAuthority> authorities) {
         return new User(username, password, isEnabled, true, true, true, authorities);
     }
 

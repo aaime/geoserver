@@ -128,8 +128,7 @@ public class ImportJSONWriter {
         }
     }
 
-    public void contexts(FlushableJSONBuilder json, Iterator<ImportContext> contexts, int expand)
-            throws IOException {
+    public void contexts(FlushableJSONBuilder json, Iterator<ImportContext> contexts, int expand) throws IOException {
         json.object().key("imports").array();
         while (contexts.hasNext()) {
             ImportContext context = contexts.next();
@@ -139,8 +138,7 @@ public class ImportJSONWriter {
         json.flush();
     }
 
-    public void context(FlushableJSONBuilder json, ImportContext context, boolean top, int expand)
-            throws IOException {
+    public void context(FlushableJSONBuilder json, ImportContext context, boolean top, int expand) throws IOException {
         if (top) {
             json.object().key("import");
         }
@@ -181,8 +179,7 @@ public class ImportJSONWriter {
         json.flush();
     }
 
-    public void tasks(FlushableJSONBuilder json, List<ImportTask> tasks, boolean top, int expand)
-            throws IOException {
+    public void tasks(FlushableJSONBuilder json, List<ImportTask> tasks, boolean top, int expand) throws IOException {
 
         if (top) {
             json.object();
@@ -200,8 +197,7 @@ public class ImportJSONWriter {
         json.flush();
     }
 
-    public void task(FlushableJSONBuilder json, ImportTask task, boolean top, int expand)
-            throws IOException {
+    public void task(FlushableJSONBuilder json, ImportTask task, boolean top, int expand) throws IOException {
 
         long id = task.getId();
         String href = RequestInfo.get().servletURI(pathTo(task));
@@ -258,14 +254,12 @@ public class ImportJSONWriter {
         json.flush();
     }
 
-    public void store(
-            FlushableJSONBuilder json, StoreInfo store, ImportTask task, boolean top, int expand)
+    public void store(FlushableJSONBuilder json, StoreInfo store, ImportTask task, boolean top, int expand)
             throws IOException {
 
-        String type =
-                store instanceof DataStoreInfo
-                        ? "dataStore"
-                        : store instanceof CoverageStoreInfo ? "coverageStore" : "store";
+        String type = store instanceof DataStoreInfo
+                ? "dataStore"
+                : store instanceof CoverageStoreInfo ? "coverageStore" : "store";
 
         json.object();
         if (task != null) {
@@ -289,8 +283,7 @@ public class ImportJSONWriter {
         json.flush();
     }
 
-    public void layer(FlushableJSONBuilder json, ImportTask task, boolean top, int expand)
-            throws IOException {
+    public void layer(FlushableJSONBuilder json, ImportTask task, boolean top, int expand) throws IOException {
 
         if (top) {
             json.object().key("layer");
@@ -343,8 +336,7 @@ public class ImportJSONWriter {
         json.flush();
     }
 
-    void featureType(FlushableJSONBuilder json, FeatureTypeInfo featureTypeInfo)
-            throws IOException {
+    void featureType(FlushableJSONBuilder json, FeatureTypeInfo featureTypeInfo) throws IOException {
         json.key("attributes").array();
         List<AttributeTypeInfo> attributes = featureTypeInfo.attributes();
         for (AttributeTypeInfo att : attributes) {
@@ -382,8 +374,7 @@ public class ImportJSONWriter {
         }
     }
 
-    public void transformChain(FlushableJSONBuilder json, ImportTask task, boolean top, int expand)
-            throws IOException {
+    public void transformChain(FlushableJSONBuilder json, ImportTask task, boolean top, int expand) throws IOException {
 
         if (top) {
             json.object();
@@ -394,8 +385,7 @@ public class ImportJSONWriter {
         json.key("transformChain").object();
         json.key("type").value(txChain instanceof VectorTransformChain ? "vector" : "raster");
 
-        transforms(
-                json, task, expand, txChain != null ? txChain.getTransforms() : new ArrayList<>());
+        transforms(json, task, expand, txChain != null ? txChain.getTransforms() : new ArrayList<>());
         json.endObject();
 
         if (top) {
@@ -406,10 +396,7 @@ public class ImportJSONWriter {
     }
 
     private void transforms(
-            FlushableJSONBuilder json,
-            Object parent,
-            int expand,
-            List<? extends ImportTransform> transforms)
+            FlushableJSONBuilder json, Object parent, int expand, List<? extends ImportTransform> transforms)
             throws IOException {
         json.key("transforms").array();
 
@@ -421,17 +408,11 @@ public class ImportJSONWriter {
     }
 
     public void transform(
-            FlushableJSONBuilder json,
-            ImportTransform transform,
-            int index,
-            Object parent,
-            boolean top,
-            int expand)
+            FlushableJSONBuilder json, ImportTransform transform, int index, Object parent, boolean top, int expand)
             throws IOException {
         json.object();
         json.key("type").value(transform.getClass().getSimpleName());
-        json.key("href")
-                .value(RequestInfo.get().servletURI(pathTo(parent) + "/transforms/" + index));
+        json.key("href").value(RequestInfo.get().servletURI(pathTo(parent) + "/transforms/" + index));
         if (expand > 0) {
             if (transform instanceof DateFormatTransform) {
                 DateFormatTransform df = (DateFormatTransform) transform;
@@ -463,8 +444,7 @@ public class ImportJSONWriter {
                 json.key("fieldType").value(act.getType().getName());
                 json.key("cql").value(act.getCql());
             } else if (transform.getClass() == AttributesToPointGeometryTransform.class) {
-                AttributesToPointGeometryTransform atpgt =
-                        (AttributesToPointGeometryTransform) transform;
+                AttributesToPointGeometryTransform atpgt = (AttributesToPointGeometryTransform) transform;
                 json.key("latField").value(atpgt.getLatField());
                 json.key("lngField").value(atpgt.getLngField());
                 json.key("pointFieldName").value(atpgt.getPointFieldName());
@@ -496,8 +476,7 @@ public class ImportJSONWriter {
                 json.key("name").value(pst.getName());
                 buildJsonOptions(json, "options", options);
             } else {
-                throw new IOException(
-                        "Serializaiton of " + transform.getClass() + " not implemented");
+                throw new IOException("Serializaiton of " + transform.getClass() + " not implemented");
             }
         }
         json.endObject();
@@ -533,8 +512,7 @@ public class ImportJSONWriter {
         json.endObject();
     }
 
-    public void data(FlushableJSONBuilder json, ImportData data, Object parent, int expand)
-            throws IOException {
+    public void data(FlushableJSONBuilder json, ImportData data, Object parent, int expand) throws IOException {
         if (data instanceof FileData) {
             if (data instanceof Directory) {
                 if (data instanceof Mosaic) {
@@ -558,8 +536,7 @@ public class ImportJSONWriter {
         json.flush();
     }
 
-    public void remote(FlushableJSONBuilder json, RemoteData data, Object parent, int expand)
-            throws IOException {
+    public void remote(FlushableJSONBuilder json, RemoteData data, Object parent, int expand) throws IOException {
 
         json.object();
 
@@ -579,8 +556,7 @@ public class ImportJSONWriter {
         json.flush();
     }
 
-    public void file(
-            FlushableJSONBuilder json, FileData data, Object parent, int expand, boolean href)
+    public void file(FlushableJSONBuilder json, FileData data, Object parent, int expand, boolean href)
             throws IOException {
 
         json.object();
@@ -613,13 +589,11 @@ public class ImportJSONWriter {
         json.flush();
     }
 
-    void fileContents(FlushableJSONBuilder json, FileData data, Object parent, int expand)
-            throws IOException {
+    void fileContents(FlushableJSONBuilder json, FileData data, Object parent, int expand) throws IOException {
         // TODO: we should probably url encode to handle spaces and other chars
         String filename = data.getFile().getName();
         json.key("file").value(filename);
-        json.key("href")
-                .value(RequestInfo.get().servletURI(pathTo(data, parent) + "/files/" + filename));
+        json.key("href").value(RequestInfo.get().servletURI(pathTo(data, parent) + "/files/" + filename));
         if (expand > 0) {
             if (data instanceof SpatialFile) {
                 SpatialFile sf = (SpatialFile) data;
@@ -640,18 +614,15 @@ public class ImportJSONWriter {
         }
     }
 
-    public void mosaic(FlushableJSONBuilder json, Mosaic data, Object parent, int expand)
-            throws IOException {
+    public void mosaic(FlushableJSONBuilder json, Mosaic data, Object parent, int expand) throws IOException {
         directory(json, data, "mosaic", parent, expand);
     }
 
-    public void directory(FlushableJSONBuilder json, Directory data, Object parent, int expand)
-            throws IOException {
+    public void directory(FlushableJSONBuilder json, Directory data, Object parent, int expand) throws IOException {
         directory(json, data, "directory", parent, expand);
     }
 
-    public void directory(
-            FlushableJSONBuilder json, Directory data, String typeName, Object parent, int expand)
+    public void directory(FlushableJSONBuilder json, Directory data, String typeName, Object parent, int expand)
             throws IOException {
 
         json.object();
@@ -676,8 +647,7 @@ public class ImportJSONWriter {
         json.flush();
     }
 
-    public void files(
-            FlushableJSONBuilder json, Directory data, Object parent, boolean top, int expand)
+    public void files(FlushableJSONBuilder json, Directory data, Object parent, boolean top, int expand)
             throws IOException {
 
         if (top) {
@@ -696,8 +666,7 @@ public class ImportJSONWriter {
         json.flush();
     }
 
-    public void database(FlushableJSONBuilder json, Database data, Object parent, int expand)
-            throws IOException {
+    public void database(FlushableJSONBuilder json, Database data, Object parent, int expand) throws IOException {
         json.object();
         json.key("type").value("database");
         json.key("format").value(data.getFormat() != null ? data.getFormat().getName() : null);
@@ -723,8 +692,7 @@ public class ImportJSONWriter {
         json.endObject();
     }
 
-    void table(FlushableJSONBuilder json, Table data, Object parent, int expand)
-            throws IOException {
+    void table(FlushableJSONBuilder json, Table data, Object parent, int expand) throws IOException {
         json.object();
         json.key("type").value("table");
         json.key("name").value(data.getName());
@@ -787,8 +755,7 @@ public class ImportJSONWriter {
     }
 
     XStreamPersister persister() {
-        XStreamPersister xp =
-                importer.initXStreamPersister(new XStreamPersisterFactory().createJSONPersister());
+        XStreamPersister xp = importer.initXStreamPersister(new XStreamPersisterFactory().createJSONPersister());
 
         xp.setReferenceByName(true);
         xp.setExcludeIds();
@@ -796,23 +763,20 @@ public class ImportJSONWriter {
         // xp.setCatalog(importer.getCatalog());
         xp.setHideFeatureTypeAttributes();
         // @todo this is copy-and-paste from org.geoserver.catalog.rest.FeatureTypeResource
-        xp.setCallback(
-                new XStreamPersister.Callback() {
+        xp.setCallback(new XStreamPersister.Callback() {
 
-                    @Override
-                    protected void postEncodeFeatureType(
-                            FeatureTypeInfo ft,
-                            HierarchicalStreamWriter writer,
-                            MarshallingContext context) {
-                        try {
-                            writer.startNode("attributes");
-                            context.convertAnother(ft.attributes());
-                            writer.endNode();
-                        } catch (IOException e) {
-                            throw new RuntimeException("Could not get native attributes", e);
-                        }
-                    }
-                });
+            @Override
+            protected void postEncodeFeatureType(
+                    FeatureTypeInfo ft, HierarchicalStreamWriter writer, MarshallingContext context) {
+                try {
+                    writer.startNode("attributes");
+                    context.convertAnother(ft.attributes());
+                    writer.endNode();
+                } catch (IOException e) {
+                    throw new RuntimeException("Could not get native attributes", e);
+                }
+            }
+        });
         return xp;
     }
 

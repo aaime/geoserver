@@ -43,8 +43,7 @@ public class ResourceDirectoryInfoJSONConverter extends XStreamJSONMessageConver
 
     @Override
     protected boolean supports(Class<?> clazz) {
-        return RestWrapper.class.isAssignableFrom(clazz)
-                && !RestListWrapper.class.isAssignableFrom(clazz);
+        return RestWrapper.class.isAssignableFrom(clazz) && !RestListWrapper.class.isAssignableFrom(clazz);
     }
 
     @Override
@@ -62,8 +61,7 @@ public class ResourceDirectoryInfoJSONConverter extends XStreamJSONMessageConver
             ResourceDirectoryInfo dirInfo = (ResourceDirectoryInfo) object;
             if (1 == dirInfo.getChildren().size()) {
                 boolean alwaysSerializeCollectionsAsArrays = true;
-                XStreamPersister xmlPersister =
-                        xpf.createJSONPersister(alwaysSerializeCollectionsAsArrays);
+                XStreamPersister xmlPersister = xpf.createJSONPersister(alwaysSerializeCollectionsAsArrays);
                 restWrapper.configurePersister(xmlPersister, this);
                 writeSingleChildrenDirectoryInfo(dirInfo, xmlPersister, outputMessage.getBody());
                 return;
@@ -73,29 +71,24 @@ public class ResourceDirectoryInfoJSONConverter extends XStreamJSONMessageConver
     }
 
     private void writeSingleChildrenDirectoryInfo(
-            ResourceDirectoryInfo dirInfo, XStreamPersister xmlPersister, OutputStream out)
-            throws IOException {
+            ResourceDirectoryInfo dirInfo, XStreamPersister xmlPersister, OutputStream out) throws IOException {
 
         SingleChildDirInfo info = new SingleChildDirInfo(dirInfo);
         XStream xstream = xmlPersister.getXStream();
         xstream.alias("ResourceDirectory", SingleChildDirInfo.class);
 
-        Converter conv =
-                new CollectionConverter(xstream.getMapper()) {
-                    @Override
-                    public boolean canConvert(@SuppressWarnings("rawtypes") Class type) {
-                        return Collection.class.isAssignableFrom(type);
-                    }
+        Converter conv = new CollectionConverter(xstream.getMapper()) {
+            @Override
+            public boolean canConvert(@SuppressWarnings("rawtypes") Class type) {
+                return Collection.class.isAssignableFrom(type);
+            }
 
-                    @Override
-                    protected void writeCompleteItem(
-                            Object item,
-                            MarshallingContext context,
-                            HierarchicalStreamWriter writer) {
+            @Override
+            protected void writeCompleteItem(Object item, MarshallingContext context, HierarchicalStreamWriter writer) {
 
-                        super.writeBareItem(item, context, writer);
-                    }
-                };
+                super.writeBareItem(item, context, writer);
+            }
+        };
 
         xstream.registerLocalConverter(Children.class, "child", conv);
         xmlPersister.save(info, out);

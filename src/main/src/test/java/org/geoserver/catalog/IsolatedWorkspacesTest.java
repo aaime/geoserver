@@ -49,8 +49,7 @@ public abstract class IsolatedWorkspacesTest extends GeoServerSystemTestSupport 
     }
 
     /** Helper method that checks that the provided workspace has the expected content. */
-    protected void checkWorkspace(
-            WorkspaceInfo workspace, String expectedPrefix, boolean expectedIsolation) {
+    protected void checkWorkspace(WorkspaceInfo workspace, String expectedPrefix, boolean expectedIsolation) {
         assertThat(workspace, notNullValue());
         assertThat(workspace.getName(), is(expectedPrefix));
         assertThat(workspace.isIsolated(), is(expectedIsolation));
@@ -58,10 +57,7 @@ public abstract class IsolatedWorkspacesTest extends GeoServerSystemTestSupport 
 
     /** Helper method that checks that the provided namespace has the expected content. */
     protected void checkNamespace(
-            NamespaceInfo namespace,
-            String expectedPrefix,
-            String expectedNamespaceUri,
-            boolean expectedIsolation) {
+            NamespaceInfo namespace, String expectedPrefix, String expectedNamespaceUri, boolean expectedIsolation) {
         assertThat(namespace, notNullValue());
         assertThat(namespace.getPrefix(), is(expectedPrefix));
         assertThat(namespace.getName(), is(expectedPrefix));

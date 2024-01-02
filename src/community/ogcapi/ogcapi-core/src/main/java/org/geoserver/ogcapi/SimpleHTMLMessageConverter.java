@@ -53,9 +53,7 @@ public class SimpleHTMLMessageConverter<T> extends AbstractHTMLMessageConverter<
         try {
             HashMap<String, Object> model = setupModel(value);
             Charset defaultCharset = getDefaultCharset();
-            if (outputMessage != null
-                    && outputMessage.getBody() != null
-                    && defaultCharset != null) {
+            if (outputMessage != null && outputMessage.getBody() != null && defaultCharset != null) {
                 templateSupport.processTemplate(
                         null,
                         templateName,
@@ -64,9 +62,8 @@ public class SimpleHTMLMessageConverter<T> extends AbstractHTMLMessageConverter<
                         new OutputStreamWriter(outputMessage.getBody(), defaultCharset),
                         defaultCharset);
             } else {
-                LOGGER.warning(
-                        "Either the default character set, output message or body was null, so the "
-                                + "template could not be processed.");
+                LOGGER.warning("Either the default character set, output message or body was null, so the "
+                        + "template could not be processed.");
             }
         } finally {
             // the model can be working over feature collections, make sure they are cleaned up

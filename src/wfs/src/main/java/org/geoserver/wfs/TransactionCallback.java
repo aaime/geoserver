@@ -28,8 +28,7 @@ public interface TransactionCallback extends ExtensionPriority, TransactionListe
      * @param committed true if the transaction was successful, false if the transaction was aborted
      *     for any reason
      */
-    void afterTransaction(
-            TransactionRequest request, TransactionResponse result, boolean committed);
+    void afterTransaction(TransactionRequest request, TransactionResponse result, boolean committed);
 
     @Override
     default int getPriority() {

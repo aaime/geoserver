@@ -90,9 +90,7 @@ public class CatalogMultiResourceItemWriter<T> extends CatalogWriter<T> {
                 File file = setResourceToDelegate();
                 // create only if write is called
                 file.createNewFile();
-                Assert.state(
-                        file.canWrite(),
-                        "Output resource " + file.getAbsolutePath() + " must be writable");
+                Assert.state(file.canWrite(), "Output resource " + file.getAbsolutePath() + " must be writable");
                 delegate.open(new ExecutionContext());
                 opened = true;
             }
@@ -160,8 +158,7 @@ public class CatalogMultiResourceItemWriter<T> extends CatalogWriter<T> {
         try {
             super.open(executionContext);
             resourceIndex = executionContext.getInt(getExecutionContextKey(RESOURCE_INDEX_KEY), 1);
-            currentResourceItemCount =
-                    executionContext.getInt(getExecutionContextKey(CURRENT_RESOURCE_ITEM_COUNT), 0);
+            currentResourceItemCount = executionContext.getInt(getExecutionContextKey(CURRENT_RESOURCE_ITEM_COUNT), 0);
 
             try {
                 setResourceToDelegate();
@@ -189,9 +186,7 @@ public class CatalogMultiResourceItemWriter<T> extends CatalogWriter<T> {
                 if (opened) {
                     delegate.update(executionContext);
                 }
-                executionContext.putInt(
-                        getExecutionContextKey(CURRENT_RESOURCE_ITEM_COUNT),
-                        currentResourceItemCount);
+                executionContext.putInt(getExecutionContextKey(CURRENT_RESOURCE_ITEM_COUNT), currentResourceItemCount);
                 executionContext.putInt(getExecutionContextKey(RESOURCE_INDEX_KEY), resourceIndex);
             }
         } catch (ItemStreamException e) {

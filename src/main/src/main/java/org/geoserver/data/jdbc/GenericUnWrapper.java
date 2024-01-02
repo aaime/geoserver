@@ -30,8 +30,7 @@ import org.geotools.util.logging.Logging;
  * @author Jody Garnett - OpenGeo
  */
 public class GenericUnWrapper implements UnWrapper {
-    private static final Logger LOGGER =
-            Logging.getLogger("org.geoserver.data.jdbc.GenericUnWrapper");
+    private static final Logger LOGGER = Logging.getLogger("org.geoserver.data.jdbc.GenericUnWrapper");
 
     private static final Method IGNORE;
 
@@ -39,8 +38,7 @@ public class GenericUnWrapper implements UnWrapper {
         try {
             IGNORE = GenericUnWrapper.class.getMethod("ignore", new Class[0]);
         } catch (Exception inconsistent) {
-            throw new IllegalStateException(
-                    "Expected static GenericUnWrapper ignore() method", inconsistent);
+            throw new IllegalStateException("Expected static GenericUnWrapper ignore() method", inconsistent);
         }
     }
 
@@ -90,8 +88,7 @@ public class GenericUnWrapper implements UnWrapper {
     }
 
     /** Look up method used for unwrapping (if supported in the application container). */
-    private static void methodSearch(
-            String env, Map<Class<?>, Method> methods, String className, String methodName) {
+    private static void methodSearch(String env, Map<Class<?>, Method> methods, String className, String methodName) {
         try {
             Class<?> wrappedConnection = Class.forName(className);
             Method unwrap = wrappedConnection.getMethod(methodName, (Class[]) null);
@@ -122,8 +119,7 @@ public class GenericUnWrapper implements UnWrapper {
             return unwrapped;
         } else {
             throw new IllegalArgumentException(
-                    "This connection is not unwrappable, "
-                            + "check canUnwrap before calling unwrap");
+                    "This connection is not unwrappable, " + "check canUnwrap before calling unwrap");
         }
     }
 
@@ -140,8 +136,7 @@ public class GenericUnWrapper implements UnWrapper {
             return unwrapped;
         } else {
             throw new IllegalArgumentException(
-                    "This statement is not unwrappable, "
-                            + "check canUnwrap before calling unwrap");
+                    "This statement is not unwrappable, " + "check canUnwrap before calling unwrap");
         }
     }
 
@@ -151,8 +146,7 @@ public class GenericUnWrapper implements UnWrapper {
      * provide an unwrapping method reflection is tried once (resulting in either a cached method to
      * next time, or null for use as a sentinel
      */
-    @SuppressWarnings(
-            "deprecation") // Method.isAccessible is deprecated but replacement not available in
+    @SuppressWarnings("deprecation") // Method.isAccessible is deprecated but replacement not available in
     // Java 8
     private <T> T unwrapInternal(Class<T> target, T conn, Map<Class<?>, Method> methods) {
         Class<?> implementation = conn.getClass();
@@ -206,47 +200,41 @@ public class GenericUnWrapper implements UnWrapper {
     private <T> T unwrapInternal(Class<T> target, T conn, Class<?> wrapper, Method accessMethod) {
         if (accessMethod == null) {
             LOGGER.finest(
-                    "Using "
-                            + wrapper.getName()
-                            + " does not have accessMethod to unwrap "
-                            + target.getSimpleName());
+                    "Using " + wrapper.getName() + " does not have accessMethod to unwrap " + target.getSimpleName());
             return null; // skip inaccessible method
         }
         try {
             Object result = accessMethod.invoke(conn, (Object[]) null);
             if (result == null) {
-                LOGGER.finest(
-                        "Using "
-                                + wrapper.getName()
-                                + "."
-                                + accessMethod.getName()
-                                + "() to unwrap "
-                                + target.getSimpleName()
-                                + " produced a null");
+                LOGGER.finest("Using "
+                        + wrapper.getName()
+                        + "."
+                        + accessMethod.getName()
+                        + "() to unwrap "
+                        + target.getSimpleName()
+                        + " produced a null");
                 return null;
             }
             if (result == conn) {
-                LOGGER.finest(
-                        "Using "
-                                + wrapper.getName()
-                                + "."
-                                + accessMethod.getName()
-                                + "() to unwrap did not result in native "
-                                + target.getSimpleName()
-                                + ": "
-                                + result.getClass().getSimpleName());
+                LOGGER.finest("Using "
+                        + wrapper.getName()
+                        + "."
+                        + accessMethod.getName()
+                        + "() to unwrap did not result in native "
+                        + target.getSimpleName()
+                        + ": "
+                        + result.getClass().getSimpleName());
                 return null;
             }
             if (!target.isInstance(result)) {
-                LOGGER.finest(
-                        "Using "
-                                + wrapper.getName()
-                                + "."
-                                + accessMethod.getName()
-                                + "() to unwrap did not result in native "
-                                + target.getSimpleName()
-                                + ": "
-                                + result.getClass().getSimpleName());
+                LOGGER.finest("Using "
+                        + wrapper.getName()
+                        + "."
+                        + accessMethod.getName()
+                        + "() to unwrap did not result in native "
+                        + target.getSimpleName()
+                        + ": "
+                        + result.getClass().getSimpleName());
                 return null;
             }
             return target.cast(result);

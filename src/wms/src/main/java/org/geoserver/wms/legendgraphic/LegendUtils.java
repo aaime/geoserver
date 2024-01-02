@@ -151,8 +151,8 @@ public class LegendUtils {
     private static final int DEFAULT_ROWS = 0;
 
     /** shared package's logger */
-    private static final Logger LOGGER =
-            org.geotools.util.logging.Logging.getLogger(LegendUtils.class.getPackage().getName());
+    private static final Logger LOGGER = org.geotools.util.logging.Logging.getLogger(
+            LegendUtils.class.getPackage().getName());
 
     public static final Color DEFAULT_BORDER_COLOR = Color.black;
 
@@ -191,9 +191,7 @@ public class LegendUtils {
         LegendLayout layout = DEFAULT_LAYOUT;
         if (legendOptions != null && legendOptions.get("grouplayout") != null) {
             try {
-                layout =
-                        LegendLayout.valueOf(
-                                ((String) legendOptions.get("grouplayout")).toUpperCase());
+                layout = LegendLayout.valueOf(((String) legendOptions.get("grouplayout")).toUpperCase());
             } catch (IllegalArgumentException e) {
             }
         }
@@ -315,9 +313,7 @@ public class LegendUtils {
             try {
                 legendFontSize = Integer.valueOf((String) legendOptions.get("fontSize"));
             } catch (NumberFormatException e) {
-                LOGGER.warning(
-                        "Error trying to interpret legendOption 'fontSize': "
-                                + legendOptions.get("fontSize"));
+                LOGGER.warning("Error trying to interpret legendOption 'fontSize': " + legendOptions.get("fontSize"));
                 legendFontSize = LegendUtils.DEFAULT_FONT_SIZE;
             }
         }
@@ -331,8 +327,7 @@ public class LegendUtils {
 
         if (legendFontFamily == LegendUtils.DEFAULT_FONT_TYPE
                 && legendFontName.equalsIgnoreCase(LegendUtils.DEFAULT_FONT_NAME)
-                && (legendFontSize == LegendUtils.DEFAULT_FONT_SIZE || legendFontSize <= 0))
-            return DEFAULT_FONT;
+                && (legendFontSize == LegendUtils.DEFAULT_FONT_SIZE || legendFontSize <= 0)) return DEFAULT_FONT;
 
         Font f = FontCache.getDefaultInstance().getFont(legendFontName);
         if (f != null) {
@@ -366,10 +361,7 @@ public class LegendUtils {
         } catch (NumberFormatException e) {
             if (LOGGER.isLoggable(Level.WARNING))
                 LOGGER.warning(
-                        "Could not decode label color: "
-                                + color
-                                + ", default to "
-                                + DEFAULT_FONT_COLOR.toString());
+                        "Could not decode label color: " + color + ", default to " + DEFAULT_FONT_COLOR.toString());
             return DEFAULT_FONT_COLOR;
         }
     }
@@ -453,11 +445,7 @@ public class LegendUtils {
         try {
             return color((String) clr);
         } catch (NumberFormatException e) {
-            LOGGER.warning(
-                    "Could not decode background color: "
-                            + clr
-                            + ", default to "
-                            + DEFAULT_BG_COLOR.toString());
+            LOGGER.warning("Could not decode background color: " + clr + ", default to " + DEFAULT_BG_COLOR.toString());
             return DEFAULT_BG_COLOR;
         }
     }
@@ -492,9 +480,7 @@ public class LegendUtils {
             opacity = ExpressionExtractor.extractCqlExpressions(opacityExp);
             opacityValue = opacity.evaluate(null, Double.class);
         }
-        if (opacityValue == null
-                || (opacityValue.doubleValue() - 1) > 0
-                || opacityValue.doubleValue() < 0) {
+        if (opacityValue == null || (opacityValue.doubleValue() - 1) > 0 || opacityValue.doubleValue() < 0) {
             throw new IllegalArgumentException(
                     MessageFormat.format(ErrorKeys.ILLEGAL_ARGUMENT_$2, "Opacity", opacityValue));
         }
@@ -529,9 +515,7 @@ public class LegendUtils {
      * @return the {@link Color} out of this {@link ColorMapEntry}.
      * @throws NumberFormatException in case the color string is badly formatted.
      */
-    @SuppressFBWarnings({
-        "NP_NULL_ON_SOME_PATH",
-        "NP_NULL_PARAM_DEREF"
+    @SuppressFBWarnings({"NP_NULL_ON_SOME_PATH", "NP_NULL_PARAM_DEREF"
     }) // SP does not recognize the check in ensureNotNull
     public static Color color(final ColorMapEntry entry) {
         ensureNotNull(entry, "entry");
@@ -589,8 +573,7 @@ public class LegendUtils {
      *
      * @return an array of {@link Rule}s.
      */
-    public static Rule[] getApplicableRules(
-            final FeatureTypeStyle[] ftStyles, double scaleDenominator) {
+    public static Rule[] getApplicableRules(final FeatureTypeStyle[] ftStyles, double scaleDenominator) {
         ensureNotNull(ftStyles, "FeatureTypeStyle array ");
         /** Holds both the rules that apply and the ElseRule's if any, in the order they appear */
         final List<Rule> ruleList = new ArrayList<>();
@@ -627,10 +610,8 @@ public class LegendUtils {
      */
     public static boolean isWithInScale(final Rule r, final double scaleDenominator) {
         return (scaleDenominator == -1)
-                || (((r.getMinScaleDenominator() - LegendGraphicBuilder.TOLERANCE)
-                                <= scaleDenominator)
-                        && ((r.getMaxScaleDenominator() + LegendGraphicBuilder.TOLERANCE)
-                                > scaleDenominator));
+                || (((r.getMinScaleDenominator() - LegendGraphicBuilder.TOLERANCE) <= scaleDenominator)
+                        && ((r.getMaxScaleDenominator() + LegendGraphicBuilder.TOLERANCE) > scaleDenominator));
     }
 
     /**
@@ -643,8 +624,7 @@ public class LegendUtils {
      * @param g - the Graphics2D that will be used to render this label
      * @return a {@link BufferedImage} of the properly rendered label.
      */
-    public static BufferedImage renderLabel(
-            String label, final Graphics2D g, final GetLegendGraphicRequest req) {
+    public static BufferedImage renderLabel(String label, final Graphics2D g, final GetLegendGraphicRequest req) {
 
         ensureNotNull(label);
         ensureNotNull(g);
@@ -685,11 +665,10 @@ public class LegendUtils {
             }
 
             // make the actual label image
-            renderedLabel =
-                    new BufferedImage(
-                            (int) Math.ceil(bounds.getWidth()),
-                            (int) Math.ceil(bounds.getHeight()),
-                            BufferedImage.TYPE_INT_ARGB);
+            renderedLabel = new BufferedImage(
+                    (int) Math.ceil(bounds.getWidth()),
+                    (int) Math.ceil(bounds.getHeight()),
+                    BufferedImage.TYPE_INT_ARGB);
 
             st = new StringTokenizer(realLabel, "\n\r\f");
 
@@ -697,11 +676,9 @@ public class LegendUtils {
             rlg.setColor(labelColor);
             rlg.setFont(g.getFont());
             rlg.setRenderingHint(
-                    RenderingHints.KEY_TEXT_ANTIALIASING,
-                    g.getRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING));
+                    RenderingHints.KEY_TEXT_ANTIALIASING, g.getRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING));
             rlg.setRenderingHint(
-                    RenderingHints.KEY_FRACTIONALMETRICS,
-                    g.getRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS));
+                    RenderingHints.KEY_FRACTIONALMETRICS, g.getRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS));
             int y = 0 - g.getFontMetrics().getDescent();
             int c = 0;
 
@@ -713,19 +690,19 @@ public class LegendUtils {
         } else {
             // this is a traditional 'regular-old' label.  Just figure the
             // size and act accordingly.
-            int height = (int) Math.ceil(g.getFontMetrics().getStringBounds(label, g).getHeight());
-            int width = (int) Math.ceil(g.getFontMetrics().getStringBounds(label, g).getWidth());
+            int height =
+                    (int) Math.ceil(g.getFontMetrics().getStringBounds(label, g).getHeight());
+            int width =
+                    (int) Math.ceil(g.getFontMetrics().getStringBounds(label, g).getWidth());
             renderedLabel = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
             Graphics2D rlg = renderedLabel.createGraphics();
             rlg.setColor(labelColor);
             rlg.setFont(g.getFont());
             rlg.setRenderingHint(
-                    RenderingHints.KEY_TEXT_ANTIALIASING,
-                    g.getRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING));
+                    RenderingHints.KEY_TEXT_ANTIALIASING, g.getRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING));
             if (g.getRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS) != null) {
                 rlg.setRenderingHint(
-                        RenderingHints.KEY_FRACTIONALMETRICS,
-                        g.getRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS));
+                        RenderingHints.KEY_FRACTIONALMETRICS, g.getRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS));
             }
             rlg.drawString(label, 0, height - rlg.getFontMetrics().getDescent());
             rlg.dispose();
@@ -757,25 +734,18 @@ public class LegendUtils {
             final double dx) {
         if (right == null && center == null) return left;
         if (left == null) throw new NullPointerException("Left image cannot be null");
-        int totalHeight =
-                (int)
-                        (Math.max(
-                                        left.getHeight(),
-                                        Math.max(
-                                                (center != null
-                                                        ? center.getHeight()
-                                                        : Double.NEGATIVE_INFINITY),
-                                                right != null ? right.getHeight() : 0))
-                                + 0.5);
-        final int totalWidth =
-                (int)
-                        (left.getWidth()
-                                + (center != null ? center.getWidth() : 0)
-                                + (right != null ? right.getWidth() : 0)
-                                + 2 * dx
-                                + 0.5);
-        final BufferedImage finalImage =
-                ImageUtils.createImage(totalWidth, totalHeight, null, transparent);
+        int totalHeight = (int) (Math.max(
+                        left.getHeight(),
+                        Math.max(
+                                (center != null ? center.getHeight() : Double.NEGATIVE_INFINITY),
+                                right != null ? right.getHeight() : 0))
+                + 0.5);
+        final int totalWidth = (int) (left.getWidth()
+                + (center != null ? center.getWidth() : 0)
+                + (right != null ? right.getWidth() : 0)
+                + 2 * dx
+                + 0.5);
+        final BufferedImage finalImage = ImageUtils.createImage(totalWidth, totalHeight, null, transparent);
         final Graphics2D finalGraphics =
                 ImageUtils.prepareTransparency(transparent, backgroundColor, finalImage, hintsMap);
 
@@ -846,8 +816,9 @@ public class LegendUtils {
                 if (rule.equalsIgnoreCase(r.getName())) {
                     sldRule = r;
                     if (LOGGER.isLoggable(Level.FINE)) {
-                        LOGGER.fine(
-                                new StringBuffer("found requested rule: ").append(rule).toString());
+                        LOGGER.fine(new StringBuffer("found requested rule: ")
+                                .append(rule)
+                                .toString());
                     }
 
                     break;

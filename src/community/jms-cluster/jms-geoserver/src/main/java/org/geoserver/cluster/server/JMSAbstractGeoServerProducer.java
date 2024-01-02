@@ -21,8 +21,7 @@ import org.springframework.context.ApplicationEvent;
  * @author Carlo Cancellieri - carlo.cancellieri@geo-solutions.it
  */
 public abstract class JMSAbstractGeoServerProducer extends JMSAbstractProducer {
-    private static final java.util.logging.Logger LOGGER =
-            Logging.getLogger(JMSAbstractGeoServerProducer.class);
+    private static final java.util.logging.Logger LOGGER = Logging.getLogger(JMSAbstractGeoServerProducer.class);
 
     public JMSAbstractGeoServerProducer() {
         super();

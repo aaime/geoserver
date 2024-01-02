@@ -45,8 +45,7 @@ public class URLManglersTest extends GeoServerSystemTestSupport {
     protected void onSetUp(SystemTestData testData) throws Exception {
         super.onSetUp(testData);
         FileUtils.copyFileToDirectory(
-                new File("./src/test/resources/geoserver-environment.properties"),
-                testData.getDataDirectoryRoot());
+                new File("./src/test/resources/geoserver-environment.properties"), testData.getDataDirectoryRoot());
     }
 
     @Before
@@ -65,12 +64,7 @@ public class URLManglersTest extends GeoServerSystemTestSupport {
 
     @Test
     public void testKVP() {
-        String url =
-                buildURL(
-                        BASEURL,
-                        "test",
-                        Collections.singletonMap("param", "value()"),
-                        URLType.SERVICE);
+        String url = buildURL(BASEURL, "test", Collections.singletonMap("param", "value()"), URLType.SERVICE);
         assertEquals("http://localhost:8080/geoserver/test?param=value%28%29", url);
     }
 
@@ -102,8 +96,7 @@ public class URLManglersTest extends GeoServerSystemTestSupport {
         assertEquals("http://custom.host/test", url);
 
         // check not-matched placeholders remain intact, like the headers placeholders
-        gi.getSettings()
-                .setProxyBaseUrl("${X-Forwarded-Proto}://${X-Forwarded-Host}/${proxy.custom}");
+        gi.getSettings().setProxyBaseUrl("${X-Forwarded-Proto}://${X-Forwarded-Host}/${proxy.custom}");
         getGeoServer().save(gi);
         url = buildURL(BASEURL, "test", null, URLType.SERVICE);
         assertEquals("${X-Forwarded-Proto}://${X-Forwarded-Host}/http://custom.host/test", url);

@@ -81,8 +81,7 @@ public class GeoServerExtensionsHelper {
             if (GeoServerExtensions.context.containsBean(name)) {
                 Object conflict = GeoServerExtensions.context.getBean(name);
                 if (bean != conflict) {
-                    GeoServerExtensions.LOGGER.fine(
-                            "ApplicationContext override " + name + ": " + conflict);
+                    GeoServerExtensions.LOGGER.fine("ApplicationContext override " + name + ": " + conflict);
                 }
             }
         } else {

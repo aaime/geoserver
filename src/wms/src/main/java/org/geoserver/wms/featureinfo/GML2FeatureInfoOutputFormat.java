@@ -62,8 +62,7 @@ public class GML2FeatureInfoOutputFormat extends GetFeatureInfoOutputFormat {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public void write(
-            FeatureCollectionType results, GetFeatureInfoRequest fInfoReq, OutputStream out)
+    public void write(FeatureCollectionType results, GetFeatureInfoRequest fInfoReq, OutputStream out)
             throws ServiceException, IOException {
 
         // the 'response' object we'll pass to our OutputFormat

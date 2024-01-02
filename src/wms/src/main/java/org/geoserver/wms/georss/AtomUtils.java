@@ -91,8 +91,7 @@ public final class AtomUtils {
             params.put("layers", nsPrefix + ":" + feature.getType().getTypeName());
             params.put("featureid", feature.getID());
 
-            return ResponseUtils.buildURL(
-                    context.getRequest().getBaseUrl(), "wms/reflect", params, URLType.SERVICE);
+            return ResponseUtils.buildURL(context.getRequest().getBaseUrl(), "wms/reflect", params, URLType.SERVICE);
         }
     }
 

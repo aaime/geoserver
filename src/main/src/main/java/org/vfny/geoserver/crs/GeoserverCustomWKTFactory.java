@@ -29,10 +29,8 @@ public class GeoserverCustomWKTFactory extends FactoryUsingWKT {
     protected URL getDefinitionsURL() {
         String cust_proj_file = System.getProperty(SYSTEM_DEFAULT_USER_PROJ_FILE);
         if (cust_proj_file == null) {
-            GeoServerResourceLoader loader =
-                    GeoServerExtensions.bean(GeoServerResourceLoader.class);
-            if (loader
-                    != null) { // not available during construction SystemTestData - call CRS reset
+            GeoServerResourceLoader loader = GeoServerExtensions.bean(GeoServerResourceLoader.class);
+            if (loader != null) { // not available during construction SystemTestData - call CRS reset
                 // to fix
                 Resource custom_proj = loader.get("user_projections/epsg.properties");
                 if (custom_proj.getType() == Type.RESOURCE) {

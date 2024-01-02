@@ -30,8 +30,7 @@ public class RestEnvVariableCallback extends DispatcherCallbackAdapter {
             Map<String, Object> localEnvVars = (Map<String, Object>) PARSER.parse(unparsedOptions);
             EnvFunction.setLocalValues(localEnvVars);
         } catch (Exception e) {
-            throw new RestException(
-                    "Invalid syntax for environment variables", HttpStatus.BAD_REQUEST, e);
+            throw new RestException("Invalid syntax for environment variables", HttpStatus.BAD_REQUEST, e);
         }
     }
 

@@ -124,14 +124,13 @@ public class LookAtOptions {
                 geom = reader.read(geomWKT);
             } catch (Exception e) {
                 if (LOGGER.isLoggable(Level.INFO)) {
-                    LOGGER.info(
-                            "Error parsing "
-                                    + KEY_LOOKAT
-                                    + " KML format option: "
-                                    + e.getMessage()
-                                    + ". Argument WKT: '"
-                                    + geomWKT
-                                    + "'");
+                    LOGGER.info("Error parsing "
+                            + KEY_LOOKAT
+                            + " KML format option: "
+                            + e.getMessage()
+                            + ". Argument WKT: '"
+                            + geomWKT
+                            + "'");
                 }
             }
         }
@@ -159,11 +158,10 @@ public class LookAtOptions {
                 mode = AltitudeMode.fromValue(String.valueOf(object));
             } catch (IllegalArgumentException ignore) {
                 if (LOGGER.isLoggable(Level.INFO)) {
-                    LOGGER.info(
-                            "Illegal value for KML format option 'altitudeMode': '"
-                                    + object
-                                    + "'. Expected one of "
-                                    + Arrays.toString(AltitudeMode.values()));
+                    LOGGER.info("Illegal value for KML format option 'altitudeMode': '"
+                            + object
+                            + "'. Expected one of "
+                            + Arrays.toString(AltitudeMode.values()));
                 }
             }
         }

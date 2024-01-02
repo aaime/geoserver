@@ -140,7 +140,8 @@ public class MapMLControllerTest extends WMSTestSupport {
 
         LayerGroupInfo lgi = catalog.getLayerGroupByName(NATURE_GROUP);
         lgi.setInternationalTitle(title);
-        CoordinateReferenceSystem webMerc = MapMLController.previewTcrsMap.get("OSMTILE").getCRS();
+        CoordinateReferenceSystem webMerc =
+                MapMLController.previewTcrsMap.get("OSMTILE").getCRS();
         Bounds webMercBounds = MapMLController.previewTcrsMap.get("OSMTILE").getBounds();
         double x1 = webMercBounds.getMin().x;
         double x2 = webMercBounds.getMax().x;
@@ -227,9 +228,7 @@ public class MapMLControllerTest extends WMSTestSupport {
         request.addPreferredLocale(Locale.CANADA_FRENCH);
         Document d = testLayersAndGroupsHTML(li, request);
 
-        assertTrue(
-                "HTML layer title must be internationalized",
-                "Le titre français".equalsIgnoreCase(d.title()));
+        assertTrue("HTML layer title must be internationalized", "Le titre français".equalsIgnoreCase(d.title()));
 
         LayerGroupInfo lgi = cat.getLayerGroupByName(NATURE_GROUP);
         request = createRequest("mapml/" + lgi.getName() + "/osmtile");
@@ -241,9 +240,7 @@ public class MapMLControllerTest extends WMSTestSupport {
         LayerGroupInfo noTitleLG = cat.getLayerGroupByName("layerGroup");
         MockHttpServletRequest r = createRequest("mapml/" + noTitleLG.getName() + "/osmtile");
         d = testLayersAndGroupsHTML(noTitleLG, r);
-        assertTrue(
-                "HTML layer group title must NOT be internationalized",
-                "layerGroup".equalsIgnoreCase(d.title()));
+        assertTrue("HTML layer group title must NOT be internationalized", "layerGroup".equalsIgnoreCase(d.title()));
     }
 
     @Test
@@ -257,15 +254,8 @@ public class MapMLControllerTest extends WMSTestSupport {
         try {
             lg.setTitle(unescapedTitle);
             catalog.save(lg);
-            String htmlResponse =
-                    mc.Html(
-                            request,
-                            response,
-                            lg.getName(),
-                            "osmtile",
-                            Optional.empty(),
-                            Optional.empty(),
-                            Optional.empty());
+            String htmlResponse = mc.Html(
+                    request, response, lg.getName(), "osmtile", Optional.empty(), Optional.empty(), Optional.empty());
             assertThat(htmlResponse, not(containsString(unescapedTitle)));
             assertThat(htmlResponse, containsString(escapedTitle));
         } finally {
@@ -279,18 +269,8 @@ public class MapMLControllerTest extends WMSTestSupport {
         MockHttpServletRequest request = createRequest("mapml/" + "foo" + "/osmtile");
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        mc.Html(
-                request,
-                response,
-                "foo",
-                "osmtile",
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty());
-        assertEquals(
-                "Response is 404 Not Found",
-                HttpServletResponse.SC_NOT_FOUND,
-                response.getStatus());
+        mc.Html(request, response, "foo", "osmtile", Optional.empty(), Optional.empty(), Optional.empty());
+        assertEquals("Response is 404 Not Found", HttpServletResponse.SC_NOT_FOUND, response.getStatus());
     }
 
     @Test
@@ -300,39 +280,18 @@ public class MapMLControllerTest extends WMSTestSupport {
         MockHttpServletRequest request = createRequest("mapml/" + li.getName() + "/foo/");
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        mc.Html(
-                request,
-                response,
-                li.getName(),
-                "foo",
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty());
-        assertEquals(
-                "Response is 400 Bad Request",
-                HttpServletResponse.SC_BAD_REQUEST,
-                response.getStatus());
+        mc.Html(request, response, li.getName(), "foo", Optional.empty(), Optional.empty(), Optional.empty());
+        assertEquals("Response is 400 Bad Request", HttpServletResponse.SC_BAD_REQUEST, response.getStatus());
 
         request = createRequest("mapml/" + li.getName() + "/foo/");
         response = new MockHttpServletResponse();
 
-        mc.mapML(
-                request,
-                response,
-                li.getName(),
-                "foo",
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty());
-        assertEquals(
-                "Response is 400 Bad Request",
-                HttpServletResponse.SC_BAD_REQUEST,
-                response.getStatus());
+        mc.mapML(request, response, li.getName(), "foo", Optional.empty(), Optional.empty(), Optional.empty());
+        assertEquals("Response is 400 Bad Request", HttpServletResponse.SC_BAD_REQUEST, response.getStatus());
     }
 
     @SuppressWarnings("PMD.SimplifiableTestAssertion")
-    private Document testLayersAndGroupsHTML(Object l, MockHttpServletRequest request)
-            throws Exception {
+    private Document testLayersAndGroupsHTML(Object l, MockHttpServletRequest request) throws Exception {
         MockHttpServletResponse response = new MockHttpServletResponse();
         String layerName;
         String layerLabel;
@@ -346,14 +305,7 @@ public class MapMLControllerTest extends WMSTestSupport {
             layerLabel = mc.getLabel(lyrGpInfo, layerName, request);
         }
         String htmlResponse =
-                mc.Html(
-                        request,
-                        response,
-                        layerName,
-                        "osmtile",
-                        Optional.empty(),
-                        Optional.empty(),
-                        Optional.empty());
+                mc.Html(request, response, layerName, "osmtile", Optional.empty(), Optional.empty(), Optional.empty());
         assertNotNull("Html method must return a document", htmlResponse);
         Document doc = Jsoup.parse(htmlResponse);
         Element webmapimport = doc.head().select("script").first();
@@ -380,20 +332,18 @@ public class MapMLControllerTest extends WMSTestSupport {
         return doc;
     }
 
-    private Mapml testLayersAndGroupsMapML(Object l, MockHttpServletRequest request)
-            throws Exception {
+    private Mapml testLayersAndGroupsMapML(Object l, MockHttpServletRequest request) throws Exception {
 
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        Mapml mapml =
-                mc.mapML(
-                        request,
-                        response,
-                        ((PublishedInfo) l).getName(),
-                        "osmtile",
-                        Optional.empty(),
-                        Optional.empty(),
-                        Optional.empty());
+        Mapml mapml = mc.mapML(
+                request,
+                response,
+                ((PublishedInfo) l).getName(),
+                "osmtile",
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty());
         assertNotNull("mapML method must return a MapML document", mapml);
         StringWriter sw = new StringWriter();
         try {
@@ -419,15 +369,13 @@ public class MapMLControllerTest extends WMSTestSupport {
         assertTrue(result.matches("<mapml- xmlns=\"http://www.w3.org/1999/xhtml\">.*"));
 
         String title = mapml.getHead().getTitle();
-        assertTrue(
-                "MapML document title must equal layer title", title.equalsIgnoreCase(layerTitle));
+        assertTrue("MapML document title must equal layer title", title.equalsIgnoreCase(layerTitle));
         BodyContent b = mapml.getBody();
         assertNotNull("mapML method must return MapML body in response", b);
         Extent e = b.getExtent();
 
         String checked = e.getChecked();
-        assertTrue(
-                "extent checked attribute is always checked", checked.equalsIgnoreCase("checked"));
+        assertTrue("extent checked attribute is always checked", checked.equalsIgnoreCase("checked"));
 
         String hidden = e.getHidden();
         assertTrue("single extent is always hidden", hidden.equalsIgnoreCase("hidden"));
@@ -468,8 +416,7 @@ public class MapMLControllerTest extends WMSTestSupport {
                     assertTrue(
                             "map-input[type=location/@max must equal 2.0037508342789244E7",
                             "2.0037508342789244E7".equalsIgnoreCase(input.getMax()));
-                } else if (input.getType() == InputType.LOCATION
-                        && input.getAxis() == AxisType.NORTHING) {
+                } else if (input.getType() == InputType.LOCATION && input.getAxis() == AxisType.NORTHING) {
                     assertTrue(
                             "map-input[type=location/@min must equal -2.0037508342780735E7",
                             "-2.0037508342780735E7".equalsIgnoreCase(input.getMin()));
@@ -486,12 +433,11 @@ public class MapMLControllerTest extends WMSTestSupport {
 
     @Test
     public void testShardingMapMLLayer() throws Exception {
-        String path =
-                "mapml/"
-                        + MockData.ROAD_SEGMENTS.getPrefix()
-                        + ":"
-                        + MockData.ROAD_SEGMENTS.getLocalPart()
-                        + "/osmtile";
+        String path = "mapml/"
+                + MockData.ROAD_SEGMENTS.getPrefix()
+                + ":"
+                + MockData.ROAD_SEGMENTS.getLocalPart()
+                + "/osmtile";
 
         // set up mapml layer to useTiles
         Catalog catalog = getCatalog();
@@ -511,16 +457,11 @@ public class MapMLControllerTest extends WMSTestSupport {
         assertTrue(host.equalsIgnoreCase("{s}.example.com"));
         assertXpathEvaluatesTo("1", "count(//html:map-datalist[@id='servers'])", doc);
         assertXpathEvaluatesTo(
-                "1",
-                "count(//html:map-input[@list='servers'][@type='hidden'][@shard='true'][@name='s'])",
-                doc);
+                "1", "count(//html:map-input[@list='servers'][@type='hidden'][@shard='true'][@name='s'])", doc);
         assertXpathEvaluatesTo("3", "count(//html:map-datalist/html:map-option)", doc);
-        assertXpathEvaluatesTo(
-                "1", "count(//html:map-datalist/html:map-option[@value='server1'])", doc);
-        assertXpathEvaluatesTo(
-                "1", "count(//html:map-datalist/html:map-option[@value='server2'])", doc);
-        assertXpathEvaluatesTo(
-                "1", "count(//html:map-datalist/html:map-option[@value='server3'])", doc);
+        assertXpathEvaluatesTo("1", "count(//html:map-datalist/html:map-option[@value='server1'])", doc);
+        assertXpathEvaluatesTo("1", "count(//html:map-datalist/html:map-option[@value='server2'])", doc);
+        assertXpathEvaluatesTo("1", "count(//html:map-datalist/html:map-option[@value='server3'])", doc);
 
         assertXpathEvaluatesTo("1", "count(//html:map-link[@rel='query'][@tref])", doc);
         url = new URL(xpath.evaluate("//html:map-link[@rel='query']/@tref", doc));
@@ -530,12 +471,11 @@ public class MapMLControllerTest extends WMSTestSupport {
 
     @Test
     public void testDefaultConfiguredMapMLLayer() throws Exception {
-        String path =
-                "mapml/"
-                        + MockData.ROAD_SEGMENTS.getPrefix()
-                        + ":"
-                        + MockData.ROAD_SEGMENTS.getLocalPart()
-                        + "/osmtile";
+        String path = "mapml/"
+                + MockData.ROAD_SEGMENTS.getPrefix()
+                + ":"
+                + MockData.ROAD_SEGMENTS.getLocalPart()
+                + "/osmtile";
 
         org.w3c.dom.Document doc = getLocalizedMapML(path, Locale.FRENCH);
 
@@ -595,26 +535,22 @@ public class MapMLControllerTest extends WMSTestSupport {
                 doc);
         assertXpathEvaluatesTo("1", "count(//html:map-input[@name='w'][@type='width'])", doc);
         assertXpathEvaluatesTo("1", "count(//html:map-input[@name='h'][@type='height'])", doc);
-        assertXpathEvaluatesTo(
-                "1", "count(//html:map-input[@name='i'][@type='location'][@units='map'])", doc);
-        assertXpathEvaluatesTo(
-                "1", "count(//html:map-input[@name='j'][@type='location'][@units='map'])", doc);
+        assertXpathEvaluatesTo("1", "count(//html:map-input[@name='i'][@type='location'][@units='map'])", doc);
+        assertXpathEvaluatesTo("1", "count(//html:map-input[@name='j'][@type='location'][@units='map'])", doc);
 
         // this is a weird one, probably should not be necessary, but if we
         // remove the requirement to have it, we will have to specify a
         // requirement to specify a zoom range via a <meta> element
-        assertXpathEvaluatesTo(
-                "1", "count(//html:map-input[@name='z'][@type='zoom'][@min][@max])", doc);
+        assertXpathEvaluatesTo("1", "count(//html:map-input[@name='z'][@type='zoom'][@min][@max])", doc);
     }
 
     @Test
     public void testWMSTilesConfiguredMapMLLayer() throws Exception {
-        String path =
-                "mapml/"
-                        + MockData.ROAD_SEGMENTS.getPrefix()
-                        + ":"
-                        + MockData.ROAD_SEGMENTS.getLocalPart()
-                        + "/osmtile";
+        String path = "mapml/"
+                + MockData.ROAD_SEGMENTS.getPrefix()
+                + ":"
+                + MockData.ROAD_SEGMENTS.getLocalPart()
+                + "/osmtile";
 
         org.w3c.dom.Document doc = getMapML(path);
         assertXpathEvaluatesTo("1", "count(//html:map-link[@rel='image'][@tref])", doc);
@@ -697,12 +633,11 @@ public class MapMLControllerTest extends WMSTestSupport {
 
     @Test
     public void testGWCTilesConfiguredMapMLLayer() throws Exception {
-        String path =
-                "mapml/"
-                        + MockData.ROAD_SEGMENTS.getPrefix()
-                        + ":"
-                        + MockData.ROAD_SEGMENTS.getLocalPart()
-                        + "/osmtile";
+        String path = "mapml/"
+                + MockData.ROAD_SEGMENTS.getPrefix()
+                + ":"
+                + MockData.ROAD_SEGMENTS.getLocalPart()
+                + "/osmtile";
 
         org.w3c.dom.Document doc = getMapML(path);
         assertXpathEvaluatesTo("1", "count(//html:map-link[@rel='image'][@tref])", doc);
@@ -715,12 +650,10 @@ public class MapMLControllerTest extends WMSTestSupport {
         layerMeta.getMetadata().put("mapml.useTiles", true);
         catalog.save(layerMeta);
         LayerInfo layerInfo = catalog.getLayerByName(MockData.ROAD_SEGMENTS.getLocalPart());
-        GeoServerTileLayer layerInfoTileLayer =
-                new GeoServerTileLayer(layerInfo, defaults, gwc.getGridSetBroker());
+        GeoServerTileLayer layerInfoTileLayer = new GeoServerTileLayer(layerInfo, defaults, gwc.getGridSetBroker());
         layerInfoTileLayer.addGridSubset(osmtile);
         gwc.save(layerInfoTileLayer);
-        String wmtsLayerName =
-                MockData.ROAD_SEGMENTS.getPrefix() + ":" + MockData.ROAD_SEGMENTS.getLocalPart();
+        String wmtsLayerName = MockData.ROAD_SEGMENTS.getPrefix() + ":" + MockData.ROAD_SEGMENTS.getLocalPart();
 
         doc = getLocalizedMapML(path, Locale.JAPANESE);
         assertXpathEvaluatesTo("1", "count(//html:map-link[@rel='tile'][@tref])", doc);
@@ -770,12 +703,9 @@ public class MapMLControllerTest extends WMSTestSupport {
                 doc);
         assertXpathEvaluatesTo("0", "count(//html:map-input[@name='w'][@type='width'])", doc);
         assertXpathEvaluatesTo("0", "count(//html:map-input[@name='h'][@type='height'])", doc);
-        assertXpathEvaluatesTo(
-                "1", "count(//html:map-input[@name='i'][@type='location'][@units='tile'])", doc);
-        assertXpathEvaluatesTo(
-                "1", "count(//html:map-input[@name='j'][@type='location'][@units='tile'])", doc);
-        assertXpathEvaluatesTo(
-                "1", "count(//html:map-input[@name='z'][@type='zoom'][@min][@max])", doc);
+        assertXpathEvaluatesTo("1", "count(//html:map-input[@name='i'][@type='location'][@units='tile'])", doc);
+        assertXpathEvaluatesTo("1", "count(//html:map-input[@name='j'][@type='location'][@units='tile'])", doc);
+        assertXpathEvaluatesTo("1", "count(//html:map-input[@name='z'][@type='zoom'][@min][@max])", doc);
     }
 
     @Test
@@ -783,18 +713,18 @@ public class MapMLControllerTest extends WMSTestSupport {
 
         // set up mapml layer featurecaption
         Catalog catalog = getCatalog();
-        ResourceInfo layerMeta = catalog.getLayerByName(getLayerId(MockData.FORESTS)).getResource();
+        ResourceInfo layerMeta =
+                catalog.getLayerByName(getLayerId(MockData.FORESTS)).getResource();
         String featureCaptionTemplate = "${NAME}";
         layerMeta.getMetadata().put("mapml.featureCaption", featureCaptionTemplate);
         catalog.save(layerMeta);
 
         assertTrue(layerMeta.getMetadata().containsKey("mapml.featureCaption"));
-        assertTrue(
-                layerMeta
-                        .getMetadata()
-                        .get("mapml.featureCaption")
-                        .toString()
-                        .equalsIgnoreCase(featureCaptionTemplate));
+        assertTrue(layerMeta
+                .getMetadata()
+                .get("mapml.featureCaption")
+                .toString()
+                .equalsIgnoreCase(featureCaptionTemplate));
         String forests = getLayerId(MockData.FORESTS);
         HashMap<String, String> vars = new HashMap<>();
         vars.put("version", "1.1.1");
@@ -818,12 +748,11 @@ public class MapMLControllerTest extends WMSTestSupport {
 
     @Test
     public void testDefaultConfiguredMapMLLayerGetFeatureInfoAsMapML() throws Exception {
-        String path =
-                "mapml/"
-                        + MockData.BASIC_POLYGONS.getPrefix()
-                        + ":"
-                        + MockData.BASIC_POLYGONS.getLocalPart()
-                        + "/osmtile";
+        String path = "mapml/"
+                + MockData.BASIC_POLYGONS.getPrefix()
+                + ":"
+                + MockData.BASIC_POLYGONS.getLocalPart()
+                + "/osmtile";
 
         // set up mapml layer featurecaption
         Catalog catalog = getCatalog();
@@ -834,12 +763,11 @@ public class MapMLControllerTest extends WMSTestSupport {
         layerMeta.getMetadata().put("mapml.featureCaption", featureCaptionTemplate);
         catalog.save(layerMeta);
         assertTrue(layerMeta.getMetadata().containsKey("mapml.featureCaption"));
-        assertTrue(
-                layerMeta
-                        .getMetadata()
-                        .get("mapml.featureCaption")
-                        .toString()
-                        .equalsIgnoreCase(featureCaptionTemplate));
+        assertTrue(layerMeta
+                .getMetadata()
+                .get("mapml.featureCaption")
+                .toString()
+                .equalsIgnoreCase(featureCaptionTemplate));
 
         org.w3c.dom.Document doc = getLocalizedMapML(path, Locale.ENGLISH);
 
@@ -863,9 +791,7 @@ public class MapMLControllerTest extends WMSTestSupport {
         assertTrue(vars.get("info_format").equalsIgnoreCase("text/mapml"));
         assertTrue(vars.get("feature_count").equalsIgnoreCase("50"));
         assertTrue(vars.get("language").equalsIgnoreCase(Locale.ENGLISH.getLanguage()));
-        vars.put(
-                "bbox",
-                "-967387.0299771908,-118630.26789859355,884223.543202919,920913.3167798058");
+        vars.put("bbox", "-967387.0299771908,-118630.26789859355,884223.543202919,920913.3167798058");
         vars.put("width", "757");
         vars.put("height", "425");
         vars.put("x", "379");
@@ -888,8 +814,7 @@ public class MapMLControllerTest extends WMSTestSupport {
      * @param query A map representing kvp to be used by the request.
      * @return A result of the request parsed into a dom.
      */
-    protected org.w3c.dom.Document getMapML(final String path, HashMap<String, String> query)
-            throws Exception {
+    protected org.w3c.dom.Document getMapML(final String path, HashMap<String, String> query) throws Exception {
         MockHttpServletRequest request = createRequest(path, query);
         request.addHeader("Accept", "text/mapml");
         request.setMethod("GET");
@@ -904,8 +829,7 @@ public class MapMLControllerTest extends WMSTestSupport {
      * @param locale A locale to use for the Accept-Language header
      * @return A result of the request parsed into a dom.
      */
-    protected org.w3c.dom.Document getLocalizedMapML(final String path, Locale locale)
-            throws Exception {
+    protected org.w3c.dom.Document getLocalizedMapML(final String path, Locale locale) throws Exception {
         MockHttpServletRequest request = createRequest(path, false);
         request.addHeader("Accept", "text/mapml");
         request.addHeader("Accept-Language", locale.getLanguage());

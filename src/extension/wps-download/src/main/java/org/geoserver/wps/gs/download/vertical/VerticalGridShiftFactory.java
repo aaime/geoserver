@@ -49,10 +49,8 @@ public class VerticalGridShiftFactory extends ReferencingFactory implements Buff
      */
     public VerticalGridShiftFactory(final int priority) {
         super(priority);
-        verticalGridCache =
-                new SoftValueHashMap<>(
-                        GRID_CACHE_HARD_REFERENCES,
-                        (key, object) -> ((VerticalGridShift) object).dispose());
+        verticalGridCache = new SoftValueHashMap<>(
+                GRID_CACHE_HARD_REFERENCES, (key, object) -> ((VerticalGridShift) object).dispose());
     }
 
     /**
@@ -63,8 +61,7 @@ public class VerticalGridShiftFactory extends ReferencingFactory implements Buff
      * @return the grid
      * @throws FactoryException if grid cannot be created
      */
-    public VerticalGridShift createVerticalGrid(URL gridLocation, int gridCRSCode)
-            throws FactoryException {
+    public VerticalGridShift createVerticalGrid(URL gridLocation, int gridCRSCode) throws FactoryException {
         if (gridLocation == null) {
             throw new FactoryException("The grid location must be not null");
         }
@@ -81,8 +78,7 @@ public class VerticalGridShiftFactory extends ReferencingFactory implements Buff
                         return grid; // - Return
                     }
                 }
-                throw new FactoryException(
-                        "Vertical Offset Grid " + gridLocation + " could not be created.");
+                throw new FactoryException("Vertical Offset Grid " + gridLocation + " could not be created.");
             }
         }
     }
@@ -99,13 +95,11 @@ public class VerticalGridShiftFactory extends ReferencingFactory implements Buff
                 File file = URLs.urlToFile(url);
 
                 if (!file.exists() || !file.canRead()) {
-                    throw new IOException(
-                            MessageFormat.format(ErrorKeys.FILE_DOES_NOT_EXIST_$1, file));
+                    throw new IOException(MessageFormat.format(ErrorKeys.FILE_DOES_NOT_EXIST_$1, file));
                 }
                 return loadGridShift(file, gridCRSCode);
             }
-            throw new FactoryException(
-                    "URL " + url + " doesn't refer a supported Vertical Grid file");
+            throw new FactoryException("URL " + url + " doesn't refer a supported Vertical Grid file");
         } catch (IOException | IllegalArgumentException e) {
             LOGGER.log(Level.SEVERE, e.getLocalizedMessage(), e);
             throw new FactoryException(e.getLocalizedMessage(), e);
@@ -122,8 +116,7 @@ public class VerticalGridShiftFactory extends ReferencingFactory implements Buff
      * @throws IOException
      * @throws FactoryException
      */
-    public static VerticalGridShift loadGridShift(File file, int gridCRSCode)
-            throws IOException, FactoryException {
+    public static VerticalGridShift loadGridShift(File file, int gridCRSCode) throws IOException, FactoryException {
         // In the future, if we start supporting multiple type of grids (csv, gtx, geotiff) we can
         // leverage on an SPI mechanism and a finder.
         String path = file.getAbsolutePath();

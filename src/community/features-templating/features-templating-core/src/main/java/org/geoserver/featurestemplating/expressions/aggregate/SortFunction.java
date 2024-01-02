@@ -24,12 +24,11 @@ import org.geotools.filter.capability.FunctionNameImpl;
  */
 public class SortFunction extends FunctionExpressionImpl implements VolatileFunction {
 
-    private static FunctionName NAME =
-            new FunctionNameImpl(
-                    "sort",
-                    parameter("result", Object.class),
-                    parameter("order", String.class, 1, 1),
-                    parameter("property", String.class, 0, 1));
+    private static FunctionName NAME = new FunctionNameImpl(
+            "sort",
+            parameter("result", Object.class),
+            parameter("order", String.class, 1, 1),
+            parameter("property", String.class, 0, 1));
 
     private enum Order {
         ASC,

@@ -31,8 +31,7 @@ public class RoleCalculator {
     }
 
     /** Constructor */
-    public RoleCalculator(
-            GeoServerUserGroupService userGroupService, GeoServerRoleService roleService) {
+    public RoleCalculator(GeoServerUserGroupService userGroupService, GeoServerRoleService roleService) {
         this.userGroupService = userGroupService;
         this.roleService = roleService;
         assertRoleServiceNotNull();
@@ -125,8 +124,7 @@ public class RoleCalculator {
     }
 
     /** Collects the ascendents for a {@link GeoServerRole} object */
-    protected void addParentRole(GeoServerRole role, Collection<GeoServerRole> inherited)
-            throws IOException {
+    protected void addParentRole(GeoServerRole role, Collection<GeoServerRole> inherited) throws IOException {
         GeoServerRole parentRole = getRoleService().getParentRole(role);
         if (parentRole == null) return; // end of recursion
 
@@ -157,15 +155,14 @@ public class RoleCalculator {
      * Takes the role set for a user and personalizes the roles (matching user properties and role
      * parameters)
      */
-    public SortedSet<GeoServerRole> personalizeRoles(
-            GeoServerUser user, Collection<GeoServerRole> roles) throws IOException {
+    public SortedSet<GeoServerRole> personalizeRoles(GeoServerUser user, Collection<GeoServerRole> roles)
+            throws IOException {
         SortedSet<GeoServerRole> set = new TreeSet<>();
         for (GeoServerRole role : roles) {
-            Properties personalizedProps =
-                    getRoleService()
-                            .personalizeRoleParams(
-                                    role.getAuthority(), role.getProperties(),
-                                    user.getUsername(), user.getProperties());
+            Properties personalizedProps = getRoleService()
+                    .personalizeRoleParams(
+                            role.getAuthority(), role.getProperties(),
+                            user.getUsername(), user.getProperties());
             if (personalizedProps == null) {
                 set.add(role);
             } else { // create personalized role

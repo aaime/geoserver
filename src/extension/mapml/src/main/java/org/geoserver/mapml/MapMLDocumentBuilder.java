@@ -69,7 +69,9 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class MapMLDocumentBuilder {
     private static final Logger LOGGER = Logging.getLogger("org.geoserver.mapml");
-    @Autowired GWC GWC;
+
+    @Autowired
+    GWC GWC;
 
     private final MapMLController controller;
     private final HttpServletRequest request;
@@ -170,7 +172,9 @@ public class MapMLDocumentBuilder {
             } else if (li.getTitle() != null && !li.getTitle().trim().isEmpty()) {
                 return li.getTitle().trim();
             } else {
-                return li.getName().trim().isEmpty() ? defaultTitle : li.getName().trim();
+                return li.getName().trim().isEmpty()
+                        ? defaultTitle
+                        : li.getName().trim();
             }
         } else {
             LayerInfo li = (LayerInfo) p;
@@ -181,7 +185,9 @@ public class MapMLDocumentBuilder {
             } else if (li.getTitle() != null && !li.getTitle().trim().isEmpty()) {
                 return li.getTitle().trim();
             } else {
-                return li.getName().trim().isEmpty() ? defaultTitle : li.getName().trim();
+                return li.getName().trim().isEmpty()
+                        ? defaultTitle
+                        : li.getName().trim();
             }
         }
     }
@@ -194,8 +200,7 @@ public class MapMLDocumentBuilder {
             layerGroupInfo = geoServer.getCatalog().getLayerGroupByName(layer);
             if (layerGroupInfo == null) {
                 try {
-                    response.sendError(
-                            HttpServletResponse.SC_NOT_FOUND, "Invalid layer or layer group name");
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Invalid layer or layer group name");
                     throw new RuntimeException("Invalid layer or layer group name");
                 } catch (IOException ioe) {
                 }
@@ -205,10 +210,9 @@ public class MapMLDocumentBuilder {
                 bbox.expandToInclude(li.getResource().getLatLonBoundingBox());
             }
             layerMeta = layerGroupInfo.getMetadata();
-            workspace =
-                    (layerGroupInfo.getWorkspace() != null
-                            ? layerGroupInfo.getWorkspace().getName()
-                            : "");
+            workspace = (layerGroupInfo.getWorkspace() != null
+                    ? layerGroupInfo.getWorkspace().getName()
+                    : "");
             queryable = !layerGroupInfo.isQueryDisabled();
             layerName = layerGroupInfo.getName();
             layerTitle = getTitle(layerGroupInfo, layerName);
@@ -216,10 +220,9 @@ public class MapMLDocumentBuilder {
             resourceInfo = layerInfo.getResource();
             bbox = layerInfo.getResource().getLatLonBoundingBox();
             layerMeta = resourceInfo.getMetadata();
-            workspace =
-                    (resourceInfo.getStore().getWorkspace() != null
-                            ? resourceInfo.getStore().getWorkspace().getName()
-                            : "");
+            workspace = (resourceInfo.getStore().getWorkspace() != null
+                    ? resourceInfo.getStore().getWorkspace().getName()
+                    : "");
             queryable = layerInfo.isQueryable();
             isTransparent = transparent.orElse(!layerInfo.isOpaque());
             layerName = layerInfo.getName().isEmpty() ? layer : layerInfo.getName();
@@ -235,12 +238,9 @@ public class MapMLDocumentBuilder {
             }
             return;
         }
-        styleName =
-                geoServer.getCatalog().getStyleByName(style.orElse("")) != null ? style.get() : "";
+        styleName = geoServer.getCatalog().getStyleByName(style.orElse("")) != null ? style.get() : "";
         imageFormat = format.orElse("image/png");
-        baseUrl =
-                ResponseUtils.buildURL(
-                        ResponseUtils.baseURL(request), null, null, URLMangler.URLType.EXTERNAL);
+        baseUrl = ResponseUtils.buildURL(ResponseUtils.baseURL(request), null, null, URLMangler.URLType.EXTERNAL);
         baseUrlPattern = baseUrl;
         // handle shard config
         enableSharding = layerMeta.get("mapml.enableSharding", Boolean.class);
@@ -258,11 +258,8 @@ public class MapMLDocumentBuilder {
             baseUrlPattern = shardBaseURL(request, shardServerPattern);
         }
         useTiles = Boolean.TRUE.equals(layerMeta.get("mapml.useTiles", Boolean.class));
-        tileLayerExists =
-                gwc.hasTileLayer(isLayerGroup ? layerGroupInfo : layerInfo)
-                        && gwc.getTileLayer(isLayerGroup ? layerGroupInfo : layerInfo)
-                                        .getGridSubset(projType.value())
-                                != null;
+        tileLayerExists = gwc.hasTileLayer(isLayerGroup ? layerGroupInfo : layerInfo)
+                && gwc.getTileLayer(isLayerGroup ? layerGroupInfo : layerInfo).getGridSubset(projType.value()) != null;
     }
     /** Create Mapml JAXB object */
     private void prepareDocument() {
@@ -335,8 +332,7 @@ public class MapMLDocumentBuilder {
                     params.put("format", imageFormat);
                 }
                 String path = "mapml/" + layer + "/" + proj;
-                String url =
-                        ResponseUtils.buildURL(baseUrl, path, params, URLMangler.URLType.SERVICE);
+                String url = ResponseUtils.buildURL(baseUrl, path, params, URLMangler.URLType.SERVICE);
                 styleLink.setHref(url);
                 links.add(styleLink);
             }
@@ -440,8 +436,7 @@ public class MapMLDocumentBuilder {
         if ("Time".equalsIgnoreCase(dimension)) {
             if (resourceInfo instanceof FeatureTypeInfo) {
                 FeatureTypeInfo typeInfo = (FeatureTypeInfo) resourceInfo;
-                DimensionInfo timeInfo =
-                        typeInfo.getMetadata().get(ResourceInfo.TIME, DimensionInfo.class);
+                DimensionInfo timeInfo = typeInfo.getMetadata().get(ResourceInfo.TIME, DimensionInfo.class);
                 if (timeInfo.isEnabled()) {
                     timeEnabled = true;
                     Set<Date> dates = controller.wms.getFeatureTypeTimes(typeInfo);
@@ -460,8 +455,7 @@ public class MapMLDocumentBuilder {
         } else if ("Elevation".equalsIgnoreCase(dimension)) {
             if (resourceInfo instanceof FeatureTypeInfo) {
                 FeatureTypeInfo typeInfo = (FeatureTypeInfo) resourceInfo;
-                DimensionInfo elevInfo =
-                        typeInfo.getMetadata().get(ResourceInfo.ELEVATION, DimensionInfo.class);
+                DimensionInfo elevInfo = typeInfo.getMetadata().get(ResourceInfo.ELEVATION, DimensionInfo.class);
                 if (elevInfo.isEnabled()) {
                     elevationEnabled = true;
                     Set<Double> elevs = controller.wms.getFeatureTypeElevations(typeInfo);
@@ -557,11 +551,8 @@ public class MapMLDocumentBuilder {
         params.put("format", imageFormat);
         String urlTemplate = "";
         try {
-            urlTemplate =
-                    URLDecoder.decode(
-                            ResponseUtils.buildURL(
-                                    baseUrlPattern, path, params, URLMangler.URLType.SERVICE),
-                            "UTF-8");
+            urlTemplate = URLDecoder.decode(
+                    ResponseUtils.buildURL(baseUrlPattern, path, params, URLMangler.URLType.SERVICE), "UTF-8");
         } catch (UnsupportedEncodingException uee) {
         }
         tileLink.setTref(urlTemplate);
@@ -586,10 +577,9 @@ public class MapMLDocumentBuilder {
         ReferencedEnvelope bbbox =
                 new ReferencedEnvelope(previewTcrsMap.get(projType.value()).getCRS());
         try {
-            bbbox =
-                    isLayerGroup
-                            ? layerGroupInfo.getBounds()
-                            : layerInfo.getResource().boundingBox();
+            bbbox = isLayerGroup
+                    ? layerGroupInfo.getBounds()
+                    : layerInfo.getResource().boundingBox();
             bbbox = bbbox.transform(previewTcrsMap.get(projType.value()).getCRS(), true);
         } catch (Exception e) {
             // sometimes, when the bbox is right to 90N or 90S, in epsg:3857,
@@ -677,11 +667,8 @@ public class MapMLDocumentBuilder {
         params.put("height", "256");
         String urlTemplate = "";
         try {
-            urlTemplate =
-                    URLDecoder.decode(
-                            ResponseUtils.buildURL(
-                                    baseUrlPattern, path, params, URLMangler.URLType.SERVICE),
-                            "UTF-8");
+            urlTemplate = URLDecoder.decode(
+                    ResponseUtils.buildURL(baseUrlPattern, path, params, URLMangler.URLType.SERVICE), "UTF-8");
         } catch (UnsupportedEncodingException uee) {
         }
         tileLink.setTref(urlTemplate);
@@ -700,10 +687,9 @@ public class MapMLDocumentBuilder {
             // initialization is necessary so as to set the PCRS to which
             // the resource's bbox will be transformed, below.
             bbbox = new ReferencedEnvelope(previewTcrsMap.get(projType.value()).getCRS());
-            bbbox =
-                    isLayerGroup
-                            ? layerGroupInfo.getBounds()
-                            : layerInfo.getResource().boundingBox();
+            bbbox = isLayerGroup
+                    ? layerGroupInfo.getBounds()
+                    : layerInfo.getResource().boundingBox();
             // transform can cause an exception if the bbox coordinates fall
             // too near the pole (at least in OSMTILE, where the poles are
             // undefined/out of scope).
@@ -722,9 +708,8 @@ public class MapMLDocumentBuilder {
             y1 = defaultBounds.getMin().y;
             y2 = defaultBounds.getMax().y;
             // use the bounds of the TCRS as the default bounds for this layer
-            bbbox =
-                    new ReferencedEnvelope(
-                            x1, x2, y1, y2, previewTcrsMap.get(projType.value()).getCRS());
+            bbbox = new ReferencedEnvelope(
+                    x1, x2, y1, y2, previewTcrsMap.get(projType.value()).getCRS());
         }
         // image inputs
         // xmin
@@ -816,11 +801,8 @@ public class MapMLDocumentBuilder {
         params.put("height", "{h}");
         String urlTemplate = "";
         try {
-            urlTemplate =
-                    URLDecoder.decode(
-                            ResponseUtils.buildURL(
-                                    baseUrlPattern, path, params, URLMangler.URLType.SERVICE),
-                            "UTF-8");
+            urlTemplate = URLDecoder.decode(
+                    ResponseUtils.buildURL(baseUrlPattern, path, params, URLMangler.URLType.SERVICE), "UTF-8");
         } catch (UnsupportedEncodingException uee) {
         }
         imageLink.setTref(urlTemplate);
@@ -867,11 +849,8 @@ public class MapMLDocumentBuilder {
         params.put("j", "{j}");
         String urlTemplate = "";
         try {
-            urlTemplate =
-                    URLDecoder.decode(
-                            ResponseUtils.buildURL(
-                                    baseUrlPattern, path, params, URLMangler.URLType.SERVICE),
-                            "UTF-8");
+            urlTemplate = URLDecoder.decode(
+                    ResponseUtils.buildURL(baseUrlPattern, path, params, URLMangler.URLType.SERVICE), "UTF-8");
         } catch (UnsupportedEncodingException uee) {
         }
         queryLink.setTref(urlTemplate);
@@ -934,11 +913,8 @@ public class MapMLDocumentBuilder {
         params.put("y", "{j}");
         String urlTemplate = "";
         try {
-            urlTemplate =
-                    URLDecoder.decode(
-                            ResponseUtils.buildURL(
-                                    baseUrlPattern, path, params, URLMangler.URLType.SERVICE),
-                            "UTF-8");
+            urlTemplate = URLDecoder.decode(
+                    ResponseUtils.buildURL(baseUrlPattern, path, params, URLMangler.URLType.SERVICE), "UTF-8");
         } catch (UnsupportedEncodingException uee) {
         }
         queryLink.setTref(urlTemplate);

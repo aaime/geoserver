@@ -20,12 +20,11 @@ import org.geotools.util.logging.Logging;
  */
 public class AggregateFunction extends FunctionExpressionImpl implements VolatileFunction {
 
-    private static FunctionName NAME =
-            new FunctionNameImpl(
-                    "aggregate",
-                    parameter("result", Object.class),
-                    parameter("value", Object.class),
-                    parameter("aggregationType", String.class, 1, 1));
+    private static FunctionName NAME = new FunctionNameImpl(
+            "aggregate",
+            parameter("result", Object.class),
+            parameter("value", Object.class),
+            parameter("aggregationType", String.class, 1, 1));
 
     public AggregateFunction() {
         super(NAME);

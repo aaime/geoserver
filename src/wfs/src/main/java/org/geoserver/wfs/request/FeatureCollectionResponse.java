@@ -99,8 +99,7 @@ public abstract class FeatureCollectionResponse extends RequestObject {
 
         @Override
         public FeatureCollectionResponse create() {
-            return FeatureCollectionResponse.adapt(
-                    ((WfsFactory) getFactory()).createFeatureCollectionType());
+            return FeatureCollectionResponse.adapt(((WfsFactory) getFactory()).createFeatureCollectionType());
         }
 
         @Override
@@ -163,16 +162,14 @@ public abstract class FeatureCollectionResponse extends RequestObject {
                 return adaptee;
             } else if (target.equals(net.opengis.wfs20.FeatureCollectionType.class)) {
                 FeatureCollectionType source = (FeatureCollectionType) adaptee;
-                net.opengis.wfs20.FeatureCollectionType result =
-                        Wfs20Factory.eINSTANCE.createFeatureCollectionType();
+                net.opengis.wfs20.FeatureCollectionType result = Wfs20Factory.eINSTANCE.createFeatureCollectionType();
                 result.getMember().addAll(source.getFeature());
                 result.setNumberReturned(source.getNumberOfFeatures());
                 result.setLockId(source.getLockId());
                 result.setTimeStamp(source.getTimeStamp());
                 return result;
             } else {
-                throw new WFSException(
-                        "Cannot transform " + adaptee + " to the specified target class " + target);
+                throw new WFSException("Cannot transform " + adaptee + " to the specified target class " + target);
             }
         }
     }
@@ -184,8 +181,7 @@ public abstract class FeatureCollectionResponse extends RequestObject {
 
         @Override
         public FeatureCollectionResponse create() {
-            return FeatureCollectionResponse.adapt(
-                    ((Wfs20Factory) getFactory()).createFeatureCollectionType());
+            return FeatureCollectionResponse.adapt(((Wfs20Factory) getFactory()).createFeatureCollectionType());
         }
 
         @Override
@@ -247,8 +243,7 @@ public abstract class FeatureCollectionResponse extends RequestObject {
             if (target.equals(net.opengis.wfs20.FeatureCollectionType.class)) {
                 return adaptee;
             } else if (target.equals(FeatureCollectionType.class)) {
-                net.opengis.wfs20.FeatureCollectionType source =
-                        (net.opengis.wfs20.FeatureCollectionType) adaptee;
+                net.opengis.wfs20.FeatureCollectionType source = (net.opengis.wfs20.FeatureCollectionType) adaptee;
                 FeatureCollectionType result = WfsFactory.eINSTANCE.createFeatureCollectionType();
                 result.getFeature().addAll(source.getMember());
                 result.setNumberOfFeatures(source.getNumberReturned());
@@ -256,8 +251,7 @@ public abstract class FeatureCollectionResponse extends RequestObject {
                 result.setTimeStamp(source.getTimeStamp());
                 return result;
             } else {
-                throw new WFSException(
-                        "Cannot transform " + adaptee + " to the specified target class " + target);
+                throw new WFSException("Cannot transform " + adaptee + " to the specified target class " + target);
             }
         }
     }

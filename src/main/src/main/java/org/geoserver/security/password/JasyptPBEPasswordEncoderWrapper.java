@@ -20,8 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  *
  * @author vickdw Created on 10/23/18
  */
-public class JasyptPBEPasswordEncoderWrapper extends AbstractGeoserverPasswordEncoder
-        implements PasswordEncoder {
+public class JasyptPBEPasswordEncoderWrapper extends AbstractGeoserverPasswordEncoder implements PasswordEncoder {
     private TextEncryptor textEncryptor = null;
     private PBEStringEncryptor pbeStringEncryptor = null;
     private Boolean useTextEncryptor = null;
@@ -34,8 +33,7 @@ public class JasyptPBEPasswordEncoderWrapper extends AbstractGeoserverPasswordEn
         return new PasswordEncoder() {
 
             @Override
-            public boolean matches(CharSequence encPass, String rawPass)
-                    throws DataAccessException {
+            public boolean matches(CharSequence encPass, String rawPass) throws DataAccessException {
                 return false;
             }
 
@@ -76,9 +74,7 @@ public class JasyptPBEPasswordEncoderWrapper extends AbstractGeoserverPasswordEn
     @Override
     public String encodePassword(String rawPass, Object salt) {
         this.checkInitialization();
-        return this.useTextEncryptor
-                ? this.textEncryptor.encrypt(rawPass)
-                : this.pbeStringEncryptor.encrypt(rawPass);
+        return this.useTextEncryptor ? this.textEncryptor.encrypt(rawPass) : this.pbeStringEncryptor.encrypt(rawPass);
     }
 
     @Override

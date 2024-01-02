@@ -197,14 +197,8 @@ public class BatchManagerTest {
 
         TransactionRequest lTransaction = transactionRequest(element2Handlers.keySet());
 
-        BatchManager sut =
-                new BatchManager(
-                        lTransaction,
-                        transactionListener,
-                        stores,
-                        transactionResponse,
-                        element2Handlers,
-                        batchSizeForDeletion);
+        BatchManager sut = new BatchManager(
+                lTransaction, transactionListener, stores, transactionResponse, element2Handlers, batchSizeForDeletion);
         sut.run();
 
         String message = String.format("First %d DELETEs have been merged", batchSizeForDeletion);
@@ -244,36 +238,30 @@ public class BatchManagerTest {
         Native native1 = newNative();
         TransactionElementHandler native1Handler = mock(TransactionElementHandler.class);
 
-        Map<TransactionElement, TransactionElementHandler> element2Handlers =
-                asMap( //
-                        keyValue(insert1, insert1Handler), //
-                        keyValue(insert2, insert2Handler), //
-                        keyValue(update1, update1Handler), //
-                        keyValue(insert3, insert3Handler), //
-                        keyValue(delete1, delete1Handler), //
-                        keyValue(delete2, delete2Handler), //
-                        keyValue(delete3, delete3Handler), //
-                        keyValue(replace1, replace1Handler), //
-                        keyValue(native1, native1Handler)
-                        //
-                        );
+        Map<TransactionElement, TransactionElementHandler> element2Handlers = asMap( //
+                keyValue(insert1, insert1Handler), //
+                keyValue(insert2, insert2Handler), //
+                keyValue(update1, update1Handler), //
+                keyValue(insert3, insert3Handler), //
+                keyValue(delete1, delete1Handler), //
+                keyValue(delete2, delete2Handler), //
+                keyValue(delete3, delete3Handler), //
+                keyValue(replace1, replace1Handler), //
+                keyValue(native1, native1Handler)
+                //
+                );
 
         TransactionRequest lTransaction = transactionRequest(element2Handlers.keySet());
 
         // when: BatchManager runs...
-        BatchManager sut =
-                new BatchManager(
-                        lTransaction,
-                        transactionListener,
-                        stores,
-                        transactionResponse,
-                        element2Handlers,
-                        pDeleteBatchSize);
+        BatchManager sut = new BatchManager(
+                lTransaction, transactionListener, stores, transactionResponse, element2Handlers, pDeleteBatchSize);
         sut.run();
 
         // then:
         // verify contents have been moved appropriately
-        assertEquals("First 2 INSERTs have been merged", 2, insert1.getFeatures().size());
+        assertEquals(
+                "First 2 INSERTs have been merged", 2, insert1.getFeatures().size());
         if (pDeleteBatchSize <= 1) {
             assertFalse("First 2 DELETEs must not be merged", delete1.getFilter() instanceof Or);
         } else {
@@ -294,8 +282,7 @@ public class BatchManagerTest {
         // DELETE-1 was executed?
         verify(delete1Handler, times(1)).execute(same(delete1), any(), any(), any(), any());
         // DELETE-2 skipped?
-        verify(delete2Handler, times(pDeleteBatchSize <= 1 ? 1 : 0))
-                .execute(any(), any(), any(), any(), any());
+        verify(delete2Handler, times(pDeleteBatchSize <= 1 ? 1 : 0)).execute(any(), any(), any(), any(), any());
         // DELETE-3 was executed?
         verify(delete3Handler, times(1)).execute(same(delete3), any(), any(), any(), any());
         // REPLACE-1 was executed?
@@ -321,8 +308,7 @@ public class BatchManagerTest {
 
     private MapEntry<TransactionElement, TransactionElementHandler> keyValue(
             TransactionElement pElement, TransactionElementHandler pElementHandler) {
-        return new MapEntry<TransactionElement, TransactionElementHandler>(
-                pElement, pElementHandler);
+        return new MapEntry<TransactionElement, TransactionElementHandler>(pElement, pElementHandler);
     }
 
     @SafeVarargs

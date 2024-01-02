@@ -31,7 +31,6 @@ public interface HTMLExtensionCallback {
      * @param model The model value that will be used by the template
      * @param htmlExtensionArguments the arguments provided to the htmlExtension function
      */
-    public String getExtension(
-            Request dr, Map<String, Object> model, Charset charset, List htmlExtensionArguments)
+    public String getExtension(Request dr, Map<String, Object> model, Charset charset, List htmlExtensionArguments)
             throws IOException;
 }

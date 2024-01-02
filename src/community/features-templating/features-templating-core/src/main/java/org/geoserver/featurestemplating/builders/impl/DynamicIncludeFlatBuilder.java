@@ -30,8 +30,7 @@ public class DynamicIncludeFlatBuilder extends DynamicJsonBuilder {
 
     private static Logger LOGGER = Logging.getLogger(DynamicIncludeFlatBuilder.class);
 
-    public DynamicIncludeFlatBuilder(
-            String expression, NamespaceSupport namespaces, JsonNode node) {
+    public DynamicIncludeFlatBuilder(String expression, NamespaceSupport namespaces, JsonNode node) {
         // key is null since the $includeFlat key should not appear
         super(null, expression, namespaces, node);
     }
@@ -41,8 +40,7 @@ public class DynamicIncludeFlatBuilder extends DynamicJsonBuilder {
     }
 
     @Override
-    public void evaluate(TemplateOutputWriter writer, TemplateBuilderContext context)
-            throws IOException {
+    public void evaluate(TemplateOutputWriter writer, TemplateBuilderContext context) throws IOException {
         if (canWrite(context)) {
             ObjectNode finalNode = getFinalJSON(context);
 
@@ -75,14 +73,11 @@ public class DynamicIncludeFlatBuilder extends DynamicJsonBuilder {
         return finalNode;
     }
 
-    private void doIncludeFlat(
-            ObjectNode finalNode, TemplateBuilderContext context, TemplateOutputWriter writer)
+    private void doIncludeFlat(ObjectNode finalNode, TemplateBuilderContext context, TemplateOutputWriter writer)
             throws IOException {
         if (hasDynamic(finalNode)) {
-            LOGGER.fine(
-                    () ->
-                            "Included Json object has property interpolation or expression."
-                                    + "Going to build a nested TemplateBuilder tree.");
+            LOGGER.fine(() -> "Included Json object has property interpolation or expression."
+                    + "Going to build a nested TemplateBuilder tree.");
             iterateAndEvaluateNestedTree(context, writer, finalNode);
         } else {
             LOGGER.fine(() -> "Writing the included flat Json Node.");
@@ -101,8 +96,7 @@ public class DynamicIncludeFlatBuilder extends DynamicJsonBuilder {
      * @param context the template context.
      * @throws IOException
      */
-    protected void iterateAndWrite(
-            ObjectNode objectNode, TemplateOutputWriter writer, TemplateBuilderContext context)
+    protected void iterateAndWrite(ObjectNode objectNode, TemplateOutputWriter writer, TemplateBuilderContext context)
             throws IOException {
         Iterator<String> names = objectNode.fieldNames();
         while (names != null && names.hasNext()) {
@@ -136,20 +130,17 @@ public class DynamicIncludeFlatBuilder extends DynamicJsonBuilder {
         } else if (cql != null) {
             evaluate = cql.evaluate(sample);
         }
-        if (evaluate instanceof Attribute)
-            evaluate = JSONFieldSupport.parseWhenJSON(null, null, evaluate);
+        if (evaluate instanceof Attribute) evaluate = JSONFieldSupport.parseWhenJSON(null, null, evaluate);
         if (!(evaluate instanceof JsonNode)) return null;
 
         return getBuilderFromNode(key, (JsonNode) evaluate);
     }
 
     private TemplateBuilder getBuilderFromNode(String key, JsonNode node) {
-        TemplateReaderConfiguration configuration =
-                new TemplateReaderConfiguration(getNamespaces());
+        TemplateReaderConfiguration configuration = new TemplateReaderConfiguration(getNamespaces());
         TemplateBuilderMaker maker = configuration.getBuilderMaker();
         maker.namespaces(configuration.getNamespaces());
-        JSONTemplateReader jsonTemplateReader =
-                new JSONTemplateReader(node, configuration, new ArrayList<>());
+        JSONTemplateReader jsonTemplateReader = new JSONTemplateReader(node, configuration, new ArrayList<>());
 
         CompositeBuilder result = new CompositeBuilder(key, getNamespaces(), false);
         jsonTemplateReader.getBuilderFromJson(null, node, result, maker);

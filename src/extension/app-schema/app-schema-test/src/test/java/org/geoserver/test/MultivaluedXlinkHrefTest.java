@@ -26,9 +26,7 @@ public class MultivaluedXlinkHrefTest extends AbstractAppSchemaTestSupport {
      */
     @Test
     public void testGetFeature() {
-        Document doc =
-                getAsDOM(
-                        "wfs?service=WFS&version=2.0.0&request=GetFeature&typenames=gsml:GeologicUnit");
+        Document doc = getAsDOM("wfs?service=WFS&version=2.0.0&request=GetFeature&typenames=gsml:GeologicUnit");
         LOGGER.info("WFS GetFeature, typename=gsml:GeologicUnit response:\n" + prettyString(doc));
         assertXpathCount(1, "//gsml:GeologicUnit", doc);
         assertXpathEvaluatesTo("gu.1", "//gsml:GeologicUnit/@gml:id", doc);

@@ -78,10 +78,7 @@ public class GWCInitializer implements GeoServerReinitializer {
 
     private ConfigurableBlobStore blobStore;
 
-    public GWCInitializer(
-            GWCConfigPersister configPersister,
-            Catalog rawCatalog,
-            TileLayerCatalog tileLayerCatalog) {
+    public GWCInitializer(GWCConfigPersister configPersister, Catalog rawCatalog, TileLayerCatalog tileLayerCatalog) {
         this.configPersister = configPersister;
         this.rawCatalog = rawCatalog;
         this.tileLayerCatalog = tileLayerCatalog;
@@ -90,15 +87,12 @@ public class GWCInitializer implements GeoServerReinitializer {
     /** @see org.geoserver.config.GeoServerInitializer#initialize(org.geoserver.config.GeoServer) */
     @Override
     public void initialize(final GeoServer geoServer) throws Exception {
-        LOGGER.config(
-                "Initializing GeoServer specific GWC configuration from "
-                        + GWCConfigPersister.GWC_CONFIG_FILE);
+        LOGGER.config("Initializing GeoServer specific GWC configuration from " + GWCConfigPersister.GWC_CONFIG_FILE);
 
         final Version currentVersion = new Version("1.1.0");
         final Resource configFile = configPersister.findConfigFile();
         if (configFile == null || configFile.getType() != Type.RESOURCE) {
-            LOGGER.fine(
-                    "GWC's GeoServer specific configuration not found, creating with old defaults");
+            LOGGER.fine("GWC's GeoServer specific configuration not found, creating with old defaults");
             GWCConfig oldDefaults = GWCConfig.getOldDefaults();
             oldDefaults.setVersion(currentVersion.toString());
             upgradeWMSIntegrationConfig(geoServer, oldDefaults);
@@ -160,10 +154,7 @@ public class GWCInitializer implements GeoServerReinitializer {
                 gwcConfig.setCacheProviderClass(GuavaCacheProvider.class.toString());
                 configPersister.save(gwcConfig);
                 if (LOGGER.isLoggable(Level.FINEST)) {
-                    LOGGER.finest(
-                            "Unable to find: "
-                                    + cacheProviderClass
-                                    + ", used default configuration");
+                    LOGGER.finest("Unable to find: " + cacheProviderClass + ", used default configuration");
                 }
             }
             blobStore.setChanged(gwcConfig, true);
@@ -194,9 +185,7 @@ public class GWCInitializer implements GeoServerReinitializer {
             } catch (RuntimeException e) {
                 LOGGER.log(
                         Level.WARNING,
-                        "Error migrating GWC Tile Layer settings for Layer '"
-                                + layer.getName()
-                                + "'",
+                        "Error migrating GWC Tile Layer settings for Layer '" + layer.getName() + "'",
                         e);
             }
         }
@@ -232,8 +221,7 @@ public class GWCInitializer implements GeoServerReinitializer {
                 continue;
             }
             try {
-                GeoServerTileLayerInfo tileLayerInfo =
-                        TileLayerInfoUtil.loadOrCreate(layer, defaultSettings);
+                GeoServerTileLayerInfo tileLayerInfo = TileLayerInfoUtil.loadOrCreate(layer, defaultSettings);
                 tileLayerCatalog.save(tileLayerInfo);
                 MetadataMap metadata = layer.getMetadata();
                 if (metadata.containsKey(LegacyTileLayerInfoLoader.CONFIG_KEY_ENABLED)) {
@@ -243,17 +231,14 @@ public class GWCInitializer implements GeoServerReinitializer {
             } catch (RuntimeException e) {
                 LOGGER.log(
                         Level.WARNING,
-                        "Error occurred saving default GWC Tile Layer settings for Layer '"
-                                + layer.getName()
-                                + "'",
+                        "Error occurred saving default GWC Tile Layer settings for Layer '" + layer.getName() + "'",
                         e);
             }
         }
 
         for (LayerGroupInfo layer : rawCatalog.getLayerGroups()) {
             try {
-                GeoServerTileLayerInfo tileLayerInfo =
-                        TileLayerInfoUtil.loadOrCreate(layer, defaultSettings);
+                GeoServerTileLayerInfo tileLayerInfo = TileLayerInfoUtil.loadOrCreate(layer, defaultSettings);
                 tileLayerCatalog.save(tileLayerInfo);
 
                 MetadataMap metadata = layer.getMetadata();
@@ -279,8 +264,7 @@ public class GWCInitializer implements GeoServerReinitializer {
      * method removes that key from WMSInfo if present and sets its value to the {@code gwcConfig}
      * instead.
      */
-    private void upgradeWMSIntegrationConfig(final GeoServer geoServer, final GWCConfig gwcConfig)
-            throws IOException {
+    private void upgradeWMSIntegrationConfig(final GeoServer geoServer, final GWCConfig gwcConfig) throws IOException {
         // Check whether we're using the old way of storing this information, and get rid of it
         WMSInfo service = geoServer.getService(WMSInfo.class);
         if (service != null) {
@@ -306,19 +290,14 @@ public class GWCInitializer implements GeoServerReinitializer {
             LOGGER.finest("Adding Layers to avoid In Memory Caching");
         }
         // it is ok to use the ForkJoinPool.commonPool() here, there's no I/O involved
-        tileLayerCatalog
-                .getLayerIds()
-                .parallelStream()
-                .forEach(id -> addLayerToNotCache(cache, id));
+        tileLayerCatalog.getLayerIds().parallelStream().forEach(id -> addLayerToNotCache(cache, id));
     }
 
     private void addLayerToNotCache(CacheProvider cache, String layerId) {
         try {
             // Check if the Layer must not be cached
             GeoServerTileLayerInfo tileLayerInfo = tileLayerCatalog.getLayerById(layerId);
-            if (tileLayerInfo != null
-                    && tileLayerInfo.isEnabled()
-                    && !tileLayerInfo.isInMemoryCached()) {
+            if (tileLayerInfo != null && tileLayerInfo.isEnabled() && !tileLayerInfo.isInMemoryCached()) {
                 // Add it to the cache
                 cache.addUncachedLayer(tileLayerInfo.getName());
             }

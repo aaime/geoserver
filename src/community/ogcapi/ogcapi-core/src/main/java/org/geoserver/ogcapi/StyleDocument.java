@@ -37,14 +37,12 @@ public class StyleDocument extends AbstractDocument {
         this.style = style;
         this.id = style.prefixedName();
         try {
-            this.title =
-                    Optional.ofNullable(style.getStyle().getDescription())
-                            .map(Description::getTitle)
-                            .map(Object::toString)
-                            .orElse(null);
+            this.title = Optional.ofNullable(style.getStyle().getDescription())
+                    .map(Description::getTitle)
+                    .map(Object::toString)
+                    .orElse(null);
         } catch (Exception e) {
-            LOGGER.log(
-                    Level.WARNING, "Could not get description from style, setting it to null", e);
+            LOGGER.log(Level.WARNING, "Could not get description from style, setting it to null", e);
             this.title = null;
         }
     }

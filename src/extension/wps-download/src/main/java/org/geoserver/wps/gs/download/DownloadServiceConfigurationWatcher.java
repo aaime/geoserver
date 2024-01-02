@@ -42,18 +42,15 @@ import org.geotools.util.logging.Logging;
  *
  * @author Simone Giannecchini, GeoSolutions
  */
-public class DownloadServiceConfigurationWatcher extends TimerTask
-        implements DownloadServiceConfigurationGenerator {
+public class DownloadServiceConfigurationWatcher extends TimerTask implements DownloadServiceConfigurationGenerator {
 
     public static final String DOWNLOAD_PROCESS_DIR = "download-process";
 
     public static final String PROPERTYFILENAME = "download.properties";
 
-    public static final String DEFAULT_PROPERTY_PATH =
-            Paths.path(DOWNLOAD_PROCESS_DIR, PROPERTYFILENAME);
+    public static final String DEFAULT_PROPERTY_PATH = Paths.path(DOWNLOAD_PROCESS_DIR, PROPERTYFILENAME);
 
-    public static final Logger LOGGER =
-            Logging.getLogger(DownloadServiceConfigurationWatcher.class);
+    public static final Logger LOGGER = Logging.getLogger(DownloadServiceConfigurationWatcher.class);
 
     /** {@link PropertyFileWatcher} used for loading the property file. */
     private PropertyFileWatcher watcher;
@@ -88,13 +85,10 @@ public class DownloadServiceConfigurationWatcher extends TimerTask
                 LOGGER.log(Level.FINE, "Properties file not found");
             }
             if (LOGGER.isLoggable(Level.FINE)) {
-                LOGGER.log(
-                        Level.FINE,
-                        "Copying the default properties file inside the data directory");
+                LOGGER.log(Level.FINE, "Copying the default properties file inside the data directory");
             }
             try (InputStream is =
-                    DownloadServiceConfigurationWatcher.class.getResourceAsStream(
-                            DEFAULT_PROPERTY_PATH)) {
+                    DownloadServiceConfigurationWatcher.class.getResourceAsStream(DEFAULT_PROPERTY_PATH)) {
 
                 // Copy the default property file into the data directory
 
@@ -160,11 +154,10 @@ public class DownloadServiceConfigurationWatcher extends TimerTask
             } else {
                 configuration = new DownloadServiceConfiguration();
                 if (LOGGER.isLoggable(Level.INFO)) {
-                    LOGGER.info(
-                            "Unable to read configuration file for download service: "
-                                    + file.path()
-                                    + " continuing with default configuration-->\n"
-                                    + configuration);
+                    LOGGER.info("Unable to read configuration file for download service: "
+                            + file.path()
+                            + " continuing with default configuration-->\n"
+                            + configuration);
                 }
             }
         } catch (Exception e) {
@@ -173,11 +166,10 @@ public class DownloadServiceConfigurationWatcher extends TimerTask
             }
             configuration = new DownloadServiceConfiguration();
             if (LOGGER.isLoggable(Level.INFO)) {
-                LOGGER.info(
-                        "Unable to read confguration file for download service: "
-                                + file.path()
-                                + " continuing with default configuration-->\n"
-                                + configuration);
+                LOGGER.info("Unable to read confguration file for download service: "
+                        + file.path()
+                        + " continuing with default configuration-->\n"
+                        + configuration);
             }
         }
         // return
@@ -191,42 +183,23 @@ public class DownloadServiceConfigurationWatcher extends TimerTask
      * @param downloadProcessProperties the {@link Properties} file to parse. Cannot be null.
      * @return an instance of {@link DownloadServiceConfiguration}.
      */
-    private DownloadServiceConfiguration parseConfigurationValues(
-            Properties downloadProcessProperties) {
+    private DownloadServiceConfiguration parseConfigurationValues(Properties downloadProcessProperties) {
         Utilities.ensureNonNull("downloadProcessProperties", downloadProcessProperties);
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.log(Level.FINE, "Parsing the properties file");
         }
         // Initialize the configuration fields with default values
-        long maxFeatures =
-                getLongValue(downloadProcessProperties, MAX_FEATURES_NAME, DEFAULT_MAX_FEATURES);
+        long maxFeatures = getLongValue(downloadProcessProperties, MAX_FEATURES_NAME, DEFAULT_MAX_FEATURES);
         long rasterSizeLimits =
-                getLongValue(
-                        downloadProcessProperties,
-                        RASTER_SIZE_LIMITS_NAME,
-                        DEFAULT_RASTER_SIZE_LIMITS);
-        long writeLimits =
-                getLongValue(
-                        downloadProcessProperties, WRITE_LIMITS_NAME, DEFAULT_RASTER_SIZE_LIMITS);
-        long hardOutputLimit =
-                getLongValue(downloadProcessProperties, "hardOutputLimit", DEFAULT_WRITE_LIMITS);
-        int compressionLevel =
-                getIntValue(
-                        downloadProcessProperties, "compressionLevel", DEFAULT_COMPRESSION_LEVEL);
-        int maxFrames =
-                getIntValue(
-                        downloadProcessProperties,
-                        MAX_ANIMATION_FRAMES_NAME,
-                        DEFAULT_MAX_ANIMATION_FRAMES);
+                getLongValue(downloadProcessProperties, RASTER_SIZE_LIMITS_NAME, DEFAULT_RASTER_SIZE_LIMITS);
+        long writeLimits = getLongValue(downloadProcessProperties, WRITE_LIMITS_NAME, DEFAULT_RASTER_SIZE_LIMITS);
+        long hardOutputLimit = getLongValue(downloadProcessProperties, "hardOutputLimit", DEFAULT_WRITE_LIMITS);
+        int compressionLevel = getIntValue(downloadProcessProperties, "compressionLevel", DEFAULT_COMPRESSION_LEVEL);
+        int maxFrames = getIntValue(downloadProcessProperties, MAX_ANIMATION_FRAMES_NAME, DEFAULT_MAX_ANIMATION_FRAMES);
 
         // create the configuration object
         return new DownloadServiceConfiguration(
-                maxFeatures,
-                rasterSizeLimits,
-                writeLimits,
-                hardOutputLimit,
-                compressionLevel,
-                maxFrames);
+                maxFeatures, rasterSizeLimits, writeLimits, hardOutputLimit, compressionLevel, maxFrames);
     }
 
     private long getLongValue(Properties properties, String key, long defaultValue) {

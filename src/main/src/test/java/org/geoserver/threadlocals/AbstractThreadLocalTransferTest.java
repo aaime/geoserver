@@ -76,5 +76,6 @@ public abstract class AbstractThreadLocalTransferTest {
         abstract void assertThreadLocalCleaned();
 
         abstract void assertThreadLocalApplied();
-    };
+    }
+    ;
 }

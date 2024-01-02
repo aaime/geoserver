@@ -58,7 +58,8 @@ public class OpenIdConnectFilterConfig extends GeoServerOAuth2FilterConfig {
         this.forceUserAuthorizationUriHttps = true;
         this.loginEndpoint = "/j_spring_oauth2_openid_connect_login";
         this.logoutEndpoint = "/j_spring_oauth2_openid_connect_logout";
-    };
+    }
+    ;
 
     /**
      * we add "/" at the end since not having it will SOMETIME cause issues. This will either use
@@ -67,10 +68,9 @@ public class OpenIdConnectFilterConfig extends GeoServerOAuth2FilterConfig {
      * @return
      */
     String baseRedirectUri() {
-        Optional<String> proxbaseUrl =
-                Optional.ofNullable(GeoServerExtensions.bean(GeoServer.class))
-                        .map(gs -> gs.getSettings())
-                        .map(s -> s.getProxyBaseUrl());
+        Optional<String> proxbaseUrl = Optional.ofNullable(GeoServerExtensions.bean(GeoServer.class))
+                .map(gs -> gs.getSettings())
+                .map(s -> s.getProxyBaseUrl());
         if (proxbaseUrl.isPresent() && StringUtils.hasText(proxbaseUrl.get())) {
             return proxbaseUrl + "/";
         }

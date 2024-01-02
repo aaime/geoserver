@@ -71,12 +71,9 @@ public class CollectionsDocument extends AbstractDocument {
                     try {
                         FeatureTypeInfo featureType = featureTypes.next();
                         List<String> crs =
-                                FeatureService.getFeatureTypeCRS(
-                                        featureType, Collections.singletonList("#/crs"));
-                        CollectionDocument collection =
-                                new CollectionDocument(geoServer, featureType, crs);
-                        for (Consumer<CollectionDocument> collectionDecorator :
-                                collectionDecorators) {
+                                FeatureService.getFeatureTypeCRS(featureType, Collections.singletonList("#/crs"));
+                        CollectionDocument collection = new CollectionDocument(geoServer, featureType, crs);
+                        for (Consumer<CollectionDocument> collectionDecorator : collectionDecorators) {
                             collectionDecorator.accept(collection);
                         }
 
@@ -84,8 +81,7 @@ public class CollectionsDocument extends AbstractDocument {
                         return true;
                     } catch (Exception e) {
                         featureTypes.close();
-                        throw new ServiceException(
-                                "Failed to iterate over the feature types in the catalog", e);
+                        throw new ServiceException("Failed to iterate over the feature types in the catalog", e);
                     }
                 }
             }

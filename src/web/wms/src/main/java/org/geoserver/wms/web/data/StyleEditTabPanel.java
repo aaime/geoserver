@@ -50,10 +50,9 @@ public class StyleEditTabPanel extends Panel {
     }
 
     public StyleEditTabPanel setInputEnabled(final boolean enabled) {
-        visitChildren(
-                (component, visit) -> {
-                    component.setEnabled(enabled);
-                });
+        visitChildren((component, visit) -> {
+            component.setEnabled(enabled);
+        });
         return this;
     }
 }

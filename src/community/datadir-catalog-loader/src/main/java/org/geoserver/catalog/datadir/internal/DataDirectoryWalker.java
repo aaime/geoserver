@@ -89,9 +89,7 @@ class DataDirectoryWalker {
         }
 
         public Stream<LayerDirectory> layers() {
-            Path parent =
-                    Optional.ofNullable(storeFile.getParent())
-                            .orElseThrow(NullPointerException::new);
+            Path parent = Optional.ofNullable(storeFile.getParent()).orElseThrow(NullPointerException::new);
             return walker.layers(parent);
         }
     }
@@ -138,11 +136,10 @@ class DataDirectoryWalker {
         return Optional.empty();
     }
 
-    private static final Predicate<Path> STORE_DIRNAME_FILTER =
-            dir -> {
-                String name = dir.getFileName().toString();
-                return !"styles".equals(name) && !"layergroups".equals(name);
-            };
+    private static final Predicate<Path> STORE_DIRNAME_FILTER = dir -> {
+        String name = dir.getFileName().toString();
+        return !"styles".equals(name) && !"layergroups".equals(name);
+    };
 
     private Stream<StoreDirectory> stores(Path workspaceDir) {
         return subdirectories(workspaceDir).stream()
@@ -175,11 +172,10 @@ class DataDirectoryWalker {
         if (workspaces == null) {
             Path workspacesRoot = dataDirRoot.resolve("workspaces");
             List<Path> workspaceDirectories = subdirectories(workspacesRoot);
-            workspaces =
-                    workspaceDirectories.stream()
-                            .map(this::newWorkspace)
-                            .filter(Objects::nonNull)
-                            .collect(Collectors.toList());
+            workspaces = workspaceDirectories.stream()
+                    .map(this::newWorkspace)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
         }
         return workspaces;
     }
@@ -212,10 +208,9 @@ class DataDirectoryWalker {
             Optional<Path> settings = optionalFile(wsdir.resolve("settings.xml"));
             // cache which ServiceInfo xml files are in the workspace directory to make a single
             // pass
-            Set<String> serviceInfoFiles =
-                    serviceFileNames.stream()
-                            .filter(f -> Files.isRegularFile(wsdir.resolve(f)))
-                            .collect(Collectors.toSet());
+            Set<String> serviceInfoFiles = serviceFileNames.stream()
+                    .filter(f -> Files.isRegularFile(wsdir.resolve(f)))
+                    .collect(Collectors.toSet());
 
             return new WorkspaceDirectory(ws, ns, settings, serviceInfoFiles, this);
         }

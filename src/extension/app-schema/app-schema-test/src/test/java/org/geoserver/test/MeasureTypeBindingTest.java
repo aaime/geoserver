@@ -27,8 +27,7 @@ public class MeasureTypeBindingTest extends AbstractAppSchemaTestSupport {
     public void testMeasureTypeBindingWithoutUOM() {
         String path = "wfs?request=GetFeature&version=1.1.0&typename=ex:PolymorphicFeature";
         Document doc = getAsDOM(path);
-        LOGGER.info(
-                "WFS GetFeature&typename=ex:PolymorphicFeature response:\n" + prettyString(doc));
+        LOGGER.info("WFS GetFeature&typename=ex:PolymorphicFeature response:\n" + prettyString(doc));
         assertXpathCount(1, "//ex:PolymorphicFeature", doc);
 
         Node feature = doc.getElementsByTagName("ex:PolymorphicFeature").item(0);

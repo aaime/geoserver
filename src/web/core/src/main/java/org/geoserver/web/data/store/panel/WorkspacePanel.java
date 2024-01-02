@@ -36,12 +36,8 @@ public class WorkspacePanel extends Panel implements ParamPanel<WorkspaceInfo> {
         add(label);
 
         // the drop down field, with a decorator for validations
-        choice =
-                new DropDownChoice<>(
-                        "paramValue",
-                        workspaceModel,
-                        new WorkspacesModel(),
-                        new WorkspaceChoiceRenderer());
+        choice = new DropDownChoice<>(
+                "paramValue", workspaceModel, new WorkspacesModel(), new WorkspaceChoiceRenderer());
         choice.setRequired(required);
         // set the label to be the paramLabelModel otherwise a validation error would look like
         // "Parameter 'paramValue' is required"

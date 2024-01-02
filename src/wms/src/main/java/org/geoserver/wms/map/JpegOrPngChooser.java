@@ -69,8 +69,7 @@ public class JpegOrPngChooser {
         int numBands = renderedImage.getSampleModel().getNumBands();
         if (numBands == 4 || numBands == 2) {
             RenderingHints renderingHints = ImageUtilities.getRenderingHints(renderedImage);
-            RenderedOp extremaOp =
-                    ExtremaDescriptor.create(renderedImage, null, 1, 1, false, 1, renderingHints);
+            RenderedOp extremaOp = ExtremaDescriptor.create(renderedImage, null, 1, 1, false, 1, renderingHints);
             double[][] extrema = (double[][]) extremaOp.getProperty("Extrema");
             double[] mins = extrema[0];
 

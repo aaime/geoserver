@@ -164,8 +164,8 @@ public interface FeatureTypeInfo extends ResourceInfo {
      * @return The feature source.
      * @throws IOException Any I/O problems.
      */
-    FeatureSource<? extends FeatureType, ? extends Feature> getFeatureSource(
-            ProgressListener listener, Hints hints) throws IOException;
+    FeatureSource<? extends FeatureType, ? extends Feature> getFeatureSource(ProgressListener listener, Hints hints)
+            throws IOException;
 
     boolean isCircularArcPresent();
 

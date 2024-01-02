@@ -54,8 +54,7 @@ public class LinksBuilder {
      * @param mediaTypeCustomizer
      * @return
      */
-    public LinksBuilder mediaTypeCustomizer(
-            Function<List<MediaType>, List<MediaType>> mediaTypeCustomizer) {
+    public LinksBuilder mediaTypeCustomizer(Function<List<MediaType>, List<MediaType>> mediaTypeCustomizer) {
         this.mediaTypeCustomizer = mediaTypeCustomizer;
         return this;
     }
@@ -119,20 +118,14 @@ public class LinksBuilder {
     public List<Link> build() {
         List<Link> result = new ArrayList<>();
         List<MediaType> mediaTypes =
-                new ArrayList<>(
-                        APIRequestInfo.get().getProducibleMediaTypes(responseType, includeHTML));
+                new ArrayList<>(APIRequestInfo.get().getProducibleMediaTypes(responseType, includeHTML));
         if (mediaTypeCustomizer != null) {
             mediaTypes = mediaTypeCustomizer.apply(mediaTypes);
         }
         for (MediaType mediaType : mediaTypes) {
             String format = mediaType.toString();
             Map<String, String> params = Collections.singletonMap("f", format);
-            String url =
-                    buildURL(
-                            APIRequestInfo.get().getBaseURL(),
-                            getPath(),
-                            params,
-                            URLMangler.URLType.SERVICE);
+            String url = buildURL(APIRequestInfo.get().getBaseURL(), getPath(), params, URLMangler.URLType.SERVICE);
             String linkTitle = title + format;
             Link link = new Link(url, rel, format, linkTitle);
             link.setClassification(getClassification());

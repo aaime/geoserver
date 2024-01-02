@@ -73,12 +73,7 @@ public class FileSystemWatcher implements ResourceNotificationDispatcher, Dispos
             this.created = this.removed = this.modified = Collections.emptyList();
         }
 
-        public Delta(
-                File context,
-                Kind kind,
-                List<String> created,
-                List<String> removed,
-                List<String> modified) {
+        public Delta(File context, Kind kind, List<String> created, List<String> removed, List<String> modified) {
             this.context = context;
             this.kind = kind;
             this.created = created == null ? Collections.emptyList() : created;
@@ -132,12 +127,10 @@ public class FileSystemWatcher implements ResourceNotificationDispatcher, Dispos
             this.last = exsists ? file.lastModified() : 0;
             if (file.isDirectory()) {
                 this.children = loadDirectoryContents(file);
-                this.childrenLastModifiedMax =
-                        this.children
-                                .parallelStream()
-                                .mapToLong(File::lastModified)
-                                .max()
-                                .orElse(0L);
+                this.childrenLastModifiedMax = this.children.parallelStream()
+                        .mapToLong(File::lastModified)
+                        .max()
+                        .orElse(0L);
             }
         }
 
@@ -186,13 +179,7 @@ public class FileSystemWatcher implements ResourceNotificationDispatcher, Dispos
 
         @Override
         public String toString() {
-            return "Watch [path="
-                    + path
-                    + ", file="
-                    + file
-                    + ", listeners="
-                    + listeners.size()
-                    + "]";
+            return "Watch [path=" + path + ", file=" + file + ", listeners=" + listeners.size() + "]";
         }
 
         @Override
@@ -225,8 +212,7 @@ public class FileSystemWatcher implements ResourceNotificationDispatcher, Dispos
 
             long childrenMaxLastModified = this.childrenLastModifiedMax;
 
-            final CompletableFuture<File[]> contentsFuture =
-                    CompletableFuture.supplyAsync(() -> this.file.listFiles());
+            final CompletableFuture<File[]> contentsFuture = CompletableFuture.supplyAsync(() -> this.file.listFiles());
 
             final Map<Kind, List<String>> itemsByType = new EnumMap<>(Kind.class);
             // check for updates. Fastest path, no need to list current directory contents
@@ -253,8 +239,7 @@ public class FileSystemWatcher implements ResourceNotificationDispatcher, Dispos
                 // find new
                 for (File child : contents) {
                     if (this.children.add(child)) {
-                        childrenMaxLastModified =
-                                Math.max(childrenMaxLastModified, child.lastModified());
+                        childrenMaxLastModified = Math.max(childrenMaxLastModified, child.lastModified());
                         itemsByType
                                 .computeIfAbsent(Kind.ENTRY_CREATE, k -> new ArrayList<>())
                                 .add(child.getName());
@@ -323,89 +308,66 @@ public class FileSystemWatcher implements ResourceNotificationDispatcher, Dispos
      * on using minimal system resources while we wait for Java 7 WatchService (to be more
      * efficient).
      */
-    private Runnable sync =
-            new Runnable() {
-                @Override
-                public void run() {
-                    long now = System.currentTimeMillis();
-                    for (Watch watch : watchers) {
-                        if (watch.getListeners().isEmpty()) {
-                            watchers.remove(watch);
-                            continue;
-                        }
-                        final boolean directory = watch.file.isDirectory();
-                        Level level = Level.FINER;
-                        long start = System.nanoTime();
-                        if (directory) LOGGER.log(level, "polling contents of " + watch.file);
-                        Delta delta;
-                        try {
-                            delta = watch.changed(now);
-                        } catch (RuntimeException e) {
-                            LOGGER.log(Level.WARNING, "Error polling contents of " + watch.file, e);
-                            return;
-                        }
-                        if (directory && LOGGER.isLoggable(level)) {
-                            long ellapsedMicros =
-                                    MICROSECONDS.convert(System.nanoTime() - start, NANOSECONDS);
-                            long ellapsedMillis =
-                                    MILLISECONDS.convert(ellapsedMicros, MICROSECONDS);
-                            String unit = ellapsedMillis == 0L ? "us" : "ms";
-                            long time = ellapsedMillis == 0L ? ellapsedMicros : ellapsedMillis;
-                            LOGGER.log(
-                                    level,
-                                    String.format(
-                                            "delta computed in %,d%s for %s",
-                                            time, unit, watch.file));
-                        }
-                        if (delta != null) {
-                            notify(watch, delta);
-                        }
+    private Runnable sync = new Runnable() {
+        @Override
+        public void run() {
+            long now = System.currentTimeMillis();
+            for (Watch watch : watchers) {
+                if (watch.getListeners().isEmpty()) {
+                    watchers.remove(watch);
+                    continue;
+                }
+                final boolean directory = watch.file.isDirectory();
+                Level level = Level.FINER;
+                long start = System.nanoTime();
+                if (directory) LOGGER.log(level, "polling contents of " + watch.file);
+                Delta delta;
+                try {
+                    delta = watch.changed(now);
+                } catch (RuntimeException e) {
+                    LOGGER.log(Level.WARNING, "Error polling contents of " + watch.file, e);
+                    return;
+                }
+                if (directory && LOGGER.isLoggable(level)) {
+                    long ellapsedMicros = MICROSECONDS.convert(System.nanoTime() - start, NANOSECONDS);
+                    long ellapsedMillis = MILLISECONDS.convert(ellapsedMicros, MICROSECONDS);
+                    String unit = ellapsedMillis == 0L ? "us" : "ms";
+                    long time = ellapsedMillis == 0L ? ellapsedMicros : ellapsedMillis;
+                    LOGGER.log(level, String.format("delta computed in %,d%s for %s", time, unit, watch.file));
+                }
+                if (delta != null) {
+                    notify(watch, delta);
+                }
+            }
+        }
+
+        private void notify(Watch watch, Delta delta) {
+            if (LOGGER.isLoggable(Level.INFO)) {
+                LOGGER.config(String.format(
+                        "Notifying %s change on %s. Created: %,d, removed: %,d, modified: %,d",
+                        delta.kind, delta.context, delta.created.size(), delta.removed.size(), delta.modified.size()));
+            }
+            // do not call listeners on the watch thread, they may take a
+            // considerable amount of time to process the events
+            CompletableFuture.runAsync(() -> {
+                /** Created based on created/removed/modified files */
+                List<ResourceNotification.Event> events =
+                        ResourceNotification.delta(watch.file, delta.created, delta.removed, delta.modified);
+
+                ResourceNotification notify = new ResourceNotification(watch.getPath(), delta.kind, watch.last, events);
+
+                for (ResourceListener listener : watch.getListeners()) {
+                    try {
+                        listener.changed(notify);
+                    } catch (Throwable t) {
+                        Logger logger = Logger.getLogger(
+                                listener.getClass().getPackage().getName());
+                        logger.log(Level.FINE, "Unable to notify " + watch + ":" + t.getMessage(), t);
                     }
                 }
-
-                private void notify(Watch watch, Delta delta) {
-                    if (LOGGER.isLoggable(Level.INFO)) {
-                        LOGGER.config(
-                                String.format(
-                                        "Notifying %s change on %s. Created: %,d, removed: %,d, modified: %,d",
-                                        delta.kind,
-                                        delta.context,
-                                        delta.created.size(),
-                                        delta.removed.size(),
-                                        delta.modified.size()));
-                    }
-                    // do not call listeners on the watch thread, they may take a
-                    // considerable amount of time to process the events
-                    CompletableFuture.runAsync(
-                            () -> {
-                                /** Created based on created/removed/modified files */
-                                List<ResourceNotification.Event> events =
-                                        ResourceNotification.delta(
-                                                watch.file,
-                                                delta.created,
-                                                delta.removed,
-                                                delta.modified);
-
-                                ResourceNotification notify =
-                                        new ResourceNotification(
-                                                watch.getPath(), delta.kind, watch.last, events);
-
-                                for (ResourceListener listener : watch.getListeners()) {
-                                    try {
-                                        listener.changed(notify);
-                                    } catch (Throwable t) {
-                                        Logger logger =
-                                                Logger.getLogger(
-                                                        listener.getClass().getPackage().getName());
-                                        logger.log(
-                                                Level.FINE,
-                                                "Unable to notify " + watch + ":" + t.getMessage(),
-                                                t);
-                                    }
-                                }
-                            });
-                }
-            };
+            });
+        }
+    };
 
     private ScheduledFuture<?> monitor;
 

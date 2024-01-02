@@ -39,53 +39,40 @@ public class OutputTypesFormComponent extends FormComponentPanel<String> {
             final boolean isOutputTypeCheckingEnabled) {
         super(id, new Model<>());
 
+        add(new AjaxCheckBox("outputTypeCheckingEnabled", new Model<>(isOutputTypeCheckingEnabled)) {
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {
+                toggleVisibility(getModelObject());
+                target.add(palette);
+            }
+        });
+
         add(
-                new AjaxCheckBox(
-                        "outputTypeCheckingEnabled", new Model<>(isOutputTypeCheckingEnabled)) {
+                palette = new Palette<String>("palette", model, choicesModel, new SimpleChoiceRenderer<>(), 10, false) {
+                    private static final long serialVersionUID = 1L;
+
                     @Override
-                    protected void onUpdate(AjaxRequestTarget target) {
-                        toggleVisibility(getModelObject());
-                        target.add(palette);
+                    protected Recorder<String> newRecorderComponent() {
+                        Recorder<String> rec = super.newRecorderComponent();
+
+                        // add any behaviors that need to be added
+                        rec.add(toAdd.toArray(new Behavior[toAdd.size()]));
+                        toAdd.clear();
+                        return rec;
+                    }
+
+                    // Override otherwise the header is not i18n'ized
+                    @Override
+                    public Component newSelectedHeader(final String componentId) {
+                        return new Label(componentId, new ResourceModel(getSelectedHeaderPropertyKey()));
+                    }
+
+                    // Override otherwise the header is not i18n'ized
+                    @Override
+                    public Component newAvailableHeader(final String componentId) {
+                        return new Label(componentId, new ResourceModel(getAvaliableHeaderPropertyKey()));
                     }
                 });
-
-        add(
-                palette =
-                        new Palette<String>(
-                                "palette",
-                                model,
-                                choicesModel,
-                                new SimpleChoiceRenderer<>(),
-                                10,
-                                false) {
-                            private static final long serialVersionUID = 1L;
-
-                            @Override
-                            protected Recorder<String> newRecorderComponent() {
-                                Recorder<String> rec = super.newRecorderComponent();
-
-                                // add any behaviors that need to be added
-                                rec.add(toAdd.toArray(new Behavior[toAdd.size()]));
-                                toAdd.clear();
-                                return rec;
-                            }
-
-                            // Override otherwise the header is not i18n'ized
-                            @Override
-                            public Component newSelectedHeader(final String componentId) {
-                                return new Label(
-                                        componentId,
-                                        new ResourceModel(getSelectedHeaderPropertyKey()));
-                            }
-
-                            // Override otherwise the header is not i18n'ized
-                            @Override
-                            public Component newAvailableHeader(final String componentId) {
-                                return new Label(
-                                        componentId,
-                                        new ResourceModel(getAvaliableHeaderPropertyKey()));
-                            }
-                        });
         palette.add(new DefaultTheme());
         palette.setOutputMarkupPlaceholderTag(true);
         toggleVisibility(isOutputTypeCheckingEnabled);
@@ -142,6 +129,7 @@ public class OutputTypesFormComponent extends FormComponentPanel<String> {
     @Override
     public void updateModel() {
         super.updateModel();
-        if (palette.getRecorderComponent() != null) palette.getRecorderComponent().updateModel();
+        if (palette.getRecorderComponent() != null)
+            palette.getRecorderComponent().updateModel();
     }
 }

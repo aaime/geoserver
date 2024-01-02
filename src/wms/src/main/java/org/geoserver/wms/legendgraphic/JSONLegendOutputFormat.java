@@ -34,8 +34,7 @@ public class JSONLegendOutputFormat implements GetLegendGraphicOutputFormat {
      * @see GetLegendGraphicOutputFormat#produceLegendGraphic(GetLegendGraphicRequest)
      */
     @Override
-    public JSONLegendGraphic produceLegendGraphic(GetLegendGraphicRequest request)
-            throws ServiceException {
+    public JSONLegendGraphic produceLegendGraphic(GetLegendGraphicRequest request) throws ServiceException {
         LegendGraphicBuilder builder = new JSONLegendGraphicBuilder();
         JSONObject legendGraphic = (JSONObject) builder.buildLegendGraphic(request);
         JSONLegendGraphic legend = new JSONLegendGraphic(legendGraphic);

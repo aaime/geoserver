@@ -196,8 +196,7 @@ public class GeoServerRoleConverterImpl implements GeoServerRoleConverter {
         working = splitString(roleParamString, getRoleParameterDelimiterString());
         for (String kvp : working) {
             List<String> tmp = splitString(kvp.trim(), getRoleParameterAssignmentString());
-            if (tmp.size() != 2)
-                throw createExcpetion(roleString + " Invalid role string:  " + roleString);
+            if (tmp.size() != 2) throw createExcpetion(roleString + " Invalid role string:  " + roleString);
             result.getProperties().put(tmp.get(0).trim(), tmp.get(1).trim());
         }
         return result;

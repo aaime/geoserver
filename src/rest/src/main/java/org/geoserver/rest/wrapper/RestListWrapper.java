@@ -22,11 +22,7 @@ public class RestListWrapper<T> extends RestWrapperAdapter<T> {
 
     String itemAttributeName = "name";
 
-    public RestListWrapper(
-            Collection<T> collection,
-            Class<T> clazz,
-            RestBaseController controller,
-            Template template) {
+    public RestListWrapper(Collection<T> collection, Class<T> clazz, RestBaseController controller, Template template) {
         super(collection, clazz, controller, template);
     }
 

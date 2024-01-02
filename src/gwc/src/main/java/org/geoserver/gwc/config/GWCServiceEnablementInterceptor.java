@@ -52,8 +52,7 @@ public class GWCServiceEnablementInterceptor implements MethodInterceptor {
                 serviceEnabled = gwcFacade.isServiceEnabled(service);
             }
             if (!serviceEnabled) {
-                throw new org.geowebcache.service.HttpErrorCodeException(
-                        400, "Service is disabled");
+                throw new org.geowebcache.service.HttpErrorCodeException(400, "Service is disabled");
             }
         }
         return invocation.proceed();

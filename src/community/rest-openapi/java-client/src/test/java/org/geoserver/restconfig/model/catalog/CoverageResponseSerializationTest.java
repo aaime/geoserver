@@ -91,23 +91,20 @@ public class CoverageResponseSerializationTest extends SerializationTest {
         assertEquals(1, cr.getDimensions().getCoverageDimension().size());
 
         CoverageDimensionResponse cd = cr.getDimensions().getCoverageDimension().get(0);
+        assertEquals("GridSampleDimension[-9.999999933815813E36,-9.999999933815813E36]", cd.getDescription());
         assertEquals(
-                "GridSampleDimension[-9.999999933815813E36,-9.999999933815813E36]",
-                cd.getDescription());
-        assertEquals(
-                new NumberRangeResponse().min("-9.999999933815813E36").max("-9.999999933815813E36"),
-                cd.getRange());
+                new NumberRangeResponse().min("-9.999999933815813E36").max("-9.999999933815813E36"), cd.getRange());
 
         assertEquals(Collections.singletonList("EPSG:26713"), cr.getRequestSRS().getString());
-        assertEquals(Collections.singletonList("EPSG:26713"), cr.getResponseSRS().getString());
+        assertEquals(
+                Collections.singletonList("EPSG:26713"), cr.getResponseSRS().getString());
     }
 
     public @Test void testCoverageResponse_GridSampleDimension_Infinite() throws IOException {
-        CoverageResponseWrapper crw =
-                decode(
-                        "CoverageResponse_GridSampleDimension_Infinity.json",
-                        CoverageInfo.class,
-                        CoverageResponseWrapper.class);
+        CoverageResponseWrapper crw = decode(
+                "CoverageResponse_GridSampleDimension_Infinity.json",
+                CoverageInfo.class,
+                CoverageResponseWrapper.class);
         assertNotNull(crw);
         CoverageResponse cr = crw.getCoverage();
         assertNotNull(cr);
@@ -133,11 +130,10 @@ public class CoverageResponseSerializationTest extends SerializationTest {
      * @throws IOException
      */
     public @Test void testCoverageResponse_NativeCoverageNameAsParameter() throws IOException {
-        CoverageResponseWrapper crw =
-                decode(
-                        "CoverageResponse_NativeCoverageNameAsParameter.json",
-                        CoverageInfo.class,
-                        CoverageResponseWrapper.class);
+        CoverageResponseWrapper crw = decode(
+                "CoverageResponse_NativeCoverageNameAsParameter.json",
+                CoverageInfo.class,
+                CoverageResponseWrapper.class);
         assertNotNull(crw);
         CoverageResponse cr = crw.getCoverage();
         assertNotNull(cr);

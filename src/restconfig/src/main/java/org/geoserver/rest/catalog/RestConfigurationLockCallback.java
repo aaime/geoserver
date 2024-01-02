@@ -39,14 +39,12 @@ public class RestConfigurationLockCallback implements DispatcherCallback {
     }
 
     @Override
-    public void dispatched(
-            HttpServletRequest request, HttpServletResponse response, Object handler) {
+    public void dispatched(HttpServletRequest request, HttpServletResponse response, Object handler) {
         Object controller = DispatcherCallback.getControllerBean(handler);
         if (controller instanceof AbstractCatalogController
                 || controller instanceof AbstractGeoServerController
                 || controller instanceof SequentialExecutionController) {
-            if (controller instanceof CatalogReloadController
-                    || isWriteMethod(request.getMethod())) {
+            if (controller instanceof CatalogReloadController || isWriteMethod(request.getMethod())) {
                 // this requires a full lock, it affects part of GeoServer or GeoTools that are not
                 // thread safe
                 locker.lock(LockType.WRITE);
@@ -57,14 +55,11 @@ public class RestConfigurationLockCallback implements DispatcherCallback {
     }
 
     private boolean isWriteMethod(String method) {
-        return "PUT".equalsIgnoreCase(method)
-                || "POST".equalsIgnoreCase(method)
-                || "DELETE".equalsIgnoreCase(method);
+        return "PUT".equalsIgnoreCase(method) || "POST".equalsIgnoreCase(method) || "DELETE".equalsIgnoreCase(method);
     }
 
     @Override
-    public void exception(
-            HttpServletRequest request, HttpServletResponse response, Exception error) {
+    public void exception(HttpServletRequest request, HttpServletResponse response, Exception error) {
         // nothing to see here, move on
     }
 

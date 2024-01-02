@@ -44,15 +44,12 @@ public class NetCDFGetFeatureInfoTest extends WMSTestSupport {
      */
     @Test
     public void testValidXmlNcName() throws Exception {
-        String response =
-                getAsString(
-                        "wms?service=WMS&version=1.3.0&request=GetFeatureInfo"
-                                + "&layers=sf%3Aanalyzed_sst&query_layers=sf%3Aanalyzed_sst"
-                                + "&format=image/png&info_format=text/xml"
-                                + "&srs=EPSG%3A4326&bbox=25,-86,27,-83&width=100&height=100&x=37&y=50");
+        String response = getAsString("wms?service=WMS&version=1.3.0&request=GetFeatureInfo"
+                + "&layers=sf%3Aanalyzed_sst&query_layers=sf%3Aanalyzed_sst"
+                + "&format=image/png&info_format=text/xml"
+                + "&srs=EPSG%3A4326&bbox=25,-86,27,-83&width=100&height=100&x=37&y=50");
         Assert.assertTrue(response.contains("<wfs:FeatureCollection"));
         Assert.assertTrue(
-                response.contains(
-                        "<sf:Analyzed_Sea_Surface_Temperature>23.0</sf:Analyzed_Sea_Surface_Temperature>"));
+                response.contains("<sf:Analyzed_Sea_Surface_Temperature>23.0</sf:Analyzed_Sea_Surface_Temperature>"));
     }
 }

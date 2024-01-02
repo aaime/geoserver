@@ -46,8 +46,7 @@ public class PaletteManager {
 
     public static final IndexColorModel safePalette = buildDefaultPalette();
     static SoftValueHashMap<String, PaletteCacheEntry> paletteCache = new SoftValueHashMap<>();
-    static SoftValueHashMap<IndexColorModelKey, InverseColorMapOp> opCache =
-            new SoftValueHashMap<>();
+    static SoftValueHashMap<IndexColorModelKey, InverseColorMapOp> opCache = new SoftValueHashMap<>();
 
     /** TODO: we should probably provide the data directory as a constructor parameter here */
     private PaletteManager() {}
@@ -83,9 +82,7 @@ public class PaletteManager {
         Resource palettes = loader.get("palettes");
 
         Set<String> names = new HashSet<>();
-        names.addAll(
-                Arrays.asList(
-                        new String[] {name + ".gif", name + ".png", name + ".pal", name + ".tif"}));
+        names.addAll(Arrays.asList(new String[] {name + ".gif", name + ".png", name + ".pal", name + ".tif"}));
 
         List<Resource> paletteFiles = new ArrayList<>();
         for (Resource item : palettes.list()) {
@@ -120,10 +117,9 @@ public class PaletteManager {
                     }
                 }
             }
-            LOG.warning(
-                    "Skipping paletteInverter file "
-                            + fileName
-                            + " since color model is not indexed (no 256 colors paletteInverter)");
+            LOG.warning("Skipping paletteInverter file "
+                    + fileName
+                    + " since color model is not indexed (no 256 colors paletteInverter)");
         }
 
         return null;

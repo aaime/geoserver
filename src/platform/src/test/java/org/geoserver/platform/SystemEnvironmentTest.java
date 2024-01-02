@@ -37,10 +37,9 @@ public class SystemEnvironmentTest {
         System.clearProperty("ALLOW_ENV_PARAMETRIZATION");
         String sysProperty = System.getProperty("ALLOW_ENV_PARAMETRIZATION");
 
-        GeoServerResourceLoader loader =
-                EasyMock.createMockBuilder(GeoServerResourceLoader.class)
-                        .withConstructor()
-                        .createMock();
+        GeoServerResourceLoader loader = EasyMock.createMockBuilder(GeoServerResourceLoader.class)
+                .withConstructor()
+                .createMock();
 
         ApplicationContext appContext = EasyMock.createMock(ApplicationContext.class);
         EasyMock.expect(appContext.getBeanNamesForType(ExtensionFilter.class))
@@ -58,7 +57,9 @@ public class SystemEnvironmentTest {
                 .andReturn(genvMap)
                 .anyTimes();
         EasyMock.expect(appContext.getBean("geoServerLoader")).andReturn(loader).anyTimes();
-        EasyMock.expect(appContext.isSingleton("geoServerLoader")).andReturn(true).anyTimes();
+        EasyMock.expect(appContext.isSingleton("geoServerLoader"))
+                .andReturn(true)
+                .anyTimes();
 
         EasyMock.replay(appContext);
         GeoServerExtensions gsext = new GeoServerExtensions();

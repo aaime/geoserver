@@ -105,8 +105,7 @@ public final class Requests {
         // check the user is not the anonymous one
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        return (authentication != null)
-                && !(authentication instanceof AnonymousAuthenticationToken);
+        return (authentication != null) && !(authentication instanceof AnonymousAuthenticationToken);
     }
 
     /**
@@ -166,8 +165,7 @@ public final class Requests {
      *
      * <p>Useful for parsing out the FORMAT_OPTIONS and LEGEND_OPTIONS parameters
      */
-    public static Map<String, Object> parseOptionParameter(String rawOptionString)
-            throws IllegalArgumentException {
+    public static Map<String, Object> parseOptionParameter(String rawOptionString) throws IllegalArgumentException {
         Map<String, Object> map = new HashMap<>();
         if (rawOptionString == null) {
             return map;
@@ -179,10 +177,9 @@ public final class Requests {
 
             final int cloc = curKVP.indexOf(":");
             if (cloc <= 0) {
-                throw new IllegalArgumentException(
-                        "Key-value-pair: '"
-                                + curKVP
-                                + "' isn't properly formed.  It must be of the form 'Key:Value1,Value2...'");
+                throw new IllegalArgumentException("Key-value-pair: '"
+                        + curKVP
+                        + "' isn't properly formed.  It must be of the form 'Key:Value1,Value2...'");
             }
             String key = curKVP.substring(0, cloc);
             String values = curKVP.substring(cloc + 1, curKVP.length());

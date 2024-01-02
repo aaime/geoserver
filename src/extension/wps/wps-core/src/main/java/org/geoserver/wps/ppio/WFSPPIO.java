@@ -78,8 +78,7 @@ public class WFSPPIO extends XMLPPIO {
                         "Decoding the following WFS response did not result in an object of type FeatureCollectionType: \n"
                                 + new String(streamBytes));
             }
-            throw new IllegalArgumentException(
-                    "Decoded WFS result is not a feature collection, got a: " + result);
+            throw new IllegalArgumentException("Decoded WFS result is not a feature collection, got a: " + result);
         }
     }
 

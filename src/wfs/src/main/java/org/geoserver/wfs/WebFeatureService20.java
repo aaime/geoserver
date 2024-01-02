@@ -73,8 +73,7 @@ public interface WebFeatureService20 {
      * @return A feature collection type instance.
      * @throws WFSException Any service exceptions.
      */
-    FeatureCollectionResponse getFeatureWithLock(GetFeatureWithLockType request)
-            throws WFSException;
+    FeatureCollectionResponse getFeatureWithLock(GetFeatureWithLockType request) throws WFSException;
 
     /**
      * WFS GetPropertyValue operation.
@@ -104,16 +103,13 @@ public interface WebFeatureService20 {
     TransactionResponseType transaction(TransactionType request) throws WFSException;
 
     /** WFS list stored query operation. */
-    ListStoredQueriesResponseType listStoredQueries(ListStoredQueriesType request)
-            throws WFSException;
+    ListStoredQueriesResponseType listStoredQueries(ListStoredQueriesType request) throws WFSException;
 
     /** WFS describe stored query operation. */
-    DescribeStoredQueriesResponseType describeStoredQueries(DescribeStoredQueriesType request)
-            throws WFSException;
+    DescribeStoredQueriesResponseType describeStoredQueries(DescribeStoredQueriesType request) throws WFSException;
 
     /** WFS create stored query operation. */
-    CreateStoredQueryResponseType createStoredQuery(CreateStoredQueryType request)
-            throws WFSException;
+    CreateStoredQueryResponseType createStoredQuery(CreateStoredQueryType request) throws WFSException;
 
     /** WFS drop stored query operation. */
     ExecutionStatusType dropStoredQuery(DropStoredQueryType request) throws WFSException;

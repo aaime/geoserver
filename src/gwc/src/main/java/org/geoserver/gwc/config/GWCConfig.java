@@ -371,8 +371,7 @@ public class GWCConfig implements Cloneable, Serializable {
             return isWMSCEnabled();
         }
         if ("wmts".equalsIgnoreCase(serviceId)) {
-            throw new RuntimeException(
-                    "To check if WMTS service is enable or disable use service info.");
+            throw new RuntimeException("To check if WMTS service is enable or disable use service info.");
         }
         if ("tms".equalsIgnoreCase(serviceId)) {
             return isTMSEnabled();
@@ -402,8 +401,7 @@ public class GWCConfig implements Cloneable, Serializable {
                 && Objects.equals(cacheProviderClass, gwcConfig.cacheProviderClass)
                 && Objects.equals(cacheConfigurations, gwcConfig.cacheConfigurations)
                 && Objects.equals(defaultCachingGridSetIds, gwcConfig.defaultCachingGridSetIds)
-                && Objects.equals(
-                        defaultCoverageCacheFormats, gwcConfig.defaultCoverageCacheFormats)
+                && Objects.equals(defaultCoverageCacheFormats, gwcConfig.defaultCoverageCacheFormats)
                 && Objects.equals(defaultVectorCacheFormats, gwcConfig.defaultVectorCacheFormats)
                 && Objects.equals(defaultOtherCacheFormats, gwcConfig.defaultOtherCacheFormats)
                 && Objects.equals(lockProviderName, gwcConfig.lockProviderName)

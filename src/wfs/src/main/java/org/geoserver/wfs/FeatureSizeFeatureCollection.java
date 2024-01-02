@@ -50,19 +50,15 @@ public class FeatureSizeFeatureCollection extends DecoratingSimpleFeatureCollect
      * <p>Useful in particular for stores that do not have any way to perform a fast count against a
      * filtered query, like shapefiles
      */
-    private static int FEATURE_CACHE_LIMIT =
-            Integer.valueOf(
-                    System.getProperty(
-                            "org.geoserver.wfs.getfeature.cachelimit",
-                            String.valueOf(DEFAULT_CACHE_SIZE)));
+    private static int FEATURE_CACHE_LIMIT = Integer.valueOf(
+            System.getProperty("org.geoserver.wfs.getfeature.cachelimit", String.valueOf(DEFAULT_CACHE_SIZE)));
 
     /** Allows to programmatically set the maximum number of cacheable features. */
     public static void setFeatureCacheLimit(int featureCacheLimit) {
         FEATURE_CACHE_LIMIT = featureCacheLimit;
     }
 
-    public FeatureSizeFeatureCollection(
-            SimpleFeatureCollection delegate, SimpleFeatureSource source, Query query) {
+    public FeatureSizeFeatureCollection(SimpleFeatureCollection delegate, SimpleFeatureSource source, Query query) {
         super(delegate);
         this.featureSource = source;
         this.query = query;

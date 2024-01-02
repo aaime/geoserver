@@ -36,8 +36,7 @@ public class EntityResolverProvider {
     private final AllowListEntityResolver ALLOWLIST_ENTITY_RESOLVER;
 
     /** A entity resolver provider that always disables entity resolution */
-    public static final EntityResolverProvider RESOLVE_DISABLED_PROVIDER =
-            new EntityResolverProvider(null);
+    public static final EntityResolverProvider RESOLVE_DISABLED_PROVIDER = new EntityResolverProvider(null);
 
     private final GeoServer geoServer;
 

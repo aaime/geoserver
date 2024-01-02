@@ -59,16 +59,10 @@ public class WMSRequests {
      * @return The full url for a getMap request.
      */
     public static String getTiledGetMapUrl(
-            GeoServer geoserver,
-            GetMapRequest req,
-            Layer layer,
-            int layerIndex,
-            Envelope bbox,
-            String[] kvp) {
+            GeoServer geoserver, GetMapRequest req, Layer layer, int layerIndex, Envelope bbox, String[] kvp) {
 
-        HashMap<String, String> params =
-                getGetMapParams(
-                        req, layer.getTitle(), layerIndex, layer.getStyle().getName(), bbox, kvp);
+        HashMap<String, String> params = getGetMapParams(
+                req, layer.getTitle(), layerIndex, layer.getStyle().getName(), bbox, kvp);
 
         String baseUrl = getTileCacheBaseUrl(req, geoserver);
 
@@ -139,14 +133,12 @@ public class WMSRequests {
      * @param kvp Additional or overidding kvp parameters, may be <code>null</code>
      * @return The full url for a getMap request.
      */
-    public static String getGetMapUrl(
-            GetMapRequest req, Layer layer, int layerIndex, Envelope bbox, String[] kvp) {
+    public static String getGetMapUrl(GetMapRequest req, Layer layer, int layerIndex, Envelope bbox, String[] kvp) {
 
         String layerName = layer != null ? layer.getTitle() : null;
         String style = layer != null ? layer.getStyle().getName() : null;
 
-        LinkedHashMap<String, String> params =
-                getGetMapParams(req, layerName, layerIndex, style, bbox, kvp);
+        LinkedHashMap<String, String> params = getGetMapParams(req, layerName, layerIndex, style, bbox, kvp);
         return ResponseUtils.buildURL(req.getBaseUrl(), "wms", params, URLType.SERVICE);
     }
 
@@ -171,12 +163,7 @@ public class WMSRequests {
      * @return The full url for a getMap request.
      */
     public static String getGetMapUrl(
-            GetMapRequest req,
-            String layer,
-            int layerIndex,
-            String style,
-            Envelope bbox,
-            String[] kvp) {
+            GetMapRequest req, String layer, int layerIndex, String style, Envelope bbox, String[] kvp) {
         HashMap<String, String> params = getGetMapParams(req, layer, layerIndex, style, bbox, kvp);
         return ResponseUtils.buildURL(req.getBaseUrl(), "wms", params, URLType.SERVICE);
     }
@@ -231,12 +218,7 @@ public class WMSRequests {
 
     /** Helper method for encoding GetMap request parameters. */
     static LinkedHashMap<String, String> getGetMapParams(
-            GetMapRequest req,
-            String layer,
-            int layerIndex,
-            String style,
-            Envelope bbox,
-            String[] kvp) {
+            GetMapRequest req, String layer, int layerIndex, String style, Envelope bbox, String[] kvp) {
         // parameters
         LinkedHashMap<String, String> params = new LinkedHashMap<>();
 
@@ -268,11 +250,13 @@ public class WMSRequests {
             } else {
                 // use default for layer
                 if (useLayerIndex) {
-                    styles.append(req.getLayers().get(layerIndex).getDefaultStyle().getName());
+                    styles.append(
+                            req.getLayers().get(layerIndex).getDefaultStyle().getName());
                 } else {
                     for (int i = 0; i < req.getLayers().size(); i++) {
                         if (layer.equals(req.getLayers().get(i).getName())) {
-                            styles.append(req.getLayers().get(i).getDefaultStyle().getName());
+                            styles.append(
+                                    req.getLayers().get(i).getDefaultStyle().getName());
                         }
                     }
                 }
@@ -314,14 +298,11 @@ public class WMSRequests {
 
             if (req.getRawKvp().get("filter") != null) {
                 // split out the filter we need
-                List filters =
-                        KvpUtils.readFlat(req.getRawKvp().get("filter"), KvpUtils.OUTER_DELIMETER);
+                List filters = KvpUtils.readFlat(req.getRawKvp().get("filter"), KvpUtils.OUTER_DELIMETER);
                 params.put("filter", (String) filters.get(index));
             } else if (req.getRawKvp().get("cql_filter") != null) {
                 // split out the filter we need
-                List filters =
-                        KvpUtils.readFlat(
-                                req.getRawKvp().get("cql_filter"), KvpUtils.CQL_DELIMITER);
+                List filters = KvpUtils.readFlat(req.getRawKvp().get("cql_filter"), KvpUtils.CQL_DELIMITER);
                 params.put("cql_filter", (String) filters.get(index));
             } else if (req.getRawKvp().get("featureid") != null) {
                 // semantics of feature id slightly different, replicate entire value
@@ -334,8 +315,7 @@ public class WMSRequests {
                 }
             }
             if (StringUtils.hasText(kvpMap.get("sortby"))) {
-                List<String> sortBy =
-                        KvpUtils.readFlat(kvpMap.get("sortby"), KvpUtils.OUTER_DELIMETER);
+                List<String> sortBy = KvpUtils.readFlat(kvpMap.get("sortby"), KvpUtils.OUTER_DELIMETER);
                 if (!sortBy.get(index).isEmpty()) {
                     params.put("sortby", sortBy.get(index));
                 }
@@ -494,9 +474,7 @@ public class WMSRequests {
             return layerIndex;
         }
         // layer group and one or more additional layers and/or layer groups
-        List<?> layers =
-                new LayerParser(WMS.get())
-                        .parseLayers(names, req.getRemoteOwsURL(), req.getRemoteOwsType());
+        List<?> layers = new LayerParser(WMS.get()).parseLayers(names, req.getRemoteOwsURL(), req.getRemoteOwsType());
         int numLayers = 0;
         for (int index = 0; index < layers.size(); index++) {
             if (layers.get(index) instanceof LayerGroupInfo) {
@@ -508,8 +486,7 @@ public class WMSRequests {
                 return index;
             }
         }
-        throw new IllegalArgumentException(
-                "Unable to determine raw index for " + layerIndex + " in " + names);
+        throw new IllegalArgumentException("Unable to determine raw index for " + layerIndex + " in " + names);
     }
 
     /**
@@ -519,8 +496,7 @@ public class WMSRequests {
      * @param key the key to parse
      * @throws Exception - In the event of an unsuccesful parse.
      */
-    public static void mergeEntry(
-            Map<String, String> kvp, Map<String, Object> formatOptions, final String key)
+    public static void mergeEntry(Map<String, String> kvp, Map<String, Object> formatOptions, final String key)
             throws Exception {
         // look up parser objects
         List<KvpParser> parsers = GeoServerExtensions.extensions(KvpParser.class);
@@ -655,8 +631,7 @@ public class WMSRequests {
         }
 
         @Override
-        protected List<Object> parseLayers(
-                List<String> requestedLayerNames, URL remoteOwsUrl, String remoteOwsType) {
+        protected List<Object> parseLayers(List<String> requestedLayerNames, URL remoteOwsUrl, String remoteOwsType) {
             try {
                 return super.parseLayers(requestedLayerNames, remoteOwsUrl, remoteOwsType);
             } catch (Exception e) {

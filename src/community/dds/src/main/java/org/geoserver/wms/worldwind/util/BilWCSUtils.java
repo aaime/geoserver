@@ -82,10 +82,7 @@ public class BilWCSUtils extends WCSUtils {
             param.parameter("GridGeometry").setValue(null);
             param.parameter("InterpolationType").setValue(interpolation);
 
-            coverage =
-                    (GridCoverage2D)
-                            ((Resample) processor.getOperation("Resample"))
-                                    .doOperation(param, hints);
+            coverage = (GridCoverage2D) ((Resample) processor.getOperation("Resample")).doOperation(param, hints);
         }
 
         return coverage;
@@ -116,12 +113,11 @@ public class BilWCSUtils extends WCSUtils {
         // based on the requested scale.
         //
         // ///////////////////////////////////////////////////////////////////
-        GridGeometry2D scaledGridGeometry =
-                new GridGeometry2D(
-                        newGridRange,
-                        (destinationEnvelopeInSourceCRS != null)
-                                ? destinationEnvelopeInSourceCRS
-                                : sourceCoverage.getEnvelope());
+        GridGeometry2D scaledGridGeometry = new GridGeometry2D(
+                newGridRange,
+                (destinationEnvelopeInSourceCRS != null)
+                        ? destinationEnvelopeInSourceCRS
+                        : sourceCoverage.getEnvelope());
 
         /*
          * Operations.DEFAULT.resample( coverage, sourceCRS, scaledGridGeometry,
@@ -132,12 +128,10 @@ public class BilWCSUtils extends WCSUtils {
         param.parameter("Source").setValue(coverage);
         param.parameter("CoordinateReferenceSystem").setValue(sourceCRS);
         param.parameter("GridGeometry").setValue(scaledGridGeometry);
-        param.parameter("InterpolationType")
-                .setValue(Interpolation.getInstance(Interpolation.INTERP_NEAREST));
+        param.parameter("InterpolationType").setValue(Interpolation.getInstance(Interpolation.INTERP_NEAREST));
 
         final GridCoverage2D scaledGridCoverage =
-                (GridCoverage2D)
-                        ((Resample) processor.getOperation("Resample")).doOperation(param, hints);
+                (GridCoverage2D) ((Resample) processor.getOperation("Resample")).doOperation(param, hints);
 
         return scaledGridCoverage;
     }
@@ -168,8 +162,7 @@ public class BilWCSUtils extends WCSUtils {
         final GridCoverage2D croppedGridCoverage;
 
         // intersect the envelopes
-        final GeneralBounds intersectionEnvelope =
-                new GeneralBounds(destinationEnvelopeInSourceCRS);
+        final GeneralBounds intersectionEnvelope = new GeneralBounds(destinationEnvelopeInSourceCRS);
         intersectionEnvelope.setCoordinateReferenceSystem(sourceCRS);
         intersectionEnvelope.intersect((GeneralBounds) sourceEnvelope);
 
@@ -191,9 +184,7 @@ public class BilWCSUtils extends WCSUtils {
             // param.parameter("ConserveEnvelope").setValue(conserveEnvelope);
 
             croppedGridCoverage =
-                    (GridCoverage2D)
-                            ((Crop) processor.getOperation("CoverageCrop"))
-                                    .doOperation(param, hints);
+                    (GridCoverage2D) ((Crop) processor.getOperation("CoverageCrop")).doOperation(param, hints);
         } else {
             croppedGridCoverage = (GridCoverage2D) coverage;
         }

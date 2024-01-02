@@ -22,10 +22,8 @@ import org.geotools.feature.FeatureIterator;
  */
 class CancellingFeatureCollectionBuilder {
 
-    public static SimpleFeatureCollection wrap(
-            final FeatureCollection delegate, final ProgressListener listener) {
-        InvocationHandler cancellingInvocationHandler =
-                new CancellingInvocationHandler(listener, delegate);
+    public static SimpleFeatureCollection wrap(final FeatureCollection delegate, final ProgressListener listener) {
+        InvocationHandler cancellingInvocationHandler = new CancellingInvocationHandler(listener, delegate);
 
         Class<?>[] interfaces;
         if (delegate instanceof SimpleFeatureCollection) {
@@ -33,12 +31,8 @@ class CancellingFeatureCollectionBuilder {
         } else {
             interfaces = new Class<?>[] {FeatureCollection.class};
         }
-        SimpleFeatureCollection proxy =
-                (SimpleFeatureCollection)
-                        Proxy.newProxyInstance(
-                                CancellingFeatureCollectionBuilder.class.getClassLoader(),
-                                interfaces,
-                                cancellingInvocationHandler);
+        SimpleFeatureCollection proxy = (SimpleFeatureCollection) Proxy.newProxyInstance(
+                CancellingFeatureCollectionBuilder.class.getClassLoader(), interfaces, cancellingInvocationHandler);
 
         return proxy;
     }
@@ -70,11 +64,10 @@ class CancellingFeatureCollectionBuilder {
                 } else {
                     interfaces = new Class<?>[] {FeatureIterator.class};
                 }
-                result =
-                        Proxy.newProxyInstance(
-                                CancellingFeatureCollectionBuilder.class.getClassLoader(),
-                                interfaces,
-                                new CancellingInvocationHandler(listener, result));
+                result = Proxy.newProxyInstance(
+                        CancellingFeatureCollectionBuilder.class.getClassLoader(),
+                        interfaces,
+                        new CancellingInvocationHandler(listener, result));
             }
 
             return result;

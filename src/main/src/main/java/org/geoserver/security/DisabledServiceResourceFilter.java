@@ -27,9 +27,7 @@ import org.geoserver.platform.GeoServerExtensions;
 public class DisabledServiceResourceFilter extends AbstractCatalogFilter {
 
     private boolean isFilterSubject() {
-        return request() != null
-                && request().getService() != null
-                && request().getRequest() != null;
+        return request() != null && request().getService() != null && request().getRequest() != null;
     }
 
     private Request request() {
@@ -78,10 +76,9 @@ public class DisabledServiceResourceFilter extends AbstractCatalogFilter {
         List<String> disabledServices;
         // if service configuration is enabled get layer's disable services list
         if (resource.isServiceConfiguration()) {
-            disabledServices =
-                    CollectionUtils.isEmpty(resource.getDisabledServices())
-                            ? Collections.emptyList()
-                            : resource.getDisabledServices();
+            disabledServices = CollectionUtils.isEmpty(resource.getDisabledServices())
+                    ? Collections.emptyList()
+                    : resource.getDisabledServices();
         } else {
             // service configuration disabled, get global env default disabled services list
             disabledServices = defaultDisabledServiceTypes();

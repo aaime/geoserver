@@ -27,11 +27,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/rest/metadata")
 public class MetaDataRestService {
 
-    @Autowired private MetaDataBulkService bulkService;
+    @Autowired
+    private MetaDataBulkService bulkService;
 
-    @Autowired private MetadataTemplateService templateService;
+    @Autowired
+    private MetadataTemplateService templateService;
 
-    @Autowired private GeoServer geoServer;
+    @Autowired
+    private GeoServer geoServer;
 
     @DeleteMapping
     public void clearAll(
@@ -53,8 +56,7 @@ public class MetaDataRestService {
     }
 
     @PostMapping("nativeToCustom")
-    public void nativeToCustom(
-            @RequestParam(required = false) String indexes, @RequestBody String csvFile) {
+    public void nativeToCustom(@RequestParam(required = false) String indexes, @RequestBody String csvFile) {
         bulkService.nativeToCustom(convertToList(indexes), csvFile);
     }
 
@@ -65,8 +67,7 @@ public class MetaDataRestService {
     }
 
     @PostMapping("import")
-    public void importAndLink(
-            @RequestParam(required = false) String geonetwork, @RequestBody String csvFile) {
+    public void importAndLink(@RequestParam(required = false) String geonetwork, @RequestBody String csvFile) {
         bulkService.importAndLink(geonetwork, csvFile);
     }
 
@@ -78,8 +79,7 @@ public class MetaDataRestService {
             if (layers.length() > 0) {
                 layers.append("\n");
             }
-            ResourceInfo resource =
-                    geoServer.getCatalog().getResource(resourceId, ResourceInfo.class);
+            ResourceInfo resource = geoServer.getCatalog().getResource(resourceId, ResourceInfo.class);
             if (resource != null) {
                 layers.append(resource.prefixedName());
             } else {

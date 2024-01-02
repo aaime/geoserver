@@ -22,13 +22,11 @@ public class GMLFormatLink extends CommonFormatLink {
 
     @Override
     public ExternalLink getFormatLink(PreviewLayer layer) {
-        ExternalLink gmlLink =
-                new ExternalLink(
-                        this.getComponentId(),
-                        layer.getGmlLink(gmlParamsCache) + this.getMaxFeatures(),
-                        (new StringResourceModel(this.getTitleKey(), null, null)).getString());
-        gmlLink.setVisible(
-                layer.getType() == PreviewLayerType.Vector && layer.hasServiceSupport("WFS"));
+        ExternalLink gmlLink = new ExternalLink(
+                this.getComponentId(),
+                layer.getGmlLink(gmlParamsCache) + this.getMaxFeatures(),
+                (new StringResourceModel(this.getTitleKey(), null, null)).getString());
+        gmlLink.setVisible(layer.getType() == PreviewLayerType.Vector && layer.hasServiceSupport("WFS"));
         return gmlLink;
     }
 

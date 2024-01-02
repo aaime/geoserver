@@ -56,14 +56,11 @@ public abstract class AbstractGeometryEncoder<T extends Number> implements Conve
 
     @Override
     public void marshal(
-            Object o,
-            HierarchicalStreamWriter hierarchicalStreamWriter,
-            MarshallingContext marshallingContext) {}
+            Object o, HierarchicalStreamWriter hierarchicalStreamWriter, MarshallingContext marshallingContext) {}
 
     @Override
     public Object unmarshal(
-            HierarchicalStreamReader hierarchicalStreamReader,
-            UnmarshallingContext unmarshallingContext) {
+            HierarchicalStreamReader hierarchicalStreamReader, UnmarshallingContext unmarshallingContext) {
         return null;
     }
 
@@ -86,8 +83,7 @@ public abstract class AbstractGeometryEncoder<T extends Number> implements Conve
      * @param sr the spatial reference
      * @return JSON string representation
      */
-    public static void referencedEnvelopeToJson(
-            Envelope envelope, SpatialReference sr, JSONBuilder json) {
+    public static void referencedEnvelopeToJson(Envelope envelope, SpatialReference sr, JSONBuilder json) {
         json.object();
         envelopeCoordsToJson(envelope, json);
         json.key("spatialReference");
@@ -150,8 +146,7 @@ public abstract class AbstractGeometryEncoder<T extends Number> implements Conve
 
             return new Point(coords[0], coords[1], spatialReference);
         } else if (geom instanceof org.locationtech.jts.geom.MultiPoint) {
-            org.locationtech.jts.geom.MultiPoint mpoint =
-                    (org.locationtech.jts.geom.MultiPoint) geom;
+            org.locationtech.jts.geom.MultiPoint mpoint = (org.locationtech.jts.geom.MultiPoint) geom;
             List<T[]> points = new ArrayList<>();
             for (int i = 0; i < mpoint.getNumPoints(); i++) {
                 points.add(embeddedPoint((org.locationtech.jts.geom.Point) mpoint.getGeometryN(i)));
@@ -161,8 +156,7 @@ public abstract class AbstractGeometryEncoder<T extends Number> implements Conve
             org.locationtech.jts.geom.LineString line = (org.locationtech.jts.geom.LineString) geom;
             return new Polyline(new Number[][][] {embeddedLineString(line)}, spatialReference);
         } else if (geom instanceof org.locationtech.jts.geom.MultiLineString) {
-            org.locationtech.jts.geom.MultiLineString mline =
-                    (org.locationtech.jts.geom.MultiLineString) geom;
+            org.locationtech.jts.geom.MultiLineString mline = (org.locationtech.jts.geom.MultiLineString) geom;
             List<T[][]> paths = new ArrayList<>();
 
             for (int i = 0; i < mline.getNumGeometries(); i++) {
@@ -190,8 +184,7 @@ public abstract class AbstractGeometryEncoder<T extends Number> implements Conve
             }
             return new Polygon(rings.toArray(new Number[rings.size()][][]), spatialReference);
         } else if (geom instanceof org.locationtech.jts.geom.MultiPolygon) {
-            org.locationtech.jts.geom.MultiPolygon mpoly =
-                    (org.locationtech.jts.geom.MultiPolygon) geom;
+            org.locationtech.jts.geom.MultiPolygon mpoly = (org.locationtech.jts.geom.MultiPolygon) geom;
 
             // ESRI API has no concept of multi-polygon, there is only polygon, which can have
             // multiple outer rings, depending on their orientation. The old implementation using
@@ -201,8 +194,7 @@ public abstract class AbstractGeometryEncoder<T extends Number> implements Conve
             List<T[][]> rings = new ArrayList<>();
             for (int i = 0; i < mpoly.getNumGeometries(); i++) {
                 // for now, assume these are all polygons. that SHOULD be the case anyway
-                org.locationtech.jts.geom.Polygon geometryN =
-                        (org.locationtech.jts.geom.Polygon) mpoly.getGeometryN(i);
+                org.locationtech.jts.geom.Polygon geometryN = (org.locationtech.jts.geom.Polygon) mpoly.getGeometryN(i);
 
                 // encode the outer ring
                 LineString outer = geometryN.getExteriorRing();
@@ -231,12 +223,10 @@ public abstract class AbstractGeometryEncoder<T extends Number> implements Conve
             }
             return new GeometryArray(
                     geometryType,
-                    geometries.toArray(
-                            new org.geoserver.gsr.model.geometry.Geometry[geometries.size()]),
+                    geometries.toArray(new org.geoserver.gsr.model.geometry.Geometry[geometries.size()]),
                     spatialReference);
         } else {
-            throw new IllegalStateException(
-                    "Geometry encoding not yet supported for " + geom.getGeometryType());
+            throw new IllegalStateException("Geometry encoding not yet supported for " + geom.getGeometryType());
         }
     }
 
@@ -300,8 +290,7 @@ public abstract class AbstractGeometryEncoder<T extends Number> implements Conve
      *     the collection is empty.
      * @throws IllegalArgumentException if the gemetry collection contains multiple geometry types
      */
-    protected static GeometryTypeEnum determineGeometryType(
-            org.locationtech.jts.geom.GeometryCollection collection) {
+    protected static GeometryTypeEnum determineGeometryType(org.locationtech.jts.geom.GeometryCollection collection) {
         if (collection.getNumGeometries() == 0) {
             return GeometryTypeEnum.POINT;
         } else {
@@ -309,9 +298,8 @@ public abstract class AbstractGeometryEncoder<T extends Number> implements Conve
             for (int i = 0; i < collection.getNumGeometries(); i++) {
                 Geometry g = collection.getGeometryN(i);
                 if (!type.equals(g.getGeometryType())) {
-                    throw new IllegalArgumentException(
-                            "GeoServices REST API Specification does "
-                                    + "not support mixed geometry types in geometry collections. (Core 9.8)");
+                    throw new IllegalArgumentException("GeoServices REST API Specification does "
+                            + "not support mixed geometry types in geometry collections. (Core 9.8)");
                 }
             }
             return GeometryTypeEnum.forJTSClass(collection.getGeometryN(0).getClass());
@@ -326,8 +314,7 @@ public abstract class AbstractGeometryEncoder<T extends Number> implements Conve
      *     the collection is empty.
      * @throws IllegalArgumentException if the gemetry collection contains multiple geometry types
      */
-    protected static GeometryTypeEnum determineGeometryType(
-            org.geoserver.gsr.model.geometry.Geometry[] geometries) {
+    protected static GeometryTypeEnum determineGeometryType(org.geoserver.gsr.model.geometry.Geometry[] geometries) {
         if (geometries.length == 0) {
             return GeometryTypeEnum.POINT;
         } else {
@@ -335,9 +322,8 @@ public abstract class AbstractGeometryEncoder<T extends Number> implements Conve
             for (int i = 0; i < geometries.length; i++) {
                 org.geoserver.gsr.model.geometry.Geometry g = geometries[i];
                 if (!type.equals(g.getGeometryType())) {
-                    throw new IllegalArgumentException(
-                            "GeoServices REST API Specification does "
-                                    + "not support mixed geometry types in geometry collections. (Core 9.8)");
+                    throw new IllegalArgumentException("GeoServices REST API Specification does "
+                            + "not support mixed geometry types in geometry collections. (Core 9.8)");
                 }
             }
             return type;
@@ -374,10 +360,8 @@ public abstract class AbstractGeometryEncoder<T extends Number> implements Conve
         return new org.locationtech.jts.geom.Coordinate(array.getDouble(0), array.getDouble(1));
     }
 
-    protected static org.locationtech.jts.geom.Coordinate[] jsonArrayToCoordinates(
-            JSONArray array) {
-        org.locationtech.jts.geom.Coordinate[] coordinates =
-                new org.locationtech.jts.geom.Coordinate[array.size()];
+    protected static org.locationtech.jts.geom.Coordinate[] jsonArrayToCoordinates(JSONArray array) {
+        org.locationtech.jts.geom.Coordinate[] coordinates = new org.locationtech.jts.geom.Coordinate[array.size()];
         for (int i = 0; i < array.size(); i++) {
             coordinates[i] = jsonArrayToCoordinate(array.getJSONArray(i));
         }
@@ -388,13 +372,11 @@ public abstract class AbstractGeometryEncoder<T extends Number> implements Conve
         if (array.length != 2) {
             throw new JSONException("Coordinate must be an array with exactly two elements");
         }
-        return new org.locationtech.jts.geom.Coordinate(
-                array[0].doubleValue(), array[1].doubleValue());
+        return new org.locationtech.jts.geom.Coordinate(array[0].doubleValue(), array[1].doubleValue());
     }
 
     protected static org.locationtech.jts.geom.Coordinate[] arrayToCoordinates(Number[][] array) {
-        org.locationtech.jts.geom.Coordinate[] coordinates =
-                new org.locationtech.jts.geom.Coordinate[array.length];
+        org.locationtech.jts.geom.Coordinate[] coordinates = new org.locationtech.jts.geom.Coordinate[array.length];
         for (int i = 0; i < array.length; i++) {
             coordinates[i] = arrayToCoordinate(array[i]);
         }
@@ -442,8 +424,7 @@ public abstract class AbstractGeometryEncoder<T extends Number> implements Conve
 
         SpatialReference spatialReference = null;
         if (obj.containsKey("spatialReference")) {
-            spatialReference =
-                    SpatialReferenceEncoder.fromJson(obj.getJSONObject("spatialReference"));
+            spatialReference = SpatialReferenceEncoder.fromJson(obj.getJSONObject("spatialReference"));
         }
 
         if (obj.containsKey("geometries")) {
@@ -453,15 +434,12 @@ public abstract class AbstractGeometryEncoder<T extends Number> implements Conve
             for (int i = 0; i < nestedGeometries.size(); i++) {
                 parsedGeometries[i] = jsonToGeometry(nestedGeometries.getJSONObject(i));
             }
-            return new GeometryArray(
-                    determineGeometryType(parsedGeometries), parsedGeometries, spatialReference);
-        } else if (obj.containsKey("x") && obj.containsKey("y")
-                || geometryTypeEquals(obj, GeometryTypeEnum.POINT)) {
+            return new GeometryArray(determineGeometryType(parsedGeometries), parsedGeometries, spatialReference);
+        } else if (obj.containsKey("x") && obj.containsKey("y") || geometryTypeEquals(obj, GeometryTypeEnum.POINT)) {
             double x = obj.getDouble("x");
             double y = obj.getDouble("y");
             return new Point(x, y, spatialReference);
-        } else if (obj.containsKey("points")
-                || geometryTypeEquals(obj, GeometryTypeEnum.MULTIPOINT)) {
+        } else if (obj.containsKey("points") || geometryTypeEquals(obj, GeometryTypeEnum.MULTIPOINT)) {
             JSONArray points = obj.getJSONArray("points");
             return new Multipoint(jsonArrayToPointsArray(points), spatialReference);
         } else if (obj.containsKey("paths") || geometryTypeEquals(obj, GeometryTypeEnum.POLYLINE)) {
@@ -506,8 +484,7 @@ public abstract class AbstractGeometryEncoder<T extends Number> implements Conve
 
             Number[][][] paths = pl.getPaths();
 
-            org.locationtech.jts.geom.LineString[] lines =
-                    new org.locationtech.jts.geom.LineString[paths.length];
+            org.locationtech.jts.geom.LineString[] lines = new org.locationtech.jts.geom.LineString[paths.length];
             for (int i = 0; i < paths.length; i++) {
                 org.locationtech.jts.geom.Coordinate[] coords = arrayToCoordinates(paths[i]);
                 lines[i] = geometries.createLineString(coords);
@@ -548,15 +525,13 @@ public abstract class AbstractGeometryEncoder<T extends Number> implements Conve
                 }
             }
             if (shells.size() == 1) {
-                return geometries.createPolygon(
-                        shells.get(0), holes.toArray(new LinearRing[holes.size()]));
+                return geometries.createPolygon(shells.get(0), holes.toArray(new LinearRing[holes.size()]));
             } else {
                 // Simple sets of polygons with no holes.
                 if (holes.size() == 0) {
-                    org.locationtech.jts.geom.Polygon[] polygons =
-                            shells.stream()
-                                    .map(lr -> geometries.createPolygon(lr))
-                                    .toArray(s -> new org.locationtech.jts.geom.Polygon[s]);
+                    org.locationtech.jts.geom.Polygon[] polygons = shells.stream()
+                            .map(lr -> geometries.createPolygon(lr))
+                            .toArray(s -> new org.locationtech.jts.geom.Polygon[s]);
                     return geometries.createMultiPolygon(polygons);
                 }
 
@@ -564,13 +539,10 @@ public abstract class AbstractGeometryEncoder<T extends Number> implements Conve
                 // First turn shells into polygons and sort from smallest area to largest,
                 // so that we can do assignments of holes considering the smallest polygons first
                 // in order to handle cases like a shell contained in the hole of another polygon
-                List<org.locationtech.jts.geom.Polygon> shellPolygons =
-                        shells.stream()
-                                .map(lr -> geometries.createPolygon(lr))
-                                .sorted(
-                                        (p1, p2) ->
-                                                ((int) Math.signum(p1.getArea() - p2.getArea())))
-                                .collect(Collectors.toList());
+                List<org.locationtech.jts.geom.Polygon> shellPolygons = shells.stream()
+                        .map(lr -> geometries.createPolygon(lr))
+                        .sorted((p1, p2) -> ((int) Math.signum(p1.getArea() - p2.getArea())))
+                        .collect(Collectors.toList());
                 List<org.locationtech.jts.geom.Polygon> polygons = new ArrayList<>(shells.size());
                 for (org.locationtech.jts.geom.Polygon shellPolygon : shellPolygons) {
                     List<LinearRing> polygonHoles = new ArrayList<>();
@@ -586,10 +558,9 @@ public abstract class AbstractGeometryEncoder<T extends Number> implements Conve
                     if (polygonHoles.isEmpty()) {
                         polygons.add(shellPolygon);
                     } else {
-                        org.locationtech.jts.geom.Polygon polygon =
-                                geometries.createPolygon(
-                                        (LinearRing) shellPolygon.getExteriorRing(),
-                                        polygonHoles.toArray(new LinearRing[polygonHoles.size()]));
+                        org.locationtech.jts.geom.Polygon polygon = geometries.createPolygon(
+                                (LinearRing) shellPolygon.getExteriorRing(),
+                                polygonHoles.toArray(new LinearRing[polygonHoles.size()]));
                         polygons.add(polygon);
                     }
                 }
@@ -611,8 +582,7 @@ public abstract class AbstractGeometryEncoder<T extends Number> implements Conve
             }
             return geometries.createGeometryCollection(parsedGeometries);
         } else {
-            throw new IllegalArgumentException(
-                    "Could not convert " + geometry.getGeometryType() + " to JTS");
+            throw new IllegalArgumentException("Could not convert " + geometry.getGeometryType() + " to JTS");
         }
     }
 
@@ -624,8 +594,7 @@ public abstract class AbstractGeometryEncoder<T extends Number> implements Conve
     }
 
     private static boolean geometryTypeEquals(JSONObject obj, GeometryTypeEnum type) {
-        return obj.containsKey("geometryType")
-                && obj.getString("geometryType").equals(type.value());
+        return obj.containsKey("geometryType") && obj.getString("geometryType").equals(type.value());
     }
 
     @Override

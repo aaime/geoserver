@@ -46,8 +46,7 @@ public class ProxyBaseExtUrlMangler implements URLMangler {
     public ProxyBaseExtUrlMangler(GeoServerDataDirectory dataDirectory) {
         Resource resource = dataDirectory.get(ProxyBaseExtRuleDAO.PROXY_BASE_EXT_RULES_PATH);
         proxyBaseExtensionRules = getProxyBaseExtensionRules(resource);
-        resource.addListener(
-                notify -> proxyBaseExtensionRules = getProxyBaseExtensionRules(resource));
+        resource.addListener(notify -> proxyBaseExtensionRules = getProxyBaseExtensionRules(resource));
     }
 
     /** Constructor for testing purposes */
@@ -56,26 +55,21 @@ public class ProxyBaseExtUrlMangler implements URLMangler {
     }
 
     @Override
-    public void mangleURL(
-            StringBuilder baseURL, StringBuilder path, Map<String, String> kvp, URLType type) {
+    public void mangleURL(StringBuilder baseURL, StringBuilder path, Map<String, String> kvp, URLType type) {
         getURL(baseURL, path, Optional.empty(), false);
     }
 
     private void getURL(
-            StringBuilder baseURL,
-            StringBuilder path,
-            Optional<String> headers,
-            boolean returnLogAsOutput) {
+            StringBuilder baseURL, StringBuilder path, Optional<String> headers, boolean returnLogAsOutput) {
         // does the path match any of the rules?
         Optional<String> transformer = getFirstMatchingTransformer(path.toString());
         if (transformer.isPresent()) {
             // get the template literals from the transformer
-            List<String> templateLiterals =
-                    TEMPLATE_LITERAL_PATTERN
-                            .matcher(transformer.get())
-                            .results()
-                            .map(matchResult -> matchResult.group(1))
-                            .collect(Collectors.toList());
+            List<String> templateLiterals = TEMPLATE_LITERAL_PATTERN
+                    .matcher(transformer.get())
+                    .results()
+                    .map(matchResult -> matchResult.group(1))
+                    .collect(Collectors.toList());
             if (templateLiterals.isEmpty()) {
                 // if there are no template literals, just replace the url with the transformer
                 convertURL(baseURL, path, transformer.get(), false);
@@ -87,17 +81,15 @@ public class ProxyBaseExtUrlMangler implements URLMangler {
                 try {
                     headersOut = collectHeaders(templateLiterals, headers.get());
                 } catch (IOException e) {
-                    LOGGER.info(
-                            "Proxy Base Ext: Unable to parse test headers: " + transformer.get());
+                    LOGGER.info("Proxy Base Ext: Unable to parse test headers: " + transformer.get());
                 }
             } else { // if headers are not provided from test page, collect them from the request
                 headersOut = collectHeaders(templateLiterals);
             }
             // check if headers are missing
             if (headersOut.size() != templateLiterals.size()) {
-                LOGGER.info(
-                        "Proxy Base Ext: Some headers are missing, cannot transform the URL using the transformer: "
-                                + transformer.get());
+                LOGGER.info("Proxy Base Ext: Some headers are missing, cannot transform the URL using the transformer: "
+                        + transformer.get());
                 return;
             }
             convertURL(baseURL, path, transformer.get(), headersOut, false);
@@ -122,22 +114,12 @@ public class ProxyBaseExtUrlMangler implements URLMangler {
             baseURL = new StringBuilder(url.getProtocol() + PROTOCOL_SEPARATOR + url.getHost());
             path = new StringBuilder(p.subpath(1, p.getNameCount()).toString());
         } else if (p.getNameCount() == 1) {
-            baseURL =
-                    new StringBuilder(
-                            url.getProtocol()
-                                    + PROTOCOL_SEPARATOR
-                                    + url.getHost()
-                                    + PROTOCOL_SEPARATOR
-                                    + p.getName(0));
+            baseURL = new StringBuilder(
+                    url.getProtocol() + PROTOCOL_SEPARATOR + url.getHost() + PROTOCOL_SEPARATOR + p.getName(0));
             path = new StringBuilder("");
         } else {
-            baseURL =
-                    new StringBuilder(
-                            url.getProtocol()
-                                    + PROTOCOL_SEPARATOR
-                                    + url.getHost()
-                                    + PROTOCOL_SEPARATOR
-                                    + p.getName(0));
+            baseURL = new StringBuilder(
+                    url.getProtocol() + PROTOCOL_SEPARATOR + url.getHost() + PROTOCOL_SEPARATOR + p.getName(0));
             path = new StringBuilder(p.subpath(1, p.getNameCount()).toString());
         }
         getURL(baseURL, path, Optional.ofNullable(headersAsProperties), true);
@@ -153,10 +135,8 @@ public class ProxyBaseExtUrlMangler implements URLMangler {
         String transformerReplacedLiterals = transformer;
         if (headers != null) {
             for (Map.Entry<String, String> entry : headers.entrySet()) {
-                transformerReplacedLiterals =
-                        transformerReplacedLiterals.replace(
-                                TEMPLATE_PREFIX + entry.getKey() + TEMPLATE_POSTFIX,
-                                entry.getValue());
+                transformerReplacedLiterals = transformerReplacedLiterals.replace(
+                        TEMPLATE_PREFIX + entry.getKey() + TEMPLATE_POSTFIX, entry.getValue());
             }
         }
         try {
@@ -172,11 +152,10 @@ public class ProxyBaseExtUrlMangler implements URLMangler {
             path.setLength(0);
             path.append(url.getPath());
         } catch (MalformedURLException e) {
-            String message =
-                    "The transformer, after header template replacement (if headers were provided): "
-                            + transformerReplacedLiterals
-                            + " is not a valid URL: "
-                            + e.getMessage();
+            String message = "The transformer, after header template replacement (if headers were provided): "
+                    + transformerReplacedLiterals
+                    + " is not a valid URL: "
+                    + e.getMessage();
             LOGGER.log(Level.ALL, message, e);
             if (returnLogAsOutput) {
                 baseURL.setLength(0);
@@ -187,11 +166,7 @@ public class ProxyBaseExtUrlMangler implements URLMangler {
         }
     }
 
-    private void convertURL(
-            StringBuilder baseURL,
-            StringBuilder path,
-            String transformer,
-            boolean returnLogAsOutput) {
+    private void convertURL(StringBuilder baseURL, StringBuilder path, String transformer, boolean returnLogAsOutput) {
         convertURL(baseURL, path, transformer, null, returnLogAsOutput);
     }
 
@@ -213,8 +188,8 @@ public class ProxyBaseExtUrlMangler implements URLMangler {
                 .collect(Collectors.toMap(item -> item, HTTPHeadersCollector::getHeader));
     }
 
-    private Map<String, String> collectHeaders(
-            List<String> requiredHeaders, String headersAsProperties) throws IOException {
+    private Map<String, String> collectHeaders(List<String> requiredHeaders, String headersAsProperties)
+            throws IOException {
         Properties properties = parsePropertiesString(headersAsProperties);
         return requiredHeaders.stream()
                 .filter(headerName -> properties.getProperty(headerName) != null)

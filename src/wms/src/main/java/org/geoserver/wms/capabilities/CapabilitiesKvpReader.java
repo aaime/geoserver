@@ -65,8 +65,7 @@ public class CapabilitiesKvpReader extends KvpRequestReader {
             request.setRootLayerEnabled(Boolean.valueOf((String) rawKvp.get("ROOTLAYER")));
         }
         String[] acceptLanguages =
-                RequestUtils.getLanguageValue(
-                        rawKvp, InternationalContentHelper.ACCEPTLANGUAGES_PARAM);
+                RequestUtils.getLanguageValue(rawKvp, InternationalContentHelper.ACCEPTLANGUAGES_PARAM);
         if (acceptLanguages != null) request.setAcceptLanguages(acceptLanguages);
         return request;
     }

@@ -39,13 +39,12 @@ public class ProcessStartupFilter implements ProcessFilter, ExtensionPriority {
                 throws ProcessException {
             if (monitor != null) {
                 monitor.started();
-                monitor =
-                        new DelegateProgressListener(monitor) {
-                            @Override
-                            public void started() {
-                                // do not pass over, we already called "started"
-                            }
-                        };
+                monitor = new DelegateProgressListener(monitor) {
+                    @Override
+                    public void started() {
+                        // do not pass over, we already called "started"
+                    }
+                };
             }
             return delegate.execute(input, monitor);
         }

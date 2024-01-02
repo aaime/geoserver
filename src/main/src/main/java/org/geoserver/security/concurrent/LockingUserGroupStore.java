@@ -19,8 +19,7 @@ import org.geoserver.security.validation.PasswordPolicyException;
  *
  * @author christian
  */
-public class LockingUserGroupStore extends LockingUserGroupService
-        implements GeoServerUserGroupStore {
+public class LockingUserGroupStore extends LockingUserGroupService implements GeoServerUserGroupStore {
 
     /** Constructor for the locking wrapper */
     public LockingUserGroupStore(GeoServerUserGroupStore store) {
@@ -151,8 +150,7 @@ public class LockingUserGroupStore extends LockingUserGroupService
      *     org.geoserver.security.impl.GeoServerUserGroup)
      */
     @Override
-    public void associateUserToGroup(GeoServerUser user, GeoServerUserGroup group)
-            throws IOException {
+    public void associateUserToGroup(GeoServerUser user, GeoServerUserGroup group) throws IOException {
         writeLock();
         try {
             getStore().associateUserToGroup(user, group);
@@ -169,8 +167,7 @@ public class LockingUserGroupStore extends LockingUserGroupService
      *     org.geoserver.security.impl.GeoServerUserGroup)
      */
     @Override
-    public void disAssociateUserFromGroup(GeoServerUser user, GeoServerUserGroup group)
-            throws IOException {
+    public void disAssociateUserFromGroup(GeoServerUser user, GeoServerUserGroup group) throws IOException {
         writeLock();
         try {
             getStore().disAssociateUserFromGroup(user, group);

@@ -34,8 +34,7 @@ public class JPEGLegendOutputFormat implements GetLegendGraphicOutputFormat {
      * @see GetLegendGraphicOutputFormat#produceLegendGraphic(GetLegendGraphicRequest)
      */
     @Override
-    public LegendGraphic produceLegendGraphic(GetLegendGraphicRequest request)
-            throws ServiceException {
+    public LegendGraphic produceLegendGraphic(GetLegendGraphicRequest request) throws ServiceException {
 
         request.setTransparent(false);
 

@@ -210,12 +210,10 @@ public class XMPPBoshEndpoint implements Endpoint {
             // We create a second ServerConnector, passing in the http configuration
             // we just made along with the previously created ssl context factory.
             // Next we set the port and a longer idle timeout.
-            connector =
-                    new ServerConnector(
-                            server,
-                            new SslConnectionFactory(
-                                    sslContextFactory, HttpVersion.HTTP_1_1.asString()),
-                            new HttpConnectionFactory(https_config));
+            connector = new ServerConnector(
+                    server,
+                    new SslConnectionFactory(sslContextFactory, HttpVersion.HTTP_1_1.asString()),
+                    new HttpConnectionFactory(https_config));
             connector.setIdleTimeout(500000);
         } else {
             connector = new ServerConnector(server, new HttpConnectionFactory(http_config));
@@ -232,8 +230,7 @@ public class XMPPBoshEndpoint implements Endpoint {
      * return the collection
      */
     protected Handler createHandler() {
-        ServletContextHandler boshContext =
-                new ServletContextHandler(ServletContextHandler.SESSIONS);
+        ServletContextHandler boshContext = new ServletContextHandler(ServletContextHandler.SESSIONS);
         boshContext.setContextPath(contextPath);
         BoshServlet boshServlet = new BoshServlet();
         boshServlet.setServerRuntimeContext(serverRuntimeContext);

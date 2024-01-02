@@ -22,10 +22,7 @@ class ChainedProcessListenerNotifier {
     private boolean chained;
 
     public ChainedProcessListenerNotifier(
-            String executionId,
-            String processName,
-            boolean chained,
-            List<ChainedProcessListener> listeners) {
+            String executionId, String processName, boolean chained, List<ChainedProcessListener> listeners) {
         this.listeners = listeners;
         this.executionId = executionId;
         this.processName = processName;

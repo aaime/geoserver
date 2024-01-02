@@ -63,8 +63,7 @@ public final class Files {
          * @throws IllegalArgumentException If path contains '..'
          */
         private static String valid(String path) {
-            if (path != null
-                    && Arrays.stream(Paths.convert(path).split("/")).anyMatch(".."::equals)) {
+            if (path != null && Arrays.stream(Paths.convert(path).split("/")).anyMatch(".."::equals)) {
                 throw new IllegalArgumentException("Contains invalid '..' path: " + path);
             }
             return path;
@@ -121,10 +120,7 @@ public final class Files {
                 File tryTemp;
                 do {
                     UUID uuid = UUID.randomUUID();
-                    tryTemp =
-                            new File(
-                                    file.getParentFile(),
-                                    String.format("%s.%s.tmp", file.getName(), uuid));
+                    tryTemp = new File(file.getParentFile(), String.format("%s.%s.tmp", file.getName(), uuid));
                 } while (tryTemp.exists());
 
                 temp = tryTemp;
@@ -236,9 +232,7 @@ public final class Files {
 
         @Override
         public Type getType() {
-            return file.exists()
-                    ? (file.isDirectory() ? Type.DIRECTORY : Type.RESOURCE)
-                    : Type.UNDEFINED;
+            return file.exists() ? (file.isDirectory() ? Type.DIRECTORY : Type.RESOURCE) : Type.UNDEFINED;
         }
 
         @Override
@@ -472,10 +466,9 @@ public final class Files {
         }
 
         boolean win = System.getProperty("os.name").startsWith("Windows");
-        boolean samePath =
-                win
-                        ? source.getCanonicalPath().equalsIgnoreCase(dest.getCanonicalPath())
-                        : source.getCanonicalPath().equals(dest.getCanonicalPath());
+        boolean samePath = win
+                ? source.getCanonicalPath().equalsIgnoreCase(dest.getCanonicalPath())
+                : source.getCanonicalPath().equals(dest.getCanonicalPath());
         if (samePath) return true;
 
         // windows needs special treatment, we cannot rename onto an existing file
@@ -483,17 +476,15 @@ public final class Files {
             // windows does not do atomic renames, and can not rename a file if the dest file
             // exists
             if (!dest.delete()) {
-                throw new IOException(
-                        "Failed to move "
-                                + source.getAbsolutePath()
-                                + " - unable to remove existing: "
-                                + dest.getCanonicalPath());
+                throw new IOException("Failed to move "
+                        + source.getAbsolutePath()
+                        + " - unable to remove existing: "
+                        + dest.getCanonicalPath());
             }
         }
         // make sure the rename actually succeeds
         if (!source.renameTo(dest)) {
-            throw new IOException(
-                    "Failed to move " + source.getAbsolutePath() + " to " + dest.getAbsolutePath());
+            throw new IOException("Failed to move " + source.getAbsolutePath() + " to " + dest.getAbsolutePath());
         }
         return true;
     }
@@ -522,8 +513,7 @@ public final class Files {
      */
     private static boolean emptyDirectory(File directory) {
         if (!directory.isDirectory()) {
-            throw new IllegalArgumentException(
-                    directory + " does not appear to be a directory at all...");
+            throw new IllegalArgumentException(directory + " does not appear to be a directory at all...");
         }
 
         boolean allClean = true;

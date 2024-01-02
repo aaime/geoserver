@@ -21,8 +21,7 @@ public class MultiTokenValidator implements TokenValidator {
     }
 
     @Override
-    public void verifyToken(
-            OpenIdConnectFilterConfig config, Map accessTokenClaims, Map userInfoClaims)
+    public void verifyToken(OpenIdConnectFilterConfig config, Map accessTokenClaims, Map userInfoClaims)
             throws Exception {
         if (validators == null) {
             return; // nothing to do

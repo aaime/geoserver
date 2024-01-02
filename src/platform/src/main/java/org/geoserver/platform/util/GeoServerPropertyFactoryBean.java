@@ -42,18 +42,12 @@ public abstract class GeoServerPropertyFactoryBean<T> extends AbstractFactoryBea
         String value = GeoServerExtensions.getProperty(propertyName, applicationContext);
         Object[] logParams = {propertyName, value, getDefaultValue()};
         if (value == null || value.isEmpty()) {
-            LOGGER.log(
-                    Level.INFO,
-                    "{0} was empty or undefined, using default \"{2}\" instead",
-                    logParams);
+            LOGGER.log(Level.INFO, "{0} was empty or undefined, using default \"{2}\" instead", logParams);
             return getDefaultBean();
         }
         T bean = createInstance(value);
         if (bean == null) {
-            LOGGER.log(
-                    Level.WARNING,
-                    "{0} had unexpected value \"{1}\", using default \"{2}\" instead",
-                    logParams);
+            LOGGER.log(Level.WARNING, "{0} had unexpected value \"{1}\", using default \"{2}\" instead", logParams);
             bean = getDefaultBean();
         }
         return bean;
@@ -66,8 +60,7 @@ public abstract class GeoServerPropertyFactoryBean<T> extends AbstractFactoryBea
         }
         T defaultBean = createInstance(value);
         if (defaultBean == null) {
-            throw new IllegalStateException(
-                    propertyName + " default value \"" + value + "\" did not prduce a bean");
+            throw new IllegalStateException(propertyName + " default value \"" + value + "\" did not prduce a bean");
         }
         return defaultBean;
     }

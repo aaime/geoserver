@@ -18,8 +18,7 @@ import org.geoserver.wfs.request.FeatureCollectionResponse;
 public class HttpHeaderLinksAppender extends AbstractDispatcherCallback {
 
     @Override
-    public Response responseDispatched(
-            Request request, Operation operation, Object result, Response response) {
+    public Response responseDispatched(Request request, Operation operation, Object result, Response response) {
         // is this a feature response we are about to encode?
         if (result instanceof FeaturesResponse) {
             HttpServletResponse httpResponse = request.getHttpResponse();
@@ -36,8 +35,7 @@ public class HttpHeaderLinksAppender extends AbstractDispatcherCallback {
         return response;
     }
 
-    private void addLink(
-            HttpServletResponse httpResponse, String rel, String contentType, String href) {
+    private void addLink(HttpServletResponse httpResponse, String rel, String contentType, String href) {
         String headerValue = String.format("<%s>; rel=\"%s\"; type=\"%s\"", href, rel, contentType);
         httpResponse.addHeader("Link", headerValue);
     }

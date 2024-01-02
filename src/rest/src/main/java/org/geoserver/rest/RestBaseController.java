@@ -140,9 +140,7 @@ public abstract class RestBaseController implements RequestBodyAdvice {
 
             template = tryLoadTemplate(configuration, clazz.getSimpleName() + ".ftl");
             if (template == null) {
-                template =
-                        tryLoadTemplate(
-                                configuration, clazz.getSimpleName().toLowerCase() + ".ftl");
+                template = tryLoadTemplate(configuration, clazz.getSimpleName().toLowerCase() + ".ftl");
             }
             if (template == null) {
                 for (Class<?> interfaze : clazz.getInterfaces()) {
@@ -224,8 +222,7 @@ public abstract class RestBaseController implements RequestBodyAdvice {
      */
     // TODO: Remove this once all references have been removed (should just use
     // ResourceNotFoundExceptions)
-    protected <T> RestWrapper<T> wrapObject(
-            T object, Class<T> clazz, String errorMessage, Boolean quietOnNotFound) {
+    protected <T> RestWrapper<T> wrapObject(T object, Class<T> clazz, String errorMessage, Boolean quietOnNotFound) {
         errorMessage = quietOnNotFound != null && quietOnNotFound ? "" : errorMessage;
         if (object == null) {
             throw new RestException(errorMessage, HttpStatus.NOT_FOUND);
@@ -242,9 +239,7 @@ public abstract class RestBaseController implements RequestBodyAdvice {
      * org.springframework.web.bind.annotation.ControllerAdvice}
      */
     public boolean supports(
-            MethodParameter methodParameter,
-            Type targetType,
-            Class<? extends HttpMessageConverter<?>> converterType) {
+            MethodParameter methodParameter, Type targetType, Class<? extends HttpMessageConverter<?>> converterType) {
         return false;
     }
 
@@ -312,8 +307,7 @@ public abstract class RestBaseController implements RequestBodyAdvice {
     protected RequestAttributes getNonNullRequestAttributes() {
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         if (requestAttributes == null) {
-            throw new NullPointerException(
-                    "Could not get request attributes in the current request");
+            throw new NullPointerException("Could not get request attributes in the current request");
         }
         return requestAttributes;
     }
@@ -324,11 +318,8 @@ public abstract class RestBaseController implements RequestBodyAdvice {
         if (attributes == null) return Collections.emptyMap();
 
         @SuppressWarnings("unchecked")
-        Map<String, String> result =
-                (Map<String, String>)
-                        attributes.getAttribute(
-                                HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE,
-                                RequestAttributes.SCOPE_REQUEST);
+        Map<String, String> result = (Map<String, String>) attributes.getAttribute(
+                HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, RequestAttributes.SCOPE_REQUEST);
         if (result == null) return Collections.emptyMap();
 
         return result;

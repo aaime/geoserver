@@ -46,10 +46,7 @@ class JDBCPasswordEncryptionHelper {
                 configuration = cloneAndSetPassword(configuration, decoded);
             } catch (EncryptionOperationNotPossibleException e) {
                 // fine, it must have been a plain text password
-                LOGGER.log(
-                        Level.FINE,
-                        "Unencrypting the password failed, assuming it is a plain text one",
-                        e);
+                LOGGER.log(Level.FINE, "Unencrypting the password failed, assuming it is a plain text one", e);
             }
         }
 

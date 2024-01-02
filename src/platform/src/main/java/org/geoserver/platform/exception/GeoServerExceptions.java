@@ -69,8 +69,7 @@ public class GeoServerExceptions {
         return null;
     }
 
-    static String doLocalize(
-            String id, Object[] args, Class<? extends IGeoServerException> clazz, Locale locale) {
+    static String doLocalize(String id, Object[] args, Class<? extends IGeoServerException> clazz, Locale locale) {
 
         ResourceBundle bundle = null;
         try {

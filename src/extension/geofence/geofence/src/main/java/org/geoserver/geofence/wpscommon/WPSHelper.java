@@ -41,8 +41,7 @@ public class WPSHelper implements ApplicationContextAware {
             executionIdRetriever = applicationContext.getBean(ExecutionIdRetriever.class);
             helperAvailable = true;
         } catch (NoSuchBeanDefinitionException e) {
-            LOGGER.severe(
-                    "GeoFence-WPS integration classes not available. Please include geofence-wps module.");
+            LOGGER.severe("GeoFence-WPS integration classes not available. Please include geofence-wps module.");
         }
     }
 
@@ -54,8 +53,7 @@ public class WPSHelper implements ApplicationContextAware {
      *     consideration since the geometries are more up-to-date. Returns null if no forther
      *     resolution was computed.
      */
-    public AccessInfoUtils.WPSAccessInfo resolveWPSAccess(
-            Request req, RuleFilter filter, AccessInfo wpsAccessInfo) {
+    public AccessInfoUtils.WPSAccessInfo resolveWPSAccess(Request req, RuleFilter filter, AccessInfo wpsAccessInfo) {
         if (!helperAvailable) {
             LOGGER.warning("WPSHelper not available");
             // For more security we should deny the access, anyway let's tell

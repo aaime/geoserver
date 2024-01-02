@@ -21,14 +21,15 @@ public class PropertySelectionContext {
         this.dynamicKeyCurrent = false;
     }
 
-    public PropertySelectionContext(
-            String staticFullKey, boolean dynamicKeyCurrent, boolean dynamicKeyParent) {
+    public PropertySelectionContext(String staticFullKey, boolean dynamicKeyCurrent, boolean dynamicKeyParent) {
         this.staticFullKey = staticFullKey;
         this.dynamicKeyCurrent = dynamicKeyCurrent;
         this.dynamicKeyParent = dynamicKeyParent;
-    };
+    }
+    ;
 
-    public PropertySelectionContext() {};
+    public PropertySelectionContext() {}
+    ;
 
     /**
      * @return true if the current node as at least one parent with a dynamic key. false otherwise.

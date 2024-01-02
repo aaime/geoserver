@@ -78,18 +78,14 @@ public class OWSResponseFactory {
      * @return a {@link GetFeatureInfoResponse} matching the {@link TemplateIdentifier} and
      *     origFormat param.
      */
-    public GetFeatureInfoResponse featureInfoResponse(
-            TemplateIdentifier identifier, String origFormat) {
+    public GetFeatureInfoResponse featureInfoResponse(TemplateIdentifier identifier, String origFormat) {
         if (identifier == null) return null;
         TemplateFeatureInfoOutputFormat resp = null;
-        if (identifier.equals(TemplateIdentifier.HTML))
-            resp = new HTMLTemplateFeatureInfo(origFormat);
-        else if (identifier.equals(TemplateIdentifier.GEOJSON)
-                || identifier.equals(TemplateIdentifier.JSON)) {
+        if (identifier.equals(TemplateIdentifier.HTML)) resp = new HTMLTemplateFeatureInfo(origFormat);
+        else if (identifier.equals(TemplateIdentifier.GEOJSON) || identifier.equals(TemplateIdentifier.JSON)) {
             resp = new GeoJSONTemplateFeatureInfo(identifier, origFormat);
         } else if (isGML(identifier)) resp = new GMLTemplateFeatureInfo(identifier, origFormat);
-        else if (identifier.equals(TemplateIdentifier.JSONLD))
-            resp = new JSONLDTemplateFeatureInfo();
+        else if (identifier.equals(TemplateIdentifier.JSONLD)) resp = new JSONLDTemplateFeatureInfo();
 
         WMS wms = GeoServerExtensions.bean(WMS.class);
         GetFeatureInfoResponse response = new TemplateGetFeatureInfoResponse(wms, resp);

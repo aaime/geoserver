@@ -30,8 +30,7 @@ public class DelegatingAuthenticationProvider extends GeoServerAuthenticationPro
     }
 
     @Override
-    public final Authentication authenticate(
-            Authentication authentication, HttpServletRequest request) {
+    public final Authentication authenticate(Authentication authentication, HttpServletRequest request) {
         try {
             return doAuthenticate(authentication, request);
         } catch (AuthenticationException ex) {
@@ -51,8 +50,7 @@ public class DelegatingAuthenticationProvider extends GeoServerAuthenticationPro
      * <p>This method does not need to worry about handling any {@link AuthenticationException},
      * they should be thrown back.
      */
-    protected Authentication doAuthenticate(
-            Authentication authentication, HttpServletRequest request)
+    protected Authentication doAuthenticate(Authentication authentication, HttpServletRequest request)
             throws AuthenticationException {
         return authProvider.authenticate(authentication);
     }

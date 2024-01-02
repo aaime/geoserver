@@ -41,8 +41,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
  * {@link DescribeProcess}, {@link DescribeParameter} and {@link DescribeResult}. Each bean will
  * have a "execute" method taking the process parameters as arguments and returning the results
  */
-public class SpringBeanProcessFactory
-        extends org.geotools.process.factory.AnnotationDrivenProcessFactory
+public class SpringBeanProcessFactory extends org.geotools.process.factory.AnnotationDrivenProcessFactory
         implements ApplicationContextAware, ApplicationListener {
 
     Map<String, Class<?>> classMap;
@@ -60,24 +59,23 @@ public class SpringBeanProcessFactory
         this.markerInterface = markerInterface;
 
         // create an iterator that will register this factory into SPI
-        iterator =
-                new FactoryIteratorProvider() {
+        iterator = new FactoryIteratorProvider() {
 
-                    @Override
-                    public <T> Iterator<T> iterator(Class<T> category) {
-                        if (ProcessFactory.class.isAssignableFrom(category)) {
-                            return getFactoryIterator();
-                        } else {
-                            return null;
-                        }
-                    }
+            @Override
+            public <T> Iterator<T> iterator(Class<T> category) {
+                if (ProcessFactory.class.isAssignableFrom(category)) {
+                    return getFactoryIterator();
+                } else {
+                    return null;
+                }
+            }
 
-                    @SuppressWarnings("unchecked")
-                    private <T> Iterator<T> getFactoryIterator() {
-                        return (Iterator<T>)
-                                Collections.singletonList(SpringBeanProcessFactory.this).iterator();
-                    }
-                };
+            @SuppressWarnings("unchecked")
+            private <T> Iterator<T> getFactoryIterator() {
+                return (Iterator<T>)
+                        Collections.singletonList(SpringBeanProcessFactory.this).iterator();
+            }
+        };
 
         // register the new process and make the process function factory lookup again the processes
         Processors.addProcessFactory(this);

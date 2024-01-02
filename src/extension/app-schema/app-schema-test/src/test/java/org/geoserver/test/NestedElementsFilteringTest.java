@@ -58,11 +58,8 @@ public final class NestedElementsFilteringTest extends AbstractAppSchemaTestSupp
     @Test
     public void testWfsGetFeatureWithAdvancedNestedFilter() throws Exception {
         // execute the WFS 2.0 request
-        MockHttpServletResponse response =
-                postAsServletResponse(
-                        "wfs",
-                        readResource(
-                                "/test-data/stations/nestedElements/requests/wfs_get_feature_1.xml"));
+        MockHttpServletResponse response = postAsServletResponse(
+                "wfs", readResource("/test-data/stations/nestedElements/requests/wfs_get_feature_1.xml"));
         // check that station 1 was returned
         String content = response.getContentAsString();
         assertThat(content, containsString("gml:id=\"ins.1\""));
@@ -74,10 +71,7 @@ public final class NestedElementsFilteringTest extends AbstractAppSchemaTestSupp
     public void testWfsIncludedNamespacesDeclaration() throws Exception {
         // execute the WFS 2.0 request
         Document doc =
-                postAsDOM(
-                        "wfs",
-                        readResource(
-                                "/test-data/stations/nestedElements/requests/wfs_get_feature_1.xml"));
+                postAsDOM("wfs", readResource("/test-data/stations/nestedElements/requests/wfs_get_feature_1.xml"));
         Node perAttributeNode = doc.getFirstChild().getAttributes().getNamedItem("xmlns:per");
         assertTrue(perAttributeNode instanceof Attr);
         Attr perAttr = (Attr) perAttributeNode;

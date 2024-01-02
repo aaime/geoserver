@@ -71,8 +71,7 @@ public class LegacyCatalogImporterTest extends GeoServerAbstractTestSupport {
         File dataDirectoryRoot = mockData.getDataDirectoryRoot();
         importer.imprt(dataDirectoryRoot);
 
-        FeatureTypeInfo typeInfo =
-                catalog.getFeatureTypeByName(typeName.getNamespaceURI(), typeName.getLocalPart());
+        FeatureTypeInfo typeInfo = catalog.getFeatureTypeByName(typeName.getNamespaceURI(), typeName.getLocalPart());
         assertEquals("EPSG:4326", typeInfo.getSRS());
     }
 }

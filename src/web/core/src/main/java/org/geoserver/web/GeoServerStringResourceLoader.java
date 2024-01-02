@@ -52,11 +52,7 @@ public class GeoServerStringResourceLoader implements IStringResourceLoader {
      */
     @Override
     public String loadStringResource(
-            Class<?> clazz,
-            final String key,
-            final Locale locale,
-            final String style,
-            String variation) {
+            Class<?> clazz, final String key, final Locale locale, final String style, String variation) {
         // Load the properties associated with the path
         IPropertiesFactory propertiesFactory =
                 Application.get().getResourceSettings().getPropertiesFactory();
@@ -65,8 +61,7 @@ public class GeoServerStringResourceLoader implements IStringResourceLoader {
         String path = "/GeoServerApplication";
         while (true) {
             // Iterator over all the combinations
-            ResourceNameIterator iter =
-                    new ResourceNameIterator(path, style, variation, locale, null, false);
+            ResourceNameIterator iter = new ResourceNameIterator(path, style, variation, locale, null, false);
             while (iter.hasNext()) {
                 String newPath = iter.next();
 
@@ -104,11 +99,7 @@ public class GeoServerStringResourceLoader implements IStringResourceLoader {
      */
     @Override
     public String loadStringResource(
-            final Component component,
-            final String key,
-            Locale locale,
-            String style,
-            String variation) {
+            final Component component, final String key, Locale locale, String style, String variation) {
         if (component == null) {
             return null;
         }
@@ -178,15 +169,11 @@ public class GeoServerStringResourceLoader implements IStringResourceLoader {
         }
 
         // Stop at all html markup base classes
-        if (clazz.equals(WebPage.class)
-                || clazz.equals(WebMarkupContainer.class)
-                || clazz.equals(WebComponent.class)) {
+        if (clazz.equals(WebPage.class) || clazz.equals(WebMarkupContainer.class) || clazz.equals(WebComponent.class)) {
             return true;
         }
 
         // Stop at all wicket base classes
-        return clazz.equals(Page.class)
-                || clazz.equals(MarkupContainer.class)
-                || clazz.equals(Component.class);
+        return clazz.equals(Page.class) || clazz.equals(MarkupContainer.class) || clazz.equals(Component.class);
     }
 }

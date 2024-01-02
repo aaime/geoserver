@@ -85,60 +85,55 @@ public abstract class AbstractCatalogBackupRestoreTasklet<T> extends BackupResto
     /*
      *
      */
-    protected static Map<String, Filter<Resource>> resources =
-            new HashMap<String, Filter<Resource>>();
+    protected static Map<String, Filter<Resource>> resources = new HashMap<String, Filter<Resource>>();
 
     /*
      *
      */
     static {
-        resources.put(
-                "/",
-                new Filter<Resource>() {
+        resources.put("/", new Filter<Resource>() {
 
-                    @Override
-                    public boolean accept(Resource res) {
-                        if (res.getType() == Type.DIRECTORY
-                                        && !res.name().equalsIgnoreCase("temp")
-                                        && !res.name().equalsIgnoreCase("tmp")
-                                        && !res.name().equalsIgnoreCase("demo")
-                                        && !res.name().equalsIgnoreCase("logs")
-                                        && !res.name().equalsIgnoreCase("images")
-                                        && !res.name().equalsIgnoreCase("gwc")
-                                        && !res.name().equalsIgnoreCase("gwc-layers")
-                                        && !res.name().equalsIgnoreCase("layergroups")
-                                        && !res.name().equalsIgnoreCase("palettes")
-                                        && !res.name().equalsIgnoreCase("plugIns")
-                                        && !res.name().equalsIgnoreCase("styles")
-                                        && !res.name().equalsIgnoreCase("security")
-                                        && !res.name().equalsIgnoreCase("workspaces")
-                                        && !res.name().equalsIgnoreCase("user_projections")
-                                        && !res.name().equalsIgnoreCase("validation")
-                                        && !res.name().equalsIgnoreCase("www")
-                                        && !res.name().equalsIgnoreCase("csw")
-                                || (res.getType() == Type.RESOURCE
-                                        && (res.name().endsWith(".properties")
-                                                || res.name().endsWith(".ini")
-                                                || res.name().endsWith(".conf")))) {
-                            return true;
-                        }
-                        return false;
-                    }
-                });
+            @Override
+            public boolean accept(Resource res) {
+                if (res.getType() == Type.DIRECTORY
+                                && !res.name().equalsIgnoreCase("temp")
+                                && !res.name().equalsIgnoreCase("tmp")
+                                && !res.name().equalsIgnoreCase("demo")
+                                && !res.name().equalsIgnoreCase("logs")
+                                && !res.name().equalsIgnoreCase("images")
+                                && !res.name().equalsIgnoreCase("gwc")
+                                && !res.name().equalsIgnoreCase("gwc-layers")
+                                && !res.name().equalsIgnoreCase("layergroups")
+                                && !res.name().equalsIgnoreCase("palettes")
+                                && !res.name().equalsIgnoreCase("plugIns")
+                                && !res.name().equalsIgnoreCase("styles")
+                                && !res.name().equalsIgnoreCase("security")
+                                && !res.name().equalsIgnoreCase("workspaces")
+                                && !res.name().equalsIgnoreCase("user_projections")
+                                && !res.name().equalsIgnoreCase("validation")
+                                && !res.name().equalsIgnoreCase("www")
+                                && !res.name().equalsIgnoreCase("csw")
+                        || (res.getType() == Type.RESOURCE
+                                && (res.name().endsWith(".properties")
+                                        || res.name().endsWith(".ini")
+                                        || res.name().endsWith(".conf")))) {
+                    return true;
+                }
+                return false;
+            }
+        });
         resources.put("demo", AnyFilter.INSTANCE);
         resources.put("images", AnyFilter.INSTANCE);
-        resources.put(
-                "logs",
-                new Filter<Resource>() {
+        resources.put("logs", new Filter<Resource>() {
 
-                    @Override
-                    public boolean accept(Resource res) {
-                        if (!res.name().endsWith(".xml")) {
-                            return true;
-                        }
-                        return false;
-                    }
-                });
+            @Override
+            public boolean accept(Resource res) {
+                if (!res.name().endsWith(".xml")) {
+                    return true;
+                }
+                return false;
+            }
+        });
         resources.put("gwc-layers", AnyFilter.INSTANCE);
         resources.put("layergroups", AnyFilter.INSTANCE);
         resources.put("palettes", AnyFilter.INSTANCE);
@@ -147,22 +142,20 @@ public abstract class AbstractCatalogBackupRestoreTasklet<T> extends BackupResto
         // NOTE: it would be better to use ad-hoc Visitors in order to scan the
         // Style Resources and download only the ones needed.
         // This maybe an improvement for a future release/refactoring.
-        resources.put(
-                "styles",
-                new Filter<Resource>() {
+        resources.put("styles", new Filter<Resource>() {
 
-                    @Override
-                    public boolean accept(Resource res) {
-                        if (res.name().toLowerCase().endsWith("sld")
-                                || // exclude everything ends with SLD ext (SLD, YSLD, ...)
-                                res.name().toLowerCase().endsWith(".xml")
-                                || res.name().toLowerCase().endsWith(".css")) // exclude CSS also
-                        {
-                            return false;
-                        }
-                        return true;
-                    }
-                });
+            @Override
+            public boolean accept(Resource res) {
+                if (res.name().toLowerCase().endsWith("sld")
+                        || // exclude everything ends with SLD ext (SLD, YSLD, ...)
+                        res.name().toLowerCase().endsWith(".xml")
+                        || res.name().toLowerCase().endsWith(".css")) // exclude CSS also
+                {
+                    return false;
+                }
+                return true;
+            }
+        });
         resources.put("user_projections", AnyFilter.INSTANCE);
         resources.put("validation", AnyFilter.INSTANCE);
         resources.put("www", AnyFilter.INSTANCE);
@@ -188,21 +181,18 @@ public abstract class AbstractCatalogBackupRestoreTasklet<T> extends BackupResto
     }
 
     @Override
-    public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext)
-            throws Exception {
+    public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
         super.retrieveInterstepData(chunkContext.getStepContext().getStepExecution());
         JobExecution jobExecution =
                 chunkContext.getStepContext().getStepExecution().getJobExecution();
 
-        FutureTask<RepeatStatus> theTask =
-                new FutureTask<RepeatStatus>(
-                        new Callable<RepeatStatus>() {
+        FutureTask<RepeatStatus> theTask = new FutureTask<RepeatStatus>(new Callable<RepeatStatus>() {
 
-                            @Override
-                            public RepeatStatus call() throws Exception {
-                                return doExecute(contribution, chunkContext, jobExecution);
-                            }
-                        });
+            @Override
+            public RepeatStatus call() throws Exception {
+                return doExecute(contribution, chunkContext, jobExecution);
+            }
+        });
 
         long t0 = System.currentTimeMillis();
 
@@ -224,8 +214,7 @@ public abstract class AbstractCatalogBackupRestoreTasklet<T> extends BackupResto
                 theTask.cancel(interruptOnCancel);
 
                 JobInterruptedException exception =
-                        new JobInterruptedException(
-                                "Job " + currentExecution + " did not finish within the timeout.");
+                        new JobInterruptedException("Job " + currentExecution + " did not finish within the timeout.");
                 logValidationExceptions((T) null, exception);
 
                 return RepeatStatus.FINISHED;
@@ -233,8 +222,7 @@ public abstract class AbstractCatalogBackupRestoreTasklet<T> extends BackupResto
                 theTask.cancel(interruptOnCancel);
 
                 JobInterruptedException exception =
-                        new JobInterruptedException(
-                                "Job " + currentExecution + " interrupted while executing.");
+                        new JobInterruptedException("Job " + currentExecution + " interrupted while executing.");
                 logValidationExceptions((T) null, exception);
 
                 return RepeatStatus.FINISHED;
@@ -247,41 +235,32 @@ public abstract class AbstractCatalogBackupRestoreTasklet<T> extends BackupResto
     }
 
     /** */
-    abstract RepeatStatus doExecute(
-            StepContribution contribution, ChunkContext chunkContext, JobExecution jobExecution)
+    abstract RepeatStatus doExecute(StepContribution contribution, ChunkContext chunkContext, JobExecution jobExecution)
             throws Exception;
 
     /** */
-    public void backupRestoreAdditionalResources(ResourceStore resourceStore, Resource baseDir)
-            throws Exception {
+    public void backupRestoreAdditionalResources(ResourceStore resourceStore, Resource baseDir) throws Exception {
         try {
             String[] excludeFilePaths = null;
             if (getCurrentJobExecution() != null) {
                 JobParameters jobParameters = getCurrentJobExecution().getJobParameters();
                 if (jobParameters.getString(Backup.PARAM_EXCLUDE_FILE_PATH) != null) {
-                    excludeFilePaths =
-                            jobParameters.getString(Backup.PARAM_EXCLUDE_FILE_PATH).split(";");
+                    excludeFilePaths = jobParameters
+                            .getString(Backup.PARAM_EXCLUDE_FILE_PATH)
+                            .split(";");
                 }
             }
             for (Entry<String, Filter<Resource>> entry : resources.entrySet()) {
                 Resource resource = resourceStore.get(entry.getKey());
 
-                List<Resource> resourcesToExclude =
-                        checkReosourcesToExclude(resourceStore, resource, excludeFilePaths);
+                List<Resource> resourcesToExclude = checkReosourcesToExclude(resourceStore, resource, excludeFilePaths);
 
-                if (resource != null
-                        && Resources.exists(resource)
-                        && !resourcesToExclude.contains(resource)) {
+                if (resource != null && Resources.exists(resource) && !resourcesToExclude.contains(resource)) {
 
                     List<Resource> resources = Resources.list(resource, entry.getValue(), false);
 
                     Resource targetDir = BackupUtils.dir(baseDir, resource.name());
-                    copyResources(
-                            resourceStore,
-                            excludeFilePaths,
-                            resources,
-                            entry.getValue(),
-                            targetDir);
+                    copyResources(resourceStore, excludeFilePaths, resources, entry.getValue(), targetDir);
                 }
             }
         } catch (Exception e) {
@@ -304,7 +283,8 @@ public abstract class AbstractCatalogBackupRestoreTasklet<T> extends BackupResto
             Resource targetDir) {
         for (Resource res : resources) {
             try {
-                if (!checkReosourcesToExclude(resourceStore, res, excludeFilePaths).contains(res)) {
+                if (!checkReosourcesToExclude(resourceStore, res, excludeFilePaths)
+                        .contains(res)) {
                     if (res.getType() != Type.DIRECTORY) {
                         Resources.copy(res.file(), targetDir);
                     } else {
@@ -312,21 +292,14 @@ public abstract class AbstractCatalogBackupRestoreTasklet<T> extends BackupResto
                         if (sub_resources.size() == 0) {
                             Resources.copy(res, BackupUtils.dir(targetDir, res.path()));
                         } else {
-                            copyResources(
-                                    resourceStore,
-                                    excludeFilePaths,
-                                    sub_resources,
-                                    filter,
-                                    targetDir);
+                            copyResources(resourceStore, excludeFilePaths, sub_resources, filter, targetDir);
                         }
                     }
                 } else {
                     LOGGER.log(Level.INFO, "Excluded Resource " + res.path());
                     if (getCurrentJobExecution() != null) {
                         getCurrentJobExecution()
-                                .addWarningExceptions(
-                                        Arrays.asList(
-                                                new Exception("Excluded Resource " + res.path())));
+                                .addWarningExceptions(Arrays.asList(new Exception("Excluded Resource " + res.path())));
                     }
                 }
             } catch (Exception e) {
@@ -339,18 +312,16 @@ public abstract class AbstractCatalogBackupRestoreTasklet<T> extends BackupResto
     }
 
     private List<Resource> checkReosourcesToExclude(
-            ResourceStore resourceStore, Resource resource, String[] excludeFilePaths)
-            throws IOException {
+            ResourceStore resourceStore, Resource resource, String[] excludeFilePaths) throws IOException {
         final String basePath =
                 Paths.convert(resourceStore.get(Paths.BASE).dir().getCanonicalPath());
         List<Resource> resourcesToExclude = new ArrayList<Resource>();
         if (excludeFilePaths != null) {
             for (String exclusionPath : excludeFilePaths) {
                 if (resourceStore.get(exclusionPath) != null) {
-                    String canonicalPath =
-                            resource.getType() == Type.DIRECTORY
-                                    ? resource.dir().getCanonicalPath()
-                                    : resource.file().getCanonicalPath();
+                    String canonicalPath = resource.getType() == Type.DIRECTORY
+                            ? resource.dir().getCanonicalPath()
+                            : resource.file().getCanonicalPath();
                     canonicalPath = Paths.convert(canonicalPath);
                     canonicalPath = canonicalPath.replace(basePath, "");
                     if (canonicalPath.startsWith(exclusionPath)) {
@@ -371,10 +342,7 @@ public abstract class AbstractCatalogBackupRestoreTasklet<T> extends BackupResto
                 XStreamServiceLoader loader = findServiceLoader(service);
 
                 try {
-                    loader.save(
-                            service,
-                            backupFacade.getGeoServer(),
-                            BackupUtils.dir(directory, fileName));
+                    loader.save(service, backupFacade.getGeoServer(), BackupUtils.dir(directory, fileName));
                 } catch (Throwable t) {
                     throw new RuntimeException(t);
                     // LOGGER.log(Level.SEVERE, "Error occurred while saving configuration", t);
@@ -406,15 +374,11 @@ public abstract class AbstractCatalogBackupRestoreTasklet<T> extends BackupResto
             InputStream in = Resources.fromPath(fileName, directory).in();
 
             // Try first using the Services Loaders
-            final List<XStreamServiceLoader> loaders =
-                    GeoServerExtensions.extensions(XStreamServiceLoader.class);
+            final List<XStreamServiceLoader> loaders = GeoServerExtensions.extensions(XStreamServiceLoader.class);
             for (XStreamServiceLoader<ServiceInfo> l : loaders) {
                 try {
                     if (l.getFilename().equals(fileName)) {
-                        item =
-                                l.load(
-                                        backupFacade.getGeoServer(),
-                                        Resources.fromPath(fileName, directory));
+                        item = l.load(backupFacade.getGeoServer(), Resources.fromPath(fileName, directory));
 
                         if (item != null && item instanceof ServiceInfo) {
                             return item;
@@ -466,8 +430,7 @@ public abstract class AbstractCatalogBackupRestoreTasklet<T> extends BackupResto
                 workspace.addContent(new Element("Name").addContent(ws.getName()));
                 root.addContent(workspace);
 
-                for (DataStoreInfo ds :
-                        getCatalog().getStoresByWorkspace(ws.getName(), DataStoreInfo.class)) {
+                for (DataStoreInfo ds : getCatalog().getStoresByWorkspace(ws.getName(), DataStoreInfo.class)) {
                     if (!filteredResource(ds, ws, true, StoreInfo.class)) {
                         Element store = new Element("Store");
                         store.setAttribute("type", "DataStoreInfo");
@@ -480,8 +443,7 @@ public abstract class AbstractCatalogBackupRestoreTasklet<T> extends BackupResto
                                     if (!filteredResource(ly, ws, true, LayerInfo.class)) {
                                         Element layer = new Element("Layer");
                                         layer.setAttribute("type", "VECTOR");
-                                        layer.addContent(
-                                                new Element("Name").addContent(ly.getName()));
+                                        layer.addContent(new Element("Name").addContent(ly.getName()));
                                         store.addContent(layer);
                                     }
                                 }
@@ -494,8 +456,7 @@ public abstract class AbstractCatalogBackupRestoreTasklet<T> extends BackupResto
                 // save the indexes for WMTS stores
                 indexWMTSStores(ws, workspace);
 
-                for (CoverageStoreInfo cs :
-                        getCatalog().getStoresByWorkspace(ws.getName(), CoverageStoreInfo.class)) {
+                for (CoverageStoreInfo cs : getCatalog().getStoresByWorkspace(ws.getName(), CoverageStoreInfo.class)) {
                     if (!filteredResource(cs, ws, true, StoreInfo.class)) {
                         Element store = new Element("Store");
                         store.setAttribute("type", "CoverageStoreInfo");
@@ -508,8 +469,7 @@ public abstract class AbstractCatalogBackupRestoreTasklet<T> extends BackupResto
                                     if (!filteredResource(ly, ws, true, LayerInfo.class)) {
                                         Element layer = new Element("Layer");
                                         layer.setAttribute("type", "RASTER");
-                                        layer.addContent(
-                                                new Element("Name").addContent(ly.getName()));
+                                        layer.addContent(new Element("Name").addContent(ly.getName()));
                                         store.addContent(layer);
                                     }
                                 }
@@ -554,16 +514,14 @@ public abstract class AbstractCatalogBackupRestoreTasklet<T> extends BackupResto
     }
 
     private void indexWMTSStores(WorkspaceInfo ws, Element workspace) {
-        for (WMTSStoreInfo wmts :
-                getCatalog().getStoresByWorkspace(ws.getName(), WMTSStoreInfo.class)) {
+        for (WMTSStoreInfo wmts : getCatalog().getStoresByWorkspace(ws.getName(), WMTSStoreInfo.class)) {
             if (!filteredResource(wmts, ws, true, StoreInfo.class)) {
                 Element store = new Element("Store");
                 store.setAttribute("type", "WMSStoreInfo");
                 store.addContent(new Element("Name").addContent(wmts.getName()));
                 workspace.addContent(store);
 
-                List<WMTSLayerInfo> resourcesByStore =
-                        getCatalog().getResourcesByStore(wmts, WMTSLayerInfo.class);
+                List<WMTSLayerInfo> resourcesByStore = getCatalog().getResourcesByStore(wmts, WMTSLayerInfo.class);
                 for (WMTSLayerInfo wl : resourcesByStore) {
                     if (!filteredResource(wl, ws, true, ResourceInfo.class)) {
                         List<WMTSLayerInfo> wmtsLayerInfoList =
@@ -581,20 +539,17 @@ public abstract class AbstractCatalogBackupRestoreTasklet<T> extends BackupResto
     }
 
     private void indexWMSStores(WorkspaceInfo ws, Element workspace) {
-        for (WMSStoreInfo wms :
-                getCatalog().getStoresByWorkspace(ws.getName(), WMSStoreInfo.class)) {
+        for (WMSStoreInfo wms : getCatalog().getStoresByWorkspace(ws.getName(), WMSStoreInfo.class)) {
             if (!filteredResource(wms, ws, true, StoreInfo.class)) {
                 Element store = new Element("Store");
                 store.setAttribute("type", "WMSStoreInfo");
                 store.addContent(new Element("Name").addContent(wms.getName()));
                 workspace.addContent(store);
 
-                List<WMSLayerInfo> wmsLayerInfoList =
-                        getCatalog().getResourcesByStore(wms, WMSLayerInfo.class);
+                List<WMSLayerInfo> wmsLayerInfoList = getCatalog().getResourcesByStore(wms, WMSLayerInfo.class);
                 for (WMSLayerInfo wl : wmsLayerInfoList) {
                     if (!filteredResource(wl, ws, true, ResourceInfo.class)) {
-                        List<WMSLayerInfo> wmsLayerInfos =
-                                getCatalog().getResourcesByStore(wms, WMSLayerInfo.class);
+                        List<WMSLayerInfo> wmsLayerInfos = getCatalog().getResourcesByStore(wms, WMSLayerInfo.class);
                         for (WMSLayerInfo ly : wmsLayerInfos) {
                             Element layer = new Element("Layer");
                             layer.setAttribute("type", "WMS");
@@ -611,8 +566,7 @@ public abstract class AbstractCatalogBackupRestoreTasklet<T> extends BackupResto
     protected XStreamServiceLoader findServiceLoader(ServiceInfo service) {
         XStreamServiceLoader loader = null;
 
-        final List<XStreamServiceLoader> loaders =
-                GeoServerExtensions.extensions(XStreamServiceLoader.class);
+        final List<XStreamServiceLoader> loaders = GeoServerExtensions.extensions(XStreamServiceLoader.class);
         for (XStreamServiceLoader<ServiceInfo> l : loaders) {
             if (l.getServiceClass().isInstance(service)) {
                 loader = l;

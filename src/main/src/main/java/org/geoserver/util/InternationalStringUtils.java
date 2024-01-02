@@ -21,8 +21,7 @@ public class InternationalStringUtils {
      */
     public static GrowableInternationalString growable(InternationalString internationalString) {
         GrowableInternationalString result = null;
-        if (internationalString != null)
-            result = new GrowableInternationalString(internationalString);
+        if (internationalString != null) result = new GrowableInternationalString(internationalString);
         return result;
     }
 
@@ -33,12 +32,10 @@ public class InternationalStringUtils {
      * @param textTranslations Available translations
      * @return
      */
-    public static GrowableInternationalString growable(
-            InternationalString textTranslations, String textDefault) {
+    public static GrowableInternationalString growable(InternationalString textTranslations, String textDefault) {
         if (textTranslations != null) {
             if (textTranslations instanceof GrowableInternationalString) {
-                GrowableInternationalString translations =
-                        (GrowableInternationalString) textTranslations;
+                GrowableInternationalString translations = (GrowableInternationalString) textTranslations;
                 GrowableInternationalString combined = new GrowableInternationalString(textDefault);
                 for (Locale locale : translations.getLocales()) {
                     if (locale == null) {

@@ -49,9 +49,7 @@ public class StyleParameterFilterTest {
             UUID.randomUUID().toString()
         };
 
-        LayerInfo layerInfo =
-                GWCTestHelpers.mockLayer(
-                        UUID.randomUUID().toString(), styleNames, PublishedType.WMS);
+        LayerInfo layerInfo = GWCTestHelpers.mockLayer(UUID.randomUUID().toString(), styleNames, PublishedType.WMS);
 
         int concurrency = 10;
         int opsPerThread = 1000;
@@ -59,16 +57,14 @@ public class StyleParameterFilterTest {
         List<Thread> modifierThreads = new ArrayList<>(concurrency);
 
         for (int i = 0; i < concurrency; i++) {
-            Thread thread =
-                    new Thread(
-                            new Runnable() {
-                                @Override
-                                public void run() {
-                                    for (int j = 0; j < opsPerThread; j++) {
-                                        filter.setLayer(layerInfo);
-                                    }
-                                }
-                            });
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    for (int j = 0; j < opsPerThread; j++) {
+                        filter.setLayer(layerInfo);
+                    }
+                }
+            });
             modifierThreads.add(thread);
         }
 

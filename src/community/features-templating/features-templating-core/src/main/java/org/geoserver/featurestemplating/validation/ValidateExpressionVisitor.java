@@ -31,8 +31,7 @@ public class ValidateExpressionVisitor extends DuplicatingFilterVisitor {
         // attribute selector @ will not evaluate against featureType
         if (!expression.getPropertyName().contains("@")) {
             String xpathPath = expression.getPropertyName();
-            PropertyName pn =
-                    new AttributeExpressionImpl(xpathPath, expression.getNamespaceContext());
+            PropertyName pn = new AttributeExpressionImpl(xpathPath, expression.getNamespaceContext());
             result = pn.evaluate(context.getCurrentObj());
             if (result == null) valid = false;
         }

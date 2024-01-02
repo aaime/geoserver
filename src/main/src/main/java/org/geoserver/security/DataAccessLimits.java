@@ -107,8 +107,7 @@ public class DataAccessLimits extends AccessLimits {
             if (serializedReadFilter != Filter.INCLUDE && serializedReadFilter != Filter.EXCLUDE) {
                 try {
                     Parser p = new Parser(CONFIGURATION);
-                    return (Filter)
-                            p.parse(new ByteArrayInputStream((byte[]) serializedReadFilter));
+                    return (Filter) p.parse(new ByteArrayInputStream((byte[]) serializedReadFilter));
                 } catch (Exception e) {
                     throw (IOException) new IOException("Failed to parse filter").initCause(e);
                 }

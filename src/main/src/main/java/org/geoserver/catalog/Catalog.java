@@ -677,8 +677,7 @@ public interface Catalog extends CatalogInfo {
      * @param clazz The class of resources returned.
      * @return List of resources of the specified type in the specified namespace.
      */
-    <T extends ResourceInfo> List<T> getResourcesByNamespace(
-            NamespaceInfo namespace, Class<T> clazz);
+    <T extends ResourceInfo> List<T> getResourcesByNamespace(NamespaceInfo namespace, Class<T> clazz);
 
     /**
      * All resources in the specified namespace of the specified type.
@@ -1436,11 +1435,7 @@ public interface Catalog extends CatalogInfo {
      * <p>This method should not be called by client code. It is meant to be called interally by the
      * catalog subsystem.
      */
-    void fireModified(
-            CatalogInfo object,
-            List<String> propertyNames,
-            List<Object> oldValues,
-            List<Object> newValues);
+    void fireModified(CatalogInfo object, List<String> propertyNames, List<Object> oldValues, List<Object> newValues);
 
     /**
      * Fires the event for an object that was modified in the catalog.
@@ -1449,10 +1444,7 @@ public interface Catalog extends CatalogInfo {
      * catalog subsystem.
      */
     void firePostModified(
-            CatalogInfo object,
-            List<String> propertyNames,
-            List<Object> oldValues,
-            List<Object> newValues);
+            CatalogInfo object, List<String> propertyNames, List<Object> oldValues, List<Object> newValues);
 
     /**
      * Fires the event for an object being removed from the catalog.
@@ -1560,8 +1552,7 @@ public interface Catalog extends CatalogInfo {
      * @throws IllegalArgumentException if {@code sortOrder != null} and {code !canSort(of,
      *     sortOrder)}
      */
-    public <T extends CatalogInfo> CloseableIterator<T> list(
-            final Class<T> of, final Filter filter);
+    public <T extends CatalogInfo> CloseableIterator<T> list(final Class<T> of, final Filter filter);
 
     /**
      * Returns an {@link Iterator} over the catalog objects of the requested type that match the

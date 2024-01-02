@@ -44,8 +44,7 @@ import org.geotools.util.decorate.AbstractDecorator;
  *
  * @author Davide Savazzi - GeoSolutions
  */
-public abstract class AbstractFilteredCatalog extends AbstractDecorator<Catalog>
-        implements Catalog {
+public abstract class AbstractFilteredCatalog extends AbstractDecorator<Catalog> implements Catalog {
 
     public AbstractFilteredCatalog(Catalog catalog) {
         super(catalog);
@@ -356,8 +355,7 @@ public abstract class AbstractFilteredCatalog extends AbstractDecorator<Catalog>
     }
 
     @Override
-    public <T extends ResourceInfo> T getResourceByName(
-            NamespaceInfo ns, String name, Class<T> clazz) {
+    public <T extends ResourceInfo> T getResourceByName(NamespaceInfo ns, String name, Class<T> clazz) {
         return checkAccess(delegate.getResourceByName(ns, name, clazz));
     }
 
@@ -372,20 +370,17 @@ public abstract class AbstractFilteredCatalog extends AbstractDecorator<Catalog>
     }
 
     @Override
-    public <T extends ResourceInfo> List<T> getResourcesByNamespace(
-            NamespaceInfo namespace, Class<T> clazz) {
+    public <T extends ResourceInfo> List<T> getResourcesByNamespace(NamespaceInfo namespace, Class<T> clazz) {
         return filterResources(delegate.getResourcesByNamespace(namespace, clazz));
     }
 
     @Override
-    public <T extends ResourceInfo> List<T> getResourcesByNamespace(
-            String namespace, Class<T> clazz) {
+    public <T extends ResourceInfo> List<T> getResourcesByNamespace(String namespace, Class<T> clazz) {
         return filterResources(delegate.getResourcesByNamespace(namespace, clazz));
     }
 
     @Override
-    public <T extends ResourceInfo> T getResourceByStore(
-            StoreInfo store, String name, Class<T> clazz) {
+    public <T extends ResourceInfo> T getResourceByStore(StoreInfo store, String name, Class<T> clazz) {
         return checkAccess(delegate.getResourceByStore(store, name, clazz));
     }
 
@@ -405,14 +400,12 @@ public abstract class AbstractFilteredCatalog extends AbstractDecorator<Catalog>
     }
 
     @Override
-    public <T extends StoreInfo> T getStoreByName(
-            String workspaceName, String name, Class<T> clazz) {
+    public <T extends StoreInfo> T getStoreByName(String workspaceName, String name, Class<T> clazz) {
         return checkAccess(delegate.getStoreByName(workspaceName, name, clazz));
     }
 
     @Override
-    public <T extends StoreInfo> T getStoreByName(
-            WorkspaceInfo workspace, String name, Class<T> clazz) {
+    public <T extends StoreInfo> T getStoreByName(WorkspaceInfo workspace, String name, Class<T> clazz) {
         return checkAccess(delegate.getStoreByName(workspace, name, clazz));
     }
 
@@ -422,14 +415,12 @@ public abstract class AbstractFilteredCatalog extends AbstractDecorator<Catalog>
     }
 
     @Override
-    public <T extends StoreInfo> List<T> getStoresByWorkspace(
-            String workspaceName, Class<T> clazz) {
+    public <T extends StoreInfo> List<T> getStoresByWorkspace(String workspaceName, Class<T> clazz) {
         return filterStores(delegate.getStoresByWorkspace(workspaceName, clazz));
     }
 
     @Override
-    public <T extends StoreInfo> List<T> getStoresByWorkspace(
-            WorkspaceInfo workspace, Class<T> clazz) {
+    public <T extends StoreInfo> List<T> getStoresByWorkspace(WorkspaceInfo workspace, Class<T> clazz) {
         return filterStores(delegate.getStoresByWorkspace(workspace, clazz));
     }
 
@@ -715,19 +706,13 @@ public abstract class AbstractFilteredCatalog extends AbstractDecorator<Catalog>
 
     @Override
     public void fireModified(
-            CatalogInfo object,
-            List<String> propertyNames,
-            List<Object> oldValues,
-            List<Object> newValues) {
+            CatalogInfo object, List<String> propertyNames, List<Object> oldValues, List<Object> newValues) {
         delegate.fireModified(object, propertyNames, oldValues, newValues);
     }
 
     @Override
     public void firePostModified(
-            CatalogInfo object,
-            List<String> propertyNames,
-            List<Object> oldValues,
-            List<Object> newValues) {
+            CatalogInfo object, List<String> propertyNames, List<Object> oldValues, List<Object> newValues) {
         delegate.firePostModified(object, propertyNames, oldValues, newValues);
     }
 
@@ -910,8 +895,7 @@ public abstract class AbstractFilteredCatalog extends AbstractDecorator<Catalog>
     }
 
     @Override
-    public <T extends CatalogInfo> T get(Class<T> type, Filter filter)
-            throws IllegalArgumentException {
+    public <T extends CatalogInfo> T get(Class<T> type, Filter filter) throws IllegalArgumentException {
 
         Filter securityFilter = securityFilter(type, filter);
         T result = delegate.get(type, securityFilter);
@@ -934,8 +918,7 @@ public abstract class AbstractFilteredCatalog extends AbstractDecorator<Catalog>
 
         // create secured decorators on-demand
         final Function<T, T> securityWrapper = securityWrapper(of);
-        final CloseableIterator<T> filteredWrapped =
-                CloseableIteratorAdapter.transform(filtered, securityWrapper);
+        final CloseableIterator<T> filteredWrapped = CloseableIteratorAdapter.transform(filtered, securityWrapper);
 
         return filteredWrapped;
     }
@@ -957,8 +940,7 @@ public abstract class AbstractFilteredCatalog extends AbstractDecorator<Catalog>
      *
      * @return a catalog Predicate that evaluates if an object of the required type is accessible
      */
-    protected abstract <T extends CatalogInfo> Filter securityFilter(
-            final Class<T> infoType, final Filter filter);
+    protected abstract <T extends CatalogInfo> Filter securityFilter(final Class<T> infoType, final Filter filter);
 
     @Override
     public void removeListeners(Class<? extends CatalogListener> listenerClass) {

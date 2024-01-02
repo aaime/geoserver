@@ -89,8 +89,7 @@ public abstract class WebMap {
      * <p>The file name will be followed by the extension provided, for example, to generate
      * layer.pdf extension will be ".pdf"
      */
-    public void setContentDispositionHeader(
-            final WMSMapContent mapContent, final String extension) {
+    public void setContentDispositionHeader(final WMSMapContent mapContent, final String extension) {
         setContentDispositionHeader(mapContent, extension, true);
     }
 

@@ -78,9 +78,7 @@ public class TemplateRuleService {
     }
 
     private TemplateLayerConfig getTemplateLayerConfig() {
-        return featureTypeInfo
-                .getMetadata()
-                .get(TemplateLayerConfig.METADATA_KEY, TemplateLayerConfig.class);
+        return featureTypeInfo.getMetadata().get(TemplateLayerConfig.METADATA_KEY, TemplateLayerConfig.class);
     }
 
     public Set<TemplateRule> getRules() {
@@ -118,8 +116,7 @@ public class TemplateRuleService {
      * @param newRule the new Rule to be added.
      * @return a Set of rules having the priority fields updated.
      */
-    public static Set<TemplateRule> updatePriorities(
-            List<TemplateRule> rules, TemplateRule newRule) {
+    public static Set<TemplateRule> updatePriorities(List<TemplateRule> rules, TemplateRule newRule) {
         Set<TemplateRule> set = new HashSet<>(rules.size());
         int updatedPriority = newRule.getPriority();
         boolean newRuleAdded = false;

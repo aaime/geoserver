@@ -91,8 +91,7 @@ public class XmlTestUtil {
      * Match a document where the list of nodes selected by the given XPath expression also matches
      * the given matcher.
      */
-    public Matcher<Document> hasNodes(
-            final String xPath, final Matcher<? extends Iterable<Node>> matcher) {
+    public Matcher<Document> hasNodes(final String xPath, final Matcher<? extends Iterable<Node>> matcher) {
         return new BaseMatcher<Document>() {
 
             @Override
@@ -100,8 +99,7 @@ public class XmlTestUtil {
                 XpathEngine engine = XMLUnit.newXpathEngine();
                 engine.setNamespaceContext(namespaceContext);
                 try {
-                    List<Node> nodes =
-                            nodeCollection(engine.getMatchingNodes(xPath, (Document) item));
+                    List<Node> nodes = nodeCollection(engine.getMatchingNodes(xPath, (Document) item));
                     return matcher.matches(nodes);
                 } catch (XpathException e) {
                     return false;
@@ -122,8 +120,7 @@ public class XmlTestUtil {
                 XpathEngine engine = XMLUnit.newXpathEngine();
                 engine.setNamespaceContext(namespaceContext);
                 try {
-                    List<Node> nodes =
-                            nodeCollection(engine.getMatchingNodes(xPath, (Document) item));
+                    List<Node> nodes = nodeCollection(engine.getMatchingNodes(xPath, (Document) item));
 
                     matcher.describeMismatch(nodes, description);
 

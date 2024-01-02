@@ -116,8 +116,7 @@ public class MapDecorationLayout {
          * @return A rectangle that is as close to the desired size and position without exceeding
          *     the container bounds
          */
-        public static Rectangle findBounds(
-                Position p, Rectangle container, Dimension dim, Point o) {
+        public static Rectangle findBounds(Position p, Rectangle container, Dimension dim, Point o) {
 
             if (p == null || container == null || dim == null || o == null) {
                 throw new ServiceException("Bad params for decoration sizing.");
@@ -223,8 +222,7 @@ public class MapDecorationLayout {
          * @param g2d the Graphics2D context into which the MapDecoration will be rendered
          * @param mapContent the WMSMapContext for the request being handled
          */
-        public Dimension findOptimalSize(Graphics2D g2d, WMSMapContent mapContent)
-                throws Exception {
+        public Dimension findOptimalSize(Graphics2D g2d, WMSMapContent mapContent) throws Exception {
             return (dimension != null) ? dimension : decoration.findOptimalSize(g2d, mapContent);
         }
 
@@ -235,8 +233,7 @@ public class MapDecorationLayout {
          * @param rect the current drawable area
          * @param mapContent the map context for the current map request
          */
-        public void paint(Graphics2D g2d, Rectangle rect, WMSMapContent mapContent)
-                throws Exception {
+        public void paint(Graphics2D g2d, Rectangle rect, WMSMapContent mapContent) throws Exception {
             Dimension desiredSize = findOptimalSize(g2d, mapContent);
 
             Rectangle box = findBounds(position, rect, desiredSize, offset);
@@ -270,8 +267,7 @@ public class MapDecorationLayout {
      * @throws Exception if the configuration is invalid or other errors occur while parsing
      */
     public static MapDecorationLayout fromFile(Resource f, boolean tiled) throws Exception {
-        MapDecorationLayout dl =
-                tiled ? new MetatiledMapDecorationLayout() : new MapDecorationLayout();
+        MapDecorationLayout dl = tiled ? new MetatiledMapDecorationLayout() : new MapDecorationLayout();
 
         DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document confFile;
@@ -290,10 +286,8 @@ public class MapDecorationLayout {
      * @return a new MapDecorationLayout containing the MapDecorations specified
      * @throws Exception if the configuration is invalid or other errors occur while parsing
      */
-    public static MapDecorationLayout fromString(String definition, boolean tiled)
-            throws Exception {
-        MapDecorationLayout dl =
-                tiled ? new MetatiledMapDecorationLayout() : new MapDecorationLayout();
+    public static MapDecorationLayout fromString(String definition, boolean tiled) throws Exception {
+        MapDecorationLayout dl = tiled ? new MetatiledMapDecorationLayout() : new MapDecorationLayout();
 
         DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         InputSource source = new InputSource(new StringReader(definition));
@@ -311,8 +305,7 @@ public class MapDecorationLayout {
                 .iterator();
     }
 
-    private static MapDecorationLayout fromDocument(MapDecorationLayout dl, Document confFile)
-            throws Exception {
+    private static MapDecorationLayout fromDocument(MapDecorationLayout dl, Document confFile) throws Exception {
         Iterator<Element> decorations = getChildren(confFile.getDocumentElement(), "decoration");
         while (decorations.hasNext()) {
             Element e = decorations.next();
@@ -341,18 +334,14 @@ public class MapDecorationLayout {
 
             MapDecoration decoration = getDecoration(decorationType);
             if (decoration == null) {
-                LOGGER.log(
-                        Level.WARNING,
-                        "Unknown decoration type: " + decorationType + " requested.");
+                LOGGER.log(Level.WARNING, "Unknown decoration type: " + decorationType + " requested.");
                 continue;
             }
             decoration.loadOptions(m);
 
             Block.Position pos = Block.Position.fromString(evaluateAttribute(e, "affinity"));
             if (pos == null) {
-                LOGGER.log(
-                        Level.WARNING,
-                        "Unknown affinity: " + e.getAttribute("affinity") + " requested.");
+                LOGGER.log(Level.WARNING, "Unknown affinity: " + e.getAttribute("affinity") + " requested.");
                 continue;
             }
 
@@ -374,8 +363,7 @@ public class MapDecorationLayout {
             try {
                 if (!StringUtils.isEmpty(theOffset)) {
                     String[] offsetArr = theOffset.split(",");
-                    offset =
-                            new Point(Integer.valueOf(offsetArr[0]), Integer.valueOf(offsetArr[1]));
+                    offset = new Point(Integer.valueOf(offsetArr[0]), Integer.valueOf(offsetArr[1]));
                 } else {
                     offset = new Point(0, 0);
                 }
@@ -517,8 +505,7 @@ public class MapDecorationLayout {
                 a = Integer.valueOf(input.substring(6, 8), 16);
                 return new Color(r, g, b, a);
             default:
-                throw new RuntimeException(
-                        "Couldn't decode color value: " + origInput + " (" + input + ")");
+                throw new RuntimeException("Couldn't decode color value: " + origInput + " (" + input + ")");
         }
     }
 
@@ -546,8 +533,7 @@ public class MapDecorationLayout {
         T result = (T) expression.evaluate(null, target);
         // did the conversion fail? throw an exception with some context as to what happened
         if (result == null && expression != null)
-            throw new IllegalArgumentException(
-                    "Could not convert " + expression + " to " + target.getSimpleName());
+            throw new IllegalArgumentException("Could not convert " + expression + " to " + target.getSimpleName());
         return result;
     }
 }

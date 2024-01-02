@@ -21,16 +21,14 @@ import org.geotools.util.logging.Logging;
 public class RHealPixDGGSFactory implements DGGSFactory {
 
     static final Logger LOGGER = Logging.getLogger(RHealPixDGGSFactory.class);
-    private static final JEPWebRuntime.Initializer INITIALIZER =
-            interpreter -> {
-                interpreter.exec("from rhealpixdggs import dggs, ellipsoids");
-                interpreter.exec("from rhealpixdggs.ellipsoids import Ellipsoid");
-                interpreter.exec("from rhealpixdggs.dggs import RHEALPixDGGS, Cell");
-                interpreter.exec(
-                        "WGS84_TB16 = Ellipsoid(a=6378137.0, b=6356752.314140356, e=0.0578063088401, f=0.003352810681182, lon_0=-131.25)");
-                interpreter.exec(
-                        "dggs = RHEALPixDGGS(ellipsoid=WGS84_TB16, north_square=0, south_square=0, N_side=3)");
-            };
+    private static final JEPWebRuntime.Initializer INITIALIZER = interpreter -> {
+        interpreter.exec("from rhealpixdggs import dggs, ellipsoids");
+        interpreter.exec("from rhealpixdggs.ellipsoids import Ellipsoid");
+        interpreter.exec("from rhealpixdggs.dggs import RHEALPixDGGS, Cell");
+        interpreter.exec(
+                "WGS84_TB16 = Ellipsoid(a=6378137.0, b=6356752.314140356, e=0.0578063088401, f=0.003352810681182, lon_0=-131.25)");
+        interpreter.exec("dggs = RHEALPixDGGS(ellipsoid=WGS84_TB16, north_square=0, south_square=0, N_side=3)");
+    };
 
     @Override
     public String getId() {

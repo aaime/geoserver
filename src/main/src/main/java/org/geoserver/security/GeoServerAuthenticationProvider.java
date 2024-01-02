@@ -45,12 +45,10 @@ public abstract class GeoServerAuthenticationProvider extends AbstractGeoServerS
     /**
      * Same function as {@link #supports(Class)} but is provided with the current request object.
      */
-    public abstract boolean supports(
-            Class<? extends Object> authentication, HttpServletRequest request);
+    public abstract boolean supports(Class<? extends Object> authentication, HttpServletRequest request);
 
     @Override
-    public final Authentication authenticate(Authentication authentication)
-            throws AuthenticationException {
+    public final Authentication authenticate(Authentication authentication) throws AuthenticationException {
         return authenticate(authentication, request());
     }
 
@@ -65,8 +63,7 @@ public abstract class GeoServerAuthenticationProvider extends AbstractGeoServerS
      * <p>On successful authentication, this method returns an {@Link Authentication} object,
      * otherwise <code>null</code> should be returned.
      */
-    public abstract Authentication authenticate(
-            Authentication authentication, HttpServletRequest request);
+    public abstract Authentication authenticate(Authentication authentication, HttpServletRequest request);
 
     /** The current request. */
     HttpServletRequest request() {

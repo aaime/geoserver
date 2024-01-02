@@ -78,10 +78,7 @@ public class SecuredResourceNameChangeListener implements CatalogListener {
                 return;
             }
 
-            Supplier<String> message =
-                    () ->
-                            String.format(
-                                    "Removing Security Rules for deleted %s", removedObjectName);
+            Supplier<String> message = () -> String.format("Removing Security Rules for deleted %s", removedObjectName);
             apply(filter, dao::removeRule, message);
         } finally {
             lock.release();
@@ -121,7 +118,8 @@ public class SecuredResourceNameChangeListener implements CatalogListener {
             } else if (eventSource instanceof ResourceInfo) {
                 // if a layer has been renamed
                 // similar layer names can exist in different workspaces
-                String wsName = ((ResourceInfo) eventSource).getStore().getWorkspace().getName();
+                String wsName =
+                        ((ResourceInfo) eventSource).getStore().getWorkspace().getName();
                 filter = layerFilter(wsName, oldName);
                 updater = r -> r.setLayer(newName);
                 renamedObject = "Resource";
@@ -134,23 +132,19 @@ public class SecuredResourceNameChangeListener implements CatalogListener {
                 return;
             }
 
-            Supplier<String> message =
-                    () ->
-                            String.format(
-                                    "Updating Security Rules for renamed %s: %s -> %s",
-                                    renamedObject, oldName, newName);
+            Supplier<String> message = () ->
+                    String.format("Updating Security Rules for renamed %s: %s -> %s", renamedObject, oldName, newName);
 
             // modifying directly a rule is not a good idea, depending on the DAO implementation
             // it might do nothing (the DAO uses defensive copies or secondary storage) or it
             // might cause troubles with the DAO internal data structures (e.g. sorted structures,
             // when the field update changes the position of the rule in the order).
             // This bit removes the rule, changes it, and adds it back
-            final Consumer<DataAccessRule> safeUpdater =
-                    r -> {
-                        dao.removeRule(r);
-                        updater.accept(r);
-                        dao.addRule(r);
-                    };
+            final Consumer<DataAccessRule> safeUpdater = r -> {
+                dao.removeRule(r);
+                updater.accept(r);
+                dao.addRule(r);
+            };
             apply(filter, safeUpdater, message);
         } finally {
             lock.release();
@@ -201,10 +195,7 @@ public class SecuredResourceNameChangeListener implements CatalogListener {
         return layerFilter(ws.getName(), lgName);
     }
 
-    void apply(
-            Predicate<DataAccessRule> filter,
-            Consumer<DataAccessRule> action,
-            Supplier<String> logMessage) {
+    void apply(Predicate<DataAccessRule> filter, Consumer<DataAccessRule> action, Supplier<String> logMessage) {
         List<DataAccessRule> matches = getDataAccessRules(filter);
         if (!matches.isEmpty()) {
             LOGGER.info(logMessage);
@@ -231,8 +222,7 @@ public class SecuredResourceNameChangeListener implements CatalogListener {
      * Returns a {@code Predicate<DataAccessRule>} that satisfies both {@link
      * DataAccessRule#getRoot() root} {@link DataAccessRule#getLayer() layer} predicates
      */
-    private Predicate<DataAccessRule> filter(
-            Predicate<String> rootFilter, Predicate<String> layerFilter) {
+    private Predicate<DataAccessRule> filter(Predicate<String> rootFilter, Predicate<String> layerFilter) {
         return r -> rootFilter.test(r.getRoot()) && layerFilter.test(r.getLayer());
     }
 

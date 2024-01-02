@@ -105,8 +105,7 @@ class PatchMergeHandler<T> {
         return toPatch;
     }
 
-    private Optional<PropertyDescriptor> beanFieldFromJSON(
-            PropertyDescriptor[] descriptors, Object fieldName) {
+    private Optional<PropertyDescriptor> beanFieldFromJSON(PropertyDescriptor[] descriptors, Object fieldName) {
         return Stream.of(descriptors).filter(d -> d.getName().equals(fieldName)).findFirst();
     }
 

@@ -39,8 +39,7 @@ public class JPEGLegendGraphicResponse extends AbstractGetLegendGraphicResponse 
      * @see Response#write(Object, OutputStream, Operation)
      */
     @Override
-    public void write(Object legend, OutputStream output, Operation operation)
-            throws IOException, ServiceException {
+    public void write(Object legend, OutputStream output, Operation operation) throws IOException, ServiceException {
         Assert.isInstanceOf(BufferedImageLegendGraphic.class, legend);
 
         BufferedImage legendImage = (BufferedImage) ((LegendGraphic) legend).getLegend();

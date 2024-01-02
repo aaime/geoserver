@@ -60,8 +60,7 @@ class GoogleOAuth2SecurityConfiguration extends GeoServerOAuth2SecurityConfigura
     @Override
     @Bean(name = "googleOAuth2Resource")
     public OAuth2ProtectedResourceDetails geoServerOAuth2Resource() {
-        AuthorizationCodeResourceDetails details =
-                (AuthorizationCodeResourceDetails) super.geoServerOAuth2Resource();
+        AuthorizationCodeResourceDetails details = (AuthorizationCodeResourceDetails) super.geoServerOAuth2Resource();
         details.setTokenName("authorization_code");
 
         return details;

@@ -114,8 +114,7 @@ public class GridCoverage2DRIA extends GeometricOpImage {
      *     bands will share the same nodata value.
      * @return an instance of Coverage2RenderedImageAdapter
      */
-    public static GridCoverage2DRIA create(
-            final GridCoverage2D src, final GridCoverage2D dst, final double nodata) {
+    public static GridCoverage2DRIA create(final GridCoverage2D src, final GridCoverage2D dst, final double nodata) {
 
         Utilities.ensureNonNull("dst", dst);
         return GridCoverage2DRIA.create(src, dst.getGridGeometry(), nodata);
@@ -143,9 +142,7 @@ public class GridCoverage2DRIA extends GeometricOpImage {
         final GridEnvelope2D destinationRasterDimension = dstGridGeometry.getGridRange2D();
         final ImageLayout imageLayout = new ImageLayout();
         imageLayout.setMinX(destinationRasterDimension.x).setMinY(destinationRasterDimension.y);
-        imageLayout
-                .setWidth(destinationRasterDimension.width)
-                .setHeight(destinationRasterDimension.height);
+        imageLayout.setWidth(destinationRasterDimension.width).setHeight(destinationRasterDimension.height);
         imageLayout
                 .setTileHeight(src.getRenderedImage().getSampleModel().getHeight())
                 .setTileWidth(src.getRenderedImage().getSampleModel().getWidth());
@@ -224,20 +221,16 @@ public class GridCoverage2DRIA extends GeometricOpImage {
             extender = GridCoverage2DRIA.DEFAULT_BORDEREXTENDER;
         }
         PlanarImage srcImage = PlanarImage.wrapRenderedImage(src.getRenderedImage());
-        if (!(lpad == rpad
-                && rpad == tpad
-                && tpad == bpad
-                && bpad == 0)) { // there is need to extend
+        if (!(lpad == rpad && rpad == tpad && tpad == bpad && bpad == 0)) { // there is need to extend
             minX = srcImage.getMinX();
             maxX = srcImage.getMaxX() - 1;
             minY = srcImage.getMinY();
             maxY = srcImage.getMaxY() - 1;
-            Rectangle bounds =
-                    new Rectangle(
-                            srcImage.getMinX() - lpad,
-                            srcImage.getMinY() - tpad,
-                            srcImage.getWidth() + lpad + rpad,
-                            srcImage.getHeight() + tpad + bpad);
+            Rectangle bounds = new Rectangle(
+                    srcImage.getMinX() - lpad,
+                    srcImage.getMinY() - tpad,
+                    srcImage.getWidth() + lpad + rpad,
+                    srcImage.getHeight() + tpad + bpad);
             iter = RandomIterFactory.create(srcImage.getExtendedData(bounds, extender), bounds);
         } else {
             minX = srcImage.getMinX();
@@ -285,8 +278,7 @@ public class GridCoverage2DRIA extends GeometricOpImage {
             concatenatedForwardTransform = (AffineTransform) w2gd.clone();
             concatenatedForwardTransform.concatenate(g2ws);
             concatenatedBackwardTransform = concatenatedForwardTransform.createInverse();
-            if (XAffineTransform.isIdentity(
-                    concatenatedForwardTransform, 1E-6)) { // TODO improve this check
+            if (XAffineTransform.isIdentity(concatenatedForwardTransform, 1E-6)) { // TODO improve this check
                 concatenatedForwardTransform = new AffineTransform(); // identity
                 concatenatedBackwardTransform = new AffineTransform(); // identity
             }
@@ -320,17 +312,14 @@ public class GridCoverage2DRIA extends GeometricOpImage {
         ret.setLocation(coords[0], coords[1]);
         if (dstGridGeometry.getGridRange2D().contains(ret)) return ret;
         else {
-            LOGGER.log(
-                    Level.WARNING,
-                    "{0} mapped to {1} lies outside {2},{3}+{4}x{5}",
-                    new Object[] {
-                        srcPt,
-                        ret,
-                        dstGridGeometry.getGridRange2D().x,
-                        dstGridGeometry.getGridRange2D().y,
-                        dstGridGeometry.getGridRange2D().width + dstGridGeometry.getGridRange2D().x,
-                        dstGridGeometry.getGridRange2D().height + dstGridGeometry.getGridRange2D().y
-                    });
+            LOGGER.log(Level.WARNING, "{0} mapped to {1} lies outside {2},{3}+{4}x{5}", new Object[] {
+                srcPt,
+                ret,
+                dstGridGeometry.getGridRange2D().x,
+                dstGridGeometry.getGridRange2D().y,
+                dstGridGeometry.getGridRange2D().width + dstGridGeometry.getGridRange2D().x,
+                dstGridGeometry.getGridRange2D().height + dstGridGeometry.getGridRange2D().y
+            });
             return null;
         }
     }
@@ -660,14 +649,12 @@ public class GridCoverage2DRIA extends GeometricOpImage {
                             for (int b = 0; b < dstBands; b++) {
                                 for (int j = 0; j < kheight; j++) {
                                     for (int i = 0; i < kwidth; i++) {
-                                        samples[j][i] =
-                                                iter.getSample(xint + i, yint + j, b) & 0xFF;
+                                        samples[j][i] = iter.getSample(xint + i, yint + j, b) & 0xFF;
                                     }
                                 }
 
                                 data[b][pixelOffset + bandOffsets[b]] =
-                                        ImageUtil.clampByte(
-                                                interp.interpolate(samples, xfrac, yfrac));
+                                        ImageUtil.clampByte(interp.interpolate(samples, xfrac, yfrac));
                             }
                         }
                     }
@@ -722,8 +709,7 @@ public class GridCoverage2DRIA extends GeometricOpImage {
 
                             for (int j = 0; j < kheight; j++) {
                                 for (int i = 0; i < kwidth; i++) {
-                                    samples[j][i] =
-                                            t[iter.getSample(xint + i, yint + j, 0) & 0xFF] & 0xFF;
+                                    samples[j][i] = t[iter.getSample(xint + i, yint + j, 0) & 0xFF] & 0xFF;
                                 }
                             }
 
@@ -817,8 +803,7 @@ public class GridCoverage2DRIA extends GeometricOpImage {
                             }
 
                             data[b][pixelOffset + bandOffsets[b]] =
-                                    ImageUtil.clampUShort(
-                                            interp.interpolate(samples, xfrac, yfrac));
+                                    ImageUtil.clampUShort(interp.interpolate(samples, xfrac, yfrac));
                         }
                     }
                 }
@@ -892,8 +877,7 @@ public class GridCoverage2DRIA extends GeometricOpImage {
                     // --- optimize nearest interpolation
                     if (interp instanceof InterpolationNearest) {
                         for (int b = 0; b < dstBands; b++) {
-                            data[b][pixelOffset + bandOffsets[b]] =
-                                    ImageUtil.clampShort(iter.getSample(xint, yint, b));
+                            data[b][pixelOffset + bandOffsets[b]] = ImageUtil.clampShort(iter.getSample(xint, yint, b));
                         }
 
                     } else {
@@ -996,8 +980,7 @@ public class GridCoverage2DRIA extends GeometricOpImage {
                                 }
                             }
 
-                            data[b][pixelOffset + bandOffsets[b]] =
-                                    interp.interpolate(samples, xfrac, yfrac);
+                            data[b][pixelOffset + bandOffsets[b]] = interp.interpolate(samples, xfrac, yfrac);
                         }
                     }
                 }
@@ -1055,8 +1038,7 @@ public class GridCoverage2DRIA extends GeometricOpImage {
                     /* Fill with a background color. */
                     if (setBackground) {
                         for (int b = 0; b < dstBands; b++) {
-                            dstData[b][pixelOffset + dstBandOffsets[b]] =
-                                    (float) backgroundValues[b];
+                            dstData[b][pixelOffset + dstBandOffsets[b]] = (float) backgroundValues[b];
                         }
                     }
                 } else {
@@ -1064,8 +1046,7 @@ public class GridCoverage2DRIA extends GeometricOpImage {
                     // --- optimize nearest interpolation
                     if (interp instanceof InterpolationNearest) {
                         for (int b = 0; b < dstBands; b++) {
-                            dstData[b][pixelOffset + dstBandOffsets[b]] =
-                                    iter.getSampleFloat(xint, yint, b);
+                            dstData[b][pixelOffset + dstBandOffsets[b]] = iter.getSampleFloat(xint, yint, b);
                         }
 
                     } else {
@@ -1080,8 +1061,7 @@ public class GridCoverage2DRIA extends GeometricOpImage {
                                 }
                             }
 
-                            dstData[b][pixelOffset + dstBandOffsets[b]] =
-                                    interp.interpolate(samples, xfrac, yfrac);
+                            dstData[b][pixelOffset + dstBandOffsets[b]] = interp.interpolate(samples, xfrac, yfrac);
                         }
                     }
                 }
@@ -1144,8 +1124,7 @@ public class GridCoverage2DRIA extends GeometricOpImage {
                     // --- optimize nearest interpolation
                     if (interp instanceof InterpolationNearest) {
                         for (int b = 0; b < dstBands; b++) {
-                            data[b][pixelOffset + bandOffsets[b]] =
-                                    iter.getSampleDouble(xint, yint, b);
+                            data[b][pixelOffset + bandOffsets[b]] = iter.getSampleDouble(xint, yint, b);
                         }
 
                     } else {
@@ -1159,8 +1138,7 @@ public class GridCoverage2DRIA extends GeometricOpImage {
                                 }
                             }
 
-                            data[b][pixelOffset + bandOffsets[b]] =
-                                    interp.interpolate(samples, xfrac, yfrac);
+                            data[b][pixelOffset + bandOffsets[b]] = interp.interpolate(samples, xfrac, yfrac);
                         }
                     }
                 }
@@ -1188,16 +1166,11 @@ public class GridCoverage2DRIA extends GeometricOpImage {
      * @return A reference to the <code>destRect</code> parameter if it is non-<code>null</code>, or
      *     a new <code>float</code> array otherwise.
      */
-    public float[] warpSparseRect(
-            int x0, int y0, int width, int height, int periodX, int periodY, float[] destRect) {
+    public float[] warpSparseRect(int x0, int y0, int width, int height, int periodX, int periodY, float[] destRect) {
 
         // XXX: This method should do its calculations in doubles
         if (destRect == null) {
-            destRect =
-                    new float
-                            [((width + periodX - 1) / periodX)
-                                    * ((height + periodY - 1) / periodY)
-                                    * 2];
+            destRect = new float[((width + periodX - 1) / periodX) * ((height + periodY - 1) / periodY) * 2];
         }
 
         width += x0;

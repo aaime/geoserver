@@ -39,8 +39,7 @@ import org.geotools.gml.producer.FeatureTypeTransformer;
 
 public class XmlSchemaEncoder extends WFSDescribeFeatureTypeOutputFormat {
     /** Standard logging instance for class */
-    private static final Logger LOGGER =
-            org.geotools.util.logging.Logging.getLogger("org.vfny.geoserver.responses");
+    private static final Logger LOGGER = org.geotools.util.logging.Logging.getLogger("org.vfny.geoserver.responses");
 
     // Initialize some generic GML information
     // ABSTRACT OUTSIDE CLASS, IF POSSIBLE
@@ -49,8 +48,7 @@ public class XmlSchemaEncoder extends WFSDescribeFeatureTypeOutputFormat {
     private static final String GML_URL = "\"http://www.opengis.net/gml\"";
     private static final String GML_NAMESPACE = "\n  xmlns:gml=" + GML_URL;
     private static final String ELEMENT_FORM_DEFAULT = "\n  elementFormDefault=\"qualified\"";
-    private static final String ATTR_FORM_DEFAULT =
-            "\n  attributeFormDefault=\"unqualified\" version=\"1.0\">";
+    private static final String ATTR_FORM_DEFAULT = "\n  attributeFormDefault=\"unqualified\" version=\"1.0\">";
     private static final String TARGETNS_PREFIX = "\n  targetNamespace=\"";
     private static final String TARGETNS_SUFFIX = "\" ";
 
@@ -71,16 +69,13 @@ public class XmlSchemaEncoder extends WFSDescribeFeatureTypeOutputFormat {
     }
 
     @Override
-    protected void write(
-            FeatureTypeInfo[] featureTypeInfos, OutputStream output, Operation describeFeatureType)
+    protected void write(FeatureTypeInfo[] featureTypeInfos, OutputStream output, Operation describeFeatureType)
             throws IOException {
         WFSInfo wfs = getInfo();
 
         // generates response, using general function
-        String xmlResponse =
-                generateTypes(
-                        featureTypeInfos,
-                        (DescribeFeatureTypeType) describeFeatureType.getParameters()[0]);
+        String xmlResponse = generateTypes(
+                featureTypeInfos, (DescribeFeatureTypeType) describeFeatureType.getParameters()[0]);
 
         if (!wfs.getGeoServer().getSettings().isVerbose()) {
             // strip out the formatting.  This is pretty much the only way we
@@ -105,16 +100,14 @@ public class XmlSchemaEncoder extends WFSDescribeFeatureTypeOutputFormat {
      * @return The XMLSchema describing the features requested.
      * @throws WFSException For any problems.
      */
-    private final String generateTypes(FeatureTypeInfo[] infos, DescribeFeatureTypeType request)
-            throws IOException {
+    private final String generateTypes(FeatureTypeInfo[] infos, DescribeFeatureTypeType request) throws IOException {
         // Initialize return information and intermediate return objects
         StringBuffer tempResponse = new StringBuffer();
 
-        tempResponse.append(
-                "<?xml version=\"1.0\" encoding=\""
-                        + getInfo().getGeoServer().getSettings().getCharset()
-                        + "\"?>"
-                        + "\n<xs:schema ");
+        tempResponse.append("<?xml version=\"1.0\" encoding=\""
+                + getInfo().getGeoServer().getSettings().getCharset()
+                + "\"?>"
+                + "\n<xs:schema ");
 
         // allSameType will throw WFSException if there are types that are not found.
         if (allSameType(infos)) {
@@ -127,13 +120,7 @@ public class XmlSchemaEncoder extends WFSDescribeFeatureTypeOutputFormat {
             tempResponse.append(TARGETNS_PREFIX + targetNs + TARGETNS_SUFFIX);
 
             // namespace
-            tempResponse.append(
-                    "\n  "
-                            + "xmlns:"
-                            + ftInfo.getNamespace().getPrefix()
-                            + "=\""
-                            + targetNs
-                            + "\"");
+            tempResponse.append("\n  " + "xmlns:" + ftInfo.getNamespace().getPrefix() + "=\"" + targetNs + "\"");
 
             // xmlns:" + nsPrefix + "=\"" + targetNs
             // + "\"");
@@ -151,12 +138,11 @@ public class XmlSchemaEncoder extends WFSDescribeFeatureTypeOutputFormat {
             //            tempResponse.append("\n\n<xs:import namespace=" + GML_URL
             //                + " schemaLocation=\"" + request.getSchemaBaseUrl()
             //                + "gml/2.1.2/feature.xsd\"/>\n\n");
-            tempResponse.append(
-                    "\n\n<xs:import namespace="
-                            + GML_URL
-                            + " schemaLocation=\""
-                            + buildSchemaURL(request.getBaseUrl(), "gml/2.1.2.1/feature.xsd")
-                            + "\"/>\n\n");
+            tempResponse.append("\n\n<xs:import namespace="
+                    + GML_URL
+                    + " schemaLocation=\""
+                    + buildSchemaURL(request.getBaseUrl(), "gml/2.1.2.1/feature.xsd")
+                    + "\"/>\n\n");
             tempResponse.append(generateSpecifiedTypes(infos));
         } else {
             // the featureTypes do not have all the same prefixes.
@@ -175,12 +161,11 @@ public class XmlSchemaEncoder extends WFSDescribeFeatureTypeOutputFormat {
             while (prefixIter.hasNext()) {
                 // iterate through prefixes, and add the types that have that prefix.
                 String prefix = prefixIter.next().toString();
-                tempResponse.append(
-                        getNSImport(
-                                prefix,
-                                infos,
-                                request.getBaseUrl(),
-                                request.getService().toLowerCase()));
+                tempResponse.append(getNSImport(
+                        prefix,
+                        infos,
+                        request.getBaseUrl(),
+                        request.getService().toLowerCase()));
             }
         }
 
@@ -200,8 +185,7 @@ public class XmlSchemaEncoder extends WFSDescribeFeatureTypeOutputFormat {
      *     part of this import statement.
      * @return The namespace element.
      */
-    private StringBuffer getNSImport(
-            String prefix, FeatureTypeInfo[] infos, String baseUrl, String service) {
+    private StringBuffer getNSImport(String prefix, FeatureTypeInfo[] infos, String baseUrl, String service) {
         LOGGER.finer("prefix is " + prefix);
 
         StringBuffer retBuffer = new StringBuffer("\n  <xs:import namespace=\"");
@@ -371,11 +355,7 @@ public class XmlSchemaEncoder extends WFSDescribeFeatureTypeOutputFormat {
             // don't have schemas in the right place?  Because as it is now
             // a describe all will choke if there is one ft with no schema.xml
             throw (IOException)
-                    new IOException(
-                                    "problem writing featureType information "
-                                            + " from "
-                                            + inputFile)
-                            .initCause(e);
+                    new IOException("problem writing featureType information " + " from " + inputFile).initCause(e);
         }
 
         return sb.toString();

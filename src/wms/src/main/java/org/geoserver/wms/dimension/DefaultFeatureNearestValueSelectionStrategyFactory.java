@@ -18,8 +18,7 @@ import org.geoserver.wms.dimension.impl.FeatureNearestValueSelectionStrategyImpl
  *
  * @author Ilkka Rinne / Spatineo Inc for the Finnish Meteorological Institute
  */
-public class DefaultFeatureNearestValueSelectionStrategyFactory
-        implements NearestValueStrategyFactory {
+public class DefaultFeatureNearestValueSelectionStrategyFactory implements NearestValueStrategyFactory {
 
     @Override
     public DimensionDefaultValueSelectionStrategy createNearestValueStrategy(Object toMatch) {

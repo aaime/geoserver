@@ -80,8 +80,7 @@ public class LocalWorkspaceCatalogTest {
         // secured wrapped around lg1. These wrappers can be returned by the
         // secure catalog
         SecuredLayerGroupInfo slg1 =
-                new SecuredLayerGroupInfo(
-                        lg1, null, Collections.emptyList(), Collections.emptyList());
+                new SecuredLayerGroupInfo(lg1, null, Collections.emptyList(), Collections.emptyList());
 
         LayerGroupInfo lg2 = createNiceMock(LayerGroupInfo.class);
         expect(lg2.getName()).andReturn("lg2").anyTimes();
@@ -338,11 +337,12 @@ public class LocalWorkspaceCatalogTest {
         assertPrefixInclusion(includePrefix, setLocalWorkspace, createGeoServer);
     }
 
-    private void assertPrefixInclusion(
-            boolean includePrefix, boolean setLocalWorkspace, boolean createGeoServer) {
+    private void assertPrefixInclusion(boolean includePrefix, boolean setLocalWorkspace, boolean createGeoServer) {
         if (createGeoServer) {
             SettingsInfo settings = createNiceMock(SettingsInfo.class);
-            expect(settings.isLocalWorkspaceIncludesPrefix()).andReturn(includePrefix).anyTimes();
+            expect(settings.isLocalWorkspaceIncludesPrefix())
+                    .andReturn(includePrefix)
+                    .anyTimes();
             replay(settings);
 
             GeoServer geoServer = createNiceMock(GeoServer.class);
@@ -370,13 +370,9 @@ public class LocalWorkspaceCatalogTest {
             }
             String message;
             if (includePrefix) {
-                message =
-                        layerInfo.getName()
-                                + " should contain a : because the prefix should have been kept";
+                message = layerInfo.getName() + " should contain a : because the prefix should have been kept";
             } else {
-                message =
-                        layerInfo.getName()
-                                + " should contain not a : because the prefix should have been removed";
+                message = layerInfo.getName() + " should contain not a : because the prefix should have been removed";
             }
             assertEquals(message, includePrefix, layerInfo.getName().contains(":"));
         }

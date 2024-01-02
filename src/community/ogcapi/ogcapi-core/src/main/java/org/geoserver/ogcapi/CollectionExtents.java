@@ -30,11 +30,7 @@ public class CollectionExtents {
         public List<double[]> getBbox() {
             if (spatial != null) {
                 return spatial.stream()
-                        .map(
-                                re ->
-                                        new double[] {
-                                            re.getMinX(), re.getMinY(), re.getMaxX(), re.getMaxY()
-                                        })
+                        .map(re -> new double[] {re.getMinX(), re.getMinY(), re.getMaxX(), re.getMaxY()})
                         .collect(Collectors.toList());
             } else {
                 return null;
@@ -51,11 +47,10 @@ public class CollectionExtents {
 
         public List<String[]> getInterval() {
             if (temporal != null) {
-                return Collections.singletonList(
-                        new String[] {
-                            ISO_INSTANT.format(temporal.getMinValue().toInstant()),
-                            ISO_INSTANT.format(temporal.getMaxValue().toInstant())
-                        });
+                return Collections.singletonList(new String[] {
+                    ISO_INSTANT.format(temporal.getMinValue().toInstant()),
+                    ISO_INSTANT.format(temporal.getMaxValue().toInstant())
+                });
             } else {
                 return null;
             }

@@ -51,8 +51,7 @@ public class TiledCollectionsDocument extends AbstractDocument {
     public Iterator<TiledCollectionDocument> getCollections() {
         Iterator<TileLayer> tileLayers = gwc.getTileLayers().iterator();
         boolean skipInvalid =
-                gs.getGlobal().getResourceErrorHandling()
-                        == ResourceErrorHandling.SKIP_MISCONFIGURED_LAYERS;
+                gs.getGlobal().getResourceErrorHandling() == ResourceErrorHandling.SKIP_MISCONFIGURED_LAYERS;
         return new Iterator<TiledCollectionDocument>() {
 
             TiledCollectionDocument next;
@@ -66,8 +65,7 @@ public class TiledCollectionsDocument extends AbstractDocument {
                 while (tileLayers.hasNext()) {
                     TileLayer tileLayer = tileLayers.next();
                     try {
-                        TiledCollectionDocument collection =
-                                new TiledCollectionDocument(wms, tileLayer, true);
+                        TiledCollectionDocument collection = new TiledCollectionDocument(wms, tileLayer, true);
 
                         next = collection;
                         return true;

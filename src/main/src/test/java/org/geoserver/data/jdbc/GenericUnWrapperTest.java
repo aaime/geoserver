@@ -36,8 +36,7 @@ public class GenericUnWrapperTest {
 
     @Test
     @SuppressWarnings("PMD.CloseResource")
-    public void testUnwrapConnection()
-            throws SQLException, NoSuchMethodException, SecurityException {
+    public void testUnwrapConnection() throws SQLException, NoSuchMethodException, SecurityException {
         Connection connection = new TestConnection();
         Connection wrapper = new WrapperConnection(connection);
         assertTrue(wrapper.isWrapperFor(Connection.class));
@@ -54,8 +53,7 @@ public class GenericUnWrapperTest {
         } catch (Exception expected) {
         }
         GenericUnWrapper.CONNECTION_METHODS.put(
-                WrapperConnection.class,
-                WrapperConnection.class.getMethod("getUnderlyingConnection", null));
+                WrapperConnection.class, WrapperConnection.class.getMethod("getUnderlyingConnection", null));
 
         assertTrue(unwrapper.canUnwrap(wrapper));
         assertSame(connection, unwrapper.unwrap(wrapper));
@@ -68,8 +66,7 @@ public class GenericUnWrapperTest {
         Connection wrapper = new WrapperConnection(connection);
 
         GenericUnWrapper.CONNECTION_METHODS.put(
-                WrapperConnection.class,
-                WrapperConnection.class.getMethod("getUnderlyingConnection", null));
+                WrapperConnection.class, WrapperConnection.class.getMethod("getUnderlyingConnection", null));
 
         UnWrapper uw = DataSourceFinder.getUnWrapper(wrapper);
         assertNotNull("registed and canUnwrap", uw);

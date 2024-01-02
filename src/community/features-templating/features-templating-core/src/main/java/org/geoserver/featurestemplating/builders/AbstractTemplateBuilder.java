@@ -38,8 +38,7 @@ public abstract class AbstractTemplateBuilder implements TemplateBuilder {
 
     protected AbstractTemplateBuilder() {}
 
-    protected AbstractTemplateBuilder(
-            AbstractTemplateBuilder abstractTemplateBuilder, boolean includeChildren) {
+    protected AbstractTemplateBuilder(AbstractTemplateBuilder abstractTemplateBuilder, boolean includeChildren) {
         this.key = abstractTemplateBuilder.getKey();
         this.namespaces = abstractTemplateBuilder.getNamespaces();
         this.filter = abstractTemplateBuilder.getFilter();
@@ -87,7 +86,8 @@ public abstract class AbstractTemplateBuilder implements TemplateBuilder {
 
     public void setKey(Expression key) {
         this.key = key;
-    };
+    }
+    ;
 
     /**
      * Get the filter if present
@@ -185,22 +185,19 @@ public abstract class AbstractTemplateBuilder implements TemplateBuilder {
         this.children.add(builder);
     }
 
-    protected void addChildrenEvaluationToEncodingHints(
-            TemplateOutputWriter writer, TemplateBuilderContext context) {
+    protected void addChildrenEvaluationToEncodingHints(TemplateOutputWriter writer, TemplateBuilderContext context) {
         if (children != null && !children.isEmpty()) {
             ChildrenEvaluation childrenEvaluation = getChildrenEvaluation(writer, context);
             getEncodingHints().put(EncodingHints.CHILDREN_EVALUATION, childrenEvaluation);
         }
     }
 
-    protected ChildrenEvaluation getChildrenEvaluation(
-            TemplateOutputWriter writer, TemplateBuilderContext context) {
-        ChildrenEvaluation action =
-                () -> {
-                    for (TemplateBuilder b : children) {
-                        b.evaluate(writer, context);
-                    }
-                };
+    protected ChildrenEvaluation getChildrenEvaluation(TemplateOutputWriter writer, TemplateBuilderContext context) {
+        ChildrenEvaluation action = () -> {
+            for (TemplateBuilder b : children) {
+                b.evaluate(writer, context);
+            }
+        };
         return action;
     }
 

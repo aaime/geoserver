@@ -261,8 +261,7 @@ public enum JSONType {
             if (isJsonp) {
                 // jsonp
                 response.setContentType(JSONType.jsonp);
-                JSONType.writeJsonpException(
-                        exception, request, response.getOutputStream(), charset, verbose);
+                JSONType.writeJsonpException(exception, request, response.getOutputStream(), charset, verbose);
             } else {
                 // json
                 @SuppressWarnings("PMD.CloseResource") // wrapper, actual stream managed outside
@@ -281,17 +280,12 @@ public enum JSONType {
                 }
             }
         } catch (Exception e) {
-            if (LOGGER != null && LOGGER.isLoggable(Level.SEVERE))
-                LOGGER.severe(e.getLocalizedMessage());
+            if (LOGGER != null && LOGGER.isLoggable(Level.SEVERE)) LOGGER.severe(e.getLocalizedMessage());
         }
     }
 
     private static void writeJsonpException(
-            ServiceException exception,
-            Request request,
-            OutputStream out,
-            String charset,
-            boolean verbose)
+            ServiceException exception, Request request, OutputStream out, String charset, boolean verbose)
             throws IOException {
 
         OutputStreamWriter outWriter = new OutputStreamWriter(out, charset);
@@ -310,10 +304,7 @@ public enum JSONType {
     }
 
     private static void writeJsonException(
-            ServiceException exception,
-            Request request,
-            OutputStreamWriter outWriter,
-            boolean verbose)
+            ServiceException exception, Request request, OutputStreamWriter outWriter, boolean verbose)
             throws IOException {
         try {
             JSONBuilder json = new JSONBuilder(outWriter);
@@ -344,8 +335,7 @@ public enum JSONType {
             }
             json.endObject().endArray().endObject();
         } catch (JSONException jsonException) {
-            ServiceException serviceException =
-                    new ServiceException("Error: " + jsonException.getMessage());
+            ServiceException serviceException = new ServiceException("Error: " + jsonException.getMessage());
             serviceException.initCause(jsonException);
             throw serviceException;
         }

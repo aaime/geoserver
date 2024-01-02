@@ -110,9 +110,7 @@ public class MetricValue implements Serializable {
         if (value instanceof Double || value instanceof Float) {
             final Number numberValue = (Number) value;
             return String.format(
-                    "%.2f %s",
-                    value instanceof Double ? numberValue.doubleValue() : numberValue.floatValue(),
-                    unit);
+                    "%.2f %s", value instanceof Double ? numberValue.doubleValue() : numberValue.floatValue(), unit);
         }
         if (unit != null && unit.equalsIgnoreCase("bytes")) {
             long bytes = Converters.convert(value, Long.class);

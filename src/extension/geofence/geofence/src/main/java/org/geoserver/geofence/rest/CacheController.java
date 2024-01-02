@@ -24,15 +24,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @ControllerAdvice
 @RequestMapping(
-        path = {
-            RestBaseController.ROOT_PATH + "/geofence/ruleCache",
-            RestBaseController.ROOT_PATH + "/ruleCache"
+        path = {RestBaseController.ROOT_PATH + "/geofence/ruleCache", RestBaseController.ROOT_PATH + "/ruleCache"
         }) // legacy entrypoint
 public class CacheController extends AbstractCatalogController {
 
     static final Logger LOGGER = Logging.getLogger(CacheController.class);
 
-    @Autowired private CachedRuleReader cachedRuleReader;
+    @Autowired
+    private CachedRuleReader cachedRuleReader;
 
     public CacheController(Catalog catalog) {
         super(catalog);
@@ -44,26 +43,25 @@ public class CacheController extends AbstractCatalogController {
     public String getCacheInfo() {
         CacheStats stats = cachedRuleReader.getStats();
 
-        StringBuilder sb =
-                new StringBuilder()
-                        .append("RuleStats[")
-                        .append(" size:")
-                        .append(cachedRuleReader.getCacheSize())
-                        .append("/")
-                        .append(cachedRuleReader.getCacheInitParams().getSize())
-                        .append(" hitCount:")
-                        .append(stats.hitCount())
-                        .append(" missCount:")
-                        .append(stats.missCount())
-                        .append(" loadSuccessCount:")
-                        .append(stats.loadSuccessCount())
-                        .append(" loadExceptionCount:")
-                        .append(stats.loadExceptionCount())
-                        .append(" totalLoadTime:")
-                        .append(stats.totalLoadTime())
-                        .append(" evictionCount:")
-                        .append(stats.evictionCount())
-                        .append("] \n");
+        StringBuilder sb = new StringBuilder()
+                .append("RuleStats[")
+                .append(" size:")
+                .append(cachedRuleReader.getCacheSize())
+                .append("/")
+                .append(cachedRuleReader.getCacheInitParams().getSize())
+                .append(" hitCount:")
+                .append(stats.hitCount())
+                .append(" missCount:")
+                .append(stats.missCount())
+                .append(" loadSuccessCount:")
+                .append(stats.loadSuccessCount())
+                .append(" loadExceptionCount:")
+                .append(stats.loadExceptionCount())
+                .append(" totalLoadTime:")
+                .append(stats.totalLoadTime())
+                .append(" evictionCount:")
+                .append(stats.evictionCount())
+                .append("] \n");
 
         stats = cachedRuleReader.getAdminAuthStats();
         sb.append("AdminAuthStats[")

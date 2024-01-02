@@ -40,8 +40,7 @@ public class NewLayerProviderTest extends GeoServerWicketTestSupport {
 
     @Test
     public void testCoverages() {
-        StoreInfo dem =
-                getCatalog().getStoreByName(MockData.TASMANIA_DEM.getLocalPart(), StoreInfo.class);
+        StoreInfo dem = getCatalog().getStoreByName(MockData.TASMANIA_DEM.getLocalPart(), StoreInfo.class);
         NewLayerPageProvider provider = new NewLayerPageProvider();
         provider.setStoreId(dem.getId());
         provider.setShowPublished(true);

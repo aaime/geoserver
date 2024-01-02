@@ -210,8 +210,7 @@ public class FeatureWrapper extends BeansWrapper {
             SimpleHash map = new SimpleHash(new DefaultObjectWrapper(FM_VERSION));
             map.put(
                     "features",
-                    templateFeatureCollectionFactory.createTemplateFeatureCollection(
-                            (FeatureCollection) object, this));
+                    templateFeatureCollectionFactory.createTemplateFeatureCollection((FeatureCollection) object, this));
             map.put("type", wrap(((FeatureCollection) object).getSchema()));
 
             return map;
@@ -240,7 +239,8 @@ public class FeatureWrapper extends BeansWrapper {
             attribute.put("type", descr.getType().getBinding().getName());
             attribute.put(
                     "isGeometry",
-                    Boolean.valueOf(Geometry.class.isAssignableFrom(descr.getType().getBinding())));
+                    Boolean.valueOf(
+                            Geometry.class.isAssignableFrom(descr.getType().getBinding())));
 
             attributeMap.put(descr.getName().toString(), attribute);
         }
@@ -269,11 +269,10 @@ public class FeatureWrapper extends BeansWrapper {
 
         ResourceInfo info = null;
         if (cat != null) {
-            info =
-                    cat.getResourceByName(
-                            att.getType().getName().getNamespaceURI(),
-                            att.getType().getName().getLocalPart(),
-                            ResourceInfo.class);
+            info = cat.getResourceByName(
+                    att.getType().getName().getNamespaceURI(),
+                    att.getType().getName().getLocalPart(),
+                    ResourceInfo.class);
 
             if (info != null) {
                 map.put("type", info);
@@ -351,11 +350,8 @@ public class FeatureWrapper extends BeansWrapper {
                     attName = type.getName();
                     Object attributeMap;
                     if (type.getMaxOccurs() > 1) attributeMap = getListMaps(attName);
-                    else
-                        attributeMap =
-                                new AttributeMap(attName, feature, feature.getProperty(attName));
-                    entrySet.add(
-                            new MapEntry<Object, Object>(attName.getLocalPart(), attributeMap));
+                    else attributeMap = new AttributeMap(attName, feature, feature.getProperty(attName));
+                    entrySet.add(new MapEntry<Object, Object>(attName.getLocalPart(), attributeMap));
                 }
             }
             return entrySet;
@@ -411,8 +407,7 @@ public class FeatureWrapper extends BeansWrapper {
             this.feature = feature;
         }
 
-        public AttributeMap(
-                final Name attributeName, final ComplexAttribute feature, final Property prop) {
+        public AttributeMap(final Name attributeName, final ComplexAttribute feature, final Property prop) {
             this(attributeName, feature);
             this.prop = prop;
         }
@@ -439,15 +434,13 @@ public class FeatureWrapper extends BeansWrapper {
                 entrySet = new LinkedHashSet<>();
                 final ComplexType featureType = feature.getType();
                 PropertyDescriptor attributeDescr = featureType.getDescriptor(attributeName);
-                Property property =
-                        this.prop == null ? feature.getProperty(attributeName) : this.prop;
+                Property property = this.prop == null ? feature.getProperty(attributeName) : this.prop;
 
                 if (property == null) {
                     // maybe polymorphism? let's try
                     @SuppressWarnings("unchecked")
-                    List<AttributeDescriptor> substitutionGroup =
-                            (List<AttributeDescriptor>)
-                                    attributeDescr.getUserData().get("substitutionGroup");
+                    List<AttributeDescriptor> substitutionGroup = (List<AttributeDescriptor>)
+                            attributeDescr.getUserData().get("substitutionGroup");
                     if (substitutionGroup != null) {
                         Iterator<AttributeDescriptor> it = substitutionGroup.iterator();
                         while (property == null && it.hasNext()) {
@@ -459,9 +452,7 @@ public class FeatureWrapper extends BeansWrapper {
                     }
                 }
 
-                entrySet.add(
-                        new MapEntry<Object, Object>(
-                                "isComplex", property instanceof ComplexAttribute));
+                entrySet.add(new MapEntry<Object, Object>("isComplex", property instanceof ComplexAttribute));
 
                 Object value = null;
                 if (property instanceof ComplexAttribute) {
@@ -472,25 +463,21 @@ public class FeatureWrapper extends BeansWrapper {
 
                 entrySet.add(new DeferredValueEntry("value", value));
                 entrySet.add(new MapEntry<Object, Object>("name", attributeName.getLocalPart()));
-                entrySet.add(
-                        new MapEntry<Object, Object>("namespace", getNamespace(attributeName)));
+                entrySet.add(new MapEntry<Object, Object>("namespace", getNamespace(attributeName)));
                 entrySet.add(new MapEntry<Object, Object>("prefix", getPrefix(attributeName)));
 
                 if (attributeDescr.getType() instanceof ComplexType) {
                     entrySet.add(
-                            new MapEntry<Object, Object>(
-                                    "type", buildType((ComplexType) attributeDescr.getType())));
+                            new MapEntry<Object, Object>("type", buildType((ComplexType) attributeDescr.getType())));
                 } else {
-                    entrySet.add(
-                            new MapEntry<Object, Object>(
-                                    "type", attributeDescr.getType().getBinding().getName()));
+                    entrySet.add(new MapEntry<Object, Object>(
+                            "type", attributeDescr.getType().getBinding().getName()));
                 }
 
                 Object rawValue = value == null ? "" : value;
                 boolean isGeometry =
                         Geometry.class.isAssignableFrom(attributeDescr.getType().getBinding());
-                entrySet.add(
-                        new MapEntry<Object, Object>("isGeometry", Boolean.valueOf(isGeometry)));
+                entrySet.add(new MapEntry<Object, Object>("isGeometry", Boolean.valueOf(isGeometry)));
                 entrySet.add(new MapEntry<Object, Object>("rawValue", rawValue));
             }
             return entrySet;
@@ -541,8 +528,7 @@ public class FeatureWrapper extends BeansWrapper {
 
         @Override
         @SuppressWarnings("unchecked")
-        public CollectionModel createTemplateFeatureCollection(
-                FeatureCollection collection, BeansWrapper wrapper) {
+        public CollectionModel createTemplateFeatureCollection(FeatureCollection collection, BeansWrapper wrapper) {
             return new CollectionModel(DataUtilities.list(collection), wrapper);
         }
     }

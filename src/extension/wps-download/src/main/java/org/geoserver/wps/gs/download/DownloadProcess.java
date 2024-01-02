@@ -53,9 +53,7 @@ import org.springframework.util.MimeType;
  * @author "Alessio Fabiani - alessio.fabiani@geo-solutions.it"
  * @author Simone Giannecchini, GeoSolutions SAS
  */
-@DescribeProcess(
-        title = "Enterprise Download Process",
-        description = "Downloads Layer Stream and provides a ZIP.")
+@DescribeProcess(title = "Enterprise Download Process", description = "Downloads Layer Stream and provides a ZIP.")
 public class DownloadProcess implements GeoServerProcess, ApplicationContextAware {
 
     /** The LOGGER. */
@@ -81,9 +79,7 @@ public class DownloadProcess implements GeoServerProcess, ApplicationContextAwar
      * @param resourceManager the resourceManager to track resources to be cleaned up
      */
     public DownloadProcess(
-            GeoServer geoServer,
-            DownloadEstimatorProcess estimator,
-            WPSResourceManager resourceManager) {
+            GeoServer geoServer, DownloadEstimatorProcess estimator, WPSResourceManager resourceManager) {
         Utilities.ensureNonNull("geoServer", geoServer);
         this.catalog = geoServer.getCatalog();
         this.estimator = estimator;
@@ -131,36 +127,23 @@ public class DownloadProcess implements GeoServerProcess, ApplicationContextAwar
             description = "The produced download",
             meta = {"mimeTypes=image/tiff, " + ZIP, "chosenMimeType=resultFormat"})
     public RawData execute(
-            @DescribeParameter(
-                            name = "layerName",
-                            min = 1,
-                            description = "Original layer to download")
+            @DescribeParameter(name = "layerName", min = 1, description = "Original layer to download")
                     String layerName,
-            @DescribeParameter(name = "filter", min = 0, description = "Optional Vector Filter")
-                    Filter filter,
-            @DescribeParameter(name = "outputFormat", min = 1, description = "format Mime-Type")
-                    String mimeType,
+            @DescribeParameter(name = "filter", min = 0, description = "Optional Vector Filter") Filter filter,
+            @DescribeParameter(name = "outputFormat", min = 1, description = "format Mime-Type") String mimeType,
             @DescribeParameter(
                             name = "resultFormat",
                             min = 0,
-                            description =
-                                    "The Mime-Type of the returned object. Default is application/zip, "
-                                            + "to archive the result")
+                            description = "The Mime-Type of the returned object. Default is application/zip, "
+                                    + "to archive the result")
                     String resultFormat,
             @DescribeParameter(name = "targetCRS", min = 0, description = "Optional Target CRS")
                     CoordinateReferenceSystem targetCRS,
-            @DescribeParameter(
-                            name = "RoiCRS",
-                            min = 0,
-                            description = "Optional Region Of Interest CRS")
+            @DescribeParameter(name = "RoiCRS", min = 0, description = "Optional Region Of Interest CRS")
                     CoordinateReferenceSystem roiCRS,
-            @DescribeParameter(
-                            name = "ROI",
-                            min = 0,
-                            description = "Optional Region Of Interest (Polygon)")
+            @DescribeParameter(name = "ROI", min = 0, description = "Optional Region Of Interest (Polygon)")
                     Geometry roi,
-            @DescribeParameter(name = "cropToROI", min = 0, description = "Crop to ROI")
-                    Boolean clip,
+            @DescribeParameter(name = "cropToROI", min = 0, description = "Crop to ROI") Boolean clip,
             @DescribeParameter(
                             name = "interpolation",
                             description =
@@ -181,29 +164,21 @@ public class DownloadProcess implements GeoServerProcess, ApplicationContextAwar
                             description =
                                     "Y Size of the Target Image (applies to raster data only), or native resolution if missing")
                     Integer targetSizeY,
-            @DescribeParameter(
-                            name = "selectedBands",
-                            description = "Band Selection Indices",
-                            min = 0)
+            @DescribeParameter(name = "selectedBands", description = "Band Selection Indices", min = 0)
                     int[] bandIndices,
-            @DescribeParameter(
-                            name = "writeParameters",
-                            description = "Optional writing parameters",
-                            min = 0)
+            @DescribeParameter(name = "writeParameters", description = "Optional writing parameters", min = 0)
                     Parameters writeParameters,
             @DescribeParameter(
                             name = "minimizeReprojections",
-                            description =
-                                    "When dealing with a Heterogeneous CRS mosaic, avoid reprojections of "
-                                            + "the granules within the ROI, having their nativeCRS equal to the targetCRS",
+                            description = "When dealing with a Heterogeneous CRS mosaic, avoid reprojections of "
+                                    + "the granules within the ROI, having their nativeCRS equal to the targetCRS",
                             min = 0)
                     Boolean minimizeReprojections,
             @DescribeParameter(
                             name = "bestResolutionOnMatchingCRS",
-                            description =
-                                    "When dealing with a Heterogeneous CRS mosaic given a ROI "
-                                            + "and a TargetCRS, with no target size being specified, get the best "
-                                            + " resolution of data having nativeCrs matching the TargetCRS",
+                            description = "When dealing with a Heterogeneous CRS mosaic given a ROI "
+                                    + "and a TargetCRS, with no target size being specified, get the best "
+                                    + " resolution of data having nativeCrs matching the TargetCRS",
                             min = 0)
                     Boolean bestResolutionOnMatchingCRS,
             @DescribeParameter(
@@ -217,10 +192,7 @@ public class DownloadProcess implements GeoServerProcess, ApplicationContextAwar
                                             + "the reprojected coverage will be forced to use native resolutions",
                             min = 0)
                     Double resolutionsDifferenceTolerance,
-            @DescribeParameter(
-                            name = "targetVerticalCRS",
-                            description = "Optional Target VerticalCRS ",
-                            min = 0)
+            @DescribeParameter(name = "targetVerticalCRS", description = "Optional Target VerticalCRS ", min = 0)
                     CoordinateReferenceSystem targetVerticalCRS,
             final ProgressListener progressListener)
             throws ProcessException {
@@ -259,13 +231,9 @@ public class DownloadProcess implements GeoServerProcess, ApplicationContextAwar
             // set default interpolation value
             if (interpolation == null) {
                 if (LOGGER.isLoggable(Level.FINE)) {
-                    LOGGER.log(
-                            Level.FINE,
-                            "Interpolation parameter not specified, using default (Nearest Neighbor)");
+                    LOGGER.log(Level.FINE, "Interpolation parameter not specified, using default (Nearest Neighbor)");
                 }
-                interpolation =
-                        (Interpolation)
-                                ImageUtilities.NN_INTERPOLATION_HINT.get(JAI.KEY_INTERPOLATION);
+                interpolation = (Interpolation) ImageUtilities.NN_INTERPOLATION_HINT.get(JAI.KEY_INTERPOLATION);
             }
 
             // Default behavior is false for backward compatibility
@@ -321,8 +289,7 @@ public class DownloadProcess implements GeoServerProcess, ApplicationContextAwar
             if (resourceInfo == null) {
                 // could not find any data store associated to the specified layer ... abruptly
                 // interrupt the process
-                throw new IllegalArgumentException(
-                        "Unable to locate ResourceInfo for layer:" + layerName);
+                throw new IllegalArgumentException("Unable to locate ResourceInfo for layer:" + layerName);
             }
 
             //
@@ -346,16 +313,15 @@ public class DownloadProcess implements GeoServerProcess, ApplicationContextAwar
                 // VECTOR
                 //
                 // perform the actual download of vectorial data accordingly to the request inputs
-                internalOutput =
-                        new VectorDownload(limits, resourceManager, context)
-                                .execute(
-                                        (FeatureTypeInfo) resourceInfo,
-                                        mimeType,
-                                        roi,
-                                        clip,
-                                        filter,
-                                        targetCRS,
-                                        progressListener);
+                internalOutput = new VectorDownload(limits, resourceManager, context)
+                        .execute(
+                                (FeatureTypeInfo) resourceInfo,
+                                mimeType,
+                                roi,
+                                clip,
+                                filter,
+                                targetCRS,
+                                progressListener);
 
             } else if (resourceInfo instanceof CoverageInfo) {
                 if (LOGGER.isLoggable(Level.FINE)) {
@@ -366,25 +332,24 @@ public class DownloadProcess implements GeoServerProcess, ApplicationContextAwar
                 //
                 CoverageInfo cInfo = (CoverageInfo) resourceInfo;
                 // convert/reproject/crop if needed the coverage
-                internalOutput =
-                        new RasterDownload(limits, resourceManager, context, catalog)
-                                .execute(
-                                        mimeType,
-                                        progressListener,
-                                        cInfo,
-                                        roi,
-                                        targetCRS,
-                                        clip,
-                                        filter,
-                                        interpolation,
-                                        targetSizeX,
-                                        targetSizeY,
-                                        bandIndices,
-                                        writeParameters,
-                                        minimizeReprojections,
-                                        bestResolutionOnMatchingCRS,
-                                        resolutionsDifferenceTolerance,
-                                        targetVerticalCRS);
+                internalOutput = new RasterDownload(limits, resourceManager, context, catalog)
+                        .execute(
+                                mimeType,
+                                progressListener,
+                                cInfo,
+                                roi,
+                                targetCRS,
+                                clip,
+                                filter,
+                                interpolation,
+                                targetSizeX,
+                                targetSizeY,
+                                bandIndices,
+                                writeParameters,
+                                minimizeReprojections,
+                                bestResolutionOnMatchingCRS,
+                                resolutionsDifferenceTolerance,
+                                targetVerticalCRS);
             } else {
 
                 // wrong type
@@ -399,14 +364,12 @@ public class DownloadProcess implements GeoServerProcess, ApplicationContextAwar
             // checks
             if (internalOutput == null) {
                 // wrong type
-                throw new IllegalStateException(
-                        "Could not complete the Download Process, output file is null");
+                throw new IllegalStateException("Could not complete the Download Process, output file is null");
             }
             if (!Resources.exists(internalOutput) || !Resources.canRead(internalOutput)) {
                 // wrong type
                 throw new IllegalStateException(
-                        "Could not complete the Download Process, output file invalid! --> "
-                                + internalOutput.path());
+                        "Could not complete the Download Process, output file invalid! --> " + internalOutput.path());
             }
             String subType = MimeType.valueOf(mimeType).getSubtype();
             if (!ZIP.equalsIgnoreCase(resultFormat)) {
@@ -414,8 +377,7 @@ public class DownloadProcess implements GeoServerProcess, ApplicationContextAwar
                 // Let's extract that from there since we don't have access here to the PPIO.
                 String path = internalOutput.path();
                 String extension = FilenameUtils.getExtension(path);
-                ResourceRawData rawData =
-                        new ResourceRawData(internalOutput, resultFormat, extension);
+                ResourceRawData rawData = new ResourceRawData(internalOutput, resultFormat, extension);
                 if (progressListener != null) {
                     progressListener.complete();
                 }
@@ -429,9 +391,8 @@ public class DownloadProcess implements GeoServerProcess, ApplicationContextAwar
                 LOGGER.log(Level.FINE, "Preparing the result");
             }
             // build output zip
-            final Resource result =
-                    resourceManager.getOutputResource(
-                            resourceManager.getExecutionId(true), resourceInfo.getName() + ".zip");
+            final Resource result = resourceManager.getOutputResource(
+                    resourceManager.getExecutionId(true), resourceInfo.getName() + ".zip");
 
             try (OutputStream os1 = result.out()) {
                 if (LOGGER.isLoggable(Level.FINE)) {
@@ -453,8 +414,7 @@ public class DownloadProcess implements GeoServerProcess, ApplicationContextAwar
                     LOGGER.log(Level.FINE, "Zipping files");
                 }
                 // zip them all
-                new ZipArchivePPIO(
-                                estimator.getDownloadServiceConfiguration().getCompressionLevel())
+                new ZipArchivePPIO(estimator.getDownloadServiceConfiguration().getCompressionLevel())
                         .encode(filesToDownload, os1);
 
             } finally {

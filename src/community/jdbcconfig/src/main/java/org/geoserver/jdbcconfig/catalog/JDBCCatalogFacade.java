@@ -118,8 +118,7 @@ public class JDBCCatalogFacade implements CatalogFacade {
      *     java.lang.String, java.lang.Class)
      */
     @Override
-    public <T extends StoreInfo> T getStoreByName(
-            WorkspaceInfo workspace, String name, Class<T> clazz) {
+    public <T extends StoreInfo> T getStoreByName(WorkspaceInfo workspace, String name, Class<T> clazz) {
         if (workspace == null || workspace == ANY_WORKSPACE) {
             return db.getByIdentity(clazz, "name", name);
         } else {
@@ -133,8 +132,7 @@ public class JDBCCatalogFacade implements CatalogFacade {
      *     java.lang.Class)
      */
     @Override
-    public <T extends StoreInfo> List<T> getStoresByWorkspace(
-            WorkspaceInfo workspace, Class<T> clazz) {
+    public <T extends StoreInfo> List<T> getStoresByWorkspace(WorkspaceInfo workspace, Class<T> clazz) {
 
         Filter filter = acceptAll();
         if (null != workspace && ANY_WORKSPACE != workspace) {
@@ -178,11 +176,7 @@ public class JDBCCatalogFacade implements CatalogFacade {
         // fire modify event before change
         if (!Utilities.equals(old, workspace)) {
             Catalog catalog = getCatalog();
-            catalog.fireModified(
-                    catalog,
-                    Arrays.asList("defaultDataStore"),
-                    Arrays.asList(old),
-                    Arrays.asList(store));
+            catalog.fireModified(catalog, Arrays.asList("defaultDataStore"), Arrays.asList(old), Arrays.asList(store));
         }
         db.setDefault(target, id);
 
@@ -190,10 +184,7 @@ public class JDBCCatalogFacade implements CatalogFacade {
         if (!Utilities.equals(old, workspace)) {
             Catalog catalog = getCatalog();
             catalog.firePostModified(
-                    catalog,
-                    Arrays.asList("defaultDataStore"),
-                    Arrays.asList(old),
-                    Arrays.asList(store));
+                    catalog, Arrays.asList("defaultDataStore"), Arrays.asList(old), Arrays.asList(store));
         }
     }
 
@@ -227,8 +218,7 @@ public class JDBCCatalogFacade implements CatalogFacade {
      *     java.lang.String, java.lang.Class)
      */
     @Override
-    public <T extends ResourceInfo> T getResourceByName(
-            NamespaceInfo namespace, String name, Class<T> clazz) {
+    public <T extends ResourceInfo> T getResourceByName(NamespaceInfo namespace, String name, Class<T> clazz) {
         if (namespace == null || namespace == ANY_NAMESPACE) {
             return db.getByIdentity(clazz, "name", name);
         } else {
@@ -248,8 +238,7 @@ public class JDBCCatalogFacade implements CatalogFacade {
      *     java.lang.Class)
      */
     @Override
-    public <T extends ResourceInfo> List<T> getResourcesByNamespace(
-            NamespaceInfo namespace, Class<T> clazz) {
+    public <T extends ResourceInfo> List<T> getResourcesByNamespace(NamespaceInfo namespace, Class<T> clazz) {
 
         Filter filter = acceptAll();
         if (null != namespace && ANY_NAMESPACE != namespace) {
@@ -264,8 +253,7 @@ public class JDBCCatalogFacade implements CatalogFacade {
      *     java.lang.String, java.lang.Class)
      */
     @Override
-    public <T extends ResourceInfo> T getResourceByStore(
-            StoreInfo store, String name, Class<T> clazz) {
+    public <T extends ResourceInfo> T getResourceByStore(StoreInfo store, String name, Class<T> clazz) {
 
         Filter filter = equal("name", name);
         Filter storeFilter = equal("store.id", store.getId());
@@ -491,10 +479,7 @@ public class JDBCCatalogFacade implements CatalogFacade {
             // fire modify event before change
             Catalog catalog = getCatalog();
             catalog.fireModified(
-                    catalog,
-                    Arrays.asList("defaultNamespace"),
-                    Arrays.asList(old),
-                    Arrays.asList(defaultNamespace));
+                    catalog, Arrays.asList("defaultNamespace"), Arrays.asList(old), Arrays.asList(defaultNamespace));
         }
         db.setDefault(target, id);
 
@@ -502,10 +487,7 @@ public class JDBCCatalogFacade implements CatalogFacade {
             // fire postmodify event after change
             Catalog catalog = getCatalog();
             catalog.firePostModified(
-                    catalog,
-                    Arrays.asList("defaultNamespace"),
-                    Arrays.asList(old),
-                    Arrays.asList(defaultNamespace));
+                    catalog, Arrays.asList("defaultNamespace"), Arrays.asList(old), Arrays.asList(defaultNamespace));
         }
     }
 
@@ -581,10 +563,7 @@ public class JDBCCatalogFacade implements CatalogFacade {
             // fire modify event before change
             Catalog catalog = getCatalog();
             catalog.fireModified(
-                    catalog,
-                    Arrays.asList("defaultWorkspace"),
-                    Arrays.asList(old),
-                    Arrays.asList(workspace));
+                    catalog, Arrays.asList("defaultWorkspace"), Arrays.asList(old), Arrays.asList(workspace));
         }
         db.setDefault(type, id);
 
@@ -592,10 +571,7 @@ public class JDBCCatalogFacade implements CatalogFacade {
             // fire postmodify event after change
             Catalog catalog = getCatalog();
             catalog.firePostModified(
-                    catalog,
-                    Arrays.asList("defaultWorkspace"),
-                    Arrays.asList(old),
-                    Arrays.asList(workspace));
+                    catalog, Arrays.asList("defaultWorkspace"), Arrays.asList(old), Arrays.asList(workspace));
         }
     }
 
@@ -723,8 +699,7 @@ public class JDBCCatalogFacade implements CatalogFacade {
         if (workspace == ANY_WORKSPACE) {
             return db.getByIdentity(StyleInfo.class, "name", name);
         } else {
-            return db.getByIdentity(
-                    StyleInfo.class, "workspace.id", workspace.getId(), "name", name);
+            return db.getByIdentity(StyleInfo.class, "workspace.id", workspace.getId(), "name", name);
         }
     }
 
@@ -791,8 +766,7 @@ public class JDBCCatalogFacade implements CatalogFacade {
         }
     }
 
-    private <T extends CatalogInfo> T findUnique(Class<T> type, Filter filter)
-            throws IllegalArgumentException {
+    private <T extends CatalogInfo> T findUnique(Class<T> type, Filter filter) throws IllegalArgumentException {
 
         final Integer count = Integer.valueOf(2);
         CloseableIterator<T> it = list(type, filter, null, count);
@@ -801,8 +775,7 @@ public class JDBCCatalogFacade implements CatalogFacade {
             if (it.hasNext()) {
                 result = it.next();
                 if (it.hasNext()) {
-                    throw new IllegalArgumentException(
-                            "Specified query predicate resulted in more than one object");
+                    throw new IllegalArgumentException("Specified query predicate resulted in more than one object");
                 }
             }
         } finally {
@@ -868,8 +841,7 @@ public class JDBCCatalogFacade implements CatalogFacade {
         afterSaved(info, propertyNames, oldValues, newValues);
     }
 
-    protected void beforeSaved(
-            CatalogInfo object, List<String> propertyNames, List oldValues, List newValues) {
+    protected void beforeSaved(CatalogInfo object, List<String> propertyNames, List oldValues, List newValues) {
         // get the real object
         CatalogInfo real = ModificationProxy.unwrap(object);
 
@@ -888,8 +860,7 @@ public class JDBCCatalogFacade implements CatalogFacade {
         }
     }
 
-    protected void afterSaved(
-            CatalogInfo object, List<String> propertyNames, List oldValues, List newValues) {
+    protected void afterSaved(CatalogInfo object, List<String> propertyNames, List oldValues, List newValues) {
         CatalogInfo real = ModificationProxy.unwrap(object);
 
         // fire the post modify event

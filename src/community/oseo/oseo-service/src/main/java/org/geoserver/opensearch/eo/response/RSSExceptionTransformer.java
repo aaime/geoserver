@@ -88,16 +88,14 @@ public class RSSExceptionTransformer extends LambdaTransformerBase {
         }
 
         private void channel(ServiceException e) {
-            element(
-                    "channel",
-                    () -> {
-                        element("title", "OpenSearch for EO Error report");
-                        element("link", buildSelfUrl());
-                        element("opensearch:totalResults", "1");
-                        element("opensearch:startIndex", "1");
-                        element("opensearch:itemsPerPage", "1");
-                        element("item", () -> itemContents(e));
-                    });
+            element("channel", () -> {
+                element("title", "OpenSearch for EO Error report");
+                element("link", buildSelfUrl());
+                element("opensearch:totalResults", "1");
+                element("opensearch:startIndex", "1");
+                element("opensearch:itemsPerPage", "1");
+                element("item", () -> itemContents(e));
+            });
         }
 
         private void itemContents(ServiceException e) {

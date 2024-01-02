@@ -57,8 +57,7 @@ public class JMSGeoServerHandler extends JMSConfigurationHandler<JMSGlobalModify
 
         } catch (Exception e) {
             if (LOGGER.isLoggable(java.util.logging.Level.SEVERE))
-                LOGGER.severe(
-                        this.getClass() + " is unable to synchronize the incoming event: " + ev);
+                LOGGER.severe(this.getClass() + " is unable to synchronize the incoming event: " + ev);
             throw e;
         } finally {
             producer.enable();
@@ -76,11 +75,9 @@ public class JMSGeoServerHandler extends JMSConfigurationHandler<JMSGlobalModify
      * @throws NoSuchMethodException {@link BeanUtilsBean.copyProperties}
      * @throws IllegalArgumentException if arguments are null
      */
-    private static GeoServerInfo localizeGeoServerInfo(
-            final GeoServer geoServer, final JMSGlobalModifyEvent ev)
+    private static GeoServerInfo localizeGeoServerInfo(final GeoServer geoServer, final JMSGlobalModifyEvent ev)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        if (geoServer == null || ev == null)
-            throw new IllegalArgumentException("Wrong passed arguments are null");
+        if (geoServer == null || ev == null) throw new IllegalArgumentException("Wrong passed arguments are null");
 
         final GeoServerInfo localObject = geoServer.getGlobal();
 
@@ -90,11 +87,9 @@ public class JMSGeoServerHandler extends JMSConfigurationHandler<JMSGlobalModify
         // overwrite all members
         BeanUtils.copyProperties(localObject, deserGeoServerInfo);
 
-        org.geoserver.cluster.impl.utils.BeanUtils.smartUpdate(
-                localObject, ev.getPropertyNames(), ev.getNewValues());
+        org.geoserver.cluster.impl.utils.BeanUtils.smartUpdate(localObject, ev.getPropertyNames(), ev.getNewValues());
 
-        localObject.setCoverageAccess(
-                localizeCoverageAccessInfo(geoServer, deserGeoServerInfo.getCoverageAccess()));
+        localObject.setCoverageAccess(localizeCoverageAccessInfo(geoServer, deserGeoServerInfo.getCoverageAccess()));
 
         // localize JAI
         localObject.setJAI(localizeJAIInfo(geoServer, deserGeoServerInfo.getJAI()));
@@ -144,8 +139,7 @@ public class JMSGeoServerHandler extends JMSConfigurationHandler<JMSGlobalModify
      * @throws InvocationTargetException {@link BeanUtilsBean.copyProperties}
      * @throws IllegalArgumentException if arguments are null
      */
-    private static SettingsInfo localizeSettingsInfo(
-            final GeoServer geoServer, final SettingsInfo deserInfo)
+    private static SettingsInfo localizeSettingsInfo(final GeoServer geoServer, final SettingsInfo deserInfo)
             throws IllegalAccessException, InvocationTargetException {
         if (geoServer == null || deserInfo == null)
             throw new IllegalArgumentException("Wrong passed arguments are null");
@@ -178,8 +172,7 @@ public class JMSGeoServerHandler extends JMSConfigurationHandler<JMSGlobalModify
      * @return the updated local ContactInfo.
      * @throws IllegalArgumentException if arguments are null
      */
-    private static ContactInfo localizeContactInfo(
-            final GeoServer geoServer, final ContactInfo deserInfo)
+    private static ContactInfo localizeContactInfo(final GeoServer geoServer, final ContactInfo deserInfo)
             throws IllegalAccessException, InvocationTargetException {
         if (geoServer == null || deserInfo == null)
             throw new IllegalArgumentException("Wrong passed arguments are null");

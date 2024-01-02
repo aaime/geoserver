@@ -58,8 +58,7 @@ public class FlatGeobufOutputFormat extends WFSGetFeatureOutputFormat {
     }
 
     @Override
-    protected void write(
-            FeatureCollectionResponse featureCollection, OutputStream output, Operation operation)
+    protected void write(FeatureCollectionResponse featureCollection, OutputStream output, Operation operation)
             throws IOException {
         if (LOGGER.isLoggable(Level.INFO)) LOGGER.info("about to encode FlatGeobuf");
 

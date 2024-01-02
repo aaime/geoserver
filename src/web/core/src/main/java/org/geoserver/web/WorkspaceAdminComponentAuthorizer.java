@@ -41,14 +41,12 @@ public class WorkspaceAdminComponentAuthorizer extends AdminComponentAuthorizer 
         Catalog catalog = getSecurityManager().getCatalog();
 
         // the secure catalog builds and owns the ResourceAccessManager
-        SecureCatalogImpl secureCatalog =
-                GeoServerApplication.get().getBeanOfType(SecureCatalogImpl.class);
+        SecureCatalogImpl secureCatalog = GeoServerApplication.get().getBeanOfType(SecureCatalogImpl.class);
         ResourceAccessManager manager = secureCatalog.getResourceAccessManager();
 
         if (manager != null) {
             for (WorkspaceInfo workspace : catalog.getWorkspaces()) {
-                WorkspaceAccessLimits accessLimits =
-                        manager.getAccessLimits(authentication, workspace);
+                WorkspaceAccessLimits accessLimits = manager.getAccessLimits(authentication, workspace);
                 if (accessLimits != null && accessLimits.isAdminable()) {
                     return true;
                 }

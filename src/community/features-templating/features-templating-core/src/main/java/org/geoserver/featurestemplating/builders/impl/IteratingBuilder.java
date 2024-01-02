@@ -35,8 +35,7 @@ public class IteratingBuilder extends SourceBuilder {
     }
 
     @Override
-    public void evaluate(TemplateOutputWriter writer, TemplateBuilderContext context)
-            throws IOException {
+    public void evaluate(TemplateOutputWriter writer, TemplateBuilderContext context) throws IOException {
         if (ownOutput) {
             context = evaluateSource(context);
             if (context.getCurrentObj() != null) {
@@ -54,8 +53,8 @@ public class IteratingBuilder extends SourceBuilder {
      * @param context the current context
      * @throws IOException
      */
-    protected void evaluateNonFeaturesField(
-            TemplateOutputWriter writer, TemplateBuilderContext context) throws IOException {
+    protected void evaluateNonFeaturesField(TemplateOutputWriter writer, TemplateBuilderContext context)
+            throws IOException {
         if (canWrite(context)) {
             boolean iterateKey = isIterateKey();
             String key = getKey(context);
@@ -67,8 +66,7 @@ public class IteratingBuilder extends SourceBuilder {
             if (!iterateKey && hasOwnOutput()) writer.startArray(key, this.encodingHints);
 
             if (isList) {
-                evaluateCollection(
-                        writer, (List) context.getCurrentObj(), context.getParent(), iterateKey);
+                evaluateCollection(writer, (List) context.getCurrentObj(), context.getParent(), iterateKey);
             } else if (isArray) {
                 List list = Converters.convert(o, List.class);
                 evaluateCollection(writer, list, context.getParent(), iterateKey);
@@ -89,10 +87,7 @@ public class IteratingBuilder extends SourceBuilder {
      * @throws IOException
      */
     protected void evaluateCollection(
-            TemplateOutputWriter writer,
-            List elements,
-            TemplateBuilderContext parent,
-            boolean iterateKey)
+            TemplateOutputWriter writer, List elements, TemplateBuilderContext parent, boolean iterateKey)
             throws IOException {
 
         for (Object o : elements) {
@@ -117,8 +112,7 @@ public class IteratingBuilder extends SourceBuilder {
      * @param context the current context
      * @throws IOException
      */
-    protected void evaluateInternal(
-            TemplateOutputWriter writer, TemplateBuilderContext context, boolean iterateKey)
+    protected void evaluateInternal(TemplateOutputWriter writer, TemplateBuilderContext context, boolean iterateKey)
             throws IOException {
         if (evaluateFilter(context)) {
             String key = getKey(context);

@@ -69,8 +69,9 @@ public class LegacyTileLayerInfoLoader {
         GeoServerTileLayerInfoImpl tileLayerInfo = load(metadataMap);
 
         if (metadataMap.containsKey(CONFIG_KEY_CACHED_STYLES)) {
-            final String defaultStyle =
-                    layer.getDefaultStyle() == null ? "" : layer.getDefaultStyle().prefixedName();
+            final String defaultStyle = layer.getDefaultStyle() == null
+                    ? ""
+                    : layer.getDefaultStyle().prefixedName();
             String cachedStylesStr = metadataMap.get(CONFIG_KEY_CACHED_STYLES, String.class);
             Set<String> cachedStyles = unmarshalSet(cachedStylesStr);
             TileLayerInfoUtil.setCachedStyles(tileLayerInfo, defaultStyle, cachedStyles);
@@ -105,7 +106,8 @@ public class LegacyTileLayerInfoLoader {
         GeoServerTileLayerInfoImpl info = new GeoServerTileLayerInfoImpl();
         // whether the config needs to be saved
 
-        final boolean enabled = metadataMap.get(CONFIG_KEY_ENABLED, Boolean.class).booleanValue();
+        final boolean enabled =
+                metadataMap.get(CONFIG_KEY_ENABLED, Boolean.class).booleanValue();
         info.setEnabled(enabled);
 
         int gutter = metadataMap.get(CONFIG_KEY_GUTTER, Integer.class).intValue();
@@ -115,10 +117,12 @@ public class LegacyTileLayerInfoLoader {
         Set<XMLGridSubset> gridSetIds = unmarshalGridSubsets(gridsets);
         info.getGridSubsets().addAll(gridSetIds);
 
-        int metaTilingX = metadataMap.get(CONFIG_KEY_METATILING_X, Integer.class).intValue();
+        int metaTilingX =
+                metadataMap.get(CONFIG_KEY_METATILING_X, Integer.class).intValue();
         info.setMetaTilingX(metaTilingX);
 
-        int metaTilingY = metadataMap.get(CONFIG_KEY_METATILING_Y, Integer.class).intValue();
+        int metaTilingY =
+                metadataMap.get(CONFIG_KEY_METATILING_Y, Integer.class).intValue();
         info.setMetaTilingY(metaTilingY);
 
         if (metadataMap.containsKey(CONFIG_KEY_FORMATS)) {
@@ -164,8 +168,7 @@ public class LegacyTileLayerInfoLoader {
      * @return the list of parsed grid subsets from the argument JSON array
      * @throws IllegalArgumentException if {@code str} can't be parsed to a JSONArray
      */
-    private static Set<XMLGridSubset> unmarshalGridSubsets(String gridSubsetsStr)
-            throws IllegalArgumentException {
+    private static Set<XMLGridSubset> unmarshalGridSubsets(String gridSubsetsStr) throws IllegalArgumentException {
 
         Set<XMLGridSubset> gridSubsets = new HashSet<>();
         // backwards compatibility check for when str comes in as "EPSG:XXX,EPSG:YYY"

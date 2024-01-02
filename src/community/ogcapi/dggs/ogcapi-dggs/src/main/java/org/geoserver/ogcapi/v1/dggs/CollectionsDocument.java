@@ -55,8 +55,7 @@ public class CollectionsDocument extends AbstractDocument {
                 }
 
                 FeatureTypeInfo featureType = null;
-                while (featureTypes.hasNext()
-                        && !DGGSService.isDGGSType((featureType = featureTypes.next())))
+                while (featureTypes.hasNext() && !DGGSService.isDGGSType((featureType = featureTypes.next())))
                     ; // nothing to do here, the iteration does it all
 
                 if (featureType == null || !DGGSService.isDGGSType(featureType)) {
@@ -64,15 +63,13 @@ public class CollectionsDocument extends AbstractDocument {
                     return false;
                 } else {
                     try {
-                        CollectionDocument collection =
-                                new CollectionDocument(geoServer, featureType);
+                        CollectionDocument collection = new CollectionDocument(geoServer, featureType);
 
                         next = collection;
                         return true;
                     } catch (Exception e) {
                         featureTypes.close();
-                        throw new ServiceException(
-                                "Failed to iterate over the feature types in the catalog", e);
+                        throw new ServiceException("Failed to iterate over the feature types in the catalog", e);
                     }
                 }
             }

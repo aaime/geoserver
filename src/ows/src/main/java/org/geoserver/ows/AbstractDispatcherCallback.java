@@ -38,8 +38,7 @@ public class AbstractDispatcherCallback implements DispatcherCallback {
     }
 
     @Override
-    public Response responseDispatched(
-            Request request, Operation operation, Object result, Response response) {
+    public Response responseDispatched(Request request, Operation operation, Object result, Response response) {
         return response;
     }
 

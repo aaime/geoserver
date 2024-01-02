@@ -87,8 +87,7 @@ public final class Decimator {
                 decimateTransformGeneralize(collection.getGeometryN(i), transform);
             }
         } else if (geometry instanceof Point) {
-            LiteCoordinateSequence seq =
-                    (LiteCoordinateSequence) ((Point) geometry).getCoordinateSequence();
+            LiteCoordinateSequence seq = (LiteCoordinateSequence) ((Point) geometry).getCoordinateSequence();
             decimateTransformGeneralize(seq, transform);
         } else if (geometry instanceof Polygon) {
             Polygon polygon = (Polygon) geometry;
@@ -98,8 +97,7 @@ public final class Decimator {
                 decimateTransformGeneralize(polygon.getInteriorRingN(i), transform);
             }
         } else if (geometry instanceof LineString) {
-            LiteCoordinateSequence seq =
-                    (LiteCoordinateSequence) ((LineString) geometry).getCoordinateSequence();
+            LiteCoordinateSequence seq = (LiteCoordinateSequence) ((LineString) geometry).getCoordinateSequence();
             decimateTransformGeneralize(seq, transform);
         }
     }
@@ -183,8 +181,8 @@ public final class Decimator {
      * 1. remove any points that are within the spanx,spany. We ALWAYS keep 1st and last point 2.
      * transform to screen coordinates 3. remove any points that are close (span <1)
      */
-    private final void decimateTransformGeneralize(
-            LiteCoordinateSequence seq, MathTransform transform) throws TransformException {
+    private final void decimateTransformGeneralize(LiteCoordinateSequence seq, MathTransform transform)
+            throws TransformException {
         // decimates before XFORM
         int ncoords = seq.size();
         double[] originalOrds = seq.getXYArray(); // 2*#of points
@@ -308,8 +306,7 @@ public final class Decimator {
     }
 
     /** */
-    private int copyCoordinate(
-            double[] coords, int dimension, int readDoubles, int currentDoubles) {
+    private int copyCoordinate(double[] coords, int dimension, int readDoubles, int currentDoubles) {
         for (int i = 0; i < dimension; i++) {
             coords[readDoubles + i] = coords[currentDoubles + i];
         }

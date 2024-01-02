@@ -39,29 +39,23 @@ public class CollectionsTest extends MapsTestSupport {
         testCollectionsJson(json, MediaType.parseMediaType("application/x-yaml"));
     }
 
-    private void testCollectionsJson(DocumentContext json, MediaType defaultFormat)
-            throws Exception {
+    private void testCollectionsJson(DocumentContext json, MediaType defaultFormat) throws Exception {
         assertEquals(getNumberOfLayers(), (int) json.read("collections.length()", Integer.class));
 
         // check we have the expected number of links and they all use the right "rel" relation
-        Collection<MediaType> formats =
-                GeoServerExtensions.bean(
-                                APIDispatcher.class, GeoServerSystemTestSupport.applicationContext)
-                        .getProducibleMediaTypes(CollectionsDocument.class, true);
-        formats.forEach(
-                format -> {
-                    // check rel
-                    List items =
-                            json.read(
-                                    "collections[0].links[?(@.type=='" + format + "')]",
-                                    List.class);
-                    Map item = (Map) items.get(0);
-                    if (defaultFormat.equals(format)) {
-                        assertEquals("self", item.get("rel"));
-                    } else {
-                        assertEquals("alternate", item.get("rel"));
-                    }
-                });
+        Collection<MediaType> formats = GeoServerExtensions.bean(
+                        APIDispatcher.class, GeoServerSystemTestSupport.applicationContext)
+                .getProducibleMediaTypes(CollectionsDocument.class, true);
+        formats.forEach(format -> {
+            // check rel
+            List items = json.read("collections[0].links[?(@.type=='" + format + "')]", List.class);
+            Map item = (Map) items.get(0);
+            if (defaultFormat.equals(format)) {
+                assertEquals("self", item.get("rel"));
+            } else {
+                assertEquals("alternate", item.get("rel"));
+            }
+        });
     }
 
     @Test

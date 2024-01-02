@@ -24,17 +24,14 @@ import org.geoserver.web.data.workspace.WorkspaceEditPage;
  *
  * @author Nicola Lagomarsini Geosolutions S.A.S.
  */
-public class SettingsPluginPanelInfo extends ComponentInfo<SettingsPluginPanel>
-        implements ExtensionPriority {
+public class SettingsPluginPanelInfo extends ComponentInfo<SettingsPluginPanel> implements ExtensionPriority {
     private static final long serialVersionUID = 3630664243092125954L;
     private int priority = 50;
 
     public SettingsPluginPanel getPluginPanel(String id, IModel<SettingsInfo> model)
-            throws IllegalArgumentException, SecurityException, InstantiationException,
-                    IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        return getComponentClass()
-                .getConstructor(String.class, IModel.class)
-                .newInstance("content", model);
+            throws IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException,
+                    InvocationTargetException, NoSuchMethodException {
+        return getComponentClass().getConstructor(String.class, IModel.class).newInstance("content", model);
     }
 
     @Override
@@ -57,8 +54,7 @@ public class SettingsPluginPanelInfo extends ComponentInfo<SettingsPluginPanel>
     public static ListView<SettingsPluginPanelInfo> createExtensions(
             String id, final IModel<SettingsInfo> model, GeoServerApplication application) {
         // List of all the pluggable components
-        List<SettingsPluginPanelInfo> panels =
-                application.getBeansOfType(SettingsPluginPanelInfo.class);
+        List<SettingsPluginPanelInfo> panels = application.getBeansOfType(SettingsPluginPanelInfo.class);
 
         return new ListView<SettingsPluginPanelInfo>(id, panels) {
 

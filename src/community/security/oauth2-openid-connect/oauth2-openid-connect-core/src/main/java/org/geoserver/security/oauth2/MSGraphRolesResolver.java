@@ -75,10 +75,9 @@ public class MSGraphRolesResolver {
 
         try {
             http = createHTTPRequest(accessToken);
-            String result =
-                    new BufferedReader(new InputStreamReader(http.getInputStream()))
-                            .lines()
-                            .collect(Collectors.joining("\n"));
+            String result = new BufferedReader(new InputStreamReader(http.getInputStream()))
+                    .lines()
+                    .collect(Collectors.joining("\n"));
             return result;
         } finally {
             if (http != null) http.disconnect();

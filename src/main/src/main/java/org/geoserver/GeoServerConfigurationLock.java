@@ -66,9 +66,7 @@ public class GeoServerConfigurationLock {
 
     private long getLockTimeoutMillis() {
         String configValue = GeoServerExtensions.getProperty(TRYLOCK_TIMEOUT_SYSTEM_PROPERTY);
-        return configValue == null || configValue.isEmpty()
-                ? DEFAULT_TRY_LOCK_TIMEOUT_MS
-                : Long.valueOf(configValue);
+        return configValue == null || configValue.isEmpty() ? DEFAULT_TRY_LOCK_TIMEOUT_MS : Long.valueOf(configValue);
     }
 
     /**
@@ -104,9 +102,7 @@ public class GeoServerConfigurationLock {
         currentLock.set(type);
 
         if (LOGGER.isLoggable(LEVEL)) {
-            LOGGER.log(
-                    LEVEL,
-                    "Thread " + Thread.currentThread().getId() + " got the lock in mode " + type);
+            LOGGER.log(LEVEL, "Thread " + Thread.currentThread().getId() + " got the lock in mode " + type);
         }
     }
 
@@ -169,19 +165,10 @@ public class GeoServerConfigurationLock {
 
         if (LOGGER.isLoggable(LEVEL)) {
             if (res) {
-                LOGGER.log(
-                        LEVEL,
-                        "Thread "
-                                + Thread.currentThread().getId()
-                                + " got the lock in mode "
-                                + type);
+                LOGGER.log(LEVEL, "Thread " + Thread.currentThread().getId() + " got the lock in mode " + type);
             } else {
                 LOGGER.log(
-                        LEVEL,
-                        "Thread "
-                                + Thread.currentThread().getId()
-                                + " could not get the lock in mode "
-                                + type);
+                        LEVEL, "Thread " + Thread.currentThread().getId() + " could not get the lock in mode " + type);
             }
         }
 
@@ -206,9 +193,8 @@ public class GeoServerConfigurationLock {
                 currentLock.set(LockType.WRITE);
             } else {
                 currentLock.set(null);
-                throw new RuntimeException(
-                        "Failed to upgrade lock from read to write "
-                                + "state, please re-try the configuration operation");
+                throw new RuntimeException("Failed to upgrade lock from read to write "
+                        + "state, please re-try the configuration operation");
             }
         }
     }
@@ -230,21 +216,15 @@ public class GeoServerConfigurationLock {
             Lock lock = getLock(type);
 
             if (LOGGER.isLoggable(LEVEL)) {
-                LOGGER.log(
-                        LEVEL,
-                        "Thread "
-                                + Thread.currentThread().getId()
-                                + " releasing the lock in mode "
-                                + type);
+                LOGGER.log(LEVEL, "Thread " + Thread.currentThread().getId() + " releasing the lock in mode " + type);
             }
             lock.unlock();
         } finally {
             final int currThreadReentrantReadLockCount = readWriteLock.getReadHoldCount();
             final int currThreadReentrantWriteLockCount = readWriteLock.getWriteHoldCount();
             // reentrancy check
-            final boolean canUnset =
-                    (LockType.READ == type && currThreadReentrantReadLockCount == 0)
-                            || (LockType.WRITE == type && currThreadReentrantWriteLockCount == 0);
+            final boolean canUnset = (LockType.READ == type && currThreadReentrantReadLockCount == 0)
+                    || (LockType.WRITE == type && currThreadReentrantWriteLockCount == 0);
             if (canUnset) {
                 currentLock.set(null);
             }
@@ -268,8 +248,7 @@ public class GeoServerConfigurationLock {
             lock = readWriteLock.readLock();
         }
         if (LOGGER.isLoggable(LEVEL)) {
-            LOGGER.log(
-                    LEVEL, "Thread " + Thread.currentThread().getId() + " locking in mode " + type);
+            LOGGER.log(LEVEL, "Thread " + Thread.currentThread().getId() + " locking in mode " + type);
         }
         return lock;
     }

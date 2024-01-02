@@ -66,8 +66,7 @@ public class GeoTiffWriterHelper {
 
     /** Returns the original source file, is present in the metadata, and if the coverage */
     private File getSourceFile(GridCoverage2D coverage) {
-        final Object fileSource =
-                coverage.getProperty(AbstractGridCoverage2DReader.FILE_SOURCE_PROPERTY);
+        final Object fileSource = coverage.getProperty(AbstractGridCoverage2DReader.FILE_SOURCE_PROPERTY);
         if (fileSource != null && fileSource instanceof String) {
             File file = new File((String) fileSource);
             if (file.exists()) {
@@ -165,19 +164,16 @@ public class GeoTiffWriterHelper {
 
                 new ImageWorker(ri).writeTIFF(stream, compression, quality, tileWidth, tileHeight);
             } else {
-                final GeneralParameterValue[] wps =
-                        geotoolsWriteParams
-                                .values()
-                                .toArray(
-                                        new GeneralParameterValue
-                                                [geotoolsWriteParams.values().size()]);
+                final GeneralParameterValue[] wps = geotoolsWriteParams
+                        .values()
+                        .toArray(
+                                new GeneralParameterValue
+                                        [geotoolsWriteParams.values().size()]);
 
                 // write out the coverage
-                AbstractGridCoverageWriter writer =
-                        (AbstractGridCoverageWriter) TIFF_FORMAT.getWriter(stream);
+                AbstractGridCoverageWriter writer = (AbstractGridCoverageWriter) TIFF_FORMAT.getWriter(stream);
                 if (writer == null)
-                    throw new ServiceException(
-                            "Could not find the GeoTIFF writer, please check it's in the classpath");
+                    throw new ServiceException("Could not find the GeoTIFF writer, please check it's in the classpath");
                 try {
                     writer.write(coverage, wps);
                 } finally {

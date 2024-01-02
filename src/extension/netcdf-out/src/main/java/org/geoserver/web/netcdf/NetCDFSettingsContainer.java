@@ -249,8 +249,7 @@ public class NetCDFSettingsContainer implements Serializable {
         public String getSource() {
             if ((source == null || source.trim().isEmpty())
                     && (output == null || output.trim().isEmpty())) {
-                throw new IllegalArgumentException(
-                        "Neither source nor output supplied for extra variable");
+                throw new IllegalArgumentException("Neither source nor output supplied for extra variable");
             }
             return (source == null || source.trim().isEmpty()) ? output.trim() : source.trim();
         }
@@ -262,8 +261,7 @@ public class NetCDFSettingsContainer implements Serializable {
         public String getOutput() {
             if ((source == null || source.trim().isEmpty())
                     && (output == null || output.trim().isEmpty())) {
-                throw new IllegalArgumentException(
-                        "Neither source nor output supplied for extra variable");
+                throw new IllegalArgumentException("Neither source nor output supplied for extra variable");
             }
             return (output == null || output.trim().isEmpty()) ? source.trim() : output.trim();
         }
@@ -292,7 +290,9 @@ public class NetCDFSettingsContainer implements Serializable {
         /** @see java.lang.Object#hashCode() */
         @Override
         public int hashCode() {
-            return getSource().hashCode() + getOutput().hashCode() + getDimensions().hashCode();
+            return getSource().hashCode()
+                    + getOutput().hashCode()
+                    + getDimensions().hashCode();
         }
     }
 }

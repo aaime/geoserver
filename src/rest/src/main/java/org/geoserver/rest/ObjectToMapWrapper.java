@@ -126,14 +126,8 @@ public class ObjectToMapWrapper<T> extends BeansWrapper {
             try {
                 value = OwsUtils.get(object, p);
             } catch (Exception e) {
-                LOGGER.log(
-                        Level.WARNING, "Could not resolve property " + p + " of bean " + object, e);
-                value =
-                        "** Failed to retrieve value of property "
-                                + p
-                                + ". Error message is: "
-                                + e.getMessage()
-                                + "**";
+                LOGGER.log(Level.WARNING, "Could not resolve property " + p + " of bean " + object, e);
+                value = "** Failed to retrieve value of property " + p + ". Error message is: " + e.getMessage() + "**";
             }
             if (value == null) {
                 value = "null";

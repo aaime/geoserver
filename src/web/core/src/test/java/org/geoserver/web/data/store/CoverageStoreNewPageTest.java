@@ -101,8 +101,7 @@ public class CoverageStoreNewPageTest extends GeoServerWicketTestSupport {
         tester.assertModelValue(
                 "rasterStoreForm:workspacePanel:border:border_body:paramValue",
                 getCatalog().getDefaultWorkspace());
-        tester.assertModelValue(
-                "rasterStoreForm:parametersPanel:url", "file:data/example.extension");
+        tester.assertModelValue("rasterStoreForm:parametersPanel:url", "file:data/example.extension");
     }
 
     @Test
@@ -116,8 +115,7 @@ public class CoverageStoreNewPageTest extends GeoServerWicketTestSupport {
         tester.assertModelValue(
                 "rasterStoreForm:workspacePanel:border:border_body:paramValue",
                 getCatalog().getDefaultWorkspace());
-        tester.assertModelValue(
-                "rasterStoreForm:parametersPanel:url", "file:data/example.extension");
+        tester.assertModelValue("rasterStoreForm:parametersPanel:url", "file:data/example.extension");
     }
 
     @Test
@@ -128,8 +126,7 @@ public class CoverageStoreNewPageTest extends GeoServerWicketTestSupport {
         tester.startPage(page);
 
         tester.debugComponentTrees();
-        Component urlComponent =
-                tester.getComponentFromLastRenderedPage("rasterStoreForm:parametersPanel:url");
+        Component urlComponent = tester.getComponentFromLastRenderedPage("rasterStoreForm:parametersPanel:url");
         assertThat(urlComponent, instanceOf(FileParamPanel.class));
     }
 
@@ -137,9 +134,7 @@ public class CoverageStoreNewPageTest extends GeoServerWicketTestSupport {
     public void testNewCoverageSave() {
         startPage();
         FormTester ft = tester.newFormTester("rasterStoreForm");
-        ft.setValue(
-                "parametersPanel:url:fileInput:border:border_body:paramValue",
-                "BlueMarble/tazbm.tiff");
+        ft.setValue("parametersPanel:url:fileInput:border:border_body:paramValue", "BlueMarble/tazbm.tiff");
         ft.setValue("namePanel:border:border_body:paramValue", "tazbm2");
         ft.submit("save");
 
@@ -154,9 +149,7 @@ public class CoverageStoreNewPageTest extends GeoServerWicketTestSupport {
     public void testNewCoverageApply() {
         startPage();
         FormTester ft = tester.newFormTester("rasterStoreForm");
-        ft.setValue(
-                "parametersPanel:url:fileInput:border:border_body:paramValue",
-                "BlueMarble/tazbm.tiff");
+        ft.setValue("parametersPanel:url:fileInput:border:border_body:paramValue", "BlueMarble/tazbm.tiff");
         ft.setValue("namePanel:border:border_body:paramValue", "tazbm3");
         ft.submit("apply");
 
@@ -171,13 +164,10 @@ public class CoverageStoreNewPageTest extends GeoServerWicketTestSupport {
     public void testDisableOnConnFailureCheckbox() {
         startPage();
         FormTester ft = tester.newFormTester("rasterStoreForm");
-        ft.setValue(
-                "parametersPanel:url:fileInput:border:border_body:paramValue",
-                "BlueMarble/tazbm.tiff");
+        ft.setValue("parametersPanel:url:fileInput:border:border_body:paramValue", "BlueMarble/tazbm.tiff");
         ft.setValue("namePanel:border:border_body:paramValue", "tazbm99");
         Component component =
-                tester.getComponentFromLastRenderedPage(
-                        "rasterStoreForm:disableOnConnFailurePanel:paramValue");
+                tester.getComponentFromLastRenderedPage("rasterStoreForm:disableOnConnFailurePanel:paramValue");
         CheckBox checkBox = (CheckBox) component;
         assertFalse(Boolean.valueOf(checkBox.getInput()).booleanValue());
 

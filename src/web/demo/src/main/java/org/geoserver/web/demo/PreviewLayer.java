@@ -148,19 +148,14 @@ public class PreviewLayer {
             if (groupInfo != null) {
                 ReferencedEnvelope bounds = groupInfo.getBounds();
                 request.setBbox(bounds);
-                String srs =
-                        GML2EncodingUtils.toURI(
-                                bounds.getCoordinateReferenceSystem(), SrsSyntax.AUTH_CODE, false);
+                String srs = GML2EncodingUtils.toURI(bounds.getCoordinateReferenceSystem(), SrsSyntax.AUTH_CODE, false);
                 request.setSRS(srs);
             }
             try {
                 DefaultWebMapService.autoSetBoundsAndSize(request);
             } catch (Exception e) {
                 LOGGER.log(
-                        Level.INFO,
-                        "Could not set figure out automatically a good preview link for "
-                                + getName(),
-                        e);
+                        Level.INFO, "Could not set figure out automatically a good preview link for " + getName(), e);
             }
         }
         return request;
@@ -222,8 +217,7 @@ public class PreviewLayer {
         params.put("version", "1.1.0");
         params.put("request", "GetMap");
         params.put("layers", getName());
-        String bboxValue =
-                bbox.getMinX() + "," + bbox.getMinY() + "," + bbox.getMaxX() + "," + bbox.getMaxY();
+        String bboxValue = bbox.getMinX() + "," + bbox.getMinY() + "," + bbox.getMaxX() + "," + bbox.getMaxY();
         params.put("bbox", bboxValue);
         params.put("width", String.valueOf(request.getWidth()));
         params.put("height", String.valueOf(request.getHeight()));
@@ -242,8 +236,7 @@ public class PreviewLayer {
     public String getKmlLink() {
         Map<String, String> params = new LinkedHashMap<>();
         params.put("layers", getName());
-        return ResponseUtils.buildURL(
-                getBaseURL(), getPath("wms/kml", false), params, URLType.SERVICE);
+        return ResponseUtils.buildURL(getBaseURL(), getPath("wms/kml", false), params, URLType.SERVICE);
     }
 
     /**
@@ -258,8 +251,7 @@ public class PreviewLayer {
             if (layerInfo.getResource() instanceof FeatureTypeInfo) {
                 FeatureTypeInfo ftInfo = (FeatureTypeInfo) layerInfo.getResource();
                 if (ftInfo.getStore() != null) {
-                    Map<String, Serializable> connParams =
-                            ftInfo.getStore().getConnectionParameters();
+                    Map<String, Serializable> connParams = ftInfo.getStore().getConnectionParameters();
                     if (connParams != null) {
                         String dbtype = (String) connParams.get("dbtype");
                         // app-schema feature types need special treatment
@@ -280,10 +272,7 @@ public class PreviewLayer {
                                 try {
                                     gmlParams.gmlVersion = findGmlVersion(ftInfo);
                                 } catch (IOException e) {
-                                    LOGGER.log(
-                                            Level.FINE,
-                                            "Could not determine GML version, using default",
-                                            e);
+                                    LOGGER.log(Level.FINE, "Could not determine GML version, using default", e);
                                     gmlParams.gmlVersion = null;
                                 }
                                 // store params in cache
@@ -337,8 +326,7 @@ public class PreviewLayer {
                 return GML32OutputFormat.FORMATS.get(0);
             } else {
                 // should never happen
-                LOGGER.log(
-                        Level.FINE, "Cannot determine GML version from AbstractFeatureType type");
+                LOGGER.log(Level.FINE, "Cannot determine GML version from AbstractFeatureType type");
                 return null;
             }
         }
@@ -354,8 +342,7 @@ public class PreviewLayer {
      */
     public boolean hasServiceSupport(String serviceName) {
         if (layerInfo != null && layerInfo.getResource() != null && serviceName != null) {
-            List<String> disabledServices =
-                    DisabledServiceResourceFilter.disabledServices(layerInfo.getResource());
+            List<String> disabledServices = DisabledServiceResourceFilter.disabledServices(layerInfo.getResource());
             return disabledServices.stream().noneMatch(d -> d.equalsIgnoreCase(serviceName));
         }
         // layer group and backward compatibility
@@ -371,8 +358,7 @@ public class PreviewLayer {
         String localPart = qName.getLocalPart();
         String ns = qName.getNamespaceURI();
         if ("AbstractFeatureType".equals(localPart)
-                && (org.geotools.gml3.GML.NAMESPACE.equals(ns)
-                        || org.geotools.gml3.v3_2.GML.NAMESPACE.equals(ns))) {
+                && (org.geotools.gml3.GML.NAMESPACE.equals(ns) || org.geotools.gml3.v3_2.GML.NAMESPACE.equals(ns))) {
             return true;
         } else {
             return false;
@@ -393,8 +379,7 @@ public class PreviewLayer {
             params.put("outputFormat", gmlParams.gmlVersion);
         }
 
-        return ResponseUtils.buildURL(
-                gmlParams.baseUrl, getPath("ows", false), params, URLType.SERVICE);
+        return ResponseUtils.buildURL(gmlParams.baseUrl, getPath("ows", false), params, URLType.SERVICE);
     }
 
     class GMLOutputParams {

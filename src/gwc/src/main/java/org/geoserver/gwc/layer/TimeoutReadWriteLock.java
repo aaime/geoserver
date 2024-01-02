@@ -38,16 +38,11 @@ class TimeoutReadWriteLock {
         try {
             acquired = lock.readLock().tryLock(timeoutMs, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
-            throw new ServiceException(
-                    "Failed to acquire read lock on '" + name + "' due to interruption", e);
+            throw new ServiceException("Failed to acquire read lock on '" + name + "' due to interruption", e);
         }
         if (!acquired) {
             throw new ServiceException(
-                    "Failed to acquire read lock on '"
-                            + name
-                            + "' in less than "
-                            + timeoutMs
-                            + " ms");
+                    "Failed to acquire read lock on '" + name + "' in less than " + timeoutMs + " ms");
         }
     }
 
@@ -65,16 +60,11 @@ class TimeoutReadWriteLock {
         try {
             acquired = lock.writeLock().tryLock(timeoutMs, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
-            throw new ServiceException(
-                    "Failed to acquire write lock on '" + name + "' due to interruption", e);
+            throw new ServiceException("Failed to acquire write lock on '" + name + "' due to interruption", e);
         }
         if (!acquired) {
             throw new ServiceException(
-                    "Failed to acquire write lock on '"
-                            + name
-                            + "' in less than "
-                            + timeoutMs
-                            + " ms");
+                    "Failed to acquire write lock on '" + name + "' in less than " + timeoutMs + " ms");
         }
     }
 

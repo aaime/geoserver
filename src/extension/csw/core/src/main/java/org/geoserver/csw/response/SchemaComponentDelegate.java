@@ -25,7 +25,6 @@ public interface SchemaComponentDelegate {
      * Write on the output stream the csw:SchemaComponent section, assuming the
      * <csw:DescribeRecordResponse> has already been written out by the caller
      */
-    public void writeSchemaComponent(
-            DescribeRecordType request, Writer writer, AttributeDescriptor descriptor)
+    public void writeSchemaComponent(DescribeRecordType request, Writer writer, AttributeDescriptor descriptor)
             throws IOException;
 }

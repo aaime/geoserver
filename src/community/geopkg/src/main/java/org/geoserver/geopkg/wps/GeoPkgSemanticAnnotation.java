@@ -16,8 +16,7 @@ public class GeoPkgSemanticAnnotation {
     String description;
     String uri;
 
-    public GeoPkgSemanticAnnotation(
-            long id, String type, String title, String description, String uri) {
+    public GeoPkgSemanticAnnotation(long id, String type, String title, String description, String uri) {
         this.id = id;
         this.type = type;
         this.title = title;

@@ -39,8 +39,7 @@ public class AudienceAccessTokenValidator implements TokenValidator {
      * This does a check of the token that OUR client ID is mentioned (not another app).
      */
     @Override
-    public void verifyToken(OpenIdConnectFilterConfig config, Map claimsJWT, Map userInfoClaims)
-            throws Exception {
+    public void verifyToken(OpenIdConnectFilterConfig config, Map claimsJWT, Map userInfoClaims) throws Exception {
         String clientId = config.getCliendId();
         if ((claimsJWT.get(AUDIENCE_CLAIM_NAME) != null)) {
             if (claimsJWT.get(AUDIENCE_CLAIM_NAME).equals(clientId)) {

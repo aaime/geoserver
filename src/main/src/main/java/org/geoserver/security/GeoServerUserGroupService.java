@@ -54,8 +54,7 @@ public interface GeoServerUserGroupService extends GeoServerSecurityService, Use
     GeoServerUser getUserByUsername(String username) throws IOException;
 
     /** Create a user object. Implementations can use subclasses of {@link GeoServerUser} */
-    GeoServerUser createUserObject(String username, String password, boolean isEnabled)
-            throws IOException;
+    GeoServerUser createUserObject(String username, String password, boolean isEnabled) throws IOException;
 
     /**
      * Create a user object. Implementations can use classes implementing {@link GeoServerUserGroup}
@@ -128,8 +127,7 @@ public interface GeoServerUserGroupService extends GeoServerSecurityService, Use
     /**
      * Returns a set of {@link GeoServerUser} objects having the property with the specified value
      */
-    SortedSet<GeoServerUser> getUsersHavingPropertyValue(String propname, String propvalue)
-            throws IOException;
+    SortedSet<GeoServerUser> getUsersHavingPropertyValue(String propname, String propvalue) throws IOException;
 
     /**
      * Returns the number of {@link GeoServerUser} objects having the property with the specified

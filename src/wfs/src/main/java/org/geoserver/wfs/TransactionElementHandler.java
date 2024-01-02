@@ -26,8 +26,7 @@ public interface TransactionElementHandler {
     Class<?> getElementClass();
 
     /** Returns the qualified names of feature types needed to handle this element */
-    QName[] getTypeNames(TransactionRequest request, TransactionElement element)
-            throws WFSTransactionException;
+    QName[] getTypeNames(TransactionRequest request, TransactionElement element) throws WFSTransactionException;
 
     /**
      * Checks the element content is valid, throws an exception otherwise

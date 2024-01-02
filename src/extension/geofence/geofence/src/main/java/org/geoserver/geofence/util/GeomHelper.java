@@ -66,8 +66,7 @@ public class GeomHelper {
      *     Otherwise the other geometry will be returned.
      * @return the result of intersection.
      */
-    public static Geometry reprojectAndUnion(
-            Geometry first, Geometry second, boolean lessRestrictive) {
+    public static Geometry reprojectAndUnion(Geometry first, Geometry second, boolean lessRestrictive) {
         BiFunction<Geometry, Geometry, Geometry> union = (g1, g2) -> g1.union(g2);
         if (lessRestrictive) return reprojectAndApplyOpFavourNull(first, second, union);
         else return reprojectAndApplyOperation(first, second, union);
@@ -82,8 +81,7 @@ public class GeomHelper {
      *     the other geometry will be returned.
      * @return the result of intersection.
      */
-    public static Geometry reprojectAndIntersect(
-            Geometry first, Geometry second, boolean favourNull) {
+    public static Geometry reprojectAndIntersect(Geometry first, Geometry second, boolean favourNull) {
         BiFunction<Geometry, Geometry, Geometry> intersection = (g1, g2) -> g1.intersection(g2);
         if (favourNull) return reprojectAndApplyOpFavourNull(first, second, intersection);
         else return reprojectAndApplyOperation(first, second, intersection);
@@ -133,11 +131,10 @@ public class GeomHelper {
                 second = JTS.transform(second, transformation);
                 second.setSRID(first.getSRID());
             } catch (FactoryException | TransformException e) {
-                throw new RuntimeException(
-                        "Unable to intersect allowed areas: error during transformation from "
-                                + second.getSRID()
-                                + " to "
-                                + first.getSRID());
+                throw new RuntimeException("Unable to intersect allowed areas: error during transformation from "
+                        + second.getSRID()
+                        + " to "
+                        + first.getSRID());
             }
         }
         Geometry result = operation.apply(first, second);
@@ -152,8 +149,7 @@ public class GeomHelper {
      * @param targetCRS the target CRS.
      * @return the reprojected geometry.
      */
-    public static Geometry reprojectGeometry(
-            Geometry geometry, CoordinateReferenceSystem targetCRS) {
+    public static Geometry reprojectGeometry(Geometry geometry, CoordinateReferenceSystem targetCRS) {
         if (geometry == null) return null;
 
         try {

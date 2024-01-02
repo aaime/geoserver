@@ -21,14 +21,10 @@ public class LibdeflateSettingsPluginPanel extends SettingsPluginPanel {
     public LibdeflateSettingsPluginPanel(String id, IModel<SettingsInfo> model) {
         super(id, model);
         // Model associated to the metadata map
-        final PropertyModel<MetadataMap> metadata =
-                new PropertyModel<MetadataMap>(model, "metadata");
+        final PropertyModel<MetadataMap> metadata = new PropertyModel<MetadataMap>(model, "metadata");
 
         IModel<LibdeflateSettings> settingsModel =
-                new MetadataMapModel(
-                        metadata,
-                        LibdeflateSettings.LIBDEFLATE_SETTINGS_KEY,
-                        LibdeflateSettings.class);
+                new MetadataMapModel(metadata, LibdeflateSettings.LIBDEFLATE_SETTINGS_KEY, LibdeflateSettings.class);
 
         // New Container
         // container for ajax updates

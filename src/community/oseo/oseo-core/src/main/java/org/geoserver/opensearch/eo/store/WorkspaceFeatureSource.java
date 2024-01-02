@@ -36,9 +36,7 @@ public class WorkspaceFeatureSource extends DecoratingSimpleFeatureSource {
      * @param openSearchAccess the OpenSearchAccess
      */
     public WorkspaceFeatureSource(
-            SimpleFeatureSource delegate,
-            WorkspaceInfo workspaceInfo,
-            JDBCOpenSearchAccess openSearchAccess) {
+            SimpleFeatureSource delegate, WorkspaceInfo workspaceInfo, JDBCOpenSearchAccess openSearchAccess) {
         super(delegate);
         this.workspaceInfo = workspaceInfo;
 
@@ -86,10 +84,7 @@ public class WorkspaceFeatureSource extends DecoratingSimpleFeatureSource {
 
     private SimpleFeatureCollection getWorkspaceCollection() throws IOException {
         // if global workspace, add check for null value in workspaces array
-        Filter equalityFilter =
-                FF.equals(
-                        FF.function("arrayhasnull", FF.property(WORKSPACES_FIELD)),
-                        FF.literal(true));
+        Filter equalityFilter = FF.equals(FF.function("arrayhasnull", FF.property(WORKSPACES_FIELD)), FF.literal(true));
         // if not global workspace, add specific workspace filter
         if (workspaceInfo != null) {
             String workspace = workspaceInfo.getName();
@@ -100,9 +95,7 @@ public class WorkspaceFeatureSource extends DecoratingSimpleFeatureSource {
         // otherwise we check for null value or the specific workspace
         globalQuery.setFilter(FF.or(FF.isNull(FF.property(WORKSPACES_FIELD)), equalityFilter));
         SimpleFeatureSource collectionSource =
-                openSearchAccess
-                        .getDelegateStore()
-                        .getFeatureSource(JDBCOpenSearchAccess.COLLECTION);
+                openSearchAccess.getDelegateStore().getFeatureSource(JDBCOpenSearchAccess.COLLECTION);
         return collectionSource.getFeatures(globalQuery);
     }
 

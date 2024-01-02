@@ -74,8 +74,7 @@ public abstract class DescribeLayerResponse extends Response {
      */
     @Override
     @SuppressWarnings("PMD.UseTryWithResources") // the output is provided from outside
-    public void write(Object value, OutputStream output, Operation operation)
-            throws IOException, ServiceException {
+    public void write(Object value, OutputStream output, Operation operation) throws IOException, ServiceException {
 
         Assert.notNull(operation.getParameters(), "parameters");
         Assert.isTrue(
@@ -97,7 +96,6 @@ public abstract class DescribeLayerResponse extends Response {
         }
     }
 
-    public abstract void write(
-            DescribeLayerModel description, DescribeLayerRequest output, OutputStream operation)
+    public abstract void write(DescribeLayerModel description, DescribeLayerRequest output, OutputStream operation)
             throws IOException, ServiceException;
 }

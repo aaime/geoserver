@@ -46,21 +46,18 @@ public class JMSPublisher {
      * @param object the object (or event) to serialize and send on the JMS topic
      */
     public <S extends Serializable, O> void publish(
-            final Topic destination,
-            final JmsTemplate jmsTemplate,
-            final Properties props,
-            final O object)
+            final Topic destination, final JmsTemplate jmsTemplate, final Properties props, final O object)
             throws JMSException {
         try {
 
             final JMSEventHandler<S, O> handler = jmsManager.getHandler(object);
 
             // set the used SPI
-            props.put(JMSEventHandlerSPI.getKeyName(), handler.getGeneratorClass().getSimpleName());
+            props.put(
+                    JMSEventHandlerSPI.getKeyName(), handler.getGeneratorClass().getSimpleName());
 
             // TODO make this configurable
-            final MessageCreator creator =
-                    new JMSObjectMessageCreator(handler.serialize(object), props);
+            final MessageCreator creator = new JMSObjectMessageCreator(handler.serialize(object), props);
 
             jmsTemplate.send(destination, creator);
 

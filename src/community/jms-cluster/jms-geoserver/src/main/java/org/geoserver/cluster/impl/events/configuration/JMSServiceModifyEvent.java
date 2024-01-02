@@ -28,20 +28,12 @@ public class JMSServiceModifyEvent extends JMSModifyEvent<ServiceInfo> {
     private final JMSEventType eventType;
 
     public JMSServiceModifyEvent(
-            ServiceInfo source,
-            List<String> propertyNames,
-            List<Object> oldValues,
-            List<Object> newValues) {
+            ServiceInfo source, List<String> propertyNames, List<Object> oldValues, List<Object> newValues) {
         this(source, propertyNames, oldValues, newValues, JMSEventType.MODIFIED);
     }
 
     public JMSServiceModifyEvent(ServiceInfo source, JMSEventType eventType) {
-        this(
-                source,
-                Collections.emptyList(),
-                Collections.emptyList(),
-                Collections.emptyList(),
-                eventType);
+        this(source, Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), eventType);
     }
 
     public JMSServiceModifyEvent(

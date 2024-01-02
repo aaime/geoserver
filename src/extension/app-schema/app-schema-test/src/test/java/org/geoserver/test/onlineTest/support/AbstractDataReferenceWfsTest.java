@@ -72,9 +72,7 @@ public abstract class AbstractDataReferenceWfsTest extends AbstractAppSchemaTest
      * <p>The fixture id is obtained via {@link #getFixtureId()}.
      */
     protected final void initialiseTest() throws Exception {
-        skipOnFailure =
-                Boolean.parseBoolean(
-                        fixture.getProperty(SKIP_ON_FAILURE_KEY, SKIP_ON_FAILURE_DEFAULT));
+        skipOnFailure = Boolean.parseBoolean(fixture.getProperty(SKIP_ON_FAILURE_KEY, SKIP_ON_FAILURE_DEFAULT));
         // call the setUp template method
         try {
             connect();
@@ -113,10 +111,7 @@ public abstract class AbstractDataReferenceWfsTest extends AbstractAppSchemaTest
                 try {
                     available = isOnline();
                 } catch (Throwable t) {
-                    LOGGER.log(
-                            Level.WARNING,
-                            "Skipping " + fixtureId + " tests, resources not available.",
-                            t);
+                    LOGGER.log(Level.WARNING, "Skipping " + fixtureId + " tests, resources not available.", t);
 
                     available = Boolean.FALSE;
                 }

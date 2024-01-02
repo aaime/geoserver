@@ -73,8 +73,7 @@ public class CachingExtendedCapabilitiesProvider implements ExtendedCapabilities
      *     org.geoserver.wms.ExtendedCapabilitiesProvider#getVendorSpecificCapabilitiesChildDecls(GetCapabilitiesRequest)
      */
     @Override
-    public List<String> getVendorSpecificCapabilitiesChildDecls(
-            final GetCapabilitiesRequest request) {
+    public List<String> getVendorSpecificCapabilitiesChildDecls(final GetCapabilitiesRequest request) {
         if (gwc.getConfig().isDirectWMSIntegrationEnabled() && isTiled(request)) {
             List<String> wmscElements = new ArrayList<>();
             wmscElements.add(
@@ -115,8 +114,7 @@ public class CachingExtendedCapabilitiesProvider implements ExtendedCapabilities
         }
 
         final String namespacePrefixFilter = request.getNamespace();
-        Iterable<? extends TileLayer> tileLayers =
-                gwc.getTileLayersByNamespacePrefix(namespacePrefixFilter);
+        Iterable<? extends TileLayer> tileLayers = gwc.getTileLayersByNamespacePrefix(namespacePrefixFilter);
 
         final String nsPrefix;
         {
@@ -220,8 +218,7 @@ public class CachingExtendedCapabilitiesProvider implements ExtendedCapabilities
     }
 
     @Override
-    public NumberRange<Double> overrideScaleDenominators(
-            PublishedInfo layer, NumberRange<Double> scaleDenominators) {
+    public NumberRange<Double> overrideScaleDenominators(PublishedInfo layer, NumberRange<Double> scaleDenominators) {
         return scaleDenominators;
     }
 }

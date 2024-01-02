@@ -36,7 +36,8 @@ import javax.xml.namespace.QName;
 @XmlType(name = "propertyContent")
 public class PropertyContent extends AnyContent {
 
-    @XmlAnyAttribute private final Map<QName, String> otherAttributes = new HashMap<>();
+    @XmlAnyAttribute
+    private final Map<QName, String> otherAttributes = new HashMap<>();
 
     /**
      * Gets a map that contains attributes that aren't bound to any typed property on this class.

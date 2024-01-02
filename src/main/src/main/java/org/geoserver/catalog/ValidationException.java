@@ -21,8 +21,7 @@ public class ValidationException extends RuntimeException {
         this.parameters = parameters;
     }
 
-    public ValidationException(
-            String key, String messageFormat, Throwable cause, Object... parameters) {
+    public ValidationException(String key, String messageFormat, Throwable cause, Object... parameters) {
         super(new MessageFormat(messageFormat).format(parameters), cause);
         this.key = key;
         this.parameters = parameters;

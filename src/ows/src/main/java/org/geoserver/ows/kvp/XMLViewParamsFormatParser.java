@@ -68,8 +68,7 @@ public class XMLViewParamsFormatParser implements ViewParamsFormatParser {
         }
         if (parsed == null) {
             if (LOGGER.isLoggable(Level.FINER))
-                LOGGER.finer(
-                        "Could not find kvp parser for: '" + key + "'. Storing as raw string.");
+                LOGGER.finer("Could not find kvp parser for: '" + key + "'. Storing as raw string.");
             parsed = raw;
         }
         paramsMap.put(key, parsed);

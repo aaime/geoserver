@@ -32,8 +32,7 @@ public class GetFeatureInfoResponse extends Response {
     private GetFeatureInfoOutputFormat defaultOutputFormat;
 
     /** Creates a new GetMapResponse object. */
-    public GetFeatureInfoResponse(
-            final WMS wms, final GetFeatureInfoOutputFormat defaultOutputFormat) {
+    public GetFeatureInfoResponse(final WMS wms, final GetFeatureInfoOutputFormat defaultOutputFormat) {
         super(FeatureCollectionType.class);
         this.wms = wms;
         this.defaultOutputFormat = defaultOutputFormat;
@@ -55,14 +54,12 @@ public class GetFeatureInfoResponse extends Response {
      *     org.geoserver.platform.Operation)
      */
     @Override
-    public String getMimeType(final Object value, final Operation operation)
-            throws ServiceException {
+    public String getMimeType(final Object value, final Operation operation) throws ServiceException {
         Assert.notNull(value, "value is null");
         Assert.notNull(operation, "operation is null");
         Assert.isTrue(value instanceof FeatureCollectionType, "unrecognized result type:");
 
-        GetFeatureInfoRequest request =
-                OwsUtils.parameter(operation.getParameters(), GetFeatureInfoRequest.class);
+        GetFeatureInfoRequest request = OwsUtils.parameter(operation.getParameters(), GetFeatureInfoRequest.class);
 
         Assert.notNull(request, "request");
 
@@ -102,8 +99,7 @@ public class GetFeatureInfoResponse extends Response {
      * @throws ServiceException if no {@link GetFeatureInfoOutputFormat} is configured for the
      *     output format specified in <code>request</code>
      */
-    private GetFeatureInfoOutputFormat getRequestedOutputFormat(GetFeatureInfoRequest request)
-            throws ServiceException {
+    private GetFeatureInfoOutputFormat getRequestedOutputFormat(GetFeatureInfoRequest request) throws ServiceException {
 
         String requestFormat = request.getInfoFormat();
 
@@ -122,8 +118,7 @@ public class GetFeatureInfoResponse extends Response {
     @Override
     public String getCharset(Operation operation) {
         Assert.notNull(operation, "operation is null");
-        GetFeatureInfoRequest request =
-                OwsUtils.parameter(operation.getParameters(), GetFeatureInfoRequest.class);
+        GetFeatureInfoRequest request = OwsUtils.parameter(operation.getParameters(), GetFeatureInfoRequest.class);
         GetFeatureInfoOutputFormat outputFormat = getRequestedOutputFormat(request);
         return outputFormat.getCharset();
     }

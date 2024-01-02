@@ -37,11 +37,9 @@ import org.vfny.geoserver.wcs.WcsException.WcsExceptionCode;
  * @author $Author: Alessio Fabiani (alessio.fabiani@gmail.com) $ (last modification)
  * @author Simone Giannecchini, GeoSolutions SAS
  */
-public class GeoTIFFCoverageResponseDelegate extends BaseCoverageResponseDelegate
-        implements CoverageResponseDelegate {
+public class GeoTIFFCoverageResponseDelegate extends BaseCoverageResponseDelegate implements CoverageResponseDelegate {
 
-    private static final Logger LOGGER =
-            Logging.getLogger(GeoTIFFCoverageResponseDelegate.class.toString());
+    private static final Logger LOGGER = Logging.getLogger(GeoTIFFCoverageResponseDelegate.class.toString());
 
     /** DEFAULT_JPEG_COMPRESSION_QUALITY */
     private static final float DEFAULT_JPEG_COMPRESSION_QUALITY = 0.75f;
@@ -133,9 +131,7 @@ public class GeoTIFFCoverageResponseDelegate extends BaseCoverageResponseDelegat
      * @throws WcsException in case there are invalid or unsupported options.
      */
     private void handleInterleaving(
-            Map<String, String> encondingParameters,
-            GridCoverage2D sourceCoverage,
-            GeoTiffWriterHelper writerHelper)
+            Map<String, String> encondingParameters, GridCoverage2D sourceCoverage, GeoTiffWriterHelper writerHelper)
             throws WcsException {
         // interleaving is optional
         if (encondingParameters.containsKey("interleave")) {
@@ -173,9 +169,7 @@ public class GeoTIFFCoverageResponseDelegate extends BaseCoverageResponseDelegat
      * @throws WcsException in case there are invalid or unsupported options.
      */
     private void handleTiling(
-            Map<String, String> encodingParameters,
-            GridCoverage2D sourceCoverage,
-            GeoTiffWriterHelper helper)
+            Map<String, String> encodingParameters, GridCoverage2D sourceCoverage, GeoTiffWriterHelper helper)
             throws WcsException {
 
         // start with default dimension, since tileW and tileH are optional
@@ -193,11 +187,7 @@ public class GeoTIFFCoverageResponseDelegate extends BaseCoverageResponseDelegat
         if (gr.getSpan(1) < tileDimensions.height) {
             tileDimensions.height = gr.getSpan(1);
         }
-        LOGGER.fine(
-                "Source tiling reviewed to save space:"
-                        + tileDimensions.width
-                        + "x"
-                        + tileDimensions.height);
+        LOGGER.fine("Source tiling reviewed to save space:" + tileDimensions.width + "x" + tileDimensions.height);
 
         //
         // tiling
@@ -278,8 +268,7 @@ public class GeoTIFFCoverageResponseDelegate extends BaseCoverageResponseDelegat
      *     hold the encoding parameters.
      * @throws WcsException in case there are invalid or unsupported options.
      */
-    private void handleCompression(
-            Map<String, String> encodingParameters, GeoTiffWriterHelper helper)
+    private void handleCompression(Map<String, String> encodingParameters, GeoTiffWriterHelper helper)
             throws WcsException {
         // compression
         if (encodingParameters.containsKey(COMPRESSION)) {
@@ -297,8 +286,7 @@ public class GeoTIFFCoverageResponseDelegate extends BaseCoverageResponseDelegat
                     if (predictorS != null) {
                         if (predictorS.equals("Horizontal")) {
                             wp.setTIFFCompressor(
-                                    new TIFFLZWCompressor(
-                                            BaselineTIFFTagSet.PREDICTOR_HORIZONTAL_DIFFERENCING));
+                                    new TIFFLZWCompressor(BaselineTIFFTagSet.PREDICTOR_HORIZONTAL_DIFFERENCING));
                         } else if (predictorS.equals("Floatingpoint")) {
                             // NOT SUPPORTED YET
                             throw new OWS20Exception(

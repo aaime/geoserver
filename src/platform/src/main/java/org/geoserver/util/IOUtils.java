@@ -66,8 +66,7 @@ public class IOUtils {
      *
      * <p>Please note that both from input stream and out output stream will be closed.
      */
-    public static void copy(InputStream in, OutputStream out, int copyBufferSize)
-            throws IOException {
+    public static void copy(InputStream in, OutputStream out, int copyBufferSize) throws IOException {
         try {
             byte[] buffer = new byte[copyBufferSize];
             int bytes = 0;
@@ -89,8 +88,7 @@ public class IOUtils {
      * particular, each key in the filters map will be looked up in the reader as ${key} and
      * replaced with the associated value.
      */
-    public static void filteredCopy(File from, File to, Map<String, String> filters)
-            throws IOException {
+    public static void filteredCopy(File from, File to, Map<String, String> filters) throws IOException {
         filteredCopy(new BufferedReader(new FileReader(from)), to, filters);
     }
     /**
@@ -119,8 +117,7 @@ public class IOUtils {
      * particular, each key in the filters map will be looked up in the reader as ${key} and
      * replaced with the associated value.
      */
-    public static void filteredCopy(BufferedReader from, File to, Map<String, String> filters)
-            throws IOException {
+    public static void filteredCopy(BufferedReader from, File to, Map<String, String> filters) throws IOException {
         // prepare the escaped ${key} keys so that it won't be necessary to do
         // it over and over
         // while parsing the file
@@ -152,11 +149,9 @@ public class IOUtils {
     public static void deepCopy(File fromDir, File toDir) throws IOException {
         if (!fromDir.isDirectory() || !fromDir.exists())
             throw new IllegalArgumentException(
-                    "Invalid source directory "
-                            + "(it's either not a directory, or does not exist");
+                    "Invalid source directory " + "(it's either not a directory, or does not exist");
         if (toDir.exists() && toDir.isFile())
-            throw new IllegalArgumentException(
-                    "Invalid destination directory, " + "it happens to be a file instead");
+            throw new IllegalArgumentException("Invalid destination directory, " + "it happens to be a file instead");
 
         // create destination if not available
         if (!toDir.exists()) if (!toDir.mkdir()) throw new IOException("Could not create " + toDir);
@@ -175,12 +170,10 @@ public class IOUtils {
      * Creates a directory as a child of baseDir. The directory name will be preceded by prefix and
      * followed by suffix
      */
-    public static File createRandomDirectory(String baseDir, String prefix, String suffix)
-            throws IOException {
+    public static File createRandomDirectory(String baseDir, String prefix, String suffix) throws IOException {
         File tempDir = File.createTempFile(prefix, suffix, new File(baseDir));
         tempDir.delete();
-        if (!tempDir.mkdir())
-            throw new IOException("Could not create the temp directory " + tempDir.getPath());
+        if (!tempDir.mkdir()) throw new IOException("Could not create the temp directory " + tempDir.getPath());
         return tempDir;
     }
 
@@ -260,10 +253,8 @@ public class IOUtils {
     public static boolean emptyDirectory(File directory, boolean quiet) throws IOException {
         if (!directory.isDirectory()) {
             if (!quiet) {
-                throw new IllegalArgumentException(
-                        String.format(
-                                "The provide file '%s' doesn't appear to be a directory.",
-                                directory.getAbsolutePath()));
+                throw new IllegalArgumentException(String.format(
+                        "The provide file '%s' doesn't appear to be a directory.", directory.getAbsolutePath()));
             }
             // in quiet mode, let's just move on
             return false;
@@ -275,8 +266,7 @@ public class IOUtils {
             if (!quiet) {
                 // unlikely to happen
                 throw new IllegalStateException(
-                        String.format(
-                                "Not able to list files of '%s'.", directory.getAbsolutePath()));
+                        String.format("Not able to list files of '%s'.", directory.getAbsolutePath()));
             }
             // in quiet mode, let's just move on
             return false;
@@ -311,8 +301,7 @@ public class IOUtils {
      * @param filter An optional filter that can be used to select only certain files. Can be null,
      *     in that case all files in the directory will be zipped
      */
-    public static void zipDirectory(
-            File directory, ZipOutputStream zipout, final FilenameFilter filter)
+    public static void zipDirectory(File directory, ZipOutputStream zipout, final FilenameFilter filter)
             throws IOException, FileNotFoundException {
         zipDirectory(directory, "", zipout, filter);
     }
@@ -321,8 +310,7 @@ public class IOUtils {
      * See {@link #zipDirectory(File, ZipOutputStream, FilenameFilter)}, this version handles the
      * prefix needed to recursively zip data preserving the relative path of each
      */
-    private static void zipDirectory(
-            File directory, String prefix, ZipOutputStream zipout, final FilenameFilter filter)
+    private static void zipDirectory(File directory, String prefix, ZipOutputStream zipout, final FilenameFilter filter)
             throws IOException, FileNotFoundException {
         File[] files = directory.listFiles(filter);
         // copy file by reading 4k at a time (faster than buffered reading)
@@ -425,8 +413,8 @@ public class IOUtils {
     }
 
     /** */
-    public static void saveCompressedStream(
-            final byte[] buffer, final OutputStream out, final int len) throws IOException {
+    public static void saveCompressedStream(final byte[] buffer, final OutputStream out, final int len)
+            throws IOException {
         try {
             out.write(buffer, 0, len);
 

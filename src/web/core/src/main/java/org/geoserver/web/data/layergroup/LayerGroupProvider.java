@@ -22,23 +22,19 @@ public class LayerGroupProvider extends GeoServerDataProvider<LayerGroupInfo> {
 
     public static Property<LayerGroupInfo> NAME = new BeanProperty<>("name", "name");
 
-    public static Property<LayerGroupInfo> WORKSPACE =
-            new BeanProperty<>("workspace", "workspace.name");
+    public static Property<LayerGroupInfo> WORKSPACE = new BeanProperty<>("workspace", "workspace.name");
 
-    static final Property<LayerGroupInfo> MODIFIED_TIMESTAMP =
-            new BeanProperty<>("datemodfied", "dateModified");
+    static final Property<LayerGroupInfo> MODIFIED_TIMESTAMP = new BeanProperty<>("datemodfied", "dateModified");
 
-    static final Property<LayerGroupInfo> CREATED_TIMESTAMP =
-            new BeanProperty<>("datecreated", "dateCreated");
+    static final Property<LayerGroupInfo> CREATED_TIMESTAMP = new BeanProperty<>("datecreated", "dateCreated");
 
-    public static Property<LayerGroupInfo> ENABLED =
-            new AbstractProperty<LayerGroupInfo>("Enabled") {
+    public static Property<LayerGroupInfo> ENABLED = new AbstractProperty<LayerGroupInfo>("Enabled") {
 
-                @Override
-                public Boolean getPropertyValue(LayerGroupInfo item) {
-                    return Boolean.valueOf(item.isEnabled());
-                }
-            };
+        @Override
+        public Boolean getPropertyValue(LayerGroupInfo item) {
+            return Boolean.valueOf(item.isEnabled());
+        }
+    };
 
     static List<Property<LayerGroupInfo>> PROPERTIES = Arrays.asList(NAME, WORKSPACE, ENABLED);
 
@@ -70,15 +66,9 @@ public class LayerGroupProvider extends GeoServerDataProvider<LayerGroupInfo> {
         List<Property<LayerGroupInfo>> modifiedPropertiesList =
                 PROPERTIES.stream().map(c -> c).collect(Collectors.toList());
         // check geoserver properties
-        if (GeoServerApplication.get()
-                .getGeoServer()
-                .getSettings()
-                .isShowCreatedTimeColumnsInAdminList())
+        if (GeoServerApplication.get().getGeoServer().getSettings().isShowCreatedTimeColumnsInAdminList())
             modifiedPropertiesList.add(CREATED_TIMESTAMP);
-        if (GeoServerApplication.get()
-                .getGeoServer()
-                .getSettings()
-                .isShowModifiedTimeColumnsInAdminList())
+        if (GeoServerApplication.get().getGeoServer().getSettings().isShowModifiedTimeColumnsInAdminList())
             modifiedPropertiesList.add(MODIFIED_TIMESTAMP);
         return modifiedPropertiesList;
     }

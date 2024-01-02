@@ -118,8 +118,7 @@ public class UserGroupStoreHelper {
         return userMap.size() - getUserCountHavingProperty(propname);
     }
 
-    SortedSet<GeoServerUser> getUsersHavingPropertyValue(String propname, String propvalue)
-            throws IOException {
+    SortedSet<GeoServerUser> getUsersHavingPropertyValue(String propname, String propvalue) throws IOException {
         if (StringUtils.hasLength(propname) == false) return emptyUsers;
 
         if (StringUtils.hasLength(propvalue) == false) return emptyUsers;

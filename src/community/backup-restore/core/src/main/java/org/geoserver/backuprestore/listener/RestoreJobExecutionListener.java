@@ -52,8 +52,7 @@ public class RestoreJobExecutionListener implements JobExecutionListener {
         // swapped at the end of the Restore if everything goes well.
         if (backupFacade.getRestoreExecutions().get(jobExecution.getId()) != null) {
             this.restoreExecution = backupFacade.getRestoreExecutions().get(jobExecution.getId());
-            this.restoreExecution.setRestoreCatalog(
-                    createRestoreCatalog(jobExecution.getJobParameters()));
+            this.restoreExecution.setRestoreCatalog(createRestoreCatalog(jobExecution.getJobParameters()));
         } else {
             Long id = null;
             RestoreExecutionAdapter rst = null;
@@ -81,8 +80,7 @@ public class RestoreJobExecutionListener implements JobExecutionListener {
                 this.backupFacade.getRestoreExecutions().remove(id);
 
                 this.restoreExecution =
-                        new RestoreExecutionAdapter(
-                                jobExecution, backupFacade.getTotalNumberOfRestoreSteps());
+                        new RestoreExecutionAdapter(jobExecution, backupFacade.getTotalNumberOfRestoreSteps());
                 this.restoreExecution.setArchiveFile(archiveFile);
                 this.restoreExecution.setRestoreCatalog(restoreCatalog);
                 this.restoreExecution.setWsFilter(rst.getWsFilter());
@@ -91,9 +89,7 @@ public class RestoreJobExecutionListener implements JobExecutionListener {
 
                 this.restoreExecution.getOptions().addAll(options);
 
-                this.backupFacade
-                        .getRestoreExecutions()
-                        .put(jobExecution.getId(), this.restoreExecution);
+                this.backupFacade.getRestoreExecutions().put(jobExecution.getId(), this.restoreExecution);
             }
         }
     }
@@ -142,15 +138,9 @@ public class RestoreJobExecutionListener implements JobExecutionListener {
     @Override
     public void afterJob(JobExecution jobExecution) {
         boolean dryRun =
-                Boolean.parseBoolean(
-                        jobExecution
-                                .getJobParameters()
-                                .getString(Backup.PARAM_DRY_RUN_MODE, "false"));
+                Boolean.parseBoolean(jobExecution.getJobParameters().getString(Backup.PARAM_DRY_RUN_MODE, "false"));
         boolean bestEffort =
-                Boolean.parseBoolean(
-                        jobExecution
-                                .getJobParameters()
-                                .getString(Backup.PARAM_BEST_EFFORT_MODE, "false"));
+                Boolean.parseBoolean(jobExecution.getJobParameters().getString(Backup.PARAM_BEST_EFFORT_MODE, "false"));
         try {
             final Long executionId = jobExecution.getId();
 
@@ -159,17 +149,12 @@ public class RestoreJobExecutionListener implements JobExecutionListener {
             LOGGER.fine("Running Executions IDs : " + executionId);
 
             if (jobExecution.getStatus() != BatchStatus.STOPPED) {
+                LOGGER.fine("Executions Step Summaries : "
+                        + backupFacade.getJobOperator().getStepExecutionSummaries(executionId));
+                LOGGER.fine("Executions Parameters : "
+                        + backupFacade.getJobOperator().getParameters(executionId));
                 LOGGER.fine(
-                        "Executions Step Summaries : "
-                                + backupFacade
-                                        .getJobOperator()
-                                        .getStepExecutionSummaries(executionId));
-                LOGGER.fine(
-                        "Executions Parameters : "
-                                + backupFacade.getJobOperator().getParameters(executionId));
-                LOGGER.fine(
-                        "Executions Summary : "
-                                + backupFacade.getJobOperator().getSummary(executionId));
+                        "Executions Summary : " + backupFacade.getJobOperator().getSummary(executionId));
 
                 if (jobExecution.getStatus() == BatchStatus.COMPLETED) {
                     cleanUp();
@@ -189,14 +174,11 @@ public class RestoreJobExecutionListener implements JobExecutionListener {
     /** Clean up temp folder if required on settings. */
     private void cleanUp() {
         JobParameters jobParameters = restoreExecution.getJobParameters();
-        Resource tempFolder =
-                Resources.fromURL(jobParameters.getString(Backup.PARAM_INPUT_FILE_PATH));
+        Resource tempFolder = Resources.fromURL(jobParameters.getString(Backup.PARAM_INPUT_FILE_PATH));
 
         // Cleanup Temporary Resources
         String cleanUpTempFolders = jobParameters.getString(Backup.PARAM_CLEANUP_TEMP);
-        if (cleanUpTempFolders != null
-                && Boolean.parseBoolean(cleanUpTempFolders)
-                && tempFolder != null) {
+        if (cleanUpTempFolders != null && Boolean.parseBoolean(cleanUpTempFolders) && tempFolder != null) {
             if (Resources.exists(tempFolder)) {
                 try {
                     if (!tempFolder.delete()) {

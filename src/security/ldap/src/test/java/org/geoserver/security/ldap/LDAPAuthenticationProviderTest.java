@@ -36,8 +36,7 @@ public class LDAPAuthenticationProviderTest extends LDAPBaseTest {
     }
 
     protected void createAuthenticationProvider() {
-        authProvider =
-                (LDAPAuthenticationProvider) securityProvider.createAuthenticationProvider(config);
+        authProvider = (LDAPAuthenticationProvider) securityProvider.createAuthenticationProvider(config);
     }
 
     @RunWith(FrameworkRunner.class)
@@ -103,8 +102,7 @@ public class LDAPAuthenticationProviderTest extends LDAPBaseTest {
             // filter to extract user data
             config.setUserFilter("(telephonenumber=1)");
             // username to bind to
-            ((LDAPSecurityServiceConfig) config)
-                    .setUserFormat("uid={0},ou=People,dc=example,dc=com");
+            ((LDAPSecurityServiceConfig) config).setUserFormat("uid={0},ou=People,dc=example,dc=com");
 
             createAuthenticationProvider();
 
@@ -122,8 +120,7 @@ public class LDAPAuthenticationProviderTest extends LDAPBaseTest {
             // filter to extract user data
             config.setUserFilter("(givenName={1})");
             // username to bind to
-            ((LDAPSecurityServiceConfig) config)
-                    .setUserFormat("uid={0},ou=People,dc=example,dc=com");
+            ((LDAPSecurityServiceConfig) config).setUserFormat("uid={0},ou=People,dc=example,dc=com");
 
             createAuthenticationProvider();
 
@@ -133,8 +130,7 @@ public class LDAPAuthenticationProviderTest extends LDAPBaseTest {
             // filter to extract user data
             config.setUserFilter("(cn={0})");
             // username to bind to
-            ((LDAPSecurityServiceConfig) config)
-                    .setUserFormat("uid={0},ou=People,dc=example,dc=com");
+            ((LDAPSecurityServiceConfig) config).setUserFormat("uid={0},ou=People,dc=example,dc=com");
 
             createAuthenticationProvider();
 
@@ -219,12 +215,8 @@ public class LDAPAuthenticationProviderTest extends LDAPBaseTest {
             assertNotNull(result);
             assertEquals("nestedUser", result.getName());
             assertEquals(3, result.getAuthorities().size());
-            assertTrue(
-                    result.getAuthorities().stream()
-                            .anyMatch(x -> "ROLE_NESTED".equals(x.getAuthority())));
-            assertTrue(
-                    result.getAuthorities().stream()
-                            .anyMatch(x -> "ROLE_EXTRA".equals(x.getAuthority())));
+            assertTrue(result.getAuthorities().stream().anyMatch(x -> "ROLE_NESTED".equals(x.getAuthority())));
+            assertTrue(result.getAuthorities().stream().anyMatch(x -> "ROLE_EXTRA".equals(x.getAuthority())));
         }
 
         /** Tests LDAP hierarchical nested groups search. */
@@ -243,12 +235,8 @@ public class LDAPAuthenticationProviderTest extends LDAPBaseTest {
             assertNotNull(result);
             assertEquals("nestedUser", result.getName());
             assertEquals(3, result.getAuthorities().size());
-            assertTrue(
-                    result.getAuthorities().stream()
-                            .anyMatch(x -> "ROLE_NESTED".equals(x.getAuthority())));
-            assertTrue(
-                    result.getAuthorities().stream()
-                            .anyMatch(x -> "ROLE_EXTRA".equals(x.getAuthority())));
+            assertTrue(result.getAuthorities().stream().anyMatch(x -> "ROLE_NESTED".equals(x.getAuthority())));
+            assertTrue(result.getAuthorities().stream().anyMatch(x -> "ROLE_EXTRA".equals(x.getAuthority())));
         }
 
         /** Tests LDAP hierarchical nested groups search disabled. */
@@ -266,12 +254,8 @@ public class LDAPAuthenticationProviderTest extends LDAPBaseTest {
             assertNotNull(result);
             assertEquals("nestedUser", result.getName());
             assertEquals(2, result.getAuthorities().size());
-            assertTrue(
-                    result.getAuthorities().stream()
-                            .anyMatch(x -> "ROLE_NESTED".equals(x.getAuthority())));
-            assertTrue(
-                    result.getAuthorities().stream()
-                            .noneMatch(x -> "ROLE_EXTRA".equals(x.getAuthority())));
+            assertTrue(result.getAuthorities().stream().anyMatch(x -> "ROLE_NESTED".equals(x.getAuthority())));
+            assertTrue(result.getAuthorities().stream().noneMatch(x -> "ROLE_EXTRA".equals(x.getAuthority())));
         }
     }
 

@@ -56,8 +56,7 @@ public class TemplatePathVisitor extends DuplicatingFilterVisitor {
             Object newExpression = mapPropertyThroughBuilder(propertyName, builder);
             if (newExpression != null) return newExpression;
         }
-        return getFactory(extraData)
-                .property(expression.getPropertyName(), expression.getNamespaceContext());
+        return getFactory(extraData).property(expression.getPropertyName(), expression.getNamespaceContext());
     }
 
     /**
@@ -90,9 +89,7 @@ public class TemplatePathVisitor extends DuplicatingFilterVisitor {
             }
         } catch (Throwable ex) {
             throw new RuntimeException(
-                    "Unable to evaluate template path against"
-                            + "the template. Cause: "
-                            + ex.getMessage());
+                    "Unable to evaluate template path against" + "the template. Cause: " + ex.getMessage());
         }
         return null;
     }
@@ -241,15 +238,11 @@ public class TemplatePathVisitor extends DuplicatingFilterVisitor {
     }
 
     private boolean matchBuilder(
-            TemplateBuilder current,
-            String key,
-            List<String> pathElements,
-            TemplateBuilder parent) {
+            TemplateBuilder current, String key, List<String> pathElements, TemplateBuilder parent) {
         boolean result = keyMatched(current, key, pathElements);
         if (!result) {
             if (parent instanceof RootBuilder) result = true;
-            else if (parent instanceof SourceBuilder && !((SourceBuilder) parent).hasOwnOutput())
-                result = true;
+            else if (parent instanceof SourceBuilder && !((SourceBuilder) parent).hasOwnOutput()) result = true;
         }
         return result;
     }
@@ -293,8 +286,7 @@ public class TemplatePathVisitor extends DuplicatingFilterVisitor {
          * @return true if extradata is true, false otherwise.
          */
         private boolean canCompleteXpath(Object extradata) {
-            return extradata == null
-                    || (extradata instanceof Boolean && ((Boolean) extradata).booleanValue());
+            return extradata == null || (extradata instanceof Boolean && ((Boolean) extradata).booleanValue());
         }
 
         private String completeXpath(Stack<String> source, String xpath) {

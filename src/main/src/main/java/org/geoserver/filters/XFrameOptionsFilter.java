@@ -31,15 +31,13 @@ public class XFrameOptionsFilter implements Filter {
     private static final String X_FRAME_OPTIONS = "X-Frame-Options";
 
     /** The system property to set whether the X-Frame-Options header should be set */
-    public static final String GEOSERVER_XFRAME_SHOULD_SET_POLICY =
-            "geoserver.xframe.shouldSetPolicy";
+    public static final String GEOSERVER_XFRAME_SHOULD_SET_POLICY = "geoserver.xframe.shouldSetPolicy";
 
     /** The system property for the value of the X-Frame-Options header */
     public static final String GEOSERVER_XFRAME_POLICY = "geoserver.xframe.policy";
 
     /** The system property to set whether the X-Content-Type-Options header should be set */
-    public static final String GEOSERVER_XCONTENT_TYPE_SHOULD_SET_POLICY =
-            "geoserver.xContentType.shouldSetPolicy";
+    public static final String GEOSERVER_XCONTENT_TYPE_SHOULD_SET_POLICY = "geoserver.xContentType.shouldSetPolicy";
 
     /**
      * Whether the X-Frame-Option header should be set at all. Check this on the fly for easier
@@ -47,11 +45,8 @@ public class XFrameOptionsFilter implements Filter {
      */
     private static boolean shouldSetPolicy() {
         boolean shouldSetPolicy = DEFAULT_SHOULD_SET_POLICY;
-        if (StringUtils.isNotEmpty(
-                GeoServerExtensions.getProperty(GEOSERVER_XFRAME_SHOULD_SET_POLICY))) {
-            shouldSetPolicy =
-                    Boolean.parseBoolean(
-                            GeoServerExtensions.getProperty(GEOSERVER_XFRAME_SHOULD_SET_POLICY));
+        if (StringUtils.isNotEmpty(GeoServerExtensions.getProperty(GEOSERVER_XFRAME_SHOULD_SET_POLICY))) {
+            shouldSetPolicy = Boolean.parseBoolean(GeoServerExtensions.getProperty(GEOSERVER_XFRAME_SHOULD_SET_POLICY));
         }
 
         return shouldSetPolicy;
@@ -72,12 +67,9 @@ public class XFrameOptionsFilter implements Filter {
      */
     private static boolean shouldSetContentTypePolicy() {
         boolean shouldSetPolicy = true;
-        if (StringUtils.isNotEmpty(
-                GeoServerExtensions.getProperty(GEOSERVER_XCONTENT_TYPE_SHOULD_SET_POLICY))) {
+        if (StringUtils.isNotEmpty(GeoServerExtensions.getProperty(GEOSERVER_XCONTENT_TYPE_SHOULD_SET_POLICY))) {
             shouldSetPolicy =
-                    Boolean.parseBoolean(
-                            GeoServerExtensions.getProperty(
-                                    GEOSERVER_XCONTENT_TYPE_SHOULD_SET_POLICY));
+                    Boolean.parseBoolean(GeoServerExtensions.getProperty(GEOSERVER_XCONTENT_TYPE_SHOULD_SET_POLICY));
         }
         return shouldSetPolicy;
     }

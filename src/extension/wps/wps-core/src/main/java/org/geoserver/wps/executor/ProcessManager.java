@@ -44,10 +44,7 @@ public interface ProcessManager {
      * @return The results
      */
     Map<String, Object> submitChained(
-            String executionId,
-            Name processName,
-            Map<String, Object> inputs,
-            ProgressListener listener)
+            String executionId, Name processName, Map<String, Object> inputs, ProgressListener listener)
             throws ProcessException;
 
     /**

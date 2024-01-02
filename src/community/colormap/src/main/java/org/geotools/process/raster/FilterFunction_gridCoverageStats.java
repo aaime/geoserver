@@ -25,11 +25,8 @@ public class FilterFunction_gridCoverageStats extends FunctionExpressionImpl {
 
     PAMParser pamParser = PAMParser.getInstance();
 
-    public static FunctionName NAME =
-            new FunctionNameImpl(
-                    "gridCoverageStats",
-                    parameter("value", Number.class),
-                    parameter("property", String.class));
+    public static FunctionName NAME = new FunctionNameImpl(
+            "gridCoverageStats", parameter("value", Number.class), parameter("property", String.class));
 
     public FilterFunction_gridCoverageStats() {
         super(NAME);
@@ -56,8 +53,7 @@ public class FilterFunction_gridCoverageStats extends FunctionExpressionImpl {
                             + feature.getClass());
         } catch (Exception e) {
             // probably a type error
-            throw new IllegalArgumentException(
-                    "Filter Function problem for function gridCoverageStats", e);
+            throw new IllegalArgumentException("Filter Function problem for function gridCoverageStats", e);
         }
     }
 
@@ -73,8 +69,7 @@ public class FilterFunction_gridCoverageStats extends FunctionExpressionImpl {
             // Need to play with channel selection to deal with different raster bands
             final PAMRasterBand band = dataset.getPAMRasterBand().get(0);
             if (band != null) {
-                final String value =
-                        pamParser.getMetadataValue(band, "STATISTICS_" + statName.toUpperCase());
+                final String value = pamParser.getMetadataValue(band, "STATISTICS_" + statName.toUpperCase());
                 return Double.parseDouble(value);
             }
         }

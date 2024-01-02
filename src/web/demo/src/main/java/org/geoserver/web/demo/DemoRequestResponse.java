@@ -53,8 +53,7 @@ public class DemoRequestResponse extends WebPage {
         // [WICKET-6211] Wicket clears the password after submission, so we need to save as a string
         // now.
         HiddenField<String> passwordField =
-                new HiddenField<String>(
-                        "password", new Model<>(((DemoRequest) model.getObject()).getPassword())) {
+                new HiddenField<String>("password", new Model<>(((DemoRequest) model.getObject()).getPassword())) {
                     @Override
                     protected void onDetach() {
                         // clear the password after we are done with it

@@ -43,8 +43,7 @@ import org.locationtech.jts.geom.Geometry;
  * @param <T>
  * @param <F>
  */
-public class SecuredFeatureSource<T extends FeatureType, F extends Feature>
-        extends DecoratingFeatureSource<T, F> {
+public class SecuredFeatureSource<T extends FeatureType, F extends Feature> extends DecoratingFeatureSource<T, F> {
 
     static final Logger LOGGER = Logging.getLogger(SecuredFeatureSource.class);
 
@@ -79,19 +78,18 @@ public class SecuredFeatureSource<T extends FeatureType, F extends Feature>
         // mix the external query with the access limits one
         final Query readQuery = getReadQuery();
         final Query mixed = mixQueries(query, readQuery);
-        int limitedAttributeSize = mixed.getProperties() != null ? mixed.getProperties().size() : 0;
+        int limitedAttributeSize =
+                mixed.getProperties() != null ? mixed.getProperties().size() : 0;
         final FeatureCollection<T, F> fc = delegate.getFeatures(mixed);
         FeatureCollection<T, F> result = null;
         if (fc != null) {
-            if (limitedAttributeSize > 0
-                    && fc.getSchema().getDescriptors().size() > limitedAttributeSize) {
+            if (limitedAttributeSize > 0 && fc.getSchema().getDescriptors().size() > limitedAttributeSize) {
                 if (fc instanceof SimpleFeatureCollection) {
                     // the datastore did not honour the query properties?? It's broken, but we can
                     // fix it
                     SimpleFeatureCollection sfc = (SimpleFeatureCollection) fc;
                     SimpleFeatureType target =
-                            SimpleFeatureTypeBuilder.retype(
-                                    sfc.getSchema(), mixed.getPropertyNames());
+                            SimpleFeatureTypeBuilder.retype(sfc.getSchema(), mixed.getPropertyNames());
                     @SuppressWarnings("unchecked")
                     FeatureCollection<T, F> retyped =
                             (FeatureCollection<T, F>) new ReTypingFeatureCollection(sfc, target);
@@ -101,8 +99,7 @@ public class SecuredFeatureSource<T extends FeatureType, F extends Feature>
                     List<PropertyName> readProps = readQuery.getProperties();
                     List<PropertyName> queryProps = query.getProperties();
                     // logs only if properties have been limited by the security subsystem
-                    if (readProps != null
-                            && (queryProps == null || !readProps.containsAll(queryProps))) {
+                    if (readProps != null && (queryProps == null || !readProps.containsAll(queryProps))) {
                         // complex feature store eh? No way to fix it at least warn the admin
                         LOGGER.log(
                                 Level.SEVERE,
@@ -132,25 +129,18 @@ public class SecuredFeatureSource<T extends FeatureType, F extends Feature>
         Geometry intersectFilter = limits.getIntersectVectorFilter();
         if (clipFilter != null) {
             if (intersectFilter != null) {
-                collection =
-                        (FeatureCollection<T, F>)
-                                new ClipIntersectsFeatureCollection(
-                                        (SimpleFeatureCollection) collection,
-                                        clipFilter,
-                                        intersectFilter);
+                collection = (FeatureCollection<T, F>) new ClipIntersectsFeatureCollection(
+                        (SimpleFeatureCollection) collection, clipFilter, intersectFilter);
             } else {
-                collection =
-                        (FeatureCollection<T, F>)
-                                new ClippedFeatureCollection(
-                                        (SimpleFeatureCollection) collection, clipFilter, false);
+                collection = (FeatureCollection<T, F>)
+                        new ClippedFeatureCollection((SimpleFeatureCollection) collection, clipFilter, false);
             }
         }
         return collection;
     }
 
     protected Query getReadQuery() {
-        if (policy.getAccessLevel() == AccessLevel.HIDDEN
-                || policy.getAccessLevel() == AccessLevel.METADATA) {
+        if (policy.getAccessLevel() == AccessLevel.HIDDEN || policy.getAccessLevel() == AccessLevel.METADATA) {
             return new Query(null, Filter.EXCLUDE);
         } else if (policy.getLimits() == null) {
             return Query.ALL;
@@ -170,10 +160,9 @@ public class SecuredFeatureSource<T extends FeatureType, F extends Feature>
             }
 
         } else {
-            throw new IllegalArgumentException(
-                    "SecureFeatureSources has been fed "
-                            + "with unexpected AccessLimits class "
-                            + policy.getLimits().getClass());
+            throw new IllegalArgumentException("SecureFeatureSources has been fed "
+                    + "with unexpected AccessLimits class "
+                    + policy.getLimits().getClass());
         }
     }
 
@@ -183,9 +172,7 @@ public class SecuredFeatureSource<T extends FeatureType, F extends Feature>
      */
     protected Query mixQueries(Query userQuery, Query securityQuery) {
         // first rough mix
-        Query result =
-                new Query(
-                        DataUtilities.mixQueries(userQuery, securityQuery, userQuery.getHandle()));
+        Query result = new Query(DataUtilities.mixQueries(userQuery, securityQuery, userQuery.getHandle()));
 
         // check request attributes and use those ones only
         List<PropertyName> securityProperties = securityQuery.getProperties();
@@ -196,8 +183,7 @@ public class SecuredFeatureSource<T extends FeatureType, F extends Feature>
             } else {
                 for (PropertyName pn : userProperties) {
                     if (!securityProperties.contains(pn)) {
-                        throw new SecurityException(
-                                "Attribute " + pn.getPropertyName() + " is not available");
+                        throw new SecurityException("Attribute " + pn.getPropertyName() + " is not available");
                     }
                 }
                 result.setProperties(userProperties);

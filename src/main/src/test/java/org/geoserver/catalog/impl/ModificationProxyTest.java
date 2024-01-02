@@ -166,9 +166,7 @@ public class ModificationProxyTest {
 
             @Override
             public void describeTo(Description description) {
-                description
-                        .appendText("ModificationProxy wrapping ")
-                        .appendDescriptionOf(objectMatcher);
+                description.appendText("ModificationProxy wrapping ").appendDescriptionOf(objectMatcher);
             }
         };
     }

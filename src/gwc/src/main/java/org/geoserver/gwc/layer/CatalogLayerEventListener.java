@@ -138,10 +138,9 @@ public class CatalogLayerEventListener implements CatalogListener {
             return;
         }
         if (!sane) {
-            log.info(
-                    "Ignoring auto-creation of tile layer for "
-                            + event.getSource()
-                            + ": global gwc settings are not sane");
+            log.info("Ignoring auto-creation of tile layer for "
+                    + event.getSource()
+                    + ": global gwc settings are not sane");
         }
         Object obj = event.getSource();
         // We only handle layers here. Layer groups are initially empty
@@ -165,8 +164,7 @@ public class CatalogLayerEventListener implements CatalogListener {
         GWCConfig defaults = mediator.getConfig();
         if (defaults.isSane() && defaults.isCacheLayersByDefault()) {
             GridSetBroker gridSetBroker = mediator.getGridSetBroker();
-            GeoServerTileLayer tileLayer =
-                    new GeoServerTileLayer(layerInfo, defaults, gridSetBroker);
+            GeoServerTileLayer tileLayer = new GeoServerTileLayer(layerInfo, defaults, gridSetBroker);
             mediator.add(tileLayer);
         }
     }
@@ -245,8 +243,7 @@ public class CatalogLayerEventListener implements CatalogListener {
             return; // no tile layer associated, no need to continue
         }
         if (preModifyEvent == null) {
-            throw new IllegalStateException(
-                    "PostModifyEvent called without having called handlePreModify first?");
+            throw new IllegalStateException("PostModifyEvent called without having called handlePreModify first?");
         }
 
         final List<String> changedProperties = preModifyEvent.getPropertyNames();
@@ -276,8 +273,7 @@ public class CatalogLayerEventListener implements CatalogListener {
 
             GeoServerTileLayer tileLayer = mediator.getTileLayer(source);
             if (tileLayer != null
-                    && (changedProperties.contains("nativeBoundingBox")
-                            || changedProperties.contains("bounds"))) {
+                    && (changedProperties.contains("nativeBoundingBox") || changedProperties.contains("bounds"))) {
                 tileLayer.boundsChanged();
             }
         } else if (source instanceof WorkspaceInfo) {
@@ -293,8 +289,7 @@ public class CatalogLayerEventListener implements CatalogListener {
 
         } else if (source instanceof LayerGroupInfo) {
             LayerGroupInfo lgInfo = (LayerGroupInfo) source;
-            handleLayerGroupInfoChange(
-                    changedProperties, oldValues, newValues, lgInfo, tileLayerInfo);
+            handleLayerGroupInfoChange(changedProperties, oldValues, newValues, lgInfo, tileLayerInfo);
         }
     }
 
@@ -326,9 +321,7 @@ public class CatalogLayerEventListener implements CatalogListener {
         }
         if (truncate) {
             log.info(
-                    "Truncating TileLayer for layer group '"
-                            + layerName
-                            + "' due to a change in its layers or styles");
+                    "Truncating TileLayer for layer group '" + layerName + "' due to a change in its layers or styles");
             mediator.truncate(layerName);
         }
     }
@@ -374,13 +367,12 @@ public class CatalogLayerEventListener implements CatalogListener {
             if (!Objects.equals(oldStyleName, defaultStyle)) {
                 save = true;
                 defaultStyleChanged = true;
-                log.info(
-                        "Truncating default style for layer "
-                                + layerName
-                                + ", as it changed from "
-                                + oldStyleName
-                                + " to "
-                                + defaultStyle);
+                log.info("Truncating default style for layer "
+                        + layerName
+                        + ", as it changed from "
+                        + oldStyleName
+                        + " to "
+                        + defaultStyle);
                 mediator.truncateByLayerDefaultStyle(layerName);
             }
         } else {
@@ -399,12 +391,11 @@ public class CatalogLayerEventListener implements CatalogListener {
                 // truncate no longer existing cached styles
                 Set<String> notCachedAnyMore = Sets.difference(cachedStyles, styles);
                 for (String oldCachedStyle : notCachedAnyMore) {
-                    log.info(
-                            "Truncating cached style "
-                                    + oldCachedStyle
-                                    + " of layer "
-                                    + layerName
-                                    + " as it's no longer one of the layer's styles");
+                    log.info("Truncating cached style "
+                            + oldCachedStyle
+                            + " of layer "
+                            + layerName
+                            + " as it's no longer one of the layer's styles");
                     mediator.truncateByLayerAndStyle(layerName, oldCachedStyle);
                 }
                 // reset STYLES parameter filter
@@ -419,14 +410,12 @@ public class CatalogLayerEventListener implements CatalogListener {
         if (metadataIdx >= 0) {
             MetadataMap oldMetadata = (MetadataMap) oldValues.get(metadataIdx);
             MetadataMap newMetadata = (MetadataMap) newValues.get(metadataIdx);
-            boolean cachingEnabledChanged =
-                    Objects.equals(
-                            oldMetadata.get(ResourceInfo.CACHING_ENABLED, Boolean.class),
-                            newMetadata.get(ResourceInfo.CACHING_ENABLED, Boolean.class));
-            boolean cachingMaxAgeChanged =
-                    Objects.equals(
-                            oldMetadata.get(ResourceInfo.CACHE_AGE_MAX, Boolean.class),
-                            newMetadata.get(ResourceInfo.CACHE_AGE_MAX, Boolean.class));
+            boolean cachingEnabledChanged = Objects.equals(
+                    oldMetadata.get(ResourceInfo.CACHING_ENABLED, Boolean.class),
+                    newMetadata.get(ResourceInfo.CACHING_ENABLED, Boolean.class));
+            boolean cachingMaxAgeChanged = Objects.equals(
+                    oldMetadata.get(ResourceInfo.CACHE_AGE_MAX, Boolean.class),
+                    newMetadata.get(ResourceInfo.CACHE_AGE_MAX, Boolean.class));
             // we do we don't need to truncate the layer, but we need to update
             // its LayerInfo so that the resulting caching headers get updated
             if (cachingEnabledChanged || cachingMaxAgeChanged) {
@@ -452,8 +441,7 @@ public class CatalogLayerEventListener implements CatalogListener {
                         // we need to save in case something changed in one of the layer
                         GridSetBroker gridSetBroker = mediator.getGridSetBroker();
                         GeoServerTileLayerInfo groupTileLayerInfo = tileLayer.getInfo();
-                        GeoServerTileLayer newTileLayer =
-                                new GeoServerTileLayer(lg, gridSetBroker, groupTileLayerInfo);
+                        GeoServerTileLayer newTileLayer = new GeoServerTileLayer(lg, gridSetBroker, groupTileLayerInfo);
                         mediator.save(newTileLayer);
 
                         // we also need to truncate the group if the layer default style changed,
@@ -478,9 +466,7 @@ public class CatalogLayerEventListener implements CatalogListener {
 
         // handle layers rename
         try (CloseableIterator<LayerInfo> layers =
-                catalog.list(
-                        LayerInfo.class,
-                        Predicates.equal("resource.store.workspace.name", newWorkspaceName))) {
+                catalog.list(LayerInfo.class, Predicates.equal("resource.store.workspace.name", newWorkspaceName))) {
             while (layers.hasNext()) {
                 LayerInfo layer = layers.next();
                 String oldName = oldWorkspaceName + ":" + layer.getName();
@@ -544,9 +530,7 @@ public class CatalogLayerEventListener implements CatalogListener {
 
         // handle layer group renames
         try (CloseableIterator<LayerGroupInfo> groups =
-                catalog.list(
-                        LayerGroupInfo.class,
-                        Predicates.equal("workspace.name", newWorkspaceName))) {
+                catalog.list(LayerGroupInfo.class, Predicates.equal("workspace.name", newWorkspaceName))) {
             while (groups.hasNext()) {
                 LayerGroupInfo group = groups.next();
                 String oldName = oldWorkspaceName + ":" + group.getName();
@@ -628,22 +612,16 @@ public class CatalogLayerEventListener implements CatalogListener {
         }
     }
 
-    private void renameTileLayer(
-            final GeoServerTileLayerInfo tileLayerInfo, String oldLayerName, String newLayerName) {
+    private void renameTileLayer(final GeoServerTileLayerInfo tileLayerInfo, String oldLayerName, String newLayerName) {
         tileLayerInfo.setName(newLayerName);
 
         // notify the mediator of the rename so it changes the name of the layer in GWC without
         // affecting its caches
-        final GeoServerTileLayer oldTileLayer =
-                (GeoServerTileLayer) mediator.getTileLayerByName(oldLayerName);
+        final GeoServerTileLayer oldTileLayer = (GeoServerTileLayer) mediator.getTileLayerByName(oldLayerName);
 
         checkState(
                 null != oldTileLayer,
-                "handleRename: old tile layer not found: '"
-                        + oldLayerName
-                        + "'. New name: '"
-                        + newLayerName
-                        + "'");
+                "handleRename: old tile layer not found: '" + oldLayerName + "'. New name: '" + newLayerName + "'");
 
         mediator.rename(oldLayerName, newLayerName);
     }

@@ -17,8 +17,7 @@ import org.geoserver.security.impl.MemoryUserGroupService;
  * @author Justin Deoliveira, OpenGeo
  */
 public class MemoryUserGroupServicePanelInfo
-        extends UserGroupServicePanelInfo<
-                MemoryUserGroupServiceConfigImpl, MemoryUserGroupServicePanel> {
+        extends UserGroupServicePanelInfo<MemoryUserGroupServiceConfigImpl, MemoryUserGroupServicePanel> {
 
     public MemoryUserGroupServicePanelInfo() {
         setComponentClass(MemoryUserGroupServicePanel.class);

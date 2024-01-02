@@ -62,10 +62,7 @@ class RemovedObjectProxy implements InvocationHandler {
     }
 
     public RemovedObjectProxy(
-            String id,
-            String name,
-            Class<? extends Info> infoInterface,
-            @Nullable String nativeName) {
+            String id, String name, Class<? extends Info> infoInterface, @Nullable String nativeName) {
         checkNotNull(id, "id");
         checkNotNull(name, "name");
         checkNotNull(infoInterface, "infoInterface");
@@ -144,13 +141,7 @@ class RemovedObjectProxy implements InvocationHandler {
 
     @Override
     public String toString() {
-        return "RemovedObjectProxy[("
-                + infoInterface.getSimpleName()
-                + "[id="
-                + id
-                + ", name="
-                + name
-                + "]]";
+        return "RemovedObjectProxy[(" + infoInterface.getSimpleName() + "[id=" + id + ", name=" + name + "]]";
     }
 
     @Override

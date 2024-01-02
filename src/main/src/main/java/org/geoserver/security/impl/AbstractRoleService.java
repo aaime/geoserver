@@ -26,8 +26,7 @@ import org.springframework.util.StringUtils;
  *
  * @author Christian
  */
-public abstract class AbstractRoleService extends AbstractGeoServerSecurityService
-        implements GeoServerRoleService {
+public abstract class AbstractRoleService extends AbstractGeoServerSecurityService implements GeoServerRoleService {
 
     protected String adminRoleName, groupAdminRoleName;
     protected RoleStoreHelper helper;
@@ -206,8 +205,7 @@ public abstract class AbstractRoleService extends AbstractGeoServerSecurityServi
      */
     @Override
     public Properties personalizeRoleParams(
-            String roleName, Properties roleParams, String userName, Properties userProps)
-            throws IOException {
+            String roleName, Properties roleParams, String userName, Properties userProps) throws IOException {
 
         // this is true if the set is modified --> common
         // property names exist

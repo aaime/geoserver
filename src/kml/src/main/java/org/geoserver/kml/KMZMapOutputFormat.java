@@ -30,8 +30,7 @@ public class KMZMapOutputFormat extends AbstractMapOutputFormat {
     /** Official KMZ mime type */
     public static final String MIME_TYPE = "application/vnd.google-earth.kmz";
 
-    public static final String NL_KMZ_MIME_TYPE =
-            KMZMapOutputFormat.MIME_TYPE + ";mode=networklink";
+    public static final String NL_KMZ_MIME_TYPE = KMZMapOutputFormat.MIME_TYPE + ";mode=networklink";
 
     public static final String[] OUTPUT_FORMATS = {
         MIME_TYPE, /* NL_KMZ_MIME_TYPE , */

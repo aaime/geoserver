@@ -27,8 +27,7 @@ public interface RequestPostProcessor {
      * <tt>data</tt> that is appropriate. There is no need for this method to persist the request
      * object, it will be done after the post processing chain has been completed.
      */
-    void run(RequestData data, HttpServletRequest request, HttpServletResponse response)
-            throws Exception;
+    void run(RequestData data, HttpServletRequest request, HttpServletResponse response) throws Exception;
 
     /** @return name for the implementation */
     String getName();

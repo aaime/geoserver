@@ -24,8 +24,7 @@ public class IndexControllerTest extends CatalogRESTTestSupport {
     @Test
     public void testGetAsHTML() throws Exception {
         // TODO: Add more endpoints as they are added;
-        List<String> linksToFind =
-                new ArrayList<>(Arrays.asList("layers", "layergroups", "styles", "workspaces"));
+        List<String> linksToFind = new ArrayList<>(Arrays.asList("layers", "layergroups", "styles", "workspaces"));
 
         List<String> invalidLinks = Arrays.asList("reset", "reload");
 
@@ -38,13 +37,8 @@ public class IndexControllerTest extends CatalogRESTTestSupport {
             Element link = (Element) links.item(i);
             String linkText = link.getTextContent();
             linksToFind.remove(linkText);
-            assertFalse(
-                    "Index should only contain GET endpoints. Found: " + linkText,
-                    invalidLinks.contains(linkText));
+            assertFalse("Index should only contain GET endpoints. Found: " + linkText, invalidLinks.contains(linkText));
         }
-        assertEquals(
-                "Could not find the following links in index: " + linksToFind.toString(),
-                0,
-                linksToFind.size());
+        assertEquals("Could not find the following links in index: " + linksToFind.toString(), 0, linksToFind.size());
     }
 }

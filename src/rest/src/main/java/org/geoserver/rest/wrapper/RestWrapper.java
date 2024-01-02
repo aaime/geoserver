@@ -33,8 +33,7 @@ public interface RestWrapper<T> {
      *
      * @param persister The XStream persister
      */
-    void configurePersister(
-            XStreamPersister persister, XStreamMessageConverter xStreamMessageConverter);
+    void configurePersister(XStreamPersister persister, XStreamMessageConverter xStreamMessageConverter);
 
     /**
      * Apply configuration to the template based on the data format

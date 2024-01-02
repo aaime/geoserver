@@ -33,10 +33,7 @@ public class WrapperPolicy implements Serializable, Comparable<WrapperPolicy> {
     }
 
     public static final WrapperPolicy readWrite(AccessLimits limits) {
-        Response respone =
-                limits == null || limits.getMode() == CatalogMode.HIDE
-                        ? Response.HIDE
-                        : Response.CHALLENGE;
+        Response respone = limits == null || limits.getMode() == CatalogMode.HIDE ? Response.HIDE : Response.CHALLENGE;
         return new WrapperPolicy(AccessLevel.READ_WRITE, respone, limits);
     }
 
@@ -112,12 +109,6 @@ public class WrapperPolicy implements Serializable, Comparable<WrapperPolicy> {
 
     @Override
     public String toString() {
-        return "WrapperPolicy [level="
-                + level
-                + ", response="
-                + response
-                + ", limits="
-                + limits
-                + "]";
+        return "WrapperPolicy [level=" + level + ", response=" + response + ", limits=" + limits + "]";
     }
 }

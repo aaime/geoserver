@@ -17,14 +17,13 @@ public class NeighborFunction extends DGGSSetFunctionBase {
 
     Set<String> zoneIds;
 
-    public static FunctionName NAME =
-            functionName(
-                    "neighbor",
-                    "result:Boolean",
-                    "testedZoneId:String",
-                    "referenceZoneId:String",
-                    "distance:Integer",
-                    "dggs:org.geotools.dggs.DGGSInstance");
+    public static FunctionName NAME = functionName(
+            "neighbor",
+            "result:Boolean",
+            "testedZoneId:String",
+            "referenceZoneId:String",
+            "distance:Integer",
+            "dggs:org.geotools.dggs.DGGSInstance");
 
     public NeighborFunction() {
         super(NAME);
@@ -37,18 +36,15 @@ public class NeighborFunction extends DGGSSetFunctionBase {
         String testedZoneId = (String) getParameterValue(object, 0);
         if (testedZoneId == null) return false;
 
-        return matches(
-                testedZoneId,
-                () -> {
-                    // check params
-                    String referenceZoneId = (String) getParameterValue(object, 1);
-                    Integer distance = (Integer) getParameterValue(object, 2);
-                    DGGSInstance dggs = (DGGSInstance) getParameterValue(object, 3);
-                    if (referenceZoneId == null || distance == null || dggs == null)
-                        return Collections.emptyIterator();
+        return matches(testedZoneId, () -> {
+            // check params
+            String referenceZoneId = (String) getParameterValue(object, 1);
+            Integer distance = (Integer) getParameterValue(object, 2);
+            DGGSInstance dggs = (DGGSInstance) getParameterValue(object, 3);
+            if (referenceZoneId == null || distance == null || dggs == null) return Collections.emptyIterator();
 
-                    return dggs.neighbors(referenceZoneId, distance);
-                });
+            return dggs.neighbors(referenceZoneId, distance);
+        });
     }
 
     @Override

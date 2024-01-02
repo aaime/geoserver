@@ -39,8 +39,7 @@ import org.geotools.util.factory.Hints;
  *
  * @author Andrea Aime
  */
-public abstract class DecoratingFeatureTypeInfo extends AbstractDecorator<FeatureTypeInfo>
-        implements FeatureTypeInfo {
+public abstract class DecoratingFeatureTypeInfo extends AbstractDecorator<FeatureTypeInfo> implements FeatureTypeInfo {
 
     public DecoratingFeatureTypeInfo(FeatureTypeInfo info) {
         super(info);

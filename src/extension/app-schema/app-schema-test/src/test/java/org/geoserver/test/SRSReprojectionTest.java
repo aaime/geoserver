@@ -65,9 +65,7 @@ public class SRSReprojectionTest extends AbstractAppSchemaTestSupport {
     @Test
     public void testNonFeatureTypeProxy() {
         Document doc =
-                getAsDOM(
-                        "wfs?request=GetFeature&version=1.1"
-                                + ".0&typename=gsml:MappedFeature&srsName=EPSG:4326");
+                getAsDOM("wfs?request=GetFeature&version=1.1" + ".0&typename=gsml:MappedFeature&srsName=EPSG:4326");
         LOGGER.info("WFS GetFeature&typename=gsml:MappedFeature response:\n" + prettyString(doc));
         assertXpathEvaluatesTo(
                 "value01",
@@ -96,18 +94,15 @@ public class SRSReprojectionTest extends AbstractAppSchemaTestSupport {
                 "//gsml:MappedFeature[@gml:id='gsml.mappedfeature.mf1']/gsml:shape/gml:Point/@srsName",
                 doc);
         assertXpathEvaluatesTo(
-                "2",
-                "//gsml:MappedFeature[@gml:id='gsml.mappedfeature.mf1']/gsml:shape/gml:Point/@srsDimension",
-                doc);
+                "2", "//gsml:MappedFeature[@gml:id='gsml.mappedfeature.mf1']/gsml:shape/gml:Point/@srsDimension", doc);
         // test that result returns in long,lat order.
         assertXpathEvaluatesTo(
                 "133.8855 -23.6701",
                 "//gsml:MappedFeature[@gml:id='gsml.mappedfeature.mf1']/gsml:shape/gml:Point/gml:pos",
                 doc);
 
-        doc =
-                getAsDOM(
-                        "wfs?request=GetFeature&version=1.1.0&typename=gsml:MappedFeature&srsName=urn:x-ogc:def:crs:EPSG:4326");
+        doc = getAsDOM(
+                "wfs?request=GetFeature&version=1.1.0&typename=gsml:MappedFeature&srsName=urn:x-ogc:def:crs:EPSG:4326");
         LOGGER.info("WFS GetFeature&typename=gsml:MappedFeature response:\n" + prettyString(doc));
         // test result returns in lat,long order
         assertXpathEvaluatesTo(
@@ -122,8 +117,7 @@ public class SRSReprojectionTest extends AbstractAppSchemaTestSupport {
      */
     @Test
     public void testChainingReprojection()
-            throws NoSuchAuthorityCodeException, FactoryException, MismatchedDimensionException,
-                    TransformException {
+            throws NoSuchAuthorityCodeException, FactoryException, MismatchedDimensionException, TransformException {
         Document doc = getAsDOM("wfs?request=GetFeature&version=1.1.0&typename=ex:geomContainer");
         LOGGER.info("WFS GetFeature&typename=ex:geomContainer response:\n" + prettyString(doc));
         // Generate test geometries and its results after re-projection.
@@ -131,19 +125,15 @@ public class SRSReprojectionTest extends AbstractAppSchemaTestSupport {
         CoordinateReferenceSystem targetCRS = CRS.decode(EPSG_4326);
         MathTransform transform = CRS.findMathTransform(sourceCRS, targetCRS);
         GeometryFactory factory = new GeometryFactory();
-        Polygon srcPolygon =
-                factory.createPolygon(
-                        factory.createLinearRing(
-                                factory.getCoordinateSequenceFactory()
-                                        .create(
-                                                new Coordinate[] {
-                                                    new Coordinate(-1.2, 52.5),
-                                                    new Coordinate(-1.2, 52.6),
-                                                    new Coordinate(-1.1, 52.6),
-                                                    new Coordinate(-1.1, 52.5),
-                                                    new Coordinate(-1.2, 52.5)
-                                                })),
-                        null);
+        Polygon srcPolygon = factory.createPolygon(
+                factory.createLinearRing(factory.getCoordinateSequenceFactory().create(new Coordinate[] {
+                    new Coordinate(-1.2, 52.5),
+                    new Coordinate(-1.2, 52.6),
+                    new Coordinate(-1.1, 52.6),
+                    new Coordinate(-1.1, 52.5),
+                    new Coordinate(-1.2, 52.5)
+                })),
+                null);
         Polygon targetPolygon = (Polygon) JTS.transform(srcPolygon, transform);
         StringBuffer polygonBuffer = new StringBuffer();
         CoordinateFormatter formatter = new CoordinateFormatter(8);
@@ -152,12 +142,9 @@ public class SRSReprojectionTest extends AbstractAppSchemaTestSupport {
             formatter.format(coord.y, polygonBuffer).append(" ");
         }
         String targetPolygonCoords = polygonBuffer.toString().trim();
-        Point targetPoint =
-                (Point) JTS.transform(factory.createPoint(new Coordinate(42.58, 31.29)), transform);
+        Point targetPoint = (Point) JTS.transform(factory.createPoint(new Coordinate(42.58, 31.29)), transform);
         String targetPointCoord =
-                formatter.format(targetPoint.getCoordinate().x)
-                        + " "
-                        + formatter.format(targetPoint.getCoordinate().y);
+                formatter.format(targetPoint.getCoordinate().x) + " " + formatter.format(targetPoint.getCoordinate().y);
 
         assertXpathEvaluatesTo(
                 "52.5 -1.2 52.6 -1.2 52.6 -1.1 52.5 -1.1 52.5 -1.2",
@@ -183,9 +170,8 @@ public class SRSReprojectionTest extends AbstractAppSchemaTestSupport {
                 "//ex:geomContainer[@gml:id='2']/ex:nestedFeature[2]/ex:nestedGeom[@gml:id='secondNested.1']/ex:geom",
                 doc);
 
-        doc =
-                getAsDOM(
-                        "wfs?request=GetFeature&version=1.1.0&typename=ex:geomContainer&srsName=urn:x-ogc:def:crs:EPSG:4326");
+        doc = getAsDOM(
+                "wfs?request=GetFeature&version=1.1.0&typename=ex:geomContainer&srsName=urn:x-ogc:def:crs:EPSG:4326");
         LOGGER.info("WFS GetFeature&typename=ex:geomContainer response:\n" + prettyString(doc));
         // test that the polygon is correctly re-projected.
         assertXpathEvaluatesTo(
@@ -242,33 +228,27 @@ public class SRSReprojectionTest extends AbstractAppSchemaTestSupport {
          * test spatial filter on nested geometry attribute
          */
         GeometryFactory factory = new GeometryFactory();
-        Polygon srcPolygon =
-                factory.createPolygon(
-                        factory.createLinearRing(
-                                factory.getCoordinateSequenceFactory()
-                                        .create(
-                                                new Coordinate[] {
-                                                    new Coordinate(-1.2, 52.5),
-                                                    new Coordinate(-1.2, 52.6),
-                                                    new Coordinate(-1.1, 52.6),
-                                                    new Coordinate(-1.1, 52.5),
-                                                    new Coordinate(-1.2, 52.5)
-                                                })),
-                        null);
+        Polygon srcPolygon = factory.createPolygon(
+                factory.createLinearRing(factory.getCoordinateSequenceFactory().create(new Coordinate[] {
+                    new Coordinate(-1.2, 52.5),
+                    new Coordinate(-1.2, 52.6),
+                    new Coordinate(-1.1, 52.6),
+                    new Coordinate(-1.1, 52.5),
+                    new Coordinate(-1.2, 52.5)
+                })),
+                null);
         Envelope bounds = srcPolygon.getEnvelopeInternal();
 
-        BBOX intersects =
-                ff.bbox(
-                        "ex:nestedFeature[2]/ex:nestedGeom/ex:nestedFeature/ex:nestedGeom/ex:geom",
-                        bounds.getMinX(),
-                        bounds.getMinY(),
-                        bounds.getMaxX(),
-                        bounds.getMaxY(),
-                        "EPSG:4283");
+        BBOX intersects = ff.bbox(
+                "ex:nestedFeature[2]/ex:nestedGeom/ex:nestedFeature/ex:nestedGeom/ex:geom",
+                bounds.getMinX(),
+                bounds.getMinY(),
+                bounds.getMaxX(),
+                bounds.getMaxY(),
+                "EPSG:4283");
 
         // Filter involving nested geometry attribute --> CAN be encoded
-        ComplexFilterSplitter splitter =
-                new ComplexFilterSplitter(store.getFilterCapabilities(), rootMapping);
+        ComplexFilterSplitter splitter = new ComplexFilterSplitter(store.getFilterCapabilities(), rootMapping);
         splitter.visit(intersects, null);
         Filter preFilter = splitter.getFilterPre();
         Filter postFilter = splitter.getFilterPost();
@@ -297,8 +277,7 @@ public class SRSReprojectionTest extends AbstractAppSchemaTestSupport {
             typeInfo.setSRS("EPSG:3857");
             typeInfo.setProjectionPolicy(ProjectionPolicy.REPROJECT_TO_DECLARED);
             catalog.save(typeInfo);
-            Document doc =
-                    getAsDOM("wfs?request=GetFeature&version=1.1.0&typename=gsml:MappedFeature");
+            Document doc = getAsDOM("wfs?request=GetFeature&version=1.1.0&typename=gsml:MappedFeature");
             print(doc);
             assertXpathEvaluatesTo(
                     "urn:x-ogc:def:crs:EPSG:3857",

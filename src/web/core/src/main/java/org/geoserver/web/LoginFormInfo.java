@@ -13,8 +13,7 @@ import org.geoserver.security.GeoServerSecurityProvider;
  * @author Alessio Fabiani, GeoSolutions S.A.S.
  */
 @SuppressWarnings("serial")
-public class LoginFormInfo extends ComponentInfo<GeoServerBasePage>
-        implements Comparable<LoginFormInfo> {
+public class LoginFormInfo extends ComponentInfo<GeoServerBasePage> implements Comparable<LoginFormInfo> {
     String name;
     String icon = "";
     private Class<GeoServerSecurityProvider> filterClass;

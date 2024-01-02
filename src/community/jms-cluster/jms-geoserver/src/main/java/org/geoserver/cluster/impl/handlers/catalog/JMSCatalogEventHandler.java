@@ -27,8 +27,7 @@ import org.geoserver.ows.util.OwsUtils;
  * @author Carlo Cancellieri - carlo.cancellieri@geo-solutions.it
  */
 public abstract class JMSCatalogEventHandler extends JMSEventHandler<String, CatalogEvent> {
-    public JMSCatalogEventHandler(
-            final XStream xstream, Class<JMSEventHandlerSPI<String, CatalogEvent>> clazz) {
+    public JMSCatalogEventHandler(final XStream xstream, Class<JMSEventHandlerSPI<String, CatalogEvent>> clazz) {
         super(xstream, clazz);
         // omit not serializable fields
         omitFields();

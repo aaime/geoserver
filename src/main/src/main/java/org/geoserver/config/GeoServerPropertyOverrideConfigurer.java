@@ -45,8 +45,7 @@ public class GeoServerPropertyOverrideConfigurer extends PropertyOverrideConfigu
         Resource[] newLocations = new Resource[locations.length];
         for (int i = 0; i < locations.length; i++) {
             try {
-                newLocations[i] =
-                        SpringResourceAdaptor.relative(locations[i], data.getResourceStore());
+                newLocations[i] = SpringResourceAdaptor.relative(locations[i], data.getResourceStore());
             } catch (IOException e) {
                 LOGGER.log(Level.WARNING, "Error reading resource " + locations[i], e);
                 newLocations[i] = locations[i];

@@ -42,8 +42,7 @@ public class Utils {
 
     protected static final FilterFactory FILTERS = CommonFactoryFinder.getFilterFactory();
 
-    private static final Logger LOG =
-            org.geotools.util.logging.Logging.getLogger("org.geoserver.global");
+    private static final Logger LOG = org.geotools.util.logging.Logging.getLogger("org.geoserver.global");
 
     /**
      * Constructs a geometry {@link Filter} based on the provided parameters
@@ -80,8 +79,7 @@ public class Utils {
                 mathTx = CRS.findMathTransform(requestCRS, nativeCRS, true);
             } catch (FactoryException e) {
                 throw new IllegalArgumentException(
-                        "Unable to translate between input and native coordinate reference systems",
-                        e);
+                        "Unable to translate between input and native coordinate reference systems", e);
             }
         } else {
             mathTx = null;
@@ -97,8 +95,7 @@ public class Utils {
                         e = JTS.transform(e, mathTx);
                     } catch (TransformException e1) {
                         throw new IllegalArgumentException(
-                                "Error while converting envelope from input to native coordinate system",
-                                e1);
+                                "Error while converting envelope from input to native coordinate system", e1);
                     }
                 }
                 return spatialRel.createEnvelopeFilter(geometryProperty, e, relationPattern);
@@ -114,8 +111,7 @@ public class Utils {
                         p = (org.locationtech.jts.geom.Point) JTS.transform(p, mathTx);
                     } catch (TransformException e) {
                         throw new IllegalArgumentException(
-                                "Error while converting point from input to native coordinate system",
-                                e);
+                                "Error while converting point from input to native coordinate system", e);
                     }
                 }
                 return spatialRel.createGeometryFilter(geometryProperty, p, relationPattern);
@@ -132,16 +128,14 @@ public class Utils {
                 // fall through here to the catch-all exception at the end
             } catch (TransformException e) {
                 throw new IllegalArgumentException(
-                        "Error while converting geometry from input to native coordinate system",
-                        e);
+                        "Error while converting geometry from input to native coordinate system", e);
             }
         }
-        throw new IllegalArgumentException(
-                "Can't determine geometry filter from GeometryType \""
-                        + geometryType
-                        + "\" and geometry \""
-                        + geometryText
-                        + "\"");
+        throw new IllegalArgumentException("Can't determine geometry filter from GeometryType \""
+                + geometryType
+                + "\" and geometry \""
+                + geometryText
+                + "\"");
     }
 
     private static Envelope parseShortEnvelope(String text) {
@@ -216,16 +210,14 @@ public class Utils {
             } catch (FactoryException e) {
                 // this means we successfully parsed the integer, but it is not
                 // a valid SRID. Raise it up the stack.
-                throw new NoSuchElementException(
-                        "Could not find spatial reference for ID " + srText);
+                throw new NoSuchElementException("Could not find spatial reference for ID " + srText);
             }
 
             try {
                 net.sf.json.JSON json = JSONSerializer.toJSON(srText);
                 return SpatialReferenceEncoder.coordinateReferenceSystemFromJSON(json);
             } catch (JSONException e) {
-                throw new IllegalArgumentException(
-                        "Failed to parse JSON spatial reference: " + srText);
+                throw new IllegalArgumentException("Failed to parse JSON spatial reference: " + srText);
             }
         }
     }
@@ -235,8 +227,7 @@ public class Utils {
      * the geometry is sent as JSON) or else in the 'inSR' query parameter. If both are provided,
      * the JSON property wins.
      */
-    public static CoordinateReferenceSystem parseSpatialReference(
-            String srText, String geometryText) {
+    public static CoordinateReferenceSystem parseSpatialReference(String srText, String geometryText) {
         try {
             JSONObject jsonObject = JSONObject.fromObject(geometryText);
             Object sr = jsonObject.get("spatialReference");
@@ -264,8 +255,7 @@ public class Utils {
                 Date d1 = parseDate(parts[0]);
                 Date d2 = parseDate(parts[1]);
                 if (d1 == null && d2 == null) {
-                    throw new IllegalArgumentException(
-                            "TIME may not have NULL for both start and end times");
+                    throw new IllegalArgumentException("TIME may not have NULL for both start and end times");
                 } else if (d1 == null) {
                     return FILTERS.before(FILTERS.property(temporalProperty), FILTERS.literal(d2));
                 } else if (d2 == null) {
@@ -274,19 +264,16 @@ public class Utils {
                     Instant start = new DefaultInstant(new DefaultPosition(d1));
                     Instant end = new DefaultInstant(new DefaultPosition(d2));
                     Period p = new DefaultPeriod(start, end);
-                    return FILTERS.toverlaps(
-                            FILTERS.property(temporalProperty), FILTERS.literal(p));
+                    return FILTERS.toverlaps(FILTERS.property(temporalProperty), FILTERS.literal(p));
                 }
             } else if (parts.length == 1) {
                 Date d = parseDate(parts[0]);
                 if (d == null) {
-                    throw new IllegalArgumentException(
-                            "TIME may not have NULL for single-instant filter");
+                    throw new IllegalArgumentException("TIME may not have NULL for single-instant filter");
                 }
                 return FILTERS.tequals(FILTERS.property(temporalProperty), FILTERS.literal(d));
             } else {
-                throw new IllegalArgumentException(
-                        "TIME parameter must comply to POSINT/NULL (, POSINT/NULL)");
+                throw new IllegalArgumentException("TIME parameter must comply to POSINT/NULL (, POSINT/NULL)");
             }
         }
     }

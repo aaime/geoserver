@@ -71,8 +71,7 @@ public class WCSUtils {
 
     private static final double SHEAR_EPS = 1e-3;
 
-    private static final Logger LOGGER =
-            org.geotools.util.logging.Logging.getLogger(WCSUtils.class);
+    private static final Logger LOGGER = org.geotools.util.logging.Logging.getLogger(WCSUtils.class);
 
     public static final String ELEVATION = "ELEVATION";
 
@@ -107,8 +106,7 @@ public class WCSUtils {
         param.parameter("GridGeometry").setValue(gridGeometry);
         param.parameter("InterpolationType").setValue(interpolation);
 
-        return (GridCoverage2D)
-                ((Resample) PROCESSOR.getOperation("Resample")).doOperation(param, hints);
+        return (GridCoverage2D) ((Resample) PROCESSOR.getOperation("Resample")).doOperation(param, hints);
     }
 
     /** Crops the coverage to the specified bounds. May return null in case of empty intersection */
@@ -123,8 +121,7 @@ public class WCSUtils {
         // if the intersection is so small that we'll end up reading nothing, return null
         // instead of failing at the JAI level
         ReferencedEnvelope intersection = cropBounds.intersection(coverageBounds);
-        if (getEnvelopeInRasterSpace(intersection, coverage.getGridGeometry()).isEmpty())
-            return null;
+        if (getEnvelopeInRasterSpace(intersection, coverage.getGridGeometry()).isEmpty()) return null;
         Polygon polygon = JTS.toGeometry(cropBounds);
         Geometry roi = polygon.getFactory().createMultiPolygon(new Polygon[] {polygon});
 
@@ -159,9 +156,7 @@ public class WCSUtils {
         // in case the target envelope is so tiny that it won't fix a whole pixel on either axis
         if (targetRange.isEmpty()) return null;
 
-        GridGeometry2D target =
-                new GridGeometry2D(
-                        targetRange, gg.getGridToCRS(), gg.getCoordinateReferenceSystem2D());
+        GridGeometry2D target = new GridGeometry2D(targetRange, gg.getGridToCRS(), gg.getCoordinateReferenceSystem2D());
 
         List<GridCoverage2D> sources = new ArrayList<>(2);
         sources.add(coverage);
@@ -177,8 +172,7 @@ public class WCSUtils {
     private static GridEnvelope2D getEnvelopeInRasterSpace(Bounds bounds, GridGeometry2D gg) {
         try {
             // transform to raster space, and snap to the integer grid
-            GeneralBounds rasterEnvelopeFloat =
-                    CRS.transform(gg.getCRSToGrid2D(PixelOrientation.UPPER_LEFT), bounds);
+            GeneralBounds rasterEnvelopeFloat = CRS.transform(gg.getCRSToGrid2D(PixelOrientation.UPPER_LEFT), bounds);
             return new GridEnvelope2D(
                     (int) Math.round(rasterEnvelopeFloat.getMinimum(0)),
                     (int) Math.round(rasterEnvelopeFloat.getMinimum(1)),
@@ -201,8 +195,8 @@ public class WCSUtils {
      * @param interpolation Interpolation
      * @return GridCoverage2D
      */
-    public static GridCoverage2D interpolate(
-            final GridCoverage2D coverage, final Interpolation interpolation) throws WcsException {
+    public static GridCoverage2D interpolate(final GridCoverage2D coverage, final Interpolation interpolation)
+            throws WcsException {
         // ///////////////////////////////////////////////////////////////////
         //
         // INTERPOLATE
@@ -211,12 +205,12 @@ public class WCSUtils {
         // ///////////////////////////////////////////////////////////////////
         if (interpolation != null) {
             /* Operations.DEFAULT.interpolate(coverage, interpolation) */
-            final ParameterValueGroup param = PROCESSOR.getOperation("Interpolate").getParameters();
+            final ParameterValueGroup param =
+                    PROCESSOR.getOperation("Interpolate").getParameters();
             param.parameter("Source").setValue(coverage);
             param.parameter("Type").setValue(interpolation);
 
-            return (GridCoverage2D)
-                    ((Interpolate) PROCESSOR.getOperation("Interpolate")).doOperation(param, hints);
+            return (GridCoverage2D) ((Interpolate) PROCESSOR.getOperation("Interpolate")).doOperation(param, hints);
         }
 
         return coverage;
@@ -237,8 +231,7 @@ public class WCSUtils {
      * @param coverage GridCoverage
      * @return Coverage
      */
-    public static Coverage bandSelect(final Map params, final GridCoverage coverage)
-            throws WcsException {
+    public static Coverage bandSelect(final Map params, final GridCoverage coverage) throws WcsException {
         // ///////////////////////////////////////////////////////////////////
         //
         // BAND SELECT
@@ -289,9 +282,7 @@ public class WCSUtils {
                             }
                         }
                     } catch (Exception e) {
-                        throw new WcsException(
-                                "Band parameters incorrectly specified: "
-                                        + e.getLocalizedMessage());
+                        throw new WcsException("Band parameters incorrectly specified: " + e.getLocalizedMessage());
                     }
                 }
             }
@@ -318,8 +309,7 @@ public class WCSUtils {
             param.parameter("SampleDimensions").setValue(bands);
             // param.parameter("VisibleSampleDimension").setValue(bands);
             bandSelectedCoverage =
-                    ((SelectSampleDimension) PROCESSOR.getOperation("SelectSampleDimension"))
-                            .doOperation(param, hints);
+                    ((SelectSampleDimension) PROCESSOR.getOperation("SelectSampleDimension")).doOperation(param, hints);
         } else {
             bandSelectedCoverage = coverage;
         }
@@ -331,8 +321,7 @@ public class WCSUtils {
      * Checks the coverage described by the specified geometry and sample model does not exceeds the
      * output WCS limits
      */
-    public static void checkOutputLimits(
-            WCSInfo info, GridEnvelope2D gridRange2D, SampleModel sampleModel) {
+    public static void checkOutputLimits(WCSInfo info, GridEnvelope2D gridRange2D, SampleModel sampleModel) {
         // do we have to check a limit at all?
         long limit = info.getMaxOutputMemory() * 1024;
         if (limit <= 0) {
@@ -342,13 +331,12 @@ public class WCSUtils {
         // compute the coverage memory usage and compare with limit
         long actual = getCoverageSize(gridRange2D, sampleModel);
         if (actual > limit) {
-            throw new WcsException(
-                    "This request is trying to generate too much data, "
-                            + "the limit is "
-                            + formatBytes(limit)
-                            + " but the actual amount of bytes to be "
-                            + "written in the output is "
-                            + formatBytes(actual));
+            throw new WcsException("This request is trying to generate too much data, "
+                    + "the limit is "
+                    + formatBytes(limit)
+                    + " but the actual amount of bytes to be "
+                    + "written in the output is "
+                    + formatBytes(actual));
         }
     }
 
@@ -370,18 +358,16 @@ public class WCSUtils {
         }
 
         // compute the coverage memory usage and compare with limit
-        long actual =
-                getCoverageSize(
-                        coverage.getGridGeometry().getGridRange2D(),
-                        coverage.getRenderedImage().getSampleModel());
+        long actual = getCoverageSize(
+                coverage.getGridGeometry().getGridRange2D(),
+                coverage.getRenderedImage().getSampleModel());
         if (actual > limit) {
-            throw new WcsException(
-                    "This request is trying to read too much data, "
-                            + "the limit is "
-                            + formatBytes(limit)
-                            + " but the actual amount of "
-                            + "bytes to be read is "
-                            + formatBytes(actual));
+            throw new WcsException("This request is trying to read too much data, "
+                    + "the limit is "
+                    + formatBytes(limit)
+                    + " but the actual amount of "
+                    + "bytes to be read is "
+                    + formatBytes(actual));
         }
     }
 
@@ -410,10 +396,7 @@ public class WCSUtils {
      * @throws WcsException if the coverage size exceeds the configured limits
      */
     public static void checkInputLimits(
-            WCSInfo info,
-            CoverageInfo meta,
-            GridCoverage2DReader reader,
-            GridGeometry2D gridGeometry)
+            WCSInfo info, CoverageInfo meta, GridCoverage2DReader reader, GridGeometry2D gridGeometry)
             throws WcsException {
         // do we have to check a limit at all?
         long limit = info.getMaxInputMemory() * 1024;
@@ -426,8 +409,7 @@ public class WCSUtils {
         try {
             // if necessary reproject back to the original CRS
             GeneralBounds requestedEnvelope = new GeneralBounds(gridGeometry.getEnvelope());
-            final CoordinateReferenceSystem requestCRS =
-                    requestedEnvelope.getCoordinateReferenceSystem();
+            final CoordinateReferenceSystem requestCRS = requestedEnvelope.getCoordinateReferenceSystem();
             final CoordinateReferenceSystem nativeCRS = reader.getCoordinateReferenceSystem();
             if (!CRS.equalsIgnoreMetadata(requestCRS, nativeCRS)) {
                 requestedEnvelope = CRS.transform(requestedEnvelope, nativeCRS);
@@ -449,8 +431,7 @@ public class WCSUtils {
                 // adjust the spans based on the overview policy
                 OverviewPolicy policy = info.getOverviewPolicy();
                 double[] readResoutions = reader.getReadingResolutions(policy, resolutions);
-                double[] baseResolutions =
-                        reader.getReadingResolutions(OverviewPolicy.IGNORE, resolutions);
+                double[] baseResolutions = reader.getReadingResolutions(OverviewPolicy.IGNORE, resolutions);
                 for (int i = 0; i < spans.length; i++) {
                     spans[i] *= readResoutions[i] / baseResolutions[i];
                 }
@@ -498,13 +479,12 @@ public class WCSUtils {
         }
 
         if (actual > limit) {
-            throw new WcsException(
-                    "This request is trying to read too much data, "
-                            + "the limit is "
-                            + formatBytes(limit)
-                            + " but the actual amount of bytes "
-                            + "to be read is "
-                            + formatBytes(actual));
+            throw new WcsException("This request is trying to read too much data, "
+                    + "the limit is "
+                    + formatBytes(limit)
+                    + " but the actual amount of bytes "
+                    + "to be read is "
+                    + formatBytes(actual));
         }
     }
 
@@ -607,13 +587,12 @@ public class WCSUtils {
         long actual = pixelsNumber * pixelSize / 8; // in bytes
 
         if (actual > limit) {
-            throw new WcsException(
-                    "This request is trying to generate too much data, "
-                            + "the limit is "
-                            + formatBytes(limit)
-                            + " but the actual amount of bytes to be "
-                            + "written in the output is "
-                            + formatBytes(actual));
+            throw new WcsException("This request is trying to generate too much data, "
+                    + "the limit is "
+                    + formatBytes(limit)
+                    + " but the actual amount of bytes to be "
+                    + "written in the output is "
+                    + formatBytes(actual));
         }
     }
 
@@ -649,8 +628,7 @@ public class WCSUtils {
 
         // add it to the array
         // add to the list
-        GeneralParameterValue[] readParametersClone =
-                new GeneralParameterValue[readParameters.length + 1];
+        GeneralParameterValue[] readParametersClone = new GeneralParameterValue[readParameters.length + 1];
         System.arraycopy(readParameters, 0, readParametersClone, 0, readParameters.length);
         final ParameterValue<T> pv = pd.createValue();
         pv.setValue(value);
@@ -672,13 +650,11 @@ public class WCSUtils {
 
             return fitEnvelope(bounds, reader);
         } catch (Exception e) {
-            throw new RuntimeException(
-                    "Failed to fit the grid geometry to the declared envelope/crs", e);
+            throw new RuntimeException("Failed to fit the grid geometry to the declared envelope/crs", e);
         }
     }
 
-    protected static ReferencedEnvelope fitEnvelope(
-            ReferencedEnvelope bounds, GridCoverage2DReader reader) {
+    protected static ReferencedEnvelope fitEnvelope(ReferencedEnvelope bounds, GridCoverage2DReader reader) {
         if (fitUnecessary(bounds, reader)) {
             return bounds;
         }
@@ -690,11 +666,9 @@ public class WCSUtils {
         return simpleEnvelopeFit(bounds, reader);
     }
 
-    private static ReferencedEnvelope simpleEnvelopeFit(
-            ReferencedEnvelope bounds, GridCoverage2DReader reader) {
+    private static ReferencedEnvelope simpleEnvelopeFit(ReferencedEnvelope bounds, GridCoverage2DReader reader) {
         GeneralBounds original = reader.getOriginalEnvelope();
-        AffineTransform2D at =
-                (AffineTransform2D) reader.getOriginalGridToWorld(PixelInCell.CELL_CORNER);
+        AffineTransform2D at = (AffineTransform2D) reader.getOriginalGridToWorld(PixelInCell.CELL_CORNER);
         double scaleX = Math.abs(at.getScaleX());
         double minX = fit(bounds.getMinimum(0), original.getMinimum(0), scaleX);
         double maxX = fit(bounds.getMaximum(0), original.getMaximum(0), scaleX);
@@ -704,32 +678,26 @@ public class WCSUtils {
         double maxY = fit(bounds.getMaximum(1), original.getMaximum(1), scaleY);
         if (maxY <= minY) maxY = minY + scaleY;
 
-        return new ReferencedEnvelope(
-                minX, maxX, minY, maxY, bounds.getCoordinateReferenceSystem());
+        return new ReferencedEnvelope(minX, maxX, minY, maxY, bounds.getCoordinateReferenceSystem());
     }
 
-    private static boolean simpleFitSupported(
-            ReferencedEnvelope bounds, GridCoverage2DReader reader) {
+    private static boolean simpleFitSupported(ReferencedEnvelope bounds, GridCoverage2DReader reader) {
         // in case of reprojection resampling will happen anyways
-        if (!CRS.equalsIgnoreMetadata(
-                bounds.getCoordinateReferenceSystem(), reader.getCoordinateReferenceSystem())) {
-            LOGGER.fine(
-                    "Cannot fit the declared envelope to native grid: reprojection is being used");
+        if (!CRS.equalsIgnoreMetadata(bounds.getCoordinateReferenceSystem(), reader.getCoordinateReferenceSystem())) {
+            LOGGER.fine("Cannot fit the declared envelope to native grid: reprojection is being used");
             return false;
         }
 
         // same if the transformation is not an affine
         MathTransform tx = reader.getOriginalGridToWorld(PixelInCell.CELL_CORNER);
         if (!(tx instanceof AffineTransform2D)) {
-            LOGGER.fine(
-                    "Cannot fit the declared envelope to native grid: grid to world is not an affine");
+            LOGGER.fine("Cannot fit the declared envelope to native grid: grid to world is not an affine");
             return false;
         }
 
         AffineTransform2D at = (AffineTransform2D) tx;
         if (Math.abs(at.getShearX()) > SHEAR_EPS || Math.abs(at.getShearY()) > SHEAR_EPS) {
-            LOGGER.fine(
-                    "Cannot fit the declared envelope to native grid: grid to world affine has shear factors");
+            LOGGER.fine("Cannot fit the declared envelope to native grid: grid to world affine has shear factors");
             return false;
         }
 
@@ -772,10 +740,7 @@ public class WCSUtils {
         // if envelope has not been remapped, then go with the original grid geometry
         MathTransform gridToWorld = reader.getOriginalGridToWorld(PixelInCell.CELL_CENTER);
         GridGeometry2D nativeGridGeometry =
-                new GridGeometry2D(
-                        reader.getOriginalGridRange(),
-                        gridToWorld,
-                        reader.getCoordinateReferenceSystem());
+                new GridGeometry2D(reader.getOriginalGridRange(), gridToWorld, reader.getCoordinateReferenceSystem());
 
         try {
             ReferencedEnvelope nativeEnvelope = ci.boundingBox();
@@ -788,12 +753,10 @@ public class WCSUtils {
                 return reprojectGridGeometryFit(reader, nativeEnvelope);
             }
 
-            return simpleGridGeometryFit(
-                    simpleEnvelopeFit(nativeEnvelope, reader),
-                    (AffineTransform2D) reader.getOriginalGridToWorld(PixelInCell.CELL_CORNER));
+            return simpleGridGeometryFit(simpleEnvelopeFit(nativeEnvelope, reader), (AffineTransform2D)
+                    reader.getOriginalGridToWorld(PixelInCell.CELL_CORNER));
         } catch (Exception e) {
-            throw new RuntimeException(
-                    "Failed to fit the grid geometry to the declared envelope/crs", e);
+            throw new RuntimeException("Failed to fit the grid geometry to the declared envelope/crs", e);
         }
     }
 
@@ -805,75 +768,50 @@ public class WCSUtils {
      * @param envelope
      * @return
      */
-    private static GridGeometry2D reprojectGridGeometryFit(
-            GridCoverage2DReader reader, ReferencedEnvelope envelope) {
+    private static GridGeometry2D reprojectGridGeometryFit(GridCoverage2DReader reader, ReferencedEnvelope envelope) {
         // build a fake coverage in the same area as the original one, with
         // the same pixel size and raster size, but without actually pushing it in memory:
         // ConstantDescriptor is a JAI operation, will produce tiles only on pull.
-        AffineTransform2D originalG2W =
-                (AffineTransform2D) reader.getOriginalGridToWorld(PixelInCell.CELL_CORNER);
+        AffineTransform2D originalG2W = (AffineTransform2D) reader.getOriginalGridToWorld(PixelInCell.CELL_CORNER);
         double scale = XAffineTransform.getScale(originalG2W);
         GeneralBounds originalEnvelope = reader.getOriginalEnvelope();
-        AffineTransform2D g2w =
-                new AffineTransform2D(
-                        scale,
-                        0,
-                        0,
-                        -scale,
-                        originalEnvelope.getMinimum(0),
-                        originalEnvelope.getMaximum(1));
+        AffineTransform2D g2w = new AffineTransform2D(
+                scale, 0, 0, -scale, originalEnvelope.getMinimum(0), originalEnvelope.getMaximum(1));
         GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(null);
         GridEnvelope range = reader.getOriginalGridRange();
         RenderedOp image =
-                ConstantDescriptor.create(
-                        (float) range.getSpan(0), (float) range.getSpan(1), new Byte[] {0}, null);
+                ConstantDescriptor.create((float) range.getSpan(0), (float) range.getSpan(1), new Byte[] {0}, null);
         GridCoverage2D sampleCoverage =
-                factory.create(
-                        "sample",
-                        image,
-                        originalEnvelope.getCoordinateReferenceSystem(),
-                        g2w,
-                        null,
-                        null,
-                        null);
+                factory.create("sample", image, originalEnvelope.getCoordinateReferenceSystem(), g2w, null, null, null);
 
         // reproject to target CRS (again does not really compute pixels, just set up a JAI chain)
         CoverageProcessor processor = CoverageProcessor.getInstance();
         final Operation operation = processor.getOperation("Resample");
         final ParameterValueGroup param = operation.getParameters().clone();
         param.parameter("source").setValue(sampleCoverage);
-        param.parameter("CoordinateReferenceSystem")
-                .setValue(envelope.getCoordinateReferenceSystem());
+        param.parameter("CoordinateReferenceSystem").setValue(envelope.getCoordinateReferenceSystem());
         GridCoverage2D reprojected = (GridCoverage2D) processor.doOperation(param, hints);
         GridGeometry2D gg = reprojected.getGridGeometry();
 
         // fit the grid geometry based on the reprojected grid to world
-        return simpleGridGeometryFit(
-                envelope, ((AffineTransform2D) gg.getGridToCRS(PixelInCell.CELL_CORNER)));
+        return simpleGridGeometryFit(envelope, ((AffineTransform2D) gg.getGridToCRS(PixelInCell.CELL_CORNER)));
     }
 
-    private static GridGeometry2D simpleGridGeometryFit(
-            ReferencedEnvelope envelope, AffineTransform2D g2w) {
+    private static GridGeometry2D simpleGridGeometryFit(ReferencedEnvelope envelope, AffineTransform2D g2w) {
         // move the top left corner where the fitted envelope is
-        AffineTransform2D fittedG2W =
-                new AffineTransform2D(
-                        g2w.getScaleX(),
-                        g2w.getShearX(),
-                        g2w.getShearY(),
-                        g2w.getScaleY(),
-                        envelope.getMinimum(0),
-                        envelope.getMaximum(1));
+        AffineTransform2D fittedG2W = new AffineTransform2D(
+                g2w.getScaleX(),
+                g2w.getShearX(),
+                g2w.getShearY(),
+                g2w.getScaleY(),
+                envelope.getMinimum(0),
+                envelope.getMaximum(1));
 
         try {
             GeneralBounds gridEnvelope = CRS.transform(fittedG2W.inverse(), envelope);
-            GridEnvelope2D fittedGridRange =
-                    new GridEnvelope2D(
-                            0,
-                            0,
-                            (int) Math.round(gridEnvelope.getSpan(0)),
-                            (int) Math.round(gridEnvelope.getSpan(1)));
-            return new GridGeometry2D(
-                    fittedGridRange, fittedG2W, envelope.getCoordinateReferenceSystem());
+            GridEnvelope2D fittedGridRange = new GridEnvelope2D(
+                    0, 0, (int) Math.round(gridEnvelope.getSpan(0)), (int) Math.round(gridEnvelope.getSpan(1)));
+            return new GridGeometry2D(fittedGridRange, fittedG2W, envelope.getCoordinateReferenceSystem());
         } catch (TransformException e) {
             throw new RuntimeException("Failed to invert grid to world", e);
         }

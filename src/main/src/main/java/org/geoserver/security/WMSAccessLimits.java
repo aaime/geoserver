@@ -29,8 +29,7 @@ public class WMSAccessLimits extends DataAccessLimits {
      *     requests, and also to slice away feature info results
      * @param rasterFilter Used as a ROI on the returned data
      */
-    public WMSAccessLimits(
-            CatalogMode mode, Filter filter, MultiPolygon rasterFilter, boolean allowFeatureInfo) {
+    public WMSAccessLimits(CatalogMode mode, Filter filter, MultiPolygon rasterFilter, boolean allowFeatureInfo) {
         super(mode, filter);
         this.rasterFilter = rasterFilter;
         this.allowFeatureInfo = allowFeatureInfo;

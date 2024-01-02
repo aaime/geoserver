@@ -72,8 +72,7 @@ public class DataAccessNewPage extends AbstractDataAccessPage {
      * @see AbstractDataAccessPage#onSaveDataStore(Form)
      */
     @Override
-    protected final void onSaveDataStore(
-            final DataStoreInfo info, AjaxRequestTarget target, boolean doReturn)
+    protected final void onSaveDataStore(final DataStoreInfo info, AjaxRequestTarget target, boolean doReturn)
             throws IllegalArgumentException {
         if (!storeEditPanel.onSave()) {
             return;
@@ -118,8 +117,7 @@ public class DataAccessNewPage extends AbstractDataAccessPage {
                 message = e.getCause().getMessage();
             }
 
-            throw new IllegalArgumentException(
-                    "Error creating data store with the provided parameters: " + message);
+            throw new IllegalArgumentException("Error creating data store with the provided parameters: " + message);
         }
 
         final NewLayerPage newLayerPage;

@@ -33,8 +33,7 @@ public abstract class ProxyList<T> extends AbstractList<T> {
 
     @Override
     public T set(int index, T element) {
-        throw new IllegalArgumentException(
-                "Object is not a proxy, or not a proxy of the correct type");
+        throw new IllegalArgumentException("Object is not a proxy, or not a proxy of the correct type");
     }
 
     @Override

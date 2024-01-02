@@ -189,8 +189,7 @@ public interface CatalogFacade {
      * @param clazz The class of the resource
      * @return The resource, or <code>null</code> if no such store exists.
      */
-    <T extends ResourceInfo> T getResourceByName(
-            NamespaceInfo namespace, String name, Class<T> clazz);
+    <T extends ResourceInfo> T getResourceByName(NamespaceInfo namespace, String name, Class<T> clazz);
 
     /**
      * Loads all resources from persistent storage.
@@ -213,8 +212,7 @@ public interface CatalogFacade {
      * @param clazz The class of the resources to return.
      * @return A list of resources, possibly empty.
      */
-    <T extends ResourceInfo> List<T> getResourcesByNamespace(
-            NamespaceInfo namespace, Class<T> clazz);
+    <T extends ResourceInfo> List<T> getResourcesByNamespace(NamespaceInfo namespace, Class<T> clazz);
 
     /**
      * Loads a resource from persistent storage by specifying its name and containing store.
@@ -720,10 +718,7 @@ public interface CatalogFacade {
     static <T extends CatalogInfo> T any(Class<T> clazz) {
         try {
             return (T)
-                    Proxy.newProxyInstance(
-                            clazz.getClassLoader(),
-                            new Class[] {clazz},
-                            (proxy, method, args) -> null);
+                    Proxy.newProxyInstance(clazz.getClassLoader(), new Class[] {clazz}, (proxy, method, args) -> null);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

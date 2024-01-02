@@ -52,8 +52,7 @@ public class CollectionTest extends MapsTestSupport {
 
     @Test
     public void testLayerJson() throws Exception {
-        DocumentContext json =
-                getAsJSONPath("ogc/maps/v1/collections/" + getLayerId(MockData.LAKES), 200);
+        DocumentContext json = getAsJSONPath("ogc/maps/v1/collections/" + getLayerId(MockData.LAKES), 200);
         testLakesJson(json);
     }
 
@@ -88,8 +87,7 @@ public class CollectionTest extends MapsTestSupport {
     @Test
     public void testTemporalCollectionHTML() throws Exception {
         setupRasterDimension(TIMESERIES, TIME, DimensionPresentation.LIST, null, null, null);
-        org.jsoup.nodes.Document document =
-                getAsJSoup("ogc/maps/v1/collections/sf:timeseries?f=html");
+        org.jsoup.nodes.Document document = getAsJSoup("ogc/maps/v1/collections/sf:timeseries?f=html");
 
         String id = getLayerId(TIMESERIES).replace(":", "__");
 

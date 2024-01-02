@@ -34,10 +34,7 @@ public class EnumChoiceRenderer extends ChoiceRenderer<Enum<?>> {
             ParamResourceModel rm = new ParamResourceModel(object.name(), reference);
             return rm.getString();
         } catch (Exception e) {
-            LOGGER.log(
-                    Level.FINE,
-                    "Failed to locate resource string " + object + " with context: " + reference,
-                    e);
+            LOGGER.log(Level.FINE, "Failed to locate resource string " + object + " with context: " + reference, e);
             return object;
         }
     }

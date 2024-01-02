@@ -47,28 +47,19 @@ public class CSWUnmappingFilterVisitor extends DuplicatingFilterVisitor {
     public Object visit(PropertyName expression, Object extraData) {
 
         XPathUtil.StepList steps =
-                XPathUtil.steps(
-                        rd.getFeatureDescriptor(),
-                        expression.getPropertyName(),
-                        rd.getNamespaceSupport());
+                XPathUtil.steps(rd.getFeatureDescriptor(), expression.getPropertyName(), rd.getNamespaceSupport());
 
-        if (steps.size() == 1
-                && steps.get(0).getName().getLocalPart().equalsIgnoreCase("AnyText")) {
+        if (steps.size() == 1 && steps.get(0).getName().getLocalPart().equalsIgnoreCase("AnyText")) {
 
             Expression result = ff.literal(" ");
 
             for (CatalogStoreMappingElement element : mapping.elements()) {
-                Expression fieldIgnoreNull =
-                        ff.function(
-                                "if_then_else",
-                                ff.function("isNull", element.getContent()),
-                                ff.literal(""),
-                                element.getContent());
-                result =
-                        ff.function(
-                                "strConcat",
-                                result,
-                                ff.function("strConcat", ff.literal(" "), fieldIgnoreNull));
+                Expression fieldIgnoreNull = ff.function(
+                        "if_then_else",
+                        ff.function("isNull", element.getContent()),
+                        ff.literal(""),
+                        element.getContent());
+                result = ff.function("strConcat", result, ff.function("strConcat", ff.literal(" "), fieldIgnoreNull));
             }
 
             return result;

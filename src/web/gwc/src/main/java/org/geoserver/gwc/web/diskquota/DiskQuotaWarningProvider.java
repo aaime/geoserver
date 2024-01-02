@@ -20,8 +20,7 @@ public class DiskQuotaWarningProvider implements GeoServerHomePageContentProvide
     @Override
     public Component getPageBodyComponent(String id) {
         GeoServerSecurityManager secMgr = GeoServerApplication.get().getSecurityManager();
-        if (secMgr.checkAuthenticationForAdminRole()
-                && DiskQuotaWarningPanel.getException() != null) {
+        if (secMgr.checkAuthenticationForAdminRole() && DiskQuotaWarningPanel.getException() != null) {
             return new DiskQuotaWarningPanel(id);
         } else {
             return null;

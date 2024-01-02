@@ -111,8 +111,7 @@ public interface GeoServerFacade {
      * @return The service with the specified name or <code>null</code> if no such service could be
      *     found.
      */
-    <T extends ServiceInfo> T getServiceByName(
-            String name, WorkspaceInfo workspace, Class<T> clazz);
+    <T extends ServiceInfo> T getServiceByName(String name, WorkspaceInfo workspace, Class<T> clazz);
 
     /** Disposes the configuration. */
     void dispose();

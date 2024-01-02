@@ -26,11 +26,8 @@ public class CiteComplianceCallback extends AbstractDispatcherCallback {
         if ("WMS".equals(request.getService())) {
             WMSInfo wms = gs.getService(WMSInfo.class);
             // version is mandatory in all requests but GetCapabilities
-            if (wms.isCiteCompliant()
-                    && !"GetCapabilities".equals(request.getRequest())
-                    && isVersionMissing(request)) {
-                throw new ServiceException(
-                        "Could not determine version", "MissingParameterValue", "version");
+            if (wms.isCiteCompliant() && !"GetCapabilities".equals(request.getRequest()) && isVersionMissing(request)) {
+                throw new ServiceException("Could not determine version", "MissingParameterValue", "version");
             }
         }
         return service;

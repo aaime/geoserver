@@ -50,27 +50,23 @@ public class SimpleCatalogStore extends AbstractCatalogStore {
 
         if (root.getType() == Type.RESOURCE) {
             throw new IllegalArgumentException(
-                    "Got an existing reference on the file system, but it's not a directory: "
-                            + root.path());
+                    "Got an existing reference on the file system, but it's not a directory: " + root.path());
         }
     }
 
-    public FeatureCollection<FeatureType, Feature> getRecords(Query q, Transaction t)
-            throws IOException {
+    public FeatureCollection<FeatureType, Feature> getRecords(Query q, Transaction t) throws IOException {
         return getRecords(q, t, null);
     }
 
     @Override
     public FeatureCollection<FeatureType, Feature> getRecordsInternal(
-            RecordDescriptor rd, RecordDescriptor outputRd, Query q, Transaction t)
-            throws IOException {
+            RecordDescriptor rd, RecordDescriptor outputRd, Query q, Transaction t) throws IOException {
 
         int startIndex = 0;
         if (q.getStartIndex() != null) {
             startIndex = q.getStartIndex();
         }
-        FeatureCollection<FeatureType, Feature> records =
-                new RecordsFeatureCollection(root, startIndex);
+        FeatureCollection<FeatureType, Feature> records = new RecordsFeatureCollection(root, startIndex);
 
         // filtering
         if (q.getFilter() != null && q.getFilter() != Filter.INCLUDE) {
@@ -84,8 +80,7 @@ public class SimpleCatalogStore extends AbstractCatalogStore {
         // sorting
         if (q.getSortBy() != null && q.getSortBy().length > 0) {
             Feature[] features = records.toArray(new Feature[records.size()]);
-            Comparator<Feature> comparator =
-                    ComplexComparatorFactory.buildComparator(q.getSortBy());
+            Comparator<Feature> comparator = ComplexComparatorFactory.buildComparator(q.getSortBy());
             Arrays.sort(features, comparator);
 
             records = new MemoryFeatureCollection(records.getSchema(), Arrays.asList(features));

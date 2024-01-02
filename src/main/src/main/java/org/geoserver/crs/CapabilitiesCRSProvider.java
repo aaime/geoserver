@@ -22,14 +22,13 @@ import org.geotools.referencing.CRS;
  */
 public class CapabilitiesCRSProvider {
 
-    private static Set<String> DEFAULT_AUTHORITY_EXCLUSIONS =
-            Set.of(
-                    "http://www.opengis.net/gml",
-                    "http://www.opengis.net/def",
-                    "AUTO", // only suitable in WMS service
-                    "AUTO2", // only suitable in WMS service
-                    "urn:ogc:def",
-                    "urn:x-ogc:def");
+    private static Set<String> DEFAULT_AUTHORITY_EXCLUSIONS = Set.of(
+            "http://www.opengis.net/gml",
+            "http://www.opengis.net/def",
+            "AUTO", // only suitable in WMS service
+            "AUTO2", // only suitable in WMS service
+            "urn:ogc:def",
+            "urn:x-ogc:def");
 
     private BiFunction<String, String, String> codeMapper = CapabilitiesCRSProvider::mapCode;
 
@@ -46,19 +45,16 @@ public class CapabilitiesCRSProvider {
     }
 
     public Set<String> getCodes() {
-        List<String> authorities =
-                CRS.getSupportedAuthorities(true).stream()
-                        .filter(a -> !authorityExclusions.contains(a))
-                        .sorted()
-                        .collect(Collectors.toList());
+        List<String> authorities = CRS.getSupportedAuthorities(true).stream()
+                .filter(a -> !authorityExclusions.contains(a))
+                .sorted()
+                .collect(Collectors.toList());
 
         return authorities.stream()
-                .flatMap(
-                        authority ->
-                                CRS.getSupportedCodes(authority).stream()
-                                        .filter(code -> codeFilter.apply(authority, code))
-                                        .sorted((a, b) -> compareCodes(a, b))
-                                        .map(code -> codeMapper.apply(authority, code)))
+                .flatMap(authority -> CRS.getSupportedCodes(authority).stream()
+                        .filter(code -> codeFilter.apply(authority, code))
+                        .sorted((a, b) -> compareCodes(a, b))
+                        .map(code -> codeMapper.apply(authority, code)))
                 .collect(Collectors.toCollection(() -> new LinkedHashSet<>()));
     }
 

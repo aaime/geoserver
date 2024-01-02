@@ -43,8 +43,7 @@ public class WfsRemoteStoreTest extends WFS20TestSupport {
         // configure the test environment
         Map<String, String> environment = new HashMap<>();
         // get tiger roads schemas location
-        URL tigerRoadsSchema =
-                WfsRemoteStoreTest.class.getResource("tiger_roads_describe_feature_type.xml");
+        URL tigerRoadsSchema = WfsRemoteStoreTest.class.getResource("tiger_roads_describe_feature_type.xml");
         assertThat(tigerRoadsSchema, notNullValue());
         environment.put("TIGER_ROADS_SCHEMA_LOCATION", tigerRoadsSchema.toString());
 
@@ -86,9 +85,7 @@ public class WfsRemoteStoreTest extends WFS20TestSupport {
 
         try {
             // add the remote wfs store using a file capabilities document
-            DataStoreInfo storeInfo =
-                    createWfsDataStore(
-                            getCatalog(), "RemoteWfsStore", "remote_wfs_capabilities.xml");
+            DataStoreInfo storeInfo = createWfsDataStore(getCatalog(), "RemoteWfsStore", "remote_wfs_capabilities.xml");
 
             // retrieve the wfs store and make sure we set it to use our mocked http client
             DataAccess dataStore = storeInfo.getDataStore(new NullProgressListener());
@@ -99,17 +96,15 @@ public class WfsRemoteStoreTest extends WFS20TestSupport {
             createWfsRemoteLayer(getCatalog(), storeInfo, "tiger_tiger_roads");
 
             // perform a get feature request to make sure the layer works properly
-            MockHttpServletResponse response =
-                    getAsServletResponse(
-                            "wfs?request=GetFeature&typenames=gs:tiger_tiger_roads&version=2.0.0&service=wfs");
+            MockHttpServletResponse response = getAsServletResponse(
+                    "wfs?request=GetFeature&typenames=gs:tiger_tiger_roads&version=2.0.0&service=wfs");
             assertThat(response.getStatus(), is(200));
             String content = response.getContentAsString();
             assertThat(content, notNullValue());
             assertThat(content.contains("numberMatched=\"1\" numberReturned=\"1\""), is(true));
         } finally {
             // let's clean the catalog
-            DataStoreInfo dataStoreInfo =
-                    getCatalog().getStoreByName("RemoteWfsStore", DataStoreInfo.class);
+            DataStoreInfo dataStoreInfo = getCatalog().getStoreByName("RemoteWfsStore", DataStoreInfo.class);
             if (dataStoreInfo != null) {
                 // the store exists let's remove it, the associated layer will also be removed
                 CascadeDeleteVisitor visitor = new CascadeDeleteVisitor(getCatalog());
@@ -126,8 +121,7 @@ public class WfsRemoteStoreTest extends WFS20TestSupport {
         Map<String, String> environment = new HashMap<>();
         // get tiger roads schemas location
         URL tigerRoadsSchema =
-                WfsRemoteStoreTest.class.getResource(
-                        "tiger_roads_describe_feature_type_special_chars.xml");
+                WfsRemoteStoreTest.class.getResource("tiger_roads_describe_feature_type_special_chars.xml");
         assertThat(tigerRoadsSchema, notNullValue());
         environment.put("TIGER_ROADS_SCHEMA_LOCATION", tigerRoadsSchema.toString());
 
@@ -169,9 +163,7 @@ public class WfsRemoteStoreTest extends WFS20TestSupport {
 
         try {
             // add the remote wfs store using a file capabilities document
-            DataStoreInfo storeInfo =
-                    createWfsDataStore(
-                            getCatalog(), "RemoteWfsStore", "remote_wfs_capabilities.xml");
+            DataStoreInfo storeInfo = createWfsDataStore(getCatalog(), "RemoteWfsStore", "remote_wfs_capabilities.xml");
 
             // retrieve the wfs store and make sure we set it to use our mocked http client
             DataAccess dataStore = storeInfo.getDataStore(new NullProgressListener());
@@ -182,17 +174,15 @@ public class WfsRemoteStoreTest extends WFS20TestSupport {
             createWfsRemoteLayer(getCatalog(), storeInfo, "tiger_tiger_roads");
 
             // perform a get feature request to make sure the layer works properly
-            MockHttpServletResponse response =
-                    getAsServletResponse(
-                            "wfs?request=GetFeature&typenames=gs:tiger_tiger_roads&version=2.0.0&service=wfs");
+            MockHttpServletResponse response = getAsServletResponse(
+                    "wfs?request=GetFeature&typenames=gs:tiger_tiger_roads&version=2.0.0&service=wfs");
             assertThat(response.getStatus(), is(200));
             String content = response.getContentAsString();
             assertThat(content, notNullValue());
             assertThat(content.contains("numberMatched=\"1\" numberReturned=\"1\""), is(true));
         } finally {
             // let's clean the catalog
-            DataStoreInfo dataStoreInfo =
-                    getCatalog().getStoreByName("RemoteWfsStore", DataStoreInfo.class);
+            DataStoreInfo dataStoreInfo = getCatalog().getStoreByName("RemoteWfsStore", DataStoreInfo.class);
             if (dataStoreInfo != null) {
                 // the store exists let's remove it, the associated layer will also be removed
                 CascadeDeleteVisitor visitor = new CascadeDeleteVisitor(getCatalog());
@@ -205,8 +195,8 @@ public class WfsRemoteStoreTest extends WFS20TestSupport {
      * Helper method that creates a layer in GeoServer catalog from a WFS remote store, the provided
      * layer name should match an entry on the remote WFS server.
      */
-    private static LayerInfo createWfsRemoteLayer(
-            Catalog catalog, DataStoreInfo storeInfo, String name) throws Exception {
+    private static LayerInfo createWfsRemoteLayer(Catalog catalog, DataStoreInfo storeInfo, String name)
+            throws Exception {
         // let's create the feature type based on the remote layer capabilities description
         CatalogBuilder catalogBuilder = new CatalogBuilder(catalog);
         catalogBuilder.setStore(storeInfo);
@@ -227,8 +217,7 @@ public class WfsRemoteStoreTest extends WFS20TestSupport {
      * which should be a resource available in the classpath. The created store will be saved in the
      * GeoServer catalog on the default workspace.
      */
-    private static DataStoreInfo createWfsDataStore(
-            Catalog catalog, String name, String capabilitiesDocument) {
+    private static DataStoreInfo createWfsDataStore(Catalog catalog, String name, String capabilitiesDocument) {
         // get the capabilities document url
         URL url = WfsRemoteStoreTest.class.getResource(capabilitiesDocument);
         assertThat(url, notNullValue());
@@ -254,10 +243,7 @@ public class WfsRemoteStoreTest extends WFS20TestSupport {
      * matching place holder.
      */
     private static void registerHttpGetFromResource(
-            MockHttpClient httpClient,
-            String url,
-            String resourceName,
-            Map<String, String> environment)
+            MockHttpClient httpClient, String url, String resourceName, Map<String, String> environment)
             throws Exception {
         // get the resource URL
         URL finalUrl = new URL(TestHttpClientProvider.MOCKSERVER + url);
@@ -279,8 +265,8 @@ public class WfsRemoteStoreTest extends WFS20TestSupport {
      * response, the response will be retrieved from the provided resource name which should be
      * available in the class-path.
      */
-    private static void registerHttpGetFromResource(
-            MockHttpClient httpClient, String url, String resourceName) throws Exception {
+    private static void registerHttpGetFromResource(MockHttpClient httpClient, String url, String resourceName)
+            throws Exception {
         URL finalUrl = new URL(TestHttpClientProvider.MOCKSERVER + url);
         URL resourceUrl = WfsRemoteStoreTest.class.getResource(resourceName);
         assertThat(resourceUrl, notNullValue());

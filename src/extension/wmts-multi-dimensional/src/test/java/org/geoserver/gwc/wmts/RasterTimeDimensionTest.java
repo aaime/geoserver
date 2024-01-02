@@ -66,22 +66,24 @@ public class RasterTimeDimensionTest extends TestsSupport {
         getCatalog().save(rasterInfo);
         // check that we correctly retrieve the time dimension
         assertThat(
-                DimensionsUtils.extractDimensions(wms, getLayerInfo(), ALL_DOMAINS).size(), is(1));
+                DimensionsUtils.extractDimensions(wms, getLayerInfo(), ALL_DOMAINS)
+                        .size(),
+                is(1));
         // disable the time dimension
         dimensionInfo.setEnabled(false);
         rasterInfo.getMetadata().put(ResourceInfo.TIME, dimensionInfo);
         getCatalog().save(rasterInfo);
         // no dimensions should be available
         assertThat(
-                DimensionsUtils.extractDimensions(wms, getLayerInfo(), ALL_DOMAINS).size(), is(0));
+                DimensionsUtils.extractDimensions(wms, getLayerInfo(), ALL_DOMAINS)
+                        .size(),
+                is(0));
     }
 
     @Test
     public void testGetDefaultValue() {
-        testDefaultValueStrategy(
-                Strategy.MINIMUM, DateUtil.serializeDateTime(DATE_VALUES[0].getTime(), true));
-        testDefaultValueStrategy(
-                Strategy.MAXIMUM, DateUtil.serializeDateTime(DATE_VALUES[4].getTime(), true));
+        testDefaultValueStrategy(Strategy.MINIMUM, DateUtil.serializeDateTime(DATE_VALUES[0].getTime(), true));
+        testDefaultValueStrategy(Strategy.MAXIMUM, DateUtil.serializeDateTime(DATE_VALUES[4].getTime(), true));
     }
 
     @Test

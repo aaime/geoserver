@@ -125,8 +125,7 @@ public class CatalogReader {
      * @throws Exception If problem parsing any parameters.
      */
     protected Map<String, String> dataStoreParams(Element dataStoreElement) throws Exception {
-        Element paramsElement =
-                ReaderUtils.getChildElement(dataStoreElement, "connectionParameters", true);
+        Element paramsElement = ReaderUtils.getChildElement(dataStoreElement, "connectionParameters", true);
         NodeList paramList = paramsElement.getElementsByTagName("parameter");
 
         Map<String, String> params = new HashMap<>();

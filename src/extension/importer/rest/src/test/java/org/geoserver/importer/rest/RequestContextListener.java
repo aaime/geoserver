@@ -37,8 +37,7 @@ public final class RequestContextListener extends AbstractResourceAccessManager 
             // let's see if we can access this request context
             try {
                 HttpServletRequest request =
-                        ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
-                                .getRequest();
+                        ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
                 callBack.invoked(request, user, resource);
             } catch (Exception exception) {
                 // the call back should have test if the request context was properly obtained
@@ -53,8 +52,7 @@ public final class RequestContextListener extends AbstractResourceAccessManager 
             // let's see if we can access this request context
             try {
                 HttpServletRequest request =
-                        ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
-                                .getRequest();
+                        ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
                 callBack.invoked(request, user, workspace);
             } catch (Exception exception) {
                 // the call back should have test if the request context was properly obtained

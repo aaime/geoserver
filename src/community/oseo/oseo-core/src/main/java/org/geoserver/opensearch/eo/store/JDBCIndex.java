@@ -70,7 +70,6 @@ class JDBCIndex {
 
     /** Checks whether this JDBCIndex matches the given queryable and indexed expression */
     public boolean matches(String queryable, String expression) {
-        return Objects.equals(this.queryable, queryable)
-                && Objects.equals(this.expression, expression);
+        return Objects.equals(this.queryable, queryable) && Objects.equals(this.expression, expression);
     }
 }

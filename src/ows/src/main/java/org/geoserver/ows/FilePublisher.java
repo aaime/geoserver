@@ -82,8 +82,7 @@ public class FilePublisher extends AbstractURLPublisher {
 
         if (file == null && scloader != null) {
             // try loading as a servlet resource
-            ServletContextResource resource =
-                    (ServletContextResource) scloader.getResource(reqPath);
+            ServletContextResource resource = (ServletContextResource) scloader.getResource(reqPath);
             if (resource != null && resource.exists()) {
                 file = resource.getFile();
             }

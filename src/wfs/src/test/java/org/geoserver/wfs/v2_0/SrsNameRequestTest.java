@@ -55,30 +55,27 @@ public class SrsNameRequestTest extends WFS20TestSupport {
     private static final String NUMBER_RETURNED_XPATH = "//wfs:FeatureCollection/@numberReturned";
 
     /** The XPath for the gml:id of PrimitiveGeoFeature.f015. */
-    private static final String GML_ID_XPATH =
-            "//"
-                    + TYPE_NAME //
-                    + "[@gml:id=\""
-                    + GML_ID
-                    + "\"]/@gml:id";
+    private static final String GML_ID_XPATH = "//"
+            + TYPE_NAME //
+            + "[@gml:id=\""
+            + GML_ID
+            + "\"]/@gml:id";
 
     /** The XPath for the pointProperty data of PrimitiveGeoFeature.f015. */
-    private static final String DATA_XPATH =
-            "//"
-                    + TYPE_NAME //
-                    + "[@gml:id=\""
-                    + GML_ID
-                    + "\"]" //
-                    + "/sf:pointProperty/gml:Point/gml:pos";
+    private static final String DATA_XPATH = "//"
+            + TYPE_NAME //
+            + "[@gml:id=\""
+            + GML_ID
+            + "\"]" //
+            + "/sf:pointProperty/gml:Point/gml:pos";
 
     /** The XPath for the pointProperty srsName of PrimitiveGeoFeature.f015. */
-    private static final String SRSNAME_XPATH =
-            "//"
-                    + TYPE_NAME //
-                    + "[@gml:id=\""
-                    + GML_ID
-                    + "\"]" //
-                    + "/sf:pointProperty/gml:Point/@srsName";
+    private static final String SRSNAME_XPATH = "//"
+            + TYPE_NAME //
+            + "[@gml:id=\""
+            + GML_ID
+            + "\"]" //
+            + "/sf:pointProperty/gml:Point/@srsName";
 
     /**
      * Test that, for a given request srsName and bbox, the expected number of features are
@@ -115,8 +112,7 @@ public class SrsNameRequestTest extends WFS20TestSupport {
             requestBuilder.append(encodeSrsName(requestBbox));
         }
         Document response = getAsDOM(requestBuilder.toString());
-        XMLAssert.assertXpathEvaluatesTo(
-                Integer.toString(expectedNumberReturned), NUMBER_RETURNED_XPATH, response);
+        XMLAssert.assertXpathEvaluatesTo(Integer.toString(expectedNumberReturned), NUMBER_RETURNED_XPATH, response);
         if (expectedNumberReturned > 0) {
             XMLAssert.assertXpathEvaluatesTo(GML_ID, GML_ID_XPATH, response);
             XMLAssert.assertXpathEvaluatesTo(expectedSrsName, SRSNAME_XPATH, response);
@@ -186,12 +182,7 @@ public class SrsNameRequestTest extends WFS20TestSupport {
      */
     @Test
     public void testEpsgCodeBbox() throws Exception {
-        runTest(
-                EPSG_CODE_SRSNAME,
-                buildBbox(LON_LAT_BBOX, EPSG_CODE_SRSNAME),
-                1,
-                HTTP_URL_SRSNAME,
-                LON_LAT_DATA);
+        runTest(EPSG_CODE_SRSNAME, buildBbox(LON_LAT_BBOX, EPSG_CODE_SRSNAME), 1, HTTP_URL_SRSNAME, LON_LAT_DATA);
     }
 
     /**
@@ -238,12 +229,7 @@ public class SrsNameRequestTest extends WFS20TestSupport {
      */
     @Test
     public void testHttpUrlBbox() throws Exception {
-        runTest(
-                HTTP_URL_SRSNAME,
-                buildBbox(LON_LAT_BBOX, HTTP_URL_SRSNAME),
-                1,
-                HTTP_URL_SRSNAME,
-                LON_LAT_DATA);
+        runTest(HTTP_URL_SRSNAME, buildBbox(LON_LAT_BBOX, HTTP_URL_SRSNAME), 1, HTTP_URL_SRSNAME, LON_LAT_DATA);
     }
 
     /**
@@ -304,12 +290,7 @@ public class SrsNameRequestTest extends WFS20TestSupport {
      */
     @Test
     public void testUrnExperimentalBboxWrongAxisOrder() throws Exception {
-        runTest(
-                URN_EXPERIMENTAL_SRSNAME,
-                buildBbox(LON_LAT_BBOX, URN_EXPERIMENTAL_SRSNAME),
-                0,
-                null,
-                null);
+        runTest(URN_EXPERIMENTAL_SRSNAME, buildBbox(LON_LAT_BBOX, URN_EXPERIMENTAL_SRSNAME), 0, null, null);
     }
 
     /**
@@ -393,12 +374,7 @@ public class SrsNameRequestTest extends WFS20TestSupport {
      */
     @Test
     public void testHttpUriBbox() throws Exception {
-        runTest(
-                HTTP_URI_SRSNAME,
-                buildBbox(LAT_LON_BBOX, HTTP_URI_SRSNAME),
-                1,
-                URN_SRSNAME,
-                LAT_LON_DATA);
+        runTest(HTTP_URI_SRSNAME, buildBbox(LAT_LON_BBOX, HTTP_URI_SRSNAME), 1, URN_SRSNAME, LAT_LON_DATA);
     }
 
     /**

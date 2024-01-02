@@ -23,8 +23,7 @@ public class RenderedImageMap extends WebMap {
 
     private List<GridCoverage2D> renderedCoverages;
 
-    public RenderedImageMap(
-            final WMSMapContent mapContent, final RenderedImage image, final String mimeType) {
+    public RenderedImageMap(final WMSMapContent mapContent, final RenderedImage image, final String mimeType) {
         super(mapContent);
         this.image = image;
         setMimeType(mimeType);

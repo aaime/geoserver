@@ -92,8 +92,7 @@ public class RemoteData extends ImportData {
             manager = VFS.getManager();
 
             if (username != null) {
-                StaticUserAuthenticator auth =
-                        new StaticUserAuthenticator(domain, username, password);
+                StaticUserAuthenticator auth = new StaticUserAuthenticator(domain, username, password);
                 FileSystemOptions opts = new FileSystemOptions();
                 DefaultFileSystemConfigBuilder.getInstance().setUserAuthenticator(opts, auth);
                 fo = manager.resolveFile(location, opts);

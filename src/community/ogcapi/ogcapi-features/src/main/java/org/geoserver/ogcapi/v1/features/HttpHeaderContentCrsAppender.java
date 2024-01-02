@@ -29,19 +29,17 @@ public class HttpHeaderContentCrsAppender extends AbstractDispatcherCallback {
     public static final String CRS_RESPONSE_HEADER = "Content-Crs";
 
     @Override
-    public Response responseDispatched(
-            Request request, Operation operation, Object result, Response response) {
+    public Response responseDispatched(Request request, Operation operation, Object result, Response response) {
 
         // is this a feature response we are about to encode?
         if (result instanceof FeaturesResponse) {
             HttpServletResponse httpResponse = request.getHttpResponse();
             FeatureCollectionResponse fcr = ((FeaturesResponse) result).getResponse();
-            CoordinateReferenceSystem crs =
-                    Optional.ofNullable(fcr)
-                            .map(fct -> fct.getFeatures().get(0))
-                            .map(fc -> fc.getSchema())
-                            .map(ft -> ft.getCoordinateReferenceSystem())
-                            .orElse(null);
+            CoordinateReferenceSystem crs = Optional.ofNullable(fcr)
+                    .map(fct -> fct.getFeatures().get(0))
+                    .map(fc -> fc.getSchema())
+                    .map(ft -> ft.getCoordinateReferenceSystem())
+                    .orElse(null);
             if (crs != null) {
                 try {
                     String crsURI = FeatureService.getCRSURI(crs);
@@ -51,8 +49,7 @@ public class HttpHeaderContentCrsAppender extends AbstractDispatcherCallback {
                 } catch (FactoryException e) {
                     LOGGER.log(
                             Level.INFO,
-                            "Failed to lookup EPSG code of CRS, won't set the Content-Crs header."
-                                    + crs,
+                            "Failed to lookup EPSG code of CRS, won't set the Content-Crs header." + crs,
                             e);
                 }
             }

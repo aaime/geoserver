@@ -54,13 +54,11 @@ public class DirectTemplateFeatureCollectionFactory
     public DirectTemplateFeatureCollectionFactory() {}
 
     @Override
-    public TemplateCollectionModel createTemplateFeatureCollection(
-            FeatureCollection collection, BeansWrapper wrapper) {
+    public TemplateCollectionModel createTemplateFeatureCollection(FeatureCollection collection, BeansWrapper wrapper) {
         return new TemplateFeatureCollection(collection, wrapper);
     }
 
-    protected class TemplateFeatureCollection
-            implements TemplateCollectionModel, TemplateSequenceModel {
+    protected class TemplateFeatureCollection implements TemplateCollectionModel, TemplateSequenceModel {
         protected BeansWrapper wrapper;
 
         protected FeatureCollection collection;
@@ -78,8 +76,7 @@ public class DirectTemplateFeatureCollectionFactory
 
         @Override
         public TemplateModelIterator iterator() throws TemplateModelException {
-            TemplateFeatureIterator it =
-                    new TemplateFeatureIterator(collection.features(), wrapper);
+            TemplateFeatureIterator it = new TemplateFeatureIterator(collection.features(), wrapper);
             List<TemplateFeatureIterator> open = ITERATORS.get();
             if (open == null) {
                 open = new LinkedList<>();

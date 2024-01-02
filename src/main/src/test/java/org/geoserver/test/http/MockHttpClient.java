@@ -37,19 +37,16 @@ public class MockHttpClient extends AbstractHttpClient {
     }
 
     /** Binds a certain POST request to a response. */
-    public void expectPost(
-            URL url, String postContent, String postContentType, HTTPResponse response) {
+    public void expectPost(URL url, String postContent, String postContentType, HTTPResponse response) {
         expectPOST(url, postContent.getBytes(), postContentType, response);
     }
 
-    public void expectPOST(
-            URL url, byte[] postContent, String postContentType, HTTPResponse response) {
+    public void expectPOST(URL url, byte[] postContent, String postContentType, HTTPResponse response) {
         expectedRequests.put(new Request(url, postContent, postContentType), response);
     }
 
     @Override
-    public HTTPResponse post(URL url, InputStream postContent, String postContentType)
-            throws IOException {
+    public HTTPResponse post(URL url, InputStream postContent, String postContentType) throws IOException {
         return getResponse(new Request(url, toByteArray(postContent), postContentType));
     }
 
@@ -64,11 +61,8 @@ public class MockHttpClient extends AbstractHttpClient {
     private HTTPResponse getResponse(Request request) {
         HTTPResponse response = expectedRequests.get(request);
         if (response == null) {
-            StringBuilder sb =
-                    new StringBuilder(
-                            "Unexpected request \n"
-                                    + request
-                                    + "\nNo response is bound to it. Bound urls are: ");
+            StringBuilder sb = new StringBuilder(
+                    "Unexpected request \n" + request + "\nNo response is bound to it. Bound urls are: ");
             for (Request r : expectedRequests.keySet()) {
                 sb.append("\n").append(r);
             }

@@ -17,10 +17,7 @@ public class JdbcForeignKeyColumnMetadata extends JdbcColumnMetadata {
     private final JdbcColumnMetadata relatedColumn;
 
     public JdbcForeignKeyColumnMetadata(
-            JdbcTableMetadata table,
-            String columnName,
-            String columnType,
-            JdbcColumnMetadata relatedColumn) {
+            JdbcTableMetadata table, String columnName, String columnType, JdbcColumnMetadata relatedColumn) {
         super(table, columnName, columnType, true);
         this.relatedColumn = relatedColumn;
     }

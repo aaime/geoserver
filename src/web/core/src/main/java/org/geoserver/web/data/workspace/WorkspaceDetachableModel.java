@@ -28,8 +28,7 @@ public class WorkspaceDetachableModel implements IModel<WorkspaceInfo> {
     @Override
     public WorkspaceInfo getObject() {
         if (workspace == null) {
-            workspace =
-                    id != null ? GeoServerApplication.get().getCatalog().getWorkspace(id) : null;
+            workspace = id != null ? GeoServerApplication.get().getCatalog().getWorkspace(id) : null;
         }
         return workspace;
     }

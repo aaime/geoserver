@@ -60,10 +60,9 @@ public class DGGSResolutionCalculator {
     public int getTargetResolution(Query query, int defaultResolution) {
         Hints hints = query.getHints();
 
-        Optional<Map> viewParams =
-                Optional.ofNullable(hints.get(Hints.VIRTUAL_TABLE_PARAMETERS))
-                        .filter(Map.class::isInstance)
-                        .map(Map.class::cast);
+        Optional<Map> viewParams = Optional.ofNullable(hints.get(Hints.VIRTUAL_TABLE_PARAMETERS))
+                .filter(Map.class::isInstance)
+                .map(Map.class::cast);
 
         // did the user ask for a specific resolution?
         Optional<Integer> requestedResolution =
@@ -77,24 +76,21 @@ public class DGGSResolutionCalculator {
         // switches and excess zone generation. Try something more stable and predictable first,
         // like the OGC scale denominator.
         Optional<Double> distance;
-        Double sd =
-                safeConvert(EnvFunction.getLocalValues().get(WMS_SCALE_DENOMINATOR), Double.class);
+        Double sd = safeConvert(EnvFunction.getLocalValues().get(WMS_SCALE_DENOMINATOR), Double.class);
         if (sd != null) {
             distance = Optional.of(scaleToDistance(DefaultGeographicCRS.WGS84, sd));
         } else {
-            distance =
-                    Optional.ofNullable(hints.get(Hints.GEOMETRY_DISTANCE))
-                            .filter(Number.class::isInstance)
-                            .map(Number.class::cast)
-                            .map(n -> n.doubleValue());
+            distance = Optional.ofNullable(hints.get(Hints.GEOMETRY_DISTANCE))
+                    .filter(Number.class::isInstance)
+                    .map(Number.class::cast)
+                    .map(n -> n.doubleValue());
         }
 
         // do we have a resoution delta?
-        int resolutionDelta =
-                viewParams
-                        .map(m -> m.get(VP_RESOLUTION_DELTA))
-                        .map(n -> safeConvert(n, Integer.class))
-                        .orElse(0);
+        int resolutionDelta = viewParams
+                .map(m -> m.get(VP_RESOLUTION_DELTA))
+                .map(n -> safeConvert(n, Integer.class))
+                .orElse(0);
 
         // compute resolution and eventually apply delta
         return distance.map(n -> getResolutionFromThresholds(n.doubleValue()) + resolutionDelta)
@@ -124,11 +120,10 @@ public class DGGSResolutionCalculator {
 
     private int validateResolution(int resolution) {
         if (resolution < 0 || resolution >= levelThresholds.length) {
-            throw new IllegalArgumentException(
-                    "Requested resolution "
-                            + resolution
-                            + " is not valid, please provide a value between 0 and "
-                            + (levelThresholds.length - 1));
+            throw new IllegalArgumentException("Requested resolution "
+                    + resolution
+                    + " is not valid, please provide a value between 0 and "
+                    + (levelThresholds.length - 1));
         }
 
         return resolution;

@@ -92,13 +92,17 @@ public class SpatialJSONGetFeatureResponse extends GeoJSONGetFeatureResponse {
     /** capabilities output format string. */
     @Override
     public String getCapabilitiesElementName() {
-        return getOutputFormats().isEmpty() ? null : getOutputFormats().iterator().next();
+        return getOutputFormats().isEmpty()
+                ? null
+                : getOutputFormats().iterator().next();
     }
 
     /** Returns the mime type */
     @Override
     public String getMimeType(Object value, Operation operation) throws ServiceException {
-        return getOutputFormats().isEmpty() ? null : getOutputFormats().iterator().next();
+        return getOutputFormats().isEmpty()
+                ? null
+                : getOutputFormats().iterator().next();
     }
 
     /**
@@ -109,20 +113,17 @@ public class SpatialJSONGetFeatureResponse extends GeoJSONGetFeatureResponse {
      * @see Context
      */
     @Override
-    protected GeoJSONBuilder getGeoJSONBuilder(
-            FeatureCollectionResponse featureCollection, Writer outWriter) {
+    protected GeoJSONBuilder getGeoJSONBuilder(FeatureCollectionResponse featureCollection, Writer outWriter) {
         final GeoJSONBuilder jsonWriter = new GeoJSONBuilderWithContext(outWriter);
         int numDecimals = getNumDecimals(featureCollection.getFeature(), gs, gs.getCatalog());
         jsonWriter.setNumberOfDecimals(numDecimals);
-        jsonWriter.setEncodeMeasures(
-                encodeMeasures(featureCollection.getFeature(), gs.getCatalog()));
+        jsonWriter.setEncodeMeasures(encodeMeasures(featureCollection.getFeature(), gs.getCatalog()));
         return jsonWriter;
     }
 
     @Override
     @SuppressWarnings("rawtypes")
-    protected void write(
-            FeatureCollectionResponse featureCollection, OutputStream output, Operation operation)
+    protected void write(FeatureCollectionResponse featureCollection, OutputStream output, Operation operation)
             throws IOException {
         Name typeName = null;
         for (FeatureCollection fc : featureCollection.getFeatures()) {
@@ -182,8 +183,7 @@ public class SpatialJSONGetFeatureResponse extends GeoJSONGetFeatureResponse {
         try {
             context = (Context) jsonWriter;
         } catch (Exception e) {
-            throw new IllegalArgumentException(
-                    "Passed GeoJSONBuilder instance has no Context associated", e);
+            throw new IllegalArgumentException("Passed GeoJSONBuilder instance has no Context associated", e);
         }
 
         if (!"false".equals(sharedStringsOption)) {
@@ -205,12 +205,11 @@ public class SpatialJSONGetFeatureResponse extends GeoJSONGetFeatureResponse {
                 }
                 // create a string table only if at least one property name or pattern is given
                 if (sharedStringsOption.length() > 0) {
-                    sharedStringAttributes =
-                            new LinkedPatternHashSet(
-                                    KvpUtils.escapedTokens(sharedStringsOption, ',').stream()
-                                            .map(KvpUtils::unescape)
-                                            .collect(Collectors.toSet()),
-                                    mode);
+                    sharedStringAttributes = new LinkedPatternHashSet(
+                            KvpUtils.escapedTokens(sharedStringsOption, ',').stream()
+                                    .map(KvpUtils::unescape)
+                                    .collect(Collectors.toSet()),
+                            mode);
                 }
             } else {
                 // empty set => allow adding all string properties to the string table
@@ -245,8 +244,7 @@ public class SpatialJSONGetFeatureResponse extends GeoJSONGetFeatureResponse {
                     // set that axis order that should be used to write geometries
                     defaultGeomType = fType.getGeometryDescriptor();
                     if (defaultGeomType != null) {
-                        CoordinateReferenceSystem featureCrs =
-                                defaultGeomType.getCoordinateReferenceSystem();
+                        CoordinateReferenceSystem featureCrs = defaultGeomType.getCoordinateReferenceSystem();
                         jsonWriter.setAxisOrder(CRS.getAxisOrder(featureCrs));
                         if (crs == null) {
                             crs = featureCrs;
@@ -316,15 +314,11 @@ public class SpatialJSONGetFeatureResponse extends GeoJSONGetFeatureResponse {
                             if ((value instanceof Double && Double.isNaN((Double) value))
                                     || value instanceof Float && Float.isNaN((Float) value)) {
                                 jsonWriter.value(null);
-                            } else if ((value instanceof Double
-                                            && ((Double) value) == Double.POSITIVE_INFINITY)
-                                    || value instanceof Float
-                                            && ((Float) value) == Float.POSITIVE_INFINITY) {
+                            } else if ((value instanceof Double && ((Double) value) == Double.POSITIVE_INFINITY)
+                                    || value instanceof Float && ((Float) value) == Float.POSITIVE_INFINITY) {
                                 jsonWriter.value("Infinity");
-                            } else if ((value instanceof Double
-                                            && ((Double) value) == Double.NEGATIVE_INFINITY)
-                                    || value instanceof Float
-                                            && ((Float) value) == Float.NEGATIVE_INFINITY) {
+                            } else if ((value instanceof Double && ((Double) value) == Double.NEGATIVE_INFINITY)
+                                    || value instanceof Float && ((Float) value) == Float.NEGATIVE_INFINITY) {
                                 jsonWriter.value("-Infinity");
                             } else {
                                 if (value instanceof CharSequence
@@ -345,8 +339,7 @@ public class SpatialJSONGetFeatureResponse extends GeoJSONGetFeatureResponse {
                     jsonWriter.endArray(); // end the properties
 
                     // Bounding box for feature in properties
-                    ReferencedEnvelope refenv =
-                            ReferencedEnvelope.reference(simpleFeature.getBounds());
+                    ReferencedEnvelope refenv = ReferencedEnvelope.reference(simpleFeature.getBounds());
                     if (featureBounding && !refenv.isEmpty()) {
                         jsonWriter.writeBoundingBox(refenv);
                     }
@@ -371,8 +364,7 @@ public class SpatialJSONGetFeatureResponse extends GeoJSONGetFeatureResponse {
         try {
             context = (Context) jw;
         } catch (Exception e) {
-            throw new IllegalArgumentException(
-                    "Passed GeoJSONBuilder instance has no Context associated.", e);
+            throw new IllegalArgumentException("Passed GeoJSONBuilder instance has no Context associated.", e);
         }
 
         // write mandatory schema information
@@ -439,9 +431,7 @@ public class SpatialJSONGetFeatureResponse extends GeoJSONGetFeatureResponse {
         if (formatOptions != null) {
             result = formatOptions.get(SHARED_STRINGS_OPTION_KEY);
         }
-        return result == null
-                ? SHARED_STRINGS_OPTION_DEFAULT
-                : result.length() == 0 ? "false" : result;
+        return result == null ? SHARED_STRINGS_OPTION_DEFAULT : result.length() == 0 ? "false" : result;
     }
 
     /**
@@ -491,9 +481,7 @@ public class SpatialJSONGetFeatureResponse extends GeoJSONGetFeatureResponse {
         protected static Collection<Pattern> getPatterns(Collection<CharSequence> c, String mode) {
             switch (mode) {
                 case "glob":
-                    return c.stream()
-                            .map(s -> globToPattern(s.toString()))
-                            .collect(Collectors.toList());
+                    return c.stream().map(s -> globToPattern(s.toString())).collect(Collectors.toList());
 
                 case "text":
                     return c.stream()
@@ -501,9 +489,7 @@ public class SpatialJSONGetFeatureResponse extends GeoJSONGetFeatureResponse {
                             .collect(Collectors.toList());
 
                 default:
-                    return c.stream()
-                            .map(s -> Pattern.compile(s.toString()))
-                            .collect(Collectors.toList());
+                    return c.stream().map(s -> Pattern.compile(s.toString())).collect(Collectors.toList());
             }
         }
 
@@ -674,8 +660,7 @@ public class SpatialJSONGetFeatureResponse extends GeoJSONGetFeatureResponse {
             try {
                 return Pattern.compile(result.append('$').toString());
             } catch (PatternSyntaxException e) {
-                throw (PatternSyntaxException)
-                        new PatternSyntaxException(e.getDescription(), s, -1).initCause(e);
+                throw (PatternSyntaxException) new PatternSyntaxException(e.getDescription(), s, -1).initCause(e);
             }
         }
 

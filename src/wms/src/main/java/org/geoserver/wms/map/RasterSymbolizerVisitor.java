@@ -90,8 +90,7 @@ public class RasterSymbolizerVisitor implements StyleVisitor {
         this(scaleDenominator, featureType, null);
     }
 
-    public RasterSymbolizerVisitor(
-            double scaleDenominator, FeatureType featureType, Boolean transformFeatureInfo) {
+    public RasterSymbolizerVisitor(double scaleDenominator, FeatureType featureType, Boolean transformFeatureInfo) {
         this.scaleDenominator = scaleDenominator;
         this.featureType = featureType;
         this.transformFeatureInfo = transformFeatureInfo;
@@ -105,8 +104,7 @@ public class RasterSymbolizerVisitor implements StyleVisitor {
     }
 
     public List<RasterSymbolizer> getRasterSymbolizers() {
-        if (otherSymbolizers || !otherRenderingTransformations.isEmpty())
-            return Collections.emptyList();
+        if (otherSymbolizers || !otherRenderingTransformations.isEmpty()) return Collections.emptyList();
         else return symbolizers;
     }
 
@@ -157,8 +155,7 @@ public class RasterSymbolizerVisitor implements StyleVisitor {
 
     @Override
     public void visit(Rule rule) {
-        if (rule.getMinScaleDenominator() < scaleDenominator
-                && rule.getMaxScaleDenominator() > scaleDenominator) {
+        if (rule.getMinScaleDenominator() < scaleDenominator && rule.getMaxScaleDenominator() > scaleDenominator) {
             for (Symbolizer s : rule.symbolizers()) s.accept(this);
         }
     }
@@ -201,8 +198,8 @@ public class RasterSymbolizerVisitor implements StyleVisitor {
 
     private boolean activeRules(FeatureTypeStyle fts) {
         for (Rule rule : fts.rules()) {
-            if (rule.getMinScaleDenominator() < scaleDenominator
-                    && rule.getMaxScaleDenominator() > scaleDenominator) return true;
+            if (rule.getMinScaleDenominator() < scaleDenominator && rule.getMaxScaleDenominator() > scaleDenominator)
+                return true;
         }
 
         return false;

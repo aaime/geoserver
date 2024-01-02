@@ -44,8 +44,7 @@ public class APIContentNegotiationManager extends ContentNegotiationManager {
         public List<MediaType> resolveMediaTypes(NativeWebRequest webRequest) {
             String format = webRequest.getParameter("f");
             if ("json".equals(format)) {
-                return Arrays.asList(
-                        MediaType.APPLICATION_JSON, MediaType.parseMediaType("application/*+json"));
+                return Arrays.asList(MediaType.APPLICATION_JSON, MediaType.parseMediaType("application/*+json"));
             } else if ("xml".equals(format)) {
                 return Arrays.asList(MediaType.APPLICATION_XML, TEXT_XML);
             } else if ("html".equals(format)) {
@@ -66,10 +65,7 @@ public class APIContentNegotiationManager extends ContentNegotiationManager {
                 ServletWebRequest servletWebRequest = (ServletWebRequest) nativeWebRequest;
                 if (servletWebRequest.getRequest().getRequestURI().endsWith("/openapi.json")) {
                     return Arrays.asList(OPEN_API_MEDIA_TYPE);
-                } else if (servletWebRequest
-                        .getRequest()
-                        .getRequestURI()
-                        .endsWith("/openapi.yaml")) {
+                } else if (servletWebRequest.getRequest().getRequestURI().endsWith("/openapi.yaml")) {
                     return Arrays.asList(APPLICATION_YAML);
                 }
             }

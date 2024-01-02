@@ -36,8 +36,7 @@ public abstract class TemplateOutputWriter implements AutoCloseable {
      * @param encodingHints a map eventually holding hints about how to encode the value.
      * @throws IOException
      */
-    public abstract void writeElementName(Object elementName, EncodingHints encodingHints)
-            throws IOException;
+    public abstract void writeElementName(Object elementName, EncodingHints encodingHints) throws IOException;
 
     /**
      * Write an element value. An element value may be i.e. a field value in a JSON or an element
@@ -47,8 +46,7 @@ public abstract class TemplateOutputWriter implements AutoCloseable {
      * @param encodingHints a map eventually holding hints about how to encode the value.
      * @throws IOException
      */
-    public abstract void writeElementValue(Object elementValue, EncodingHints encodingHints)
-            throws IOException;
+    public abstract void writeElementValue(Object elementValue, EncodingHints encodingHints) throws IOException;
 
     /**
      * @param key the element name to be encoded.
@@ -57,8 +55,8 @@ public abstract class TemplateOutputWriter implements AutoCloseable {
      *     value.
      * @throws IOException
      */
-    public abstract void writeElementNameAndValue(
-            String key, Object elementValue, EncodingHints encodingHints) throws IOException;
+    public abstract void writeElementNameAndValue(String key, Object elementValue, EncodingHints encodingHints)
+            throws IOException;
 
     /**
      * Write a static content, no matter how nested.
@@ -68,8 +66,8 @@ public abstract class TemplateOutputWriter implements AutoCloseable {
      * @param encodingHints a map eventually holding hints about how to encode the value.
      * @throws IOException
      */
-    public abstract void writeStaticContent(
-            String name, Object staticContent, EncodingHints encodingHints) throws IOException;
+    public abstract void writeStaticContent(String name, Object staticContent, EncodingHints encodingHints)
+            throws IOException;
 
     /**
      * Write the start of an object.
@@ -228,8 +226,7 @@ public abstract class TemplateOutputWriter implements AutoCloseable {
         return isNull;
     }
 
-    protected <T> T getEncodingHintIfPresent(
-            EncodingHints encodingHints, String name, Class<T> cast) {
+    protected <T> T getEncodingHintIfPresent(EncodingHints encodingHints, String name, Class<T> cast) {
         T result = null;
         if (encodingHints != null) {
             result = encodingHints.get(name, cast);

@@ -25,8 +25,7 @@ import org.springframework.util.StringUtils;
  * @author Mauro Bartolomeoli
  */
 public final class IncludeQueryStringAntPathRequestMatcher implements RequestMatcher {
-    private static final Logger logger =
-            Logging.getLogger(IncludeQueryStringAntPathRequestMatcher.class);
+    private static final Logger logger = Logging.getLogger(IncludeQueryStringAntPathRequestMatcher.class);
     private static final String MATCH_ALL = "/**";
     private static final String QUERYSTRING_SEPARATOR = "|";
 
@@ -98,16 +97,15 @@ public final class IncludeQueryStringAntPathRequestMatcher implements RequestMat
     public boolean matches(HttpServletRequest request) {
         if (httpMethod != null && httpMethod != HttpMethod.valueOf(request.getMethod())) {
             if (logger.isLoggable(Level.FINE)) {
-                logger.fine(
-                        "Request '"
-                                + request.getMethod()
-                                + " "
-                                + getRequestPath(request)
-                                + "'"
-                                + " doesn't match '"
-                                + httpMethod
-                                + " "
-                                + pattern);
+                logger.fine("Request '"
+                        + request.getMethod()
+                        + " "
+                        + getRequestPath(request)
+                        + "'"
+                        + " doesn't match '"
+                        + httpMethod
+                        + " "
+                        + pattern);
             }
 
             return false;
@@ -166,8 +164,7 @@ public final class IncludeQueryStringAntPathRequestMatcher implements RequestMat
         if (!(obj instanceof IncludeQueryStringAntPathRequestMatcher)) {
             return false;
         }
-        IncludeQueryStringAntPathRequestMatcher other =
-                (IncludeQueryStringAntPathRequestMatcher) obj;
+        IncludeQueryStringAntPathRequestMatcher other = (IncludeQueryStringAntPathRequestMatcher) obj;
         return this.pattern.equals(other.pattern) && this.httpMethod == other.httpMethod;
     }
 
@@ -257,8 +254,7 @@ public final class IncludeQueryStringAntPathRequestMatcher implements RequestMat
 
         @Override
         public boolean matches(String path) {
-            return path.startsWith(subpath)
-                    && (path.length() == length || path.charAt(length) == '/');
+            return path.startsWith(subpath) && (path.length() == length || path.charAt(length) == '/');
         }
     }
 

@@ -23,8 +23,7 @@ import org.geotools.util.GrowableInternationalString;
  */
 public interface WMSInfo extends ServiceInfo {
 
-    public static final String EXCEPTION_ON_INVALID_DIMENSION_KEY =
-            "org.geoserver.wms.exceptionOnInvalidDimension";
+    public static final String EXCEPTION_ON_INVALID_DIMENSION_KEY = "org.geoserver.wms.exceptionOnInvalidDimension";
 
     /** Default value for the exceptionOnInvalidDimension */
     public static final boolean EXCEPTION_ON_INVALID_DIMENSION_DEFAULT =
@@ -256,8 +255,7 @@ public interface WMSInfo extends ServiceInfo {
      * @return
      */
     public default boolean exceptionOnInvalidDimension() {
-        return Optional.ofNullable(isExceptionOnInvalidDimension())
-                .orElse(EXCEPTION_ON_INVALID_DIMENSION_DEFAULT);
+        return Optional.ofNullable(isExceptionOnInvalidDimension()).orElse(EXCEPTION_ON_INVALID_DIMENSION_DEFAULT);
     }
 
     /**

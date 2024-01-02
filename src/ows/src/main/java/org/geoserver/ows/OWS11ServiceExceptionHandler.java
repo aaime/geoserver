@@ -33,8 +33,7 @@ import org.geotools.xsd.Encoder;
  */
 public class OWS11ServiceExceptionHandler extends ServiceExceptionHandler {
 
-    private static String CONTENT_TYPE =
-            System.getProperty("ows11.exception.xml.responsetype", DEFAULT_XML_MIME_TYPE);
+    private static String CONTENT_TYPE = System.getProperty("ows11.exception.xml.responsetype", DEFAULT_XML_MIME_TYPE);
     /**
      * verbose exception flag controlling whether the exception stack trace will be included in the
      * encoded ows exception report
@@ -75,8 +74,7 @@ public class OWS11ServiceExceptionHandler extends ServiceExceptionHandler {
             version = request.getServiceDescriptor().getVersion().toString();
         }
 
-        ExceptionReportType report =
-                Ows11Util.exceptionReport(exception, verboseExceptions, version);
+        ExceptionReportType report = Ows11Util.exceptionReport(exception, verboseExceptions, version);
 
         HttpServletResponse response = request.getHttpResponse();
         if (!request.isSOAP()) {
@@ -99,8 +97,7 @@ public class OWS11ServiceExceptionHandler extends ServiceExceptionHandler {
         encoder.setLineWidth(60);
         encoder.setOmitXMLDeclaration(request.isSOAP());
 
-        String schemaLocation =
-                buildSchemaURL(baseURL(request.getHttpRequest()), "ows/1.1.0/owsAll.xsd");
+        String schemaLocation = buildSchemaURL(baseURL(request.getHttpRequest()), "ows/1.1.0/owsAll.xsd");
         encoder.setSchemaLocation(OWS.NAMESPACE, schemaLocation);
 
         try {
@@ -109,10 +106,7 @@ public class OWS11ServiceExceptionHandler extends ServiceExceptionHandler {
             // throw new RuntimeException(ex);
             // Hmm, not much we can do here.  I guess log the fact that we couldn't write out the
             // exception and be done with it...
-            LOGGER.log(
-                    Level.INFO,
-                    "Problem writing exception information back to calling client:",
-                    ex);
+            LOGGER.log(Level.INFO, "Problem writing exception information back to calling client:", ex);
         } finally {
             try {
                 response.getOutputStream().flush();

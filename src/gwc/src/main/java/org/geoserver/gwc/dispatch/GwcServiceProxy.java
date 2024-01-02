@@ -38,13 +38,12 @@ public class GwcServiceProxy {
     private final GeoWebCacheDispatcher gwcDispatcher;
 
     public GwcServiceProxy() {
-        serviceInfo =
-                new ServiceInfoImpl() {
-                    @Override
-                    public String getType() {
-                        return "WMTS";
-                    }
-                };
+        serviceInfo = new ServiceInfoImpl() {
+            @Override
+            public String getType() {
+                return "WMTS";
+            }
+        };
         serviceInfo.setId("gwc");
         serviceInfo.setName("gwc");
         serviceInfo.setEnabled(true);
@@ -77,8 +76,7 @@ public class GwcServiceProxy {
      * @see GwcOperationProxy
      * @see GwcResponseProxy
      */
-    public GwcOperationProxy dispatch(HttpServletRequest rawRequest, HttpServletResponse rawRespose)
-            throws Exception {
+    public GwcOperationProxy dispatch(HttpServletRequest rawRequest, HttpServletResponse rawRespose) throws Exception {
 
         //        DispatcherController.BASE_URL.set(ResponseUtils.baseURL(rawRequest));
 

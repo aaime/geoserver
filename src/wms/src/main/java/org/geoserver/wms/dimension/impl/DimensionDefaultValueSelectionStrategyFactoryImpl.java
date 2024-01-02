@@ -80,21 +80,18 @@ public class DimensionDefaultValueSelectionStrategyFactoryImpl
     @Override
     public DimensionDefaultValueSelectionStrategy getStrategy(
             ResourceInfo resource, String dimensionName, DimensionInfo dimensionInfo) {
-        DimensionDefaultValueSelectionStrategy retval =
-                getStrategyFromSetting(resource, dimensionName, dimensionInfo);
+        DimensionDefaultValueSelectionStrategy retval = getStrategyFromSetting(resource, dimensionName, dimensionInfo);
         if (retval != null) {
             return retval;
         }
         // Else just select the default strategy based on the dimension name
         if (dimensionName.equals(ResourceInfo.TIME)) {
             if (resource instanceof FeatureTypeInfo) {
-                retval =
-                        featureNearestValueStrategyFactory.createNearestValueStrategy(
-                                new Date(), DimensionDefaultValueSetting.TIME_CURRENT);
+                retval = featureNearestValueStrategyFactory.createNearestValueStrategy(
+                        new Date(), DimensionDefaultValueSetting.TIME_CURRENT);
             } else if (resource instanceof CoverageInfo) {
-                retval =
-                        coverageNearestValueStrategyFactory.createNearestValueStrategy(
-                                new Date(), DimensionDefaultValueSetting.TIME_CURRENT);
+                retval = coverageNearestValueStrategyFactory.createNearestValueStrategy(
+                        new Date(), DimensionDefaultValueSetting.TIME_CURRENT);
             }
         } else if (dimensionName.equals(ResourceInfo.ELEVATION)) {
             if (resource instanceof FeatureTypeInfo) {
@@ -119,8 +116,7 @@ public class DimensionDefaultValueSelectionStrategyFactoryImpl
     }
 
     /** @param featureTimeMinimumStrategy the featureTimeMinimumStrategy to set */
-    public void setFeatureTimeMinimumStrategy(
-            DimensionDefaultValueSelectionStrategy featureTimeMinimumStrategy) {
+    public void setFeatureTimeMinimumStrategy(DimensionDefaultValueSelectionStrategy featureTimeMinimumStrategy) {
         this.featureTimeMinimumStrategy = featureTimeMinimumStrategy;
     }
 
@@ -130,8 +126,7 @@ public class DimensionDefaultValueSelectionStrategyFactoryImpl
     }
 
     /** @param featureTimeMaximumStrategy the featureTimeMaximumStrategy to set */
-    public void setFeatureTimeMaximumStrategy(
-            DimensionDefaultValueSelectionStrategy featureTimeMaximumStrategy) {
+    public void setFeatureTimeMaximumStrategy(DimensionDefaultValueSelectionStrategy featureTimeMaximumStrategy) {
         this.featureTimeMaximumStrategy = featureTimeMaximumStrategy;
     }
 
@@ -141,8 +136,7 @@ public class DimensionDefaultValueSelectionStrategyFactoryImpl
     }
 
     /** @param coverageTimeMinimumStrategy the coverageTimeMinimumStrategy to set */
-    public void setCoverageTimeMinimumStrategy(
-            DimensionDefaultValueSelectionStrategy coverageTimeMinimumStrategy) {
+    public void setCoverageTimeMinimumStrategy(DimensionDefaultValueSelectionStrategy coverageTimeMinimumStrategy) {
         this.coverageTimeMinimumStrategy = coverageTimeMinimumStrategy;
     }
 
@@ -152,8 +146,7 @@ public class DimensionDefaultValueSelectionStrategyFactoryImpl
     }
 
     /** @param coverageTimeMaximumStrategy the coverageTimeMaximumStrategy to set */
-    public void setCoverageTimeMaximumStrategy(
-            DimensionDefaultValueSelectionStrategy coverageTimeMaximumStrategy) {
+    public void setCoverageTimeMaximumStrategy(DimensionDefaultValueSelectionStrategy coverageTimeMaximumStrategy) {
         this.coverageTimeMaximumStrategy = coverageTimeMaximumStrategy;
     }
 
@@ -261,8 +254,7 @@ public class DimensionDefaultValueSelectionStrategyFactoryImpl
     }
 
     /** @param featureNearestValueStrategyFactory the featureNearestValueStrategyFactory to set */
-    public void setFeatureNearestValueStrategyFactory(
-            NearestValueStrategyFactory featureNearestValueStrategyFactory) {
+    public void setFeatureNearestValueStrategyFactory(NearestValueStrategyFactory featureNearestValueStrategyFactory) {
         this.featureNearestValueStrategyFactory = featureNearestValueStrategyFactory;
     }
 
@@ -309,83 +301,74 @@ public class DimensionDefaultValueSelectionStrategyFactoryImpl
         DimensionDefaultValueSelectionStrategy retval = null;
         Strategy getStrategyType = setting.getStrategyType();
         switch (getStrategyType) {
-            case NEAREST:
-                {
-                    Date refDate;
-                    String capabilitiesValue = null;
-                    String referenceValue = setting.getReferenceValue();
-                    if (referenceValue != null) {
-                        if (referenceValue.equalsIgnoreCase(
-                                DimensionDefaultValueSetting.TIME_CURRENT)) {
-                            refDate = new Date();
-                            capabilitiesValue = DimensionDefaultValueSetting.TIME_CURRENT;
-                        } else {
-                            try {
-                                refDate = new Date(DateUtil.parseDateTime(referenceValue));
-                            } catch (IllegalArgumentException e) {
-                                throw new ServiceException(
-                                        "Unable to parse time dimension default value reference '"
-                                                + referenceValue
-                                                + "' as date, an ISO 8601 datetime format is expected",
-                                        e);
-                            }
-                        }
-                        if (resource instanceof FeatureTypeInfo) {
-                            retval =
-                                    featureNearestValueStrategyFactory.createNearestValueStrategy(
-                                            refDate, capabilitiesValue);
-                        } else if (resource instanceof CoverageInfo) {
-                            retval =
-                                    coverageNearestValueStrategyFactory.createNearestValueStrategy(
-                                            refDate, capabilitiesValue);
-                        }
+            case NEAREST: {
+                Date refDate;
+                String capabilitiesValue = null;
+                String referenceValue = setting.getReferenceValue();
+                if (referenceValue != null) {
+                    if (referenceValue.equalsIgnoreCase(DimensionDefaultValueSetting.TIME_CURRENT)) {
+                        refDate = new Date();
+                        capabilitiesValue = DimensionDefaultValueSetting.TIME_CURRENT;
                     } else {
-                        throw new ServiceException(
-                                "No reference value given for time dimension default value 'nearest' strategy");
-                    }
-                    break;
-                }
-            case MINIMUM:
-                {
-                    if (resource instanceof FeatureTypeInfo) {
-                        retval = featureTimeMinimumStrategy;
-                    } else if (resource instanceof CoverageInfo) {
-                        retval = coverageTimeMinimumStrategy;
-                    }
-                    break;
-                }
-            case MAXIMUM:
-                {
-                    if (resource instanceof FeatureTypeInfo) {
-                        retval = featureTimeMaximumStrategy;
-                    } else if (resource instanceof CoverageInfo) {
-                        retval = coverageTimeMaximumStrategy;
-                    }
-                    break;
-                }
-            case FIXED:
-                {
-                    Object refDate;
-                    String referenceValue = setting.getReferenceValue();
-                    if (referenceValue != null) {
                         try {
-                            refDate = singleValue(timeParser.parse(referenceValue), new Date());
-                        } catch (ParseException e) {
+                            refDate = new Date(DateUtil.parseDateTime(referenceValue));
+                        } catch (IllegalArgumentException e) {
                             throw new ServiceException(
                                     "Unable to parse time dimension default value reference '"
                                             + referenceValue
-                                            + "' as date or a date range, an ISO 8601 datetime format is expected",
+                                            + "' as date, an ISO 8601 datetime format is expected",
                                     e);
                         }
-                        retval =
-                                fixedValueStrategyFactory.createFixedValueStrategy(
-                                        refDate, referenceValue);
-                    } else {
-                        throw new ServiceException(
-                                "No reference value given for time dimension default value 'fixed' strategy");
                     }
-                    break;
+                    if (resource instanceof FeatureTypeInfo) {
+                        retval = featureNearestValueStrategyFactory.createNearestValueStrategy(
+                                refDate, capabilitiesValue);
+                    } else if (resource instanceof CoverageInfo) {
+                        retval = coverageNearestValueStrategyFactory.createNearestValueStrategy(
+                                refDate, capabilitiesValue);
+                    }
+                } else {
+                    throw new ServiceException(
+                            "No reference value given for time dimension default value 'nearest' strategy");
                 }
+                break;
+            }
+            case MINIMUM: {
+                if (resource instanceof FeatureTypeInfo) {
+                    retval = featureTimeMinimumStrategy;
+                } else if (resource instanceof CoverageInfo) {
+                    retval = coverageTimeMinimumStrategy;
+                }
+                break;
+            }
+            case MAXIMUM: {
+                if (resource instanceof FeatureTypeInfo) {
+                    retval = featureTimeMaximumStrategy;
+                } else if (resource instanceof CoverageInfo) {
+                    retval = coverageTimeMaximumStrategy;
+                }
+                break;
+            }
+            case FIXED: {
+                Object refDate;
+                String referenceValue = setting.getReferenceValue();
+                if (referenceValue != null) {
+                    try {
+                        refDate = singleValue(timeParser.parse(referenceValue), new Date());
+                    } catch (ParseException e) {
+                        throw new ServiceException(
+                                "Unable to parse time dimension default value reference '"
+                                        + referenceValue
+                                        + "' as date or a date range, an ISO 8601 datetime format is expected",
+                                e);
+                    }
+                    retval = fixedValueStrategyFactory.createFixedValueStrategy(refDate, referenceValue);
+                } else {
+                    throw new ServiceException(
+                            "No reference value given for time dimension default value 'fixed' strategy");
+                }
+                break;
+            }
         }
         return retval;
     }
@@ -394,81 +377,70 @@ public class DimensionDefaultValueSelectionStrategyFactoryImpl
             ResourceInfo resource, DimensionDefaultValueSetting setting) {
         DimensionDefaultValueSelectionStrategy retval = null;
         switch (setting.getStrategyType()) {
-            case NEAREST:
-                {
-                    Number refNumber;
-                    String referenceValue = setting.getReferenceValue();
-                    if (referenceValue != null) {
+            case NEAREST: {
+                Number refNumber;
+                String referenceValue = setting.getReferenceValue();
+                if (referenceValue != null) {
+                    try {
+                        refNumber = Long.parseLong(referenceValue);
+                    } catch (NumberFormatException fne) {
                         try {
-                            refNumber = Long.parseLong(referenceValue);
-                        } catch (NumberFormatException fne) {
-                            try {
-                                refNumber = Double.parseDouble(referenceValue);
-                            } catch (NumberFormatException e) {
-                                throw new ServiceException(
-                                        "Unable to parse elevation dimension default value reference '"
-                                                + referenceValue
-                                                + "' as long or double",
-                                        e);
-                            }
-                        }
-                        if (resource instanceof FeatureTypeInfo) {
-                            retval =
-                                    featureNearestValueStrategyFactory.createNearestValueStrategy(
-                                            refNumber);
-                        } else if (resource instanceof CoverageInfo) {
-                            retval =
-                                    coverageNearestValueStrategyFactory.createNearestValueStrategy(
-                                            refNumber);
-                        }
-                    } else {
-                        throw new ServiceException(
-                                "No reference value given for elevation dimension default value 'nearest' strategy");
-                    }
-                    break;
-                }
-            case MINIMUM:
-                {
-                    if (resource instanceof FeatureTypeInfo) {
-                        retval = featureElevationMinimumStrategy;
-                    } else if (resource instanceof CoverageInfo) {
-                        retval = coverageElevationMinimumStrategy;
-                    }
-                    break;
-                }
-            case MAXIMUM:
-                {
-                    if (resource instanceof FeatureTypeInfo) {
-                        retval = featureElevationMaximumStrategy;
-                    } else if (resource instanceof CoverageInfo) {
-                        retval = coverageElevationMaximumStrategy;
-                    }
-                    break;
-                }
-            case FIXED:
-                {
-                    Object refNumber;
-                    String referenceValue = setting.getReferenceValue();
-                    if (referenceValue != null) {
-                        try {
-                            refNumber =
-                                    singleValue(elevationParser.parse(referenceValue), new Date());
-                        } catch (ParseException e) {
+                            refNumber = Double.parseDouble(referenceValue);
+                        } catch (NumberFormatException e) {
                             throw new ServiceException(
                                     "Unable to parse elevation dimension default value reference '"
                                             + referenceValue
                                             + "' as long or double",
                                     e);
                         }
-                    } else {
-                        throw new ServiceException(
-                                "No reference value given for elevation dimension default value 'fixed' strategy");
                     }
-                    retval =
-                            fixedValueStrategyFactory.createFixedValueStrategy(
-                                    refNumber, referenceValue);
-                    break;
+                    if (resource instanceof FeatureTypeInfo) {
+                        retval = featureNearestValueStrategyFactory.createNearestValueStrategy(refNumber);
+                    } else if (resource instanceof CoverageInfo) {
+                        retval = coverageNearestValueStrategyFactory.createNearestValueStrategy(refNumber);
+                    }
+                } else {
+                    throw new ServiceException(
+                            "No reference value given for elevation dimension default value 'nearest' strategy");
                 }
+                break;
+            }
+            case MINIMUM: {
+                if (resource instanceof FeatureTypeInfo) {
+                    retval = featureElevationMinimumStrategy;
+                } else if (resource instanceof CoverageInfo) {
+                    retval = coverageElevationMinimumStrategy;
+                }
+                break;
+            }
+            case MAXIMUM: {
+                if (resource instanceof FeatureTypeInfo) {
+                    retval = featureElevationMaximumStrategy;
+                } else if (resource instanceof CoverageInfo) {
+                    retval = coverageElevationMaximumStrategy;
+                }
+                break;
+            }
+            case FIXED: {
+                Object refNumber;
+                String referenceValue = setting.getReferenceValue();
+                if (referenceValue != null) {
+                    try {
+                        refNumber = singleValue(elevationParser.parse(referenceValue), new Date());
+                    } catch (ParseException e) {
+                        throw new ServiceException(
+                                "Unable to parse elevation dimension default value reference '"
+                                        + referenceValue
+                                        + "' as long or double",
+                                e);
+                    }
+                } else {
+                    throw new ServiceException(
+                            "No reference value given for elevation dimension default value 'fixed' strategy");
+                }
+                retval = fixedValueStrategyFactory.createFixedValueStrategy(refNumber, referenceValue);
+                break;
+            }
         }
         return retval;
     }
@@ -478,8 +450,7 @@ public class DimensionDefaultValueSelectionStrategyFactoryImpl
         if (parsed.size() == 1) {
             result = parsed.iterator().next();
         } else if (parsed.size() > 1) {
-            throw new IllegalArgumentException(
-                    "Dimension reference value must be a single value or range");
+            throw new IllegalArgumentException("Dimension reference value must be a single value or range");
         }
         if (result == null) {
             return defaultValue;
@@ -493,82 +464,74 @@ public class DimensionDefaultValueSelectionStrategyFactoryImpl
         DimensionDefaultValueSelectionStrategy retval = null;
         String referenceValue = null;
         switch (setting.getStrategyType()) {
-            case NEAREST:
-                {
-                    Object refValue;
-                    referenceValue = setting.getReferenceValue();
-                    if (referenceValue != null) {
+            case NEAREST: {
+                Object refValue;
+                referenceValue = setting.getReferenceValue();
+                if (referenceValue != null) {
+                    try {
+                        refValue = new Date(DateUtil.parseDateTime(referenceValue));
+                    } catch (IllegalArgumentException e) {
                         try {
-                            refValue = new Date(DateUtil.parseDateTime(referenceValue));
-                        } catch (IllegalArgumentException e) {
+                            refValue = Long.parseLong(referenceValue);
+                        } catch (NumberFormatException nfe) {
                             try {
-                                refValue = Long.parseLong(referenceValue);
-                            } catch (NumberFormatException nfe) {
-                                try {
-                                    refValue = Double.parseDouble(referenceValue);
-                                } catch (NumberFormatException nfe2) {
-                                    refValue = referenceValue;
-                                }
+                                refValue = Double.parseDouble(referenceValue);
+                            } catch (NumberFormatException nfe2) {
+                                refValue = referenceValue;
                             }
                         }
-                        if (resource instanceof FeatureTypeInfo) {
-                            retval =
-                                    featureNearestValueStrategyFactory.createNearestValueStrategy(
-                                            refValue);
-                        } else if (resource instanceof CoverageInfo) {
-                            retval =
-                                    coverageNearestValueStrategyFactory.createNearestValueStrategy(
-                                            refValue);
-                        }
-                    } else {
-                        throw new ServiceException(
-                                "No reference value given for custom dimension default value 'nearest' strategy");
                     }
-                    break;
-                }
-            case MINIMUM:
-                {
                     if (resource instanceof FeatureTypeInfo) {
-                        retval = featureCustomDimensionMinimumStrategy;
+                        retval = featureNearestValueStrategyFactory.createNearestValueStrategy(refValue);
                     } else if (resource instanceof CoverageInfo) {
-                        retval = coverageCustomDimensionMinimumStrategy;
+                        retval = coverageNearestValueStrategyFactory.createNearestValueStrategy(refValue);
                     }
-                    break;
+                } else {
+                    throw new ServiceException(
+                            "No reference value given for custom dimension default value 'nearest' strategy");
                 }
-            case MAXIMUM:
-                {
-                    if (resource instanceof FeatureTypeInfo) {
-                        retval = featureCustomDimensionMaximumStrategy;
-                    } else if (resource instanceof CoverageInfo) {
-                        retval = coverageCustomDimensionMaximumStrategy;
-                    }
-                    break;
+                break;
+            }
+            case MINIMUM: {
+                if (resource instanceof FeatureTypeInfo) {
+                    retval = featureCustomDimensionMinimumStrategy;
+                } else if (resource instanceof CoverageInfo) {
+                    retval = coverageCustomDimensionMinimumStrategy;
                 }
-            case FIXED:
-                {
-                    Object refValue;
-                    referenceValue = setting.getReferenceValue();
-                    if (referenceValue != null) {
+                break;
+            }
+            case MAXIMUM: {
+                if (resource instanceof FeatureTypeInfo) {
+                    retval = featureCustomDimensionMaximumStrategy;
+                } else if (resource instanceof CoverageInfo) {
+                    retval = coverageCustomDimensionMaximumStrategy;
+                }
+                break;
+            }
+            case FIXED: {
+                Object refValue;
+                referenceValue = setting.getReferenceValue();
+                if (referenceValue != null) {
+                    try {
+                        refValue = new Date(DateUtil.parseDateTime(referenceValue));
+                    } catch (IllegalArgumentException e) {
                         try {
-                            refValue = new Date(DateUtil.parseDateTime(referenceValue));
-                        } catch (IllegalArgumentException e) {
+                            refValue = Long.parseLong(referenceValue);
+                        } catch (NumberFormatException nfe) {
                             try {
-                                refValue = Long.parseLong(referenceValue);
-                            } catch (NumberFormatException nfe) {
-                                try {
-                                    refValue = Double.parseDouble(referenceValue);
-                                } catch (NumberFormatException nfe2) {
-                                    refValue = referenceValue;
-                                }
+                                refValue = Double.parseDouble(referenceValue);
+                            } catch (NumberFormatException nfe2) {
+                                refValue = referenceValue;
                             }
                         }
-                    } else {
-                        throw new ServiceException(
-                                "No reference value given for custom dimension default value 'fixed' strategy");
                     }
-                    retval = fixedValueStrategyFactory.createFixedValueStrategy(refValue);
-                    break;
+                } else {
+                    throw new ServiceException(
+                            "No reference value given for custom dimension default value 'fixed' strategy");
                 }
+                retval = fixedValueStrategyFactory.createFixedValueStrategy(refValue);
+                break;
+            }
         }
         return retval;
     }

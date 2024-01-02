@@ -82,8 +82,7 @@ public interface DispatcherCallback {
      * @param result The result of the operation.
      * @param response The response to the operation.
      */
-    Response responseDispatched(
-            Request request, Operation operation, Object result, Response response);
+    Response responseDispatched(Request request, Operation operation, Object result, Response response);
 
     /**
      * Called after the response to the operation has been executed.

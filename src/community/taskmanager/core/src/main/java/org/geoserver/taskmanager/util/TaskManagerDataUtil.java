@@ -38,11 +38,14 @@ public class TaskManagerDataUtil {
 
     private static Pattern PATTERN_ATTRIBUTEREF = Pattern.compile("^\\$\\{(.*)\\}$");
 
-    @Autowired private TaskManagerFactory fac;
+    @Autowired
+    private TaskManagerFactory fac;
 
-    @Autowired private TaskManagerDao dao;
+    @Autowired
+    private TaskManagerDao dao;
 
-    @Autowired private BatchJobService bjService;
+    @Autowired
+    private BatchJobService bjService;
 
     // -------------------------
     // Non-transactional methods
@@ -73,8 +76,7 @@ public class TaskManagerDataUtil {
      * @param name the parameter name.
      * @param attName the attribute name.
      */
-    public void setTaskParameterToAttribute(
-            final Task task, final String name, final String attName) {
+    public void setTaskParameterToAttribute(final Task task, final String name, final String attName) {
         setTaskParameter(task, name, "${" + attName + "}");
     }
 
@@ -85,8 +87,7 @@ public class TaskManagerDataUtil {
      * @param name the attribute name.
      * @param value the attribute value.
      */
-    public void setConfigurationAttribute(
-            final Configuration config, final String name, final String value) {
+    public void setConfigurationAttribute(final Configuration config, final String name, final String value) {
         Attribute att = config.getAttributes().get(name);
         if (att == null) {
             att = fac.createAttribute();

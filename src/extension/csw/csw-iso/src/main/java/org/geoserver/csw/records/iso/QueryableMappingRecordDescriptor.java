@@ -74,12 +74,8 @@ public abstract class QueryableMappingRecordDescriptor extends AbstractRecordDes
                 }
             }
 
-            queryableMapping.putAll(
-                    props.entrySet().stream()
-                            .collect(
-                                    Collectors.toMap(
-                                            e -> (String) e.getKey(),
-                                            e -> toProperty((String) e.getValue()))));
+            queryableMapping.putAll(props.entrySet().stream()
+                    .collect(Collectors.toMap(e -> (String) e.getKey(), e -> toProperty((String) e.getValue()))));
 
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
@@ -96,17 +92,14 @@ public abstract class QueryableMappingRecordDescriptor extends AbstractRecordDes
     public Query adaptQuery(Query query) {
         Filter filter = query.getFilter();
         if (filter != null && !Filter.INCLUDE.equals(filter)) {
-            query.setFilter(
-                    (Filter)
-                            filter.accept(
-                                    new DuplicatingFilterVisitor() {
-                                        @Override
-                                        public Object visit(
-                                                PropertyName expression, Object extraData) {
-                                            return adaptProperty(expression);
-                                        }
-                                    },
-                                    null));
+            query.setFilter((Filter) filter.accept(
+                    new DuplicatingFilterVisitor() {
+                        @Override
+                        public Object visit(PropertyName expression, Object extraData) {
+                            return adaptProperty(expression);
+                        }
+                    },
+                    null));
         }
 
         SortBy[] sortBy = query.getSortBy();
@@ -114,8 +107,7 @@ public abstract class QueryableMappingRecordDescriptor extends AbstractRecordDes
             for (int i = 0; i < sortBy.length; i++) {
                 SortBy sb = sortBy[i];
                 if (!SortBy.NATURAL_ORDER.equals(sb) && !SortBy.REVERSE_ORDER.equals(sb)) {
-                    sortBy[i] =
-                            new SortByImpl(adaptProperty(sb.getPropertyName()), sb.getSortOrder());
+                    sortBy[i] = new SortByImpl(adaptProperty(sb.getPropertyName()), sb.getSortOrder());
                 }
             }
             query.setSortBy(sortBy);
@@ -136,16 +128,10 @@ public abstract class QueryableMappingRecordDescriptor extends AbstractRecordDes
     private PropertyName adaptProperty(PropertyName expression) {
 
         XPathUtil.StepList steps =
-                XPathUtil.steps(
-                        getFeatureDescriptor(),
-                        expression.getPropertyName(),
-                        MetaDataDescriptor.NAMESPACES);
+                XPathUtil.steps(getFeatureDescriptor(), expression.getPropertyName(), MetaDataDescriptor.NAMESPACES);
 
         if (steps.size() == 1 && steps.get(0).getName().getNamespaceURI() == null
-                || steps.get(0)
-                        .getName()
-                        .getNamespaceURI()
-                        .equals(MetaDataDescriptor.NAMESPACE_APISO)) {
+                || steps.get(0).getName().getNamespaceURI().equals(MetaDataDescriptor.NAMESPACE_APISO)) {
             PropertyName fullPath = queryableMapping.get(steps.get(0).getName().getLocalPart());
             if (fullPath != null) {
                 return fullPath;

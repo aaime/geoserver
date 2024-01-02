@@ -53,12 +53,10 @@ class ClipIntersectsFeatureIterator extends ClippedFeatureIterator {
             Map<Name, Geometry> intersectedGeometries = null;
             if (intersects != null) {
                 Map<Name, Geometry> geometryAttributes = extractGeometryAttributes(f);
-                intersectedGeometries =
-                        getIntersectingGeometries(geometryAttributes, f.getFeatureType());
+                intersectedGeometries = getIntersectingGeometries(geometryAttributes, f.getFeatureType());
                 // if there is at least one geometryCollection or not all the geometry
                 // attributes were intersected performs also the clip
-                if (intersectedGeometries != null)
-                    doTheClip = geometryAttributes.size() > intersectedGeometries.size();
+                if (intersectedGeometries != null) doTheClip = geometryAttributes.size() > intersectedGeometries.size();
             }
 
             boolean clippedOut = false;

@@ -36,8 +36,8 @@ public interface CatalogStore {
      * Queries a specific record type using the GeoTools Query object (which contains type name,
      * attribute selection
      */
-    FeatureCollection<FeatureType, Feature> getRecords(
-            Query q, Transaction t, RecordDescriptor outputRd) throws IOException;
+    FeatureCollection<FeatureType, Feature> getRecords(Query q, Transaction t, RecordDescriptor outputRd)
+            throws IOException;
 
     /**
      * Returns the number of records that {@link #getRecords(Query, Transaction, String)} would
@@ -73,12 +73,7 @@ public interface CatalogStore {
      * Updates records in the store. This method might not be supported, see {@link
      * CatalogStoreCapabilities#supportsTransactions()} to check if the store supports transactions
      */
-    void updateRecord(
-            Name typeName,
-            Name[] attributeNames,
-            Object[] attributeValues,
-            Filter filter,
-            Transaction t)
+    void updateRecord(Name typeName, Name[] attributeNames, Object[] attributeValues, Filter filter, Transaction t)
             throws IOException;
 
     /**

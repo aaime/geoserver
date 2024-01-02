@@ -14,8 +14,7 @@ import org.geoserver.web.ToolLinkExternalInfo;
  *
  * @author prushforth
  */
-public abstract class CommonFormatLink extends ToolLinkExternalInfo
-        implements Comparable<CommonFormatLink> {
+public abstract class CommonFormatLink extends ToolLinkExternalInfo implements Comparable<CommonFormatLink> {
 
     private final String componentId = "theLink";
 

@@ -47,8 +47,7 @@ public class GeoTIFFMapResponse extends RenderedImageMapResponse {
     private static final String[] OUTPUT_FORMATS = {IMAGE_GEOTIFF, IMAGE_GEOTIFF8};
 
     /** GridCoverageFactory. */
-    private static final GridCoverageFactory factory =
-            CoverageFactoryFinder.getGridCoverageFactory(null);
+    private static final GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(null);
 
     /**
      * Default capabilities for GEOTIFF.
@@ -64,8 +63,7 @@ public class GeoTIFFMapResponse extends RenderedImageMapResponse {
      *
      * <p>We should soon support multipage tiff.
      */
-    private static MapProducerCapabilities CAPABILITIES =
-            new MapProducerCapabilities(true, true, true);
+    private static MapProducerCapabilities CAPABILITIES = new MapProducerCapabilities(true, true, true);
 
     public GeoTIFFMapResponse(final WMS wms) {
         super(OUTPUT_FORMATS, wms);
@@ -73,8 +71,7 @@ public class GeoTIFFMapResponse extends RenderedImageMapResponse {
 
     @Override
     @SuppressWarnings("PMD.CloseResource") // just a wrapper, actual output managed by servlet
-    public void formatImageOutputStream(
-            RenderedImage image, OutputStream outStream, WMSMapContent mapContent)
+    public void formatImageOutputStream(RenderedImage image, OutputStream outStream, WMSMapContent mapContent)
             throws ServiceException, IOException {
         // tiff
         if (LOGGER.isLoggable(Level.FINE)) {
@@ -85,8 +82,7 @@ public class GeoTIFFMapResponse extends RenderedImageMapResponse {
         image = applyPalette(image, mapContent, IMAGE_GEOTIFF8, false);
 
         // crating a grid coverage
-        GridCoverage2D gc =
-                factory.create("geotiff", image, new GeneralBounds(mapContent.getRenderingArea()));
+        GridCoverage2D gc = factory.create("geotiff", image, new GeneralBounds(mapContent.getRenderingArea()));
 
         // NoData stuff
         if (image instanceof PlanarImage) {
@@ -98,21 +94,19 @@ public class GeoTIFFMapResponse extends RenderedImageMapResponse {
             Object property = image.getProperty(NoDataContainer.GC_NODATA);
             if (property != null) {
                 CoverageUtilities.setNoDataProperty(properties, property);
-                gc =
-                        factory.create(
-                                gc.getName(),
-                                gc.getRenderedImage(),
-                                gc.getEnvelope(),
-                                gc.getSampleDimensions(),
-                                null,
-                                properties);
+                gc = factory.create(
+                        gc.getName(),
+                        gc.getRenderedImage(),
+                        gc.getEnvelope(),
+                        gc.getSampleDimensions(),
+                        null,
+                        properties);
             }
         }
 
         // writing it out
         GeoTiffWriter writer = null;
-        try (ImageOutputStream imageOutStream =
-                ImageIOExt.createImageOutputStream(image, outStream)) {
+        try (ImageOutputStream imageOutStream = ImageIOExt.createImageOutputStream(image, outStream)) {
             if (imageOutStream == null) {
                 throw new ServiceException("Unable to create ImageOutputStream.");
             }
@@ -124,8 +118,7 @@ public class GeoTIFFMapResponse extends RenderedImageMapResponse {
                 if (writer != null) writer.dispose();
             } catch (Throwable e) {
                 // eat exception to release resources silently
-                if (LOGGER.isLoggable(Level.FINEST))
-                    LOGGER.log(Level.FINEST, "Unable to properly dispose writer", e);
+                if (LOGGER.isLoggable(Level.FINEST)) LOGGER.log(Level.FINEST, "Unable to properly dispose writer", e);
             }
 
             // let go of the chain behind the coverage

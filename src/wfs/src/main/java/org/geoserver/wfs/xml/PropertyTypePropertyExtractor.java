@@ -48,17 +48,13 @@ public class PropertyTypePropertyExtractor implements PropertyExtractor {
 
         // the Name particle we can use as is
         properties.add(
-                new Object[] {
-                    Schemas.getChildElementParticle(element.getType(), "Name", false),
-                    property.getName()
-                });
+                new Object[] {Schemas.getChildElementParticle(element.getType(), "Name", false), property.getName()});
 
         // the Value particle we must retype
 
         // first guess its type
         QName newTypeName = guessValueType(property.getValue());
-        XSDTypeDefinition type =
-                (newTypeName != null) ? index.getTypeDefinition(newTypeName) : null;
+        XSDTypeDefinition type = (newTypeName != null) ? index.getTypeDefinition(newTypeName) : null;
 
         if (type != null) {
             // create a new particle based on the new type
@@ -74,10 +70,7 @@ public class PropertyTypePropertyExtractor implements PropertyExtractor {
             properties.add(new Object[] {particle, property.getValue()});
         } else {
             // coudl not determine new type, just fall back to xs:anyType
-            Object[] p = {
-                Schemas.getChildElementParticle(element.getType(), "Value", false),
-                property.getValue()
-            };
+            Object[] p = {Schemas.getChildElementParticle(element.getType(), "Value", false), property.getValue()};
             properties.add(p);
         }
 

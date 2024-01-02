@@ -61,8 +61,7 @@ public class TemplateWatcher extends FileWatcher<RootBuilder> {
      */
     public RootBuilder parseResource(Resource resource) throws IOException {
         String extension = FilenameUtils.getExtension(resource.name());
-        TemplateReader reader =
-                TemplateReaderProvider.findReader(extension, resource, configuration);
+        TemplateReader reader = TemplateReaderProvider.findReader(extension, resource, configuration);
         return reader.getRootBuilder();
     }
 }

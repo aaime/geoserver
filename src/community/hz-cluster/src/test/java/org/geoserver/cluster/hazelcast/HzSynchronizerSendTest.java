@@ -59,15 +59,8 @@ public abstract class HzSynchronizerSendTest extends HzSynchronizerTest {
             expect(info.getName()).andStubReturn(layerName);
             expect(info.getId()).andStubReturn(layerId);
 
-            expectEvent(
-                    localAddress, layerName, layerWorkspace, layerId, LayerInfo.class, Type.MODIFY);
-            expectEvent(
-                    localAddress,
-                    layerName,
-                    layerWorkspace,
-                    layerId,
-                    LayerInfo.class,
-                    Type.POST_MODIFY);
+            expectEvent(localAddress, layerName, layerWorkspace, layerId, LayerInfo.class, Type.MODIFY);
+            expectEvent(localAddress, layerName, layerWorkspace, layerId, LayerInfo.class, Type.POST_MODIFY);
         }
         replay(info);
         {
@@ -117,13 +110,7 @@ public abstract class HzSynchronizerSendTest extends HzSynchronizerTest {
 
             expect(wsInfo.getId()).andStubReturn(storeWorkspace);
 
-            expectEvent(
-                    localAddress,
-                    storeName,
-                    storeWorkspace,
-                    storeId,
-                    DataStoreInfo.class,
-                    Type.REMOVE);
+            expectEvent(localAddress, storeName, storeWorkspace, storeId, DataStoreInfo.class, Type.REMOVE);
         }
         replay(info, wsInfo);
         {
@@ -156,20 +143,8 @@ public abstract class HzSynchronizerSendTest extends HzSynchronizerTest {
 
             expect(info.getId()).andStubReturn(globalId);
 
-            expectEvent(
-                    localAddress,
-                    globalName,
-                    globalWorkspace,
-                    globalId,
-                    GeoServerInfo.class,
-                    Type.MODIFY);
-            expectEvent(
-                    localAddress,
-                    globalName,
-                    globalWorkspace,
-                    globalId,
-                    GeoServerInfo.class,
-                    Type.POST_MODIFY);
+            expectEvent(localAddress, globalName, globalWorkspace, globalId, GeoServerInfo.class, Type.MODIFY);
+            expectEvent(localAddress, globalName, globalWorkspace, globalId, GeoServerInfo.class, Type.POST_MODIFY);
         }
         replay(info);
         {
@@ -209,13 +184,7 @@ public abstract class HzSynchronizerSendTest extends HzSynchronizerTest {
             expect(info.getName()).andStubReturn(workspaceName);
             expect(info.getId()).andStubReturn(workspaceId);
 
-            expectEvent(
-                    localAddress,
-                    workspaceName,
-                    workspaceWorkspace,
-                    workspaceId,
-                    WorkspaceInfo.class,
-                    Type.ADD);
+            expectEvent(localAddress, workspaceName, workspaceWorkspace, workspaceId, WorkspaceInfo.class, Type.ADD);
         }
         replay(info);
         {

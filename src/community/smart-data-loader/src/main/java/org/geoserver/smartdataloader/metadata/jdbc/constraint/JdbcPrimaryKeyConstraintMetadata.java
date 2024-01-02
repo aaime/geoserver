@@ -20,8 +20,7 @@ public class JdbcPrimaryKeyConstraintMetadata extends JdbcTableConstraintMetadat
     private final List<String> columnNames;
     private final Map<String, Integer> columnOrderMap;
 
-    public JdbcPrimaryKeyConstraintMetadata(
-            JdbcTableMetadata table, String constraintName, List<String> columnNames) {
+    public JdbcPrimaryKeyConstraintMetadata(JdbcTableMetadata table, String constraintName, List<String> columnNames) {
         super(table, constraintName);
         this.columnNames = columnNames;
         this.columnOrderMap = new HashMap<>();

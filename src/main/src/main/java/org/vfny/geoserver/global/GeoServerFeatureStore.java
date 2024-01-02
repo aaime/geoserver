@@ -51,8 +51,7 @@ public class GeoServerFeatureStore extends GeoServerFeatureSource implements Sim
 
     /** see interface for details. */
     @Override
-    public List<FeatureId> addFeatures(FeatureCollection<SimpleFeatureType, SimpleFeature> fc)
-            throws IOException {
+    public List<FeatureId> addFeatures(FeatureCollection<SimpleFeatureType, SimpleFeature> fc) throws IOException {
         FeatureStore<SimpleFeatureType, SimpleFeature> store = store();
 
         // check if the feature collection needs to be retyped
@@ -73,8 +72,7 @@ public class GeoServerFeatureStore extends GeoServerFeatureSource implements Sim
 
     /** */
     @Override
-    public void setFeatures(FeatureReader<SimpleFeatureType, SimpleFeature> reader)
-            throws IOException {
+    public void setFeatures(FeatureReader<SimpleFeatureType, SimpleFeature> reader) throws IOException {
         FeatureStore<SimpleFeatureType, SimpleFeature> store = store();
 
         // check if the feature reader needs to be retyped
@@ -98,32 +96,28 @@ public class GeoServerFeatureStore extends GeoServerFeatureSource implements Sim
     }
 
     @Override
-    public void modifyFeatures(String name, Object attributeValue, Filter filter)
-            throws IOException {
+    public void modifyFeatures(String name, Object attributeValue, Filter filter) throws IOException {
         filter = makeDefinitionFilter(filter);
 
         store().modifyFeatures(name, attributeValue, filter);
     }
 
     @Override
-    public void modifyFeatures(String[] names, Object[] attributeValues, Filter filter)
-            throws IOException {
+    public void modifyFeatures(String[] names, Object[] attributeValues, Filter filter) throws IOException {
         filter = makeDefinitionFilter(filter);
 
         store().modifyFeatures(names, attributeValues, filter);
     }
 
     @Override
-    public void modifyFeatures(Name[] attributeNames, Object[] attributeValues, Filter filter)
-            throws IOException {
+    public void modifyFeatures(Name[] attributeNames, Object[] attributeValues, Filter filter) throws IOException {
         filter = makeDefinitionFilter(filter);
 
         store().modifyFeatures(attributeNames, attributeValues, filter);
     }
 
     @Override
-    public void modifyFeatures(Name attributeName, Object attributeValue, Filter filter)
-            throws IOException {
+    public void modifyFeatures(Name attributeName, Object attributeValue, Filter filter) throws IOException {
         filter = makeDefinitionFilter(filter);
 
         store().modifyFeatures(attributeName, attributeValue, filter);

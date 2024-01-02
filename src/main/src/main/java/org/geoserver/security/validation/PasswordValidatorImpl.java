@@ -100,16 +100,13 @@ public class PasswordValidatorImpl extends AbstractSecurityValidator implements 
             throw createSecurityException(MAX_LENGTH_$1, config.getMaxLength());
 
         if (config.isDigitRequired()) {
-            if (checkUsingMethod("isDigit", password) == false)
-                throw createSecurityException(NO_DIGIT);
+            if (checkUsingMethod("isDigit", password) == false) throw createSecurityException(NO_DIGIT);
         }
         if (config.isUppercaseRequired()) {
-            if (checkUsingMethod("isUpperCase", password) == false)
-                throw createSecurityException(NO_UPPERCASE);
+            if (checkUsingMethod("isUpperCase", password) == false) throw createSecurityException(NO_UPPERCASE);
         }
         if (config.isLowercaseRequired()) {
-            if (checkUsingMethod("isLowerCase", password) == false)
-                throw createSecurityException(NO_LOWERCASE);
+            if (checkUsingMethod("isLowerCase", password) == false) throw createSecurityException(NO_LOWERCASE);
         }
 
         String prefix = passwordStartsWithEncoderPrefix(password);

@@ -58,8 +58,7 @@ public class Directory extends FileData {
     public static Directory createNew(File parent) throws IOException {
         File directory = File.createTempFile("tmp", "", parent);
         if (!directory.delete() || !directory.mkdir())
-            throw new IOException(
-                    "Error creating temp directory at " + directory.getAbsolutePath());
+            throw new IOException("Error creating temp directory at " + directory.getAbsolutePath());
         return new Directory(directory);
     }
 
@@ -92,8 +91,7 @@ public class Directory extends FileData {
         // if the file is an archive, unpack it
         VFSWorker vfs = new VFSWorker();
         if (vfs.canHandle(file)) {
-            LOGGER.fine(
-                    "unpacking " + file.getAbsolutePath() + " to " + this.file.getAbsolutePath());
+            LOGGER.fine("unpacking " + file.getAbsolutePath() + " to " + this.file.getAbsolutePath());
             vfs.extractTo(file, this.file);
 
             LOGGER.fine("deleting " + file.getAbsolutePath());
@@ -443,8 +441,7 @@ public class Directory extends FileData {
             output = new File(archiveDir, outputName + id + ".zip");
             id++;
         }
-        try (ZipOutputStream zout =
-                new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(output)))) {
+        try (ZipOutputStream zout = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(output)))) {
 
             // don't call zout.close in finally block, if an error occurs and the zip
             // file is empty by chance, the second error will mask the first

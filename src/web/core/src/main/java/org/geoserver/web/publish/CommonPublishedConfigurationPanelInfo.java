@@ -12,8 +12,7 @@ import org.geoserver.catalog.PublishedInfo;
  *
  * @author Niels Charlier
  */
-public class CommonPublishedConfigurationPanelInfo
-        extends PublishedConfigurationPanelInfo<PublishedInfo> {
+public class CommonPublishedConfigurationPanelInfo extends PublishedConfigurationPanelInfo<PublishedInfo> {
 
     private static final long serialVersionUID = 8382295309912226673L;
 

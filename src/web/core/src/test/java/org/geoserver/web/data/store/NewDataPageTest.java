@@ -51,18 +51,14 @@ public class NewDataPageTest extends GeoServerWicketTestSupport {
         tester.startPage(new NewDataPageWithFakeCatalog());
         tester.assertRenderedPage(NewDataPageWithFakeCatalog.class);
 
-        String expectedErrMsg =
-                new ResourceModel("NewDataPage.noWorkspacesErrorMessage").getObject();
+        String expectedErrMsg = new ResourceModel("NewDataPage.noWorkspacesErrorMessage").getObject();
         assertNotNull(expectedErrMsg);
         tester.assertErrorMessages(new String[] {expectedErrMsg});
     }
 
     @Test
     public void testClickLink() {
-        Label label =
-                (Label)
-                        findComponentByContent(
-                                tester.getLastRenderedPage(), "Properties", Label.class);
+        Label label = (Label) findComponentByContent(tester.getLastRenderedPage(), "Properties", Label.class);
         // getPath() will start with 0: which indicates the page
         tester.clickLink(label.getParent().getPath().substring(2));
 

@@ -82,7 +82,8 @@ public final class TemporalUtils {
                 if (Boolean.TRUE.equals(hint)) {
                     zonedDateTime = cal.toInstant().atZone(ZoneId.systemDefault());
                 } else {
-                    zonedDateTime = cal.toInstant().atZone(TimeZone.getTimeZone("UTC").toZoneId());
+                    zonedDateTime =
+                            cal.toInstant().atZone(TimeZone.getTimeZone("UTC").toZoneId());
                 }
                 return zonedDateTime.format(formatter);
             }

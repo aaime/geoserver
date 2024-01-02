@@ -43,8 +43,7 @@ public class ExclusionsDomainModelVisitor extends DomainModelVisitorImpl {
         }
         DomainModelConfig domainModelConfig = new DomainModelConfig();
         domainModelConfig.setRootEntityName(rootEntityName);
-        DomainModelBuilder dmb =
-                new DomainModelBuilder(model.getDataStoreMetadata(), domainModelConfig);
+        DomainModelBuilder dmb = new DomainModelBuilder(model.getDataStoreMetadata(), domainModelConfig);
         DomainModel clonedDomainModel = dmb.buildDomainModel();
         ExclusionsDomainModelVisitor dmv = new ExclusionsDomainModelVisitor(excludedObjects);
         clonedDomainModel.accept(dmv);
@@ -95,10 +94,9 @@ public class ExclusionsDomainModelVisitor extends DomainModelVisitorImpl {
 
     @Override
     public void visitDomainRelation(DomainRelation relation) {
-        String domainObjectName =
-                relation.getContainingEntity().getName()
-                        + "."
-                        + relation.getDestinationEntity().getName();
+        String domainObjectName = relation.getContainingEntity().getName()
+                + "."
+                + relation.getDestinationEntity().getName();
         // if relation is in exclusion list, remove it from cloneEntity and add entity to list of
         // removed entities
         if (exclusions.contains(domainObjectName)) {

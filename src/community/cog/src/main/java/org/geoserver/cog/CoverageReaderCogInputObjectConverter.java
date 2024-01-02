@@ -25,13 +25,11 @@ import org.geotools.util.logging.Logging;
  * Attempts to convert the source input object for a {@link GridCoverageReader} to a {@link
  * SourceSPIProvider}
  */
-public class CoverageReaderCogInputObjectConverter
-        implements CoverageReaderInputObjectConverter<SourceSPIProvider> {
+public class CoverageReaderCogInputObjectConverter implements CoverageReaderInputObjectConverter<SourceSPIProvider> {
 
     static Logger LOGGER = Logging.getLogger(CoverageReaderCogInputObjectConverter.class);
 
-    private static final ImageInputStreamSpi COG_IMAGE_INPUT_STREAM_SPI =
-            new CogImageInputStreamSpi();
+    private static final ImageInputStreamSpi COG_IMAGE_INPUT_STREAM_SPI = new CogImageInputStreamSpi();
 
     private static final ImageReaderSpi COG_IMAGE_READER_SPI = new CogImageReaderSpi();
 
@@ -68,9 +66,7 @@ public class CoverageReaderCogInputObjectConverter
             return Optional.empty();
         }
         String urlString = (String) input;
-        return canConvert(urlString)
-                ? convertReaderInputObject(urlString, coverageStoreInfo)
-                : Optional.empty();
+        return canConvert(urlString) ? convertReaderInputObject(urlString, coverageStoreInfo) : Optional.empty();
     }
 
     /**
@@ -91,8 +87,7 @@ public class CoverageReaderCogInputObjectConverter
      * @param coverageStoreInfo the input coverage store info
      * @return The Optional object containing the provider
      */
-    protected Optional<SourceSPIProvider> convertReaderInputObject(
-            String input, CoverageStoreInfo coverageStoreInfo) {
+    protected Optional<SourceSPIProvider> convertReaderInputObject(String input, CoverageStoreInfo coverageStoreInfo) {
 
         String realUrl = input;
         if (realUrl.startsWith(CogSettings.COG_URL_HEADER)) {
@@ -105,8 +100,7 @@ public class CoverageReaderCogInputObjectConverter
             cogSettings = (CogSettings) metadata.get(CogSettings.COG_SETTINGS_KEY);
         }
 
-        Map<String, Serializable> connectionParameters =
-                coverageStoreInfo.getConnectionParameters();
+        Map<String, Serializable> connectionParameters = coverageStoreInfo.getConnectionParameters();
         URI baseUri = URI.create(realUrl);
         String user = null;
         String password = null;
@@ -119,14 +113,12 @@ public class CoverageReaderCogInputObjectConverter
                 password = (String) passwordObject;
             }
         }
-        BasicAuthURI cogUri =
-                new BasicAuthURI(baseUri, cogSettings.isUseCachingStream(), user, password);
-        SourceSPIProvider object =
-                new CogSourceSPIProvider(
-                        cogUri,
-                        COG_IMAGE_READER_SPI,
-                        COG_IMAGE_INPUT_STREAM_SPI,
-                        cogSettings.getRangeReaderSettings().getRangeReaderClassName());
+        BasicAuthURI cogUri = new BasicAuthURI(baseUri, cogSettings.isUseCachingStream(), user, password);
+        SourceSPIProvider object = new CogSourceSPIProvider(
+                cogUri,
+                COG_IMAGE_READER_SPI,
+                COG_IMAGE_INPUT_STREAM_SPI,
+                cogSettings.getRangeReaderSettings().getRangeReaderClassName());
         return Optional.of(object);
     }
 }

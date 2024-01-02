@@ -20,12 +20,9 @@ import org.geoserver.platform.Service;
 public class MapMLGetFeatureCallback extends AbstractDispatcherCallback {
 
     @Override
-    public Response responseDispatched(
-            Request request, Operation operation, Object result, Response response) {
+    public Response responseDispatched(Request request, Operation operation, Object result, Response response) {
         Service service = operation.getService();
-        if (service == null
-                || service.getId() == null
-                || !service.getId().equalsIgnoreCase("wfs")) {
+        if (service == null || service.getId() == null || !service.getId().equalsIgnoreCase("wfs")) {
             // not a WFS service so we are not interested in it
             return response;
         }

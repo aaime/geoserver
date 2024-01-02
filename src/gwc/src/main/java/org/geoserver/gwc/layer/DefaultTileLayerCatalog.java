@@ -69,13 +69,10 @@ public class DefaultTileLayerCatalog implements TileLayerCatalog {
                 private AtomicInteger threadIdSeq = new AtomicInteger();
 
                 public @Override ForkJoinWorkerThread newThread(ForkJoinPool pool) {
-                    String name =
-                            String.format(
-                                    "ForkJoinPool.%s-%d",
-                                    DefaultTileLayerCatalog.class.getSimpleName(),
-                                    threadIdSeq.incrementAndGet());
-                    ForkJoinWorkerThread thread =
-                            ForkJoinPool.defaultForkJoinWorkerThreadFactory.newThread(pool);
+                    String name = String.format(
+                            "ForkJoinPool.%s-%d",
+                            DefaultTileLayerCatalog.class.getSimpleName(), threadIdSeq.incrementAndGet());
+                    ForkJoinWorkerThread thread = ForkJoinPool.defaultForkJoinWorkerThreadFactory.newThread(pool);
                     thread.setName(name);
                     return thread;
                 }
@@ -85,8 +82,7 @@ public class DefaultTileLayerCatalog implements TileLayerCatalog {
      * Reuse the value initialized for I/O parallelism through the {@code
      * org.geoserver.catalog.loadingThreads} System property
      */
-    private static final int INITIALIZATION_PARALLELISM =
-            AsynchResourceIterator.ASYNCH_RESOURCE_THREADS;
+    private static final int INITIALIZATION_PARALLELISM = AsynchResourceIterator.ASYNCH_RESOURCE_THREADS;
     /**
      * Thread local of XStream used during initialization parallel execution, to circumvent the
      * terrible concurrency of XStream
@@ -109,18 +105,14 @@ public class DefaultTileLayerCatalog implements TileLayerCatalog {
 
     private List<TileLayerCatalogListener> listeners;
 
-    public DefaultTileLayerCatalog(
-            GeoServerResourceLoader resourceLoader, XMLConfiguration xmlPersisterFactory)
+    public DefaultTileLayerCatalog(GeoServerResourceLoader resourceLoader, XMLConfiguration xmlPersisterFactory)
             throws IOException {
         this(
                 resourceLoader,
-                () ->
-                        xmlPersisterFactory.getConfiguredXStreamWithContext(
-                                new SecureXStream(), Context.PERSIST));
+                () -> xmlPersisterFactory.getConfiguredXStreamWithContext(new SecureXStream(), Context.PERSIST));
     }
 
-    DefaultTileLayerCatalog(
-            GeoServerResourceLoader resourceLoader, Supplier<XStream> xstreamProvider)
+    DefaultTileLayerCatalog(GeoServerResourceLoader resourceLoader, Supplier<XStream> xstreamProvider)
             throws IOException {
 
         this.resourceLoader = resourceLoader;
@@ -161,14 +153,11 @@ public class DefaultTileLayerCatalog implements TileLayerCatalog {
         }
         if (event.getKind() == Kind.ENTRY_DELETE) {
             // resource is no longer available, figure out the id the hard(ish) way
-            String layerIdName =
-                    this.layersById
-                            .keySet()
-                            .parallelStream()
-                            .map(this::layerIdToFileName)
-                            .filter(path::equals)
-                            .findFirst()
-                            .orElse(null);
+            String layerIdName = this.layersById.keySet().parallelStream()
+                    .map(this::layerIdToFileName)
+                    .filter(path::equals)
+                    .findFirst()
+                    .orElse(null);
             if (layerIdName == null) {
                 // we don't have it, no need to notify local listeners
                 return;
@@ -190,19 +179,15 @@ public class DefaultTileLayerCatalog implements TileLayerCatalog {
             // even if it wasn't created by this instance
             layerInfo = depersist(resource);
         } catch (IOException e) {
-            LOGGER.log(
-                    Level.SEVERE,
-                    "Error depersisting tile layer information from file " + resource.name(),
-                    e);
+            LOGGER.log(Level.SEVERE, "Error depersisting tile layer information from file " + resource.name(), e);
             return;
         }
         final String layerId = layerInfo.getId();
         final GeoServerTileLayerInfo currentInfo = this.layersById.get(layerId);
 
-        final TileLayerCatalogListener.Type tileEventType =
-                event.getKind() == Kind.ENTRY_CREATE
-                        ? TileLayerCatalogListener.Type.CREATE
-                        : TileLayerCatalogListener.Type.MODIFY;
+        final TileLayerCatalogListener.Type tileEventType = event.getKind() == Kind.ENTRY_CREATE
+                ? TileLayerCatalogListener.Type.CREATE
+                : TileLayerCatalogListener.Type.MODIFY;
 
         if (event.getKind() == Kind.ENTRY_MODIFY
                 && currentInfo != null
@@ -232,16 +217,11 @@ public class DefaultTileLayerCatalog implements TileLayerCatalog {
         ExtensionFilter xmlFilter = new Resources.ExtensionFilter("XML");
         // do not thrash the filesystem if there are several cores by using the common
         // pool
-        ForkJoinPool pool =
-                new ForkJoinPool(
-                        INITIALIZATION_PARALLELISM, INITIALLIZATION_THREAD_FACTORY, null, false);
+        ForkJoinPool pool = new ForkJoinPool(INITIALIZATION_PARALLELISM, INITIALLIZATION_THREAD_FACTORY, null, false);
         try {
-            pool.submit(
-                            () ->
-                                    baseDir.list()
-                                            .parallelStream()
-                                            .filter(r -> xmlFilter.accept(r))
-                                            .forEach(this::initializationLoad))
+            pool.submit(() -> baseDir.list().parallelStream()
+                            .filter(r -> xmlFilter.accept(r))
+                            .forEach(this::initializationLoad))
                     .join();
         } finally {
             pool.shutdownNow();
@@ -265,10 +245,7 @@ public class DefaultTileLayerCatalog implements TileLayerCatalog {
         try {
             info = depersist(res, unmarshaller);
         } catch (Exception e) {
-            LOGGER.log(
-                    Level.SEVERE,
-                    "Error depersisting tile layer information from file " + res.name(),
-                    e);
+            LOGGER.log(Level.SEVERE, "Error depersisting tile layer information from file " + res.name(), e);
             return null;
         }
         saveInternal(info);
@@ -332,8 +309,7 @@ public class DefaultTileLayerCatalog implements TileLayerCatalog {
                 Resource file = getFile(tileLayerId);
                 layersByName.remove(currValue.getName());
                 file.delete();
-                listeners.forEach(
-                        l -> l.onEvent(tileLayerId, TileLayerCatalogListener.Type.DELETE));
+                listeners.forEach(l -> l.onEvent(tileLayerId, TileLayerCatalogListener.Type.DELETE));
                 return currValue;
             }
         } catch (IOException notFound) {
@@ -369,12 +345,11 @@ public class DefaultTileLayerCatalog implements TileLayerCatalog {
             if (oldValue == null) {
                 final String duplicateNameId = layersByName.get(newValue.getName());
                 if (null != duplicateNameId) {
-                    throw new IllegalArgumentException(
-                            "TileLayer with same name already exists: "
-                                    + newValue.getName()
-                                    + ": <"
-                                    + duplicateNameId
-                                    + ">");
+                    throw new IllegalArgumentException("TileLayer with same name already exists: "
+                            + newValue.getName()
+                            + ": <"
+                            + duplicateNameId
+                            + ">");
                 }
             } else {
                 layersByName.remove(oldValue.getName());
@@ -421,10 +396,7 @@ public class DefaultTileLayerCatalog implements TileLayerCatalog {
         try {
             depersist(tmp);
         } catch (Exception e) {
-            LOGGER.log(
-                    Level.WARNING,
-                    "Persisted version of tile layer " + real.getName() + " can't be loaded back",
-                    e);
+            LOGGER.log(Level.WARNING, "Persisted version of tile layer " + real.getName() + " can't be loaded back", e);
             throwIfInstanceOf(e, IOException.class);
             throwIfUnchecked(e);
             throw new RuntimeException(e);
@@ -457,15 +429,13 @@ public class DefaultTileLayerCatalog implements TileLayerCatalog {
         return depersist(res, this.serializer);
     }
 
-    private GeoServerTileLayerInfoImpl depersist(final Resource res, final XStream unmarshaller)
-            throws IOException {
+    private GeoServerTileLayerInfoImpl depersist(final Resource res, final XStream unmarshaller) throws IOException {
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.fine("Depersisting GeoServerTileLayerInfo from " + res.path());
         }
         GeoServerTileLayerInfoImpl info;
         try (Reader reader =
-                new InputStreamReader(
-                        new ByteArrayInputStream(res.getContents()), StandardCharsets.UTF_8)) {
+                new InputStreamReader(new ByteArrayInputStream(res.getContents()), StandardCharsets.UTF_8)) {
             info = (GeoServerTileLayerInfoImpl) unmarshaller.fromXML(reader);
         }
 

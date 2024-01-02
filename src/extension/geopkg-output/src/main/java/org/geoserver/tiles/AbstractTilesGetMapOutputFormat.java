@@ -138,12 +138,7 @@ public abstract class AbstractTilesGetMapOutputFormat extends AbstractMapOutputF
     protected String extension;
 
     public AbstractTilesGetMapOutputFormat(
-            String mimeType,
-            String extension,
-            Set<String> names,
-            WebMapService webMapService,
-            WMS wms,
-            GWC gwc) {
+            String mimeType, String extension, Set<String> names, WebMapService webMapService, WMS wms, GWC gwc) {
         super(mimeType, names);
         this.webMapService = webMapService;
         this.wms = wms;
@@ -216,14 +211,12 @@ public abstract class AbstractTilesGetMapOutputFormat extends AbstractMapOutputF
         List<MapLayerInfo> mapLayers = req.getLayers();
 
         Preconditions.checkState(
-                layers.size() == mapLayers.size(),
-                "Number of map layers not same as number of rendered layers");
+                layers.size() == mapLayers.size(), "Number of map layers not same as number of rendered layers");
 
         addTiles(tiles, req, map.getTitle(), listener);
     }
 
-    protected void addTiles(
-            TilesFile tiles, GetMapRequest req, String name, ProgressListener listener)
+    protected void addTiles(TilesFile tiles, GetMapRequest req, String name, ProgressListener listener)
             throws ServiceException, IOException {
         List<MapLayerInfo> mapLayers = req.getLayers();
 
@@ -286,9 +279,7 @@ public abstract class AbstractTilesGetMapOutputFormat extends AbstractMapOutputF
         req.setLayers(mapLayers);
 
         String imageFormat =
-                formatOpts.containsKey("format")
-                        ? parseFormatFromOpts(formatOpts)
-                        : findBestFormat(request);
+                formatOpts.containsKey("format") ? parseFormatFromOpts(formatOpts) : findBestFormat(request);
 
         req.setFormat(imageFormat);
         req.setWidth(gridSubset.getTileWidth());
@@ -296,14 +287,7 @@ public abstract class AbstractTilesGetMapOutputFormat extends AbstractMapOutputF
         req.setCrs(getCoordinateReferenceSystem(request));
 
         // store metadata
-        tiles.setMetadata(
-                tileEntryName,
-                bounds(request),
-                imageFormat,
-                srid(request),
-                mapLayers,
-                minmax,
-                gridSubset);
+        tiles.setMetadata(tileEntryName, bounds(request), imageFormat, srid(request), mapLayers, minmax, gridSubset);
 
         // column and row bounds
         Integer minColumn = null, maxColumn = null, minRow = null, maxRow = null;
@@ -331,21 +315,15 @@ public abstract class AbstractTilesGetMapOutputFormat extends AbstractMapOutputF
             for (long x = minX; x <= maxX; x++) {
                 for (long y = minY; y <= maxY; y++) {
                     BoundingBox box = gridSubset.boundsFromIndex(new long[] {x, y, z});
-                    req.setBbox(
-                            new Envelope(
-                                    box.getMinX(), box.getMaxX(), box.getMinY(), box.getMaxY()));
+                    req.setBbox(new Envelope(box.getMinX(), box.getMaxX(), box.getMinY(), box.getMaxY()));
                     WebMap result = webMapService.getMap(req);
                     tiles.addTile(
-                            z,
-                            (int) x,
-                            (int) (flipy ? gridSubset.getNumTilesHigh(z) - (y + 1) : y),
-                            toBytes(result));
+                            z, (int) x, (int) (flipy ? gridSubset.getNumTilesHigh(z) - (y + 1) : y), toBytes(result));
                     // Cleanup
                     cleaner.finished(null);
 
                     if (listener.isCanceled()) {
-                        LOGGER.log(
-                                Level.FINE, "Stopping tile generation, request has been canceled");
+                        LOGGER.log(Level.FINE, "Stopping tile generation, request has been canceled");
                         return;
                     }
                 }
@@ -443,8 +421,7 @@ public abstract class AbstractTilesGetMapOutputFormat extends AbstractMapOutputF
             }
 
             if (gridSubsets.isEmpty()) {
-                throw new ServiceException(
-                        "No suitable " + epsgCode + " grid subset for " + req.getLayers());
+                throw new ServiceException("No suitable " + epsgCode + " grid subset for " + req.getLayers());
             }
         }
 
@@ -503,16 +480,13 @@ public abstract class AbstractTilesGetMapOutputFormat extends AbstractMapOutputF
         }
 
         if (maxZoom < minZoom) {
-            throw new ServiceException(
-                    format("maxZoom (%d) can not be less than minZoom (%d)", maxZoom, minZoom));
+            throw new ServiceException(format("maxZoom (%d) can not be less than minZoom (%d)", maxZoom, minZoom));
         }
 
         // end index
         if (maxZoom > gridSet.getNumLevels()) {
-            LOGGER.warning(
-                    format(
-                            "Max zoom (%d) can't be greater than number of zoom levels (%d)",
-                            maxZoom, gridSet.getNumLevels()));
+            LOGGER.warning(format(
+                    "Max zoom (%d) can't be greater than number of zoom levels (%d)", maxZoom, gridSet.getNumLevels()));
             maxZoom = gridSet.getNumLevels();
         }
 
@@ -526,8 +500,7 @@ public abstract class AbstractTilesGetMapOutputFormat extends AbstractMapOutputF
         // not
         // affect
         //  this calculation).
-        double reqScale =
-                RendererUtilities.calculateOGCScale(bounds(req), gridSet.getTileWidth(), null);
+        double reqScale = RendererUtilities.calculateOGCScale(bounds(req), gridSet.getTileWidth(), null);
 
         int i = 0;
         double error = Math.abs(gridSet.getGrid(i).getScaleDenominator() - reqScale);
@@ -583,9 +556,7 @@ public abstract class AbstractTilesGetMapOutputFormat extends AbstractMapOutputF
 
         if (map instanceof RenderedImageMap) {
             RenderedImageMapResponse response =
-                    JPEG_MIME_TYPE.equals(map.getMimeType())
-                            ? new JPEGMapResponse(wms)
-                            : new PNGMapResponse(wms);
+                    JPEG_MIME_TYPE.equals(map.getMimeType()) ? new JPEGMapResponse(wms) : new PNGMapResponse(wms);
             response.write(map, bout, null);
         } else if (map instanceof RawMap) {
             ((RawMap) map).writeTo(bout);

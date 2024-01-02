@@ -110,49 +110,27 @@ public abstract class AbstractHTMLMessageConverter<T> extends AbstractHttpMessag
      */
     @SuppressWarnings("unchecked") // TemplateMethodModelEx is not generified
     protected void addLinkFunctions(String baseURL, Map<String, Object> model) {
-        model.put(
-                "serviceLink",
-                (TemplateMethodModelEx)
-                        arguments -> {
-                            APIRequestInfo requestInfo = APIRequestInfo.get();
-                            return ResponseUtils.buildURL(
-                                    requestInfo.getBaseURL(),
-                                    ResponseUtils.appendPath(
-                                            requestInfo.getServiceLandingPage(),
-                                            (String) unwrapArgument(arguments.get(0))),
-                                    arguments.size() > 1
-                                            ? Collections.singletonMap(
-                                                    "f", (String) unwrapArgument(arguments.get(1)))
-                                            : null,
-                                    URLMangler.URLType.SERVICE);
-                        });
-        model.put(
-                "resourceLink",
-                (TemplateMethodModelEx)
-                        arguments ->
-                                ResponseUtils.buildURL(
-                                        baseURL,
-                                        (String) unwrapArgument(arguments.get(0)),
-                                        null,
-                                        URLMangler.URLType.RESOURCE));
-        model.put(
-                "externalLink",
-                (TemplateMethodModelEx)
-                        arguments ->
-                                ResponseUtils.buildURL(
-                                        baseURL,
-                                        (String) unwrapArgument(arguments.get(0)),
-                                        null,
-                                        URLMangler.URLType.EXTERNAL));
-        model.put(
-                "htmlExtensions",
-                (TemplateMethodModelEx)
-                        arguments -> {
-                            if (arguments != null) {
-                                arguments = unwrapArguments(arguments);
-                            }
-                            return processHtmlExtensions(model, arguments);
-                        });
+        model.put("serviceLink", (TemplateMethodModelEx) arguments -> {
+            APIRequestInfo requestInfo = APIRequestInfo.get();
+            return ResponseUtils.buildURL(
+                    requestInfo.getBaseURL(),
+                    ResponseUtils.appendPath(
+                            requestInfo.getServiceLandingPage(), (String) unwrapArgument(arguments.get(0))),
+                    arguments.size() > 1
+                            ? Collections.singletonMap("f", (String) unwrapArgument(arguments.get(1)))
+                            : null,
+                    URLMangler.URLType.SERVICE);
+        });
+        model.put("resourceLink", (TemplateMethodModelEx) arguments -> ResponseUtils.buildURL(
+                baseURL, (String) unwrapArgument(arguments.get(0)), null, URLMangler.URLType.RESOURCE));
+        model.put("externalLink", (TemplateMethodModelEx) arguments -> ResponseUtils.buildURL(
+                baseURL, (String) unwrapArgument(arguments.get(0)), null, URLMangler.URLType.EXTERNAL));
+        model.put("htmlExtensions", (TemplateMethodModelEx) arguments -> {
+            if (arguments != null) {
+                arguments = unwrapArguments(arguments);
+            }
+            return processHtmlExtensions(model, arguments);
+        });
         model.put("loadJSON", parseJSON());
     }
 
@@ -162,14 +140,12 @@ public abstract class AbstractHTMLMessageConverter<T> extends AbstractHttpMessag
 
     private String loadJSON(String filePath) {
         try {
-            GeoServerDataDirectory geoServerDataDirectory =
-                    GeoServerExtensions.bean(GeoServerDataDirectory.class);
+            GeoServerDataDirectory geoServerDataDirectory = GeoServerExtensions.bean(GeoServerDataDirectory.class);
 
             File file = geoServerDataDirectory.findFile(filePath);
             if (file == null) {
                 LOGGER.warning("File is outside of data directory");
-                throw new RuntimeException(
-                        "File " + filePath + " is outside of the data directory");
+                throw new RuntimeException("File " + filePath + " is outside of the data directory");
             }
 
             ObjectMapper mapper = new ObjectMapper();
@@ -207,8 +183,7 @@ public abstract class AbstractHTMLMessageConverter<T> extends AbstractHttpMessag
 
     private String processHtmlExtensions(Map<String, Object> model, List arguments) {
         try {
-            List<HTMLExtensionCallback> callbacks =
-                    GeoServerExtensions.extensions(HTMLExtensionCallback.class);
+            List<HTMLExtensionCallback> callbacks = GeoServerExtensions.extensions(HTMLExtensionCallback.class);
             StringBuilder sb = new StringBuilder();
             Request dr = Dispatcher.REQUEST.get();
             for (HTMLExtensionCallback callback : callbacks) {
@@ -231,8 +206,7 @@ public abstract class AbstractHTMLMessageConverter<T> extends AbstractHttpMessag
     protected String getBaseURL() {
         APIRequestInfo requestInfo = APIRequestInfo.get();
         if (requestInfo == null) {
-            throw new IllegalArgumentException(
-                    "Cannot extract base URL, APIRequestInfo is not set");
+            throw new IllegalArgumentException("Cannot extract base URL, APIRequestInfo is not set");
         }
         return requestInfo.getBaseURL();
     }

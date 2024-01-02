@@ -20,8 +20,7 @@ public final class AppSchemaUtils {
     private AppSchemaUtils() {}
 
     /** Helper method that creates a new empty AppSchema document. */
-    static Document buildAppSchemaDocument(
-            String targetNamespacePrefix, String targetNamespaceUrl) {
+    static Document buildAppSchemaDocument(String targetNamespacePrefix, String targetNamespaceUrl) {
         // build the appschema document
         try {
             DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -44,8 +43,7 @@ public final class AppSchemaUtils {
         Element namespacesNode = document.createElement("namespaces");
         Node gmlNamespace = createNamespaceNode(document, "gml", "http://www.opengis.net/gml/3.2");
         namespacesNode.appendChild(gmlNamespace);
-        Node localNamespace =
-                createNamespaceNode(document, targetNamespacePrefix, targetNamespaceUrl);
+        Node localNamespace = createNamespaceNode(document, targetNamespacePrefix, targetNamespaceUrl);
         namespacesNode.appendChild(localNamespace);
         metadataNode.appendChild(namespacesNode);
         // empty includedTypes node
@@ -154,8 +152,7 @@ public final class AppSchemaUtils {
      *     <value>PARAMETER_VALUE</value>
      * </Parameter>}
      */
-    static Node createParameterNode(
-            Document document, String parameterName, String parameterValue) {
+    static Node createParameterNode(Document document, String parameterName, String parameterValue) {
         Element parameterNode = document.createElement("Parameter");
         Element nameParameterNode = document.createElement("name");
         nameParameterNode.setTextContent(parameterName);
@@ -188,14 +185,14 @@ public final class AppSchemaUtils {
         idNode.setTextContent(dataStoreMetadata.getName());
         dataStoreNode.appendChild(idNode);
         Element parametersNode = document.createElement("parameters");
-        Map<String, String> params = dataStoreMetadata.getDataStoreMetadataConfig().getParameters();
+        Map<String, String> params =
+                dataStoreMetadata.getDataStoreMetadataConfig().getParameters();
         Set<String> keys = params.keySet();
-        keys.forEach(
-                key -> {
-                    String value = params.get(key);
-                    Node parameterNode = createParameterNode(document, key, value);
-                    parametersNode.appendChild(parameterNode);
-                });
+        keys.forEach(key -> {
+            String value = params.get(key);
+            Node parameterNode = createParameterNode(document, key, value);
+            parametersNode.appendChild(parameterNode);
+        });
         dataStoreNode.appendChild(parametersNode);
         return dataStoreNode;
     }
@@ -237,10 +234,7 @@ public final class AppSchemaUtils {
      * </FeatureTypeMapping>}
      */
     static Element createFeatureTypeMappingNode(
-            Document document,
-            String sourceDataStoreValue,
-            String sourceTypeValue,
-            String targetElementValue) {
+            Document document, String sourceDataStoreValue, String sourceTypeValue, String targetElementValue) {
         Element featureTypeMappingNode = document.createElement("FeatureTypeMapping");
         Element sourceDataStoreNode = document.createElement("sourceDataStore");
         sourceDataStoreNode.setTextContent(sourceDataStoreValue);
@@ -313,8 +307,7 @@ public final class AppSchemaUtils {
      *     </sourceExpression>
      * </AttributeMapping>}
      */
-    static Node createAttributeMapping(
-            Document document, String targetAttributeValue, String OCQLValue) {
+    static Node createAttributeMapping(Document document, String targetAttributeValue, String OCQLValue) {
         Element attributeMappingNode = document.createElement("AttributeMapping");
         Element targetAttributeNode = document.createElement("targetAttribute");
         targetAttributeNode.setTextContent(targetAttributeValue);
@@ -327,8 +320,7 @@ public final class AppSchemaUtils {
         return attributeMappingNode;
     }
 
-    static Node createAttributeMappingIdExpression(
-            Document document, String typeMappingTarget, String OCQLValue) {
+    static Node createAttributeMappingIdExpression(Document document, String typeMappingTarget, String OCQLValue) {
         int sep = typeMappingTarget.indexOf(":");
         String idPrefix = typeMappingTarget;
         if (sep != -1) idPrefix = typeMappingTarget.substring(sep + 1);
@@ -429,8 +421,7 @@ public final class AppSchemaUtils {
      * Helper method that allows to get the an attributeMapping node for a given featureTypeMapping
      * and targetAttributeValue.
      */
-    static Node getAttributeMapping(
-            Document document, String targetElementValue, String targetAttributeValue) {
+    static Node getAttributeMapping(Document document, String targetElementValue, String targetAttributeValue) {
         Node featureTypeMappingNode = getFeatureTypeMapping(document, targetElementValue);
         if (featureTypeMappingNode != null) {
             NodeList ftmChilds = featureTypeMappingNode.getChildNodes();
@@ -446,16 +437,14 @@ public final class AppSchemaUtils {
                             Node aChild = amChildChilds.item(k);
                             String nodeName = aChild.getNodeName();
                             if (nodeName.equals("targetAttribute")) {
-                                if (aChild.getTextContent().equals(targetAttributeValue))
-                                    return amChild;
+                                if (aChild.getTextContent().equals(targetAttributeValue)) return amChild;
                             }
                         }
                     }
                 }
             }
         } else {
-            throw new RuntimeException(
-                    String.format("FeatureTypeMapping '%s' is unknown.", targetElementValue));
+            throw new RuntimeException(String.format("FeatureTypeMapping '%s' is unknown.", targetElementValue));
         }
         return null;
     }
@@ -489,8 +478,7 @@ public final class AppSchemaUtils {
                 }
             }
         } else {
-            throw new RuntimeException(
-                    String.format("FeatureTypeMapping '%s' is unknown.", targetElementValue));
+            throw new RuntimeException(String.format("FeatureTypeMapping '%s' is unknown.", targetElementValue));
         }
         return ret;
     }

@@ -24,10 +24,7 @@ import org.geotools.util.logging.Logging;
 public class FilteringFunction extends StringCQLFunction implements VolatileFunction {
 
     private static final FunctionName NAME =
-            new FunctionNameImpl(
-                    "filter",
-                    parameter("result", Object.class),
-                    parameter("filter", String.class, 1, 1));
+            new FunctionNameImpl("filter", parameter("result", Object.class), parameter("filter", String.class, 1, 1));
 
     private static final Logger LOGGER = Logging.getLogger(FilteringFunction.class);
 
@@ -50,8 +47,7 @@ public class FilteringFunction extends StringCQLFunction implements VolatileFunc
                 }
             }
         } catch (CQLException e) {
-            throw new RuntimeException(
-                    "The argument of the filter function is not a valid CQL filter");
+            throw new RuntimeException("The argument of the filter function is not a valid CQL filter");
         }
         return values;
     }

@@ -37,10 +37,7 @@ import javax.xml.bind.annotation.XmlType;
         propOrder = {"threeOrMoreCoordinatePairs"})
 public class Polygon {
 
-    @XmlElementRef(
-            name = "map-coordinates",
-            type = JAXBElement.class,
-            namespace = "http://www.w3.org/1999/xhtml")
+    @XmlElementRef(name = "map-coordinates", type = JAXBElement.class, namespace = "http://www.w3.org/1999/xhtml")
     protected List<JAXBElement<List<String>>> threeOrMoreCoordinatePairs;
 
     /**

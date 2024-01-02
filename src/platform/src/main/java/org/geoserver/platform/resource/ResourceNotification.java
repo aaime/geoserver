@@ -118,10 +118,7 @@ public class ResourceNotification implements Serializable {
     private final long timestamp;
 
     public static List<Event> delta(
-            File baseDirectory,
-            Collection<String> created,
-            Collection<String> removed,
-            Collection<String> modified) {
+            File baseDirectory, Collection<String> created, Collection<String> removed, Collection<String> modified) {
 
         created = created == null ? Collections.emptyList() : created;
         removed = removed == null ? Collections.emptyList() : removed;
@@ -168,11 +165,7 @@ public class ResourceNotification implements Serializable {
     public ResourceNotification(String path, Kind kind, long timestamp, List<Event> delta) {
         this.path = path;
         this.kind = kind;
-        this.delta =
-                (List<Event>)
-                        (delta != null
-                                ? Collections.unmodifiableList(delta)
-                                : Collections.emptyList());
+        this.delta = (List<Event>) (delta != null ? Collections.unmodifiableList(delta) : Collections.emptyList());
         this.timestamp = timestamp;
     }
 

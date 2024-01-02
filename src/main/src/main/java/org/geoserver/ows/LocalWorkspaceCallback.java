@@ -81,36 +81,24 @@ public class LocalWorkspaceCallback implements DispatcherCallback, ExtensionPrio
                         if (l != null) {
                             LocalPublished.set(l);
                         } else {
-                            LOGGER.log(
-                                    Level.FINE,
-                                    "Could not lookup context {0} as a layer, trying as group",
-                                    first);
+                            LOGGER.log(Level.FINE, "Could not lookup context {0} as a layer, trying as group", first);
                             lg = catalog.getLayerGroupByName(ws, last);
                             if (lg != null) {
                                 LocalPublished.set(lg);
                             } else {
                                 // TODO: perhaps throw an exception?
-                                LOGGER.log(
-                                        Level.FINE,
-                                        "Could not lookup context {0} as a group either",
-                                        first);
+                                LOGGER.log(Level.FINE, "Could not lookup context {0} as a group either", first);
                             }
                         }
                     }
                 }
             } else {
-                LOGGER.log(
-                        Level.FINE,
-                        "Could not lookup context {0} as a workspace, trying as group",
-                        first);
+                LOGGER.log(Level.FINE, "Could not lookup context {0} as a workspace, trying as group", first);
                 lg = catalog.getLayerGroupByName((WorkspaceInfo) null, first);
                 if (lg != null) {
                     LocalPublished.set(lg);
                 } else {
-                    LOGGER.log(
-                            Level.FINE,
-                            "Could not lookup context {0} as a layer group either",
-                            first);
+                    LOGGER.log(Level.FINE, "Could not lookup context {0} as a layer group either", first);
                 }
             }
             if (ws == null && lg == null) {
@@ -141,8 +129,7 @@ public class LocalWorkspaceCallback implements DispatcherCallback, ExtensionPrio
     }
 
     @Override
-    public Response responseDispatched(
-            Request request, Operation operation, Object result, Response response) {
+    public Response responseDispatched(Request request, Operation operation, Object result, Response response) {
         return null;
     }
 

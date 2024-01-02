@@ -58,126 +58,106 @@ abstract class AbstractWMSStorePage extends GeoServerSecuredPage {
 
         // name
         PropertyModel<String> nameModel = new PropertyModel<>(model, "name");
-        final TextParamPanel<String> namePanel =
-                new TextParamPanel<>(
-                        "namePanel",
-                        nameModel,
-                        new ResourceModel("AbstractWMSStorePage.dataSrcName", "Data Source Name"),
-                        true);
+        final TextParamPanel<String> namePanel = new TextParamPanel<>(
+                "namePanel",
+                nameModel,
+                new ResourceModel("AbstractWMSStorePage.dataSrcName", "Data Source Name"),
+                true);
 
         form.add(namePanel);
 
         // description and enabled
-        form.add(
-                new TextParamPanel<>(
-                        "descriptionPanel",
-                        new PropertyModel<>(model, "description"),
-                        new ResourceModel("AbstractWMSStorePage.description", "Description"),
-                        false));
-        form.add(
-                new CheckBoxParamPanel(
-                        "enabledPanel",
-                        new PropertyModel<>(model, "enabled"),
-                        new ResourceModel("enabled", "Enabled")));
+        form.add(new TextParamPanel<>(
+                "descriptionPanel",
+                new PropertyModel<>(model, "description"),
+                new ResourceModel("AbstractWMSStorePage.description", "Description"),
+                false));
+        form.add(new CheckBoxParamPanel(
+                "enabledPanel", new PropertyModel<>(model, "enabled"), new ResourceModel("enabled", "Enabled")));
 
-        form.add(
-                new CheckBoxParamPanel(
-                        "disableOnConnFailurePanel",
-                        new PropertyModel<>(model, "disableOnConnFailure"),
-                        new ResourceModel(
-                                "AbstractWMSStorePage.disableOnConnFailure",
-                                "Autodisable on connection failure")));
+        form.add(new CheckBoxParamPanel(
+                "disableOnConnFailurePanel",
+                new PropertyModel<>(model, "disableOnConnFailure"),
+                new ResourceModel("AbstractWMSStorePage.disableOnConnFailure", "Autodisable on connection failure")));
 
         // a custom converter will turn this into a namespace url
-        workspacePanel =
-                new WorkspacePanel(
-                        "workspacePanel",
-                        new PropertyModel<>(model, "workspace"),
-                        new ResourceModel("workspace", "Workspace"),
-                        true);
+        workspacePanel = new WorkspacePanel(
+                "workspacePanel",
+                new PropertyModel<>(model, "workspace"),
+                new ResourceModel("workspace", "Workspace"),
+                true);
         form.add(workspacePanel);
 
-        capabilitiesURL =
-                new TextParamPanel<>(
-                        "capabilitiesURL",
-                        new PropertyModel<>(model, "capabilitiesURL"),
-                        new ParamResourceModel("capabilitiesURL", this),
-                        true);
+        capabilitiesURL = new TextParamPanel<>(
+                "capabilitiesURL",
+                new PropertyModel<>(model, "capabilitiesURL"),
+                new ParamResourceModel("capabilitiesURL", this),
+                true);
         form.add(capabilitiesURL);
 
         // user name
-        usernamePanel =
-                new TextParamPanel<>(
-                        "userNamePanel",
-                        new PropertyModel<>(model, "username"),
-                        new ResourceModel("AbstractWMSStorePage.userName"),
-                        false);
+        usernamePanel = new TextParamPanel<>(
+                "userNamePanel",
+                new PropertyModel<>(model, "username"),
+                new ResourceModel("AbstractWMSStorePage.userName"),
+                false);
 
         form.add(usernamePanel);
 
         // password
         form.add(
-                password =
-                        new PasswordParamPanel(
-                                "passwordPanel",
-                                new PropertyModel<>(model, "password"),
-                                new ResourceModel("AbstractWMSStorePage.password"),
-                                false));
+                password = new PasswordParamPanel(
+                        "passwordPanel",
+                        new PropertyModel<>(model, "password"),
+                        new ResourceModel("AbstractWMSStorePage.password"),
+                        false));
 
         // max concurrent connections
-        final PropertyModel<Boolean> useHttpConnectionPoolModel =
-                new PropertyModel<>(model, "useConnectionPooling");
-        CheckBoxParamPanel useConnectionPooling =
-                new CheckBoxParamPanel(
-                        "useConnectionPoolingPanel",
-                        useHttpConnectionPoolModel,
-                        new ResourceModel("AbstractWMSStorePage.useHttpConnectionPooling"));
+        final PropertyModel<Boolean> useHttpConnectionPoolModel = new PropertyModel<>(model, "useConnectionPooling");
+        CheckBoxParamPanel useConnectionPooling = new CheckBoxParamPanel(
+                "useConnectionPoolingPanel",
+                useHttpConnectionPoolModel,
+                new ResourceModel("AbstractWMSStorePage.useHttpConnectionPooling"));
         form.add(useConnectionPooling);
 
         PropertyModel<Integer> connectionsModel = new PropertyModel<>(model, "maxConnections");
-        final TextParamPanel<Integer> maxConnections =
-                new TextParamPanel<>(
-                        "maxConnectionsPanel",
-                        connectionsModel,
-                        new ResourceModel("AbstractWMSStorePage.maxConnections"),
-                        true,
-                        new RangeValidator<>(1, 128));
+        final TextParamPanel<Integer> maxConnections = new TextParamPanel<>(
+                "maxConnectionsPanel",
+                connectionsModel,
+                new ResourceModel("AbstractWMSStorePage.maxConnections"),
+                true,
+                new RangeValidator<>(1, 128));
         maxConnections.setOutputMarkupId(true);
         maxConnections.setEnabled(useHttpConnectionPoolModel.getObject());
         form.add(maxConnections);
 
-        useConnectionPooling
-                .getFormComponent()
-                .add(
-                        new OnChangeAjaxBehavior() {
+        useConnectionPooling.getFormComponent().add(new OnChangeAjaxBehavior() {
 
-                            @Override
-                            protected void onUpdate(AjaxRequestTarget target) {
-                                boolean enabled = useHttpConnectionPoolModel.getObject();
-                                maxConnections.setEnabled(enabled);
-                                target.add(maxConnections);
-                            }
-                        });
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {
+                boolean enabled = useHttpConnectionPoolModel.getObject();
+                maxConnections.setEnabled(enabled);
+                target.add(maxConnections);
+            }
+        });
 
         // connect timeout
         PropertyModel<Integer> connectTimeoutModel = new PropertyModel<>(model, "connectTimeout");
-        form.add(
-                new TextParamPanel<>(
-                        "connectTimeoutPanel",
-                        connectTimeoutModel,
-                        new ResourceModel("AbstractWMSStorePage.connectTimeout"),
-                        true,
-                        new RangeValidator<>(1, 240)));
+        form.add(new TextParamPanel<>(
+                "connectTimeoutPanel",
+                connectTimeoutModel,
+                new ResourceModel("AbstractWMSStorePage.connectTimeout"),
+                true,
+                new RangeValidator<>(1, 240)));
 
         // read timeout
         PropertyModel<Integer> readTimeoutModel = new PropertyModel<>(model, "readTimeout");
-        form.add(
-                new TextParamPanel<>(
-                        "readTimeoutPanel",
-                        readTimeoutModel,
-                        new ResourceModel("AbstractWMSStorePage.readTimeout"),
-                        true,
-                        new RangeValidator<>(1, 360)));
+        form.add(new TextParamPanel<>(
+                "readTimeoutPanel",
+                readTimeoutModel,
+                new ResourceModel("AbstractWMSStorePage.readTimeout"),
+                true,
+                new RangeValidator<>(1, 360)));
 
         // cancel/submit buttons
         form.add(new BookmarkablePageLink<>("cancel", StorePage.class));
@@ -188,10 +168,7 @@ abstract class AbstractWMSStorePage extends GeoServerSecuredPage {
         form.add(new FeedbackPanel("feedback"));
 
         StoreNameValidator storeNameValidator =
-                new StoreNameValidator(
-                        workspacePanel.getFormComponent(),
-                        namePanel.getFormComponent(),
-                        store.getId());
+                new StoreNameValidator(workspacePanel.getFormComponent(), namePanel.getFormComponent(), store.getId());
         form.add(storeNameValidator);
     }
 
@@ -226,8 +203,7 @@ abstract class AbstractWMSStorePage extends GeoServerSecuredPage {
      * @throws IllegalArgumentException with an appropriate error message if the save action can't
      *     be successfully performed
      */
-    protected abstract void onSave(WMSStoreInfo info, AjaxRequestTarget target)
-            throws IllegalArgumentException;
+    protected abstract void onSave(WMSStoreInfo info, AjaxRequestTarget target) throws IllegalArgumentException;
 
     @Override
     protected ComponentAuthorizer getPageAuthorizer() {

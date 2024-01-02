@@ -80,9 +80,8 @@ public class KmlCentroidBuilder {
         } else if (g instanceof Polygon) {
             if (opts.isContain()) {
                 try {
-                    Point p =
-                            RendererUtilities.sampleForInternalPoint(
-                                    (Polygon) g, null, null, null, -1, opts.getSamples());
+                    Point p = RendererUtilities.sampleForInternalPoint(
+                            (Polygon) g, null, null, null, -1, opts.getSamples());
                     if (p != null && !p.isEmpty()) {
                         return p.getCoordinate();
                     }

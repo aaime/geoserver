@@ -70,8 +70,7 @@ import org.geotools.util.Version;
  */
 public abstract class KvpParser {
     /** logger */
-    protected static Logger LOGGER =
-            org.geotools.util.logging.Logging.getLogger("org.geoserver.ows");
+    protected static Logger LOGGER = org.geotools.util.logging.Logging.getLogger("org.geoserver.ows");
 
     /** The key. */
     String key;

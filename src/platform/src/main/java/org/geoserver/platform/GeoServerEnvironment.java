@@ -68,8 +68,7 @@ public class GeoServerEnvironment {
      * purposes.
      */
     public static synchronized void reloadAllowEnvParametrization() {
-        allowEnvParametrization =
-                Boolean.valueOf(System.getProperty("ALLOW_ENV_PARAMETRIZATION", "false"));
+        allowEnvParametrization = Boolean.valueOf(System.getProperty("ALLOW_ENV_PARAMETRIZATION", "false"));
     }
 
     private static final String PROPERTYFILENAME = "geoserver-environment.properties";
@@ -79,12 +78,11 @@ public class GeoServerEnvironment {
 
     private static final String nullValue = "null";
 
-    private final PropertyPlaceholderHelper helper =
-            new PropertyPlaceholderHelper(
-                    constants.asString("DEFAULT_PLACEHOLDER_PREFIX"),
-                    constants.asString("DEFAULT_PLACEHOLDER_SUFFIX"),
-                    constants.asString("DEFAULT_VALUE_SEPARATOR"),
-                    true);
+    private final PropertyPlaceholderHelper helper = new PropertyPlaceholderHelper(
+            constants.asString("DEFAULT_PLACEHOLDER_PREFIX"),
+            constants.asString("DEFAULT_PLACEHOLDER_SUFFIX"),
+            constants.asString("DEFAULT_VALUE_SEPARATOR"),
+            true);
 
     private final PlaceholderResolver resolver = name -> resolvePlaceholder(name);
 
@@ -118,10 +116,9 @@ public class GeoServerEnvironment {
             if (propertyFile.exists()) {
                 return loadGeoServerEnvProps(propertyFile);
             } else {
-                String message =
-                        "File "
-                                + propertiesPath
-                                + " not found. Trying to load the environment properties from GeoServer datadir.";
+                String message = "File "
+                        + propertiesPath
+                        + " not found. Trying to load the environment properties from GeoServer datadir.";
                 LOGGER.warning(message);
             }
         }
@@ -157,10 +154,7 @@ public class GeoServerEnvironment {
             try {
                 props = configFile.read();
             } catch (IOException e) {
-                LOGGER.log(
-                        Level.WARNING,
-                        "Could not find any '" + PROPERTYFILENAME + "' property file.",
-                        e);
+                LOGGER.log(Level.WARNING, "Could not find any '" + PROPERTYFILENAME + "' property file.", e);
                 props = new Properties();
             }
         }

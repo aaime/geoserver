@@ -35,8 +35,7 @@ public class RenderingVariables {
     public static void setupEnvironmentVariables(WMSMapContent mapContent) {
         // setup some SLD variable substitution environment used by rendering transformations
         EnvFunction.setLocalValue(WMS_BBOX, mapContent.getRenderingArea());
-        EnvFunction.setLocalValue(
-                "wms_crs", mapContent.getRenderingArea().getCoordinateReferenceSystem());
+        EnvFunction.setLocalValue("wms_crs", mapContent.getRenderingArea().getCoordinateReferenceSystem());
         EnvFunction.setLocalValue(WMS_SRS, mapContent.getRequest().getSRS());
         EnvFunction.setLocalValue(WMS_WIDTH, mapContent.getMapWidth());
         EnvFunction.setLocalValue(WMS_HEIGHT, mapContent.getMapHeight());

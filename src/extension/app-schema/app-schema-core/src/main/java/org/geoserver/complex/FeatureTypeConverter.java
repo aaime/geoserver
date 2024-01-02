@@ -39,8 +39,7 @@ class FeatureTypeConverter {
 
     private List<AttributeDescriptor> processedDescriptors = new ArrayList<>();
 
-    public FeatureTypeConverter(
-            FeatureType featureType, Map<String, String> rules, NamespaceSupport namespaceSupport) {
+    public FeatureTypeConverter(FeatureType featureType, Map<String, String> rules, NamespaceSupport namespaceSupport) {
         this.featureType = requireNonNull(featureType);
         this.rules = requireNonNull(rules);
         this.namespaceSupport = requireNonNull(namespaceSupport);
@@ -86,12 +85,8 @@ class FeatureTypeConverter {
         // get the descriptor
         Optional<AttributeDescriptor> descriptorOpt = getDescriptor(rule.getValue());
         if (!descriptorOpt.isPresent()) {
-            LOGGER.warning(
-                    () ->
-                            "Descriptor for attribute: '"
-                                    + rule.getValue()
-                                    + "' not found on feature type: "
-                                    + featureType);
+            LOGGER.warning(() ->
+                    "Descriptor for attribute: '" + rule.getValue() + "' not found on feature type: " + featureType);
             return;
         }
         AttributeDescriptor descriptor = descriptorOpt.get();
@@ -160,8 +155,7 @@ class FeatureTypeConverter {
         // if namespace is null return true
         if (descriptor.getName().getNamespaceURI() == null) return true;
         // if namespace is GML return true
-        if (descriptor.getName().getNamespaceURI().startsWith("http://www.opengis.net/gml"))
-            return true;
+        if (descriptor.getName().getNamespaceURI().startsWith("http://www.opengis.net/gml")) return true;
         return false;
     }
 

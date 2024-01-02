@@ -27,8 +27,7 @@ import org.geotools.api.feature.type.Name;
  * @param <T>
  * @param <F>
  */
-public class ReadOnlyDataAccess<T extends FeatureType, F extends Feature>
-        extends DecoratingDataAccess<T, F> {
+public class ReadOnlyDataAccess<T extends FeatureType, F extends Feature> extends DecoratingDataAccess<T, F> {
 
     static final String READ_ONLY = "This data access is read only";
     private WrapperPolicy policy;

@@ -24,22 +24,17 @@ import org.springframework.util.Assert;
  */
 public abstract class AbstractMapResponse extends Response {
 
-    protected AbstractMapResponse(
-            final Class<? extends WebMap> responseBinding, final String mime) {
+    protected AbstractMapResponse(final Class<? extends WebMap> responseBinding, final String mime) {
         this(responseBinding, new String[] {mime});
     }
 
-    protected AbstractMapResponse(
-            final Class<? extends WebMap> responseBinding, final String[] outputFormats) {
+    protected AbstractMapResponse(final Class<? extends WebMap> responseBinding, final String[] outputFormats) {
         this(
                 responseBinding,
-                outputFormats == null
-                        ? Collections.emptySet()
-                        : new HashSet<>(Arrays.asList(outputFormats)));
+                outputFormats == null ? Collections.emptySet() : new HashSet<>(Arrays.asList(outputFormats)));
     }
 
-    protected AbstractMapResponse(
-            final Class<? extends WebMap> responseBinding, Set<String> outputFormats) {
+    protected AbstractMapResponse(final Class<? extends WebMap> responseBinding, Set<String> outputFormats) {
         // Call Response superclass constructor with the kind of request we can handle
         // Make sure the output format comparison in canHandle is case insensitive
         super(responseBinding, caseInsensitiveOutputFormats(outputFormats));

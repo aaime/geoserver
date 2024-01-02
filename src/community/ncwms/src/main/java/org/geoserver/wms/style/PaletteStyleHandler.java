@@ -44,10 +44,7 @@ public class PaletteStyleHandler extends StyleHandler {
 
     @Override
     public StyledLayerDescriptor parse(
-            Object input,
-            Version version,
-            ResourceLocator resourceLocator,
-            EntityResolver entityResolver)
+            Object input, Version version, ResourceLocator resourceLocator, EntityResolver entityResolver)
             throws IOException {
         try (Reader reader = toReader(input)) {
             StyledLayerDescriptor sld = new PaletteParser().parseStyle(reader);
@@ -70,15 +67,13 @@ public class PaletteStyleHandler extends StyleHandler {
     }
 
     @Override
-    public void encode(
-            StyledLayerDescriptor sld, Version version, boolean pretty, OutputStream output)
+    public void encode(StyledLayerDescriptor sld, Version version, boolean pretty, OutputStream output)
             throws IOException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public List<Exception> validate(Object input, Version version, EntityResolver entityResolver)
-            throws IOException {
+    public List<Exception> validate(Object input, Version version, EntityResolver entityResolver) throws IOException {
         // just check the palette is valid, no need to convert to Style
         try (BufferedReader reader = new BufferedReader(toReader(input))) {
             new PaletteParser().parseColorMap(reader);

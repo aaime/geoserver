@@ -74,8 +74,7 @@ public class HzCluster implements GeoServerPluginConfigurator, DisposableBean, I
         return getConfigFile(fileName, scope, this.rl);
     }
 
-    protected Resource getConfigFile(String fileName, Class<?> scope, ResourceStore rl)
-            throws IOException {
+    protected Resource getConfigFile(String fileName, Class<?> scope, ResourceStore rl) throws IOException {
         Resource dir = rl.get(CONFIG_DIRECTORY);
         Resource file = dir.get(fileName);
         if (!Resources.exists(file)) {
@@ -99,8 +98,7 @@ public class HzCluster implements GeoServerPluginConfigurator, DisposableBean, I
 
     /** Is session sharing enabled. Only true if clustering in general is enabled. */
     public boolean isSessionSharing() {
-        return isEnabled()
-                && Boolean.parseBoolean(getClusterConfig().getProperty("session_sharing", "true"));
+        return isEnabled() && Boolean.parseBoolean(getClusterConfig().getProperty("session_sharing", "true"));
     }
 
     /** Is session sharing sticky. See Hazelcast documentation for details. */
@@ -122,8 +120,7 @@ public class HzCluster implements GeoServerPluginConfigurator, DisposableBean, I
      * @throws IllegalStateException if clustering is not enabled
      */
     public HazelcastInstance getHz() {
-        if (!isEnabled())
-            throw new IllegalStateException("Hazelcast Clustering has not been enabled.");
+        if (!isEnabled()) throw new IllegalStateException("Hazelcast Clustering has not been enabled.");
         return hz;
     }
 
@@ -202,10 +199,8 @@ public class HzCluster implements GeoServerPluginConfigurator, DisposableBean, I
     @Override
     public void saveConfiguration(GeoServerResourceLoader resourceLoader) throws IOException {
         for (Resource configFile : getFileLocations()) {
-            Resource targetDir =
-                    Files.asResource(
-                            resourceLoader.findOrCreateDirectory(
-                                    Paths.convert(rl.get("/").dir(), configFile.parent().dir())));
+            Resource targetDir = Files.asResource(resourceLoader.findOrCreateDirectory(
+                    Paths.convert(rl.get("/").dir(), configFile.parent().dir())));
 
             Resources.copy(configFile.file(), targetDir);
         }

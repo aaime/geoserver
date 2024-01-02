@@ -56,10 +56,7 @@ public class AbstractDocument {
     /** Returns all links except the ones matching both classification and type provided */
     public List<Link> getLinksExcept(String classification, String excludedType) {
         return links.stream()
-                .filter(
-                        l ->
-                                classification == null
-                                        || Objects.equals(classification, l.getClassification()))
+                .filter(l -> classification == null || Objects.equals(classification, l.getClassification()))
                 .filter(l -> excludedType == null || !excludedType.equals(l.getType()))
                 .collect(Collectors.toList());
     }
@@ -84,14 +81,13 @@ public class AbstractDocument {
         new LinksBuilder(getClass(), path)
                 .rel(Link.REL_ALTERNATE)
                 .title("This document as ")
-                .updater(
-                        (mt, l) -> {
-                            if (requestInfo.isFormatRequested(mt, defaultFormat)) {
-                                l.setRel(Link.REL_SELF);
-                                l.setClassification(Link.REL_SELF);
-                                l.setTitle("This document");
-                            }
-                        })
+                .updater((mt, l) -> {
+                    if (requestInfo.isFormatRequested(mt, defaultFormat)) {
+                        l.setRel(Link.REL_SELF);
+                        l.setClassification(Link.REL_SELF);
+                        l.setTitle("This document");
+                    }
+                })
                 .add(this);
     }
 

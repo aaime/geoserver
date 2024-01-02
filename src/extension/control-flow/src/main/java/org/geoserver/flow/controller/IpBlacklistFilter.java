@@ -57,8 +57,7 @@ public class IpBlacklistFilter implements GeoServerFilter {
     /** Default constructor */
     public IpBlacklistFilter() {
         try {
-            GeoServerResourceLoader loader =
-                    GeoServerExtensions.bean(GeoServerResourceLoader.class);
+            GeoServerResourceLoader loader = GeoServerExtensions.bean(GeoServerResourceLoader.class);
             Resource resource = loader.get(PROPERTYFILENAME);
             configFile = new PropertyFileWatcher(resource);
             blackListedAddresses = reloadConfiguration(BLPROPERTY);

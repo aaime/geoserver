@@ -37,8 +37,7 @@ public class HTMLFeatureInfoOutputFormat extends GetFeatureInfoOutputFormat {
         super(FORMAT);
         this.wms = wms;
         this.templateManager =
-                new HTMLTemplateManager(
-                        FreeMarkerTemplateManager.OutputFormat.HTML, wms, resourceLoader);
+                new HTMLTemplateManager(FreeMarkerTemplateManager.OutputFormat.HTML, wms, resourceLoader);
     }
 
     /**
@@ -49,8 +48,7 @@ public class HTMLFeatureInfoOutputFormat extends GetFeatureInfoOutputFormat {
      * @throws java.io.IOException For problems writing the output.
      */
     @Override
-    public void write(
-            FeatureCollectionType results, GetFeatureInfoRequest request, OutputStream out)
+    public void write(FeatureCollectionType results, GetFeatureInfoRequest request, OutputStream out)
             throws ServiceException, IOException {
         templateManager.write(results, request, out);
     }
@@ -67,23 +65,19 @@ public class HTMLFeatureInfoOutputFormat extends GetFeatureInfoOutputFormat {
     /** */
     private final class HTMLTemplateManager extends FreeMarkerTemplateManager {
 
-        public HTMLTemplateManager(
-                OutputFormat format, WMS wms, GeoServerResourceLoader resourceLoader) {
+        public HTMLTemplateManager(OutputFormat format, WMS wms, GeoServerResourceLoader resourceLoader) {
             super(format, wms, resourceLoader);
         }
 
         @Override
-        protected boolean templatesExist(
-                Template header, Template footer, List<FeatureCollection> collections)
+        protected boolean templatesExist(Template header, Template footer, List<FeatureCollection> collections)
                 throws IOException {
             return true;
         }
 
         @Override
         protected void handleContent(
-                List<FeatureCollection> collections,
-                OutputStreamWriter osw,
-                GetFeatureInfoRequest request)
+                List<FeatureCollection> collections, OutputStreamWriter osw, GetFeatureInfoRequest request)
                 throws IOException {
             for (FeatureCollection fc : collections) {
                 Template content = getContentTemplate(fc, wms.getCharSet());

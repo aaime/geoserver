@@ -15,8 +15,7 @@ import org.geoserver.web.data.resource.ResourceConfigurationPanelInfo;
  * Priority is reduced under standard {@link ExtensionPriority.LOWEST} to shows the SOLR link after
  * other panels.
  */
-public class SolrConfigurationPanelInfo extends ResourceConfigurationPanelInfo
-        implements ExtensionPriority {
+public class SolrConfigurationPanelInfo extends ResourceConfigurationPanelInfo implements ExtensionPriority {
 
     private static final long serialVersionUID = 1485404586629946126L;
 

@@ -129,8 +129,7 @@ public class DXFOutputFormat extends WFSGetFeatureOutputFormat {
         if (layerNames.length() > 20) {
             LOGGER.log(
                     Level.WARNING,
-                    "Calculated filename too long. Returing a shorter one: "
-                            + layerNames.substring(0, 20));
+                    "Calculated filename too long. Returing a shorter one: " + layerNames.substring(0, 20));
             return layerNames.substring(0, 20);
         }
         return layerNames;
@@ -149,8 +148,7 @@ public class DXFOutputFormat extends WFSGetFeatureOutputFormat {
     @Override
     public String getAttachmentFileName(Object value, Operation operation) {
         GetFeatureRequest request = GetFeatureRequest.adapt(operation.getParameters()[0]);
-        if (request.getFormatOptions() != null
-                && request.getFormatOptions().containsKey("FILENAME")) {
+        if (request.getFormatOptions() != null && request.getFormatOptions().containsKey("FILENAME")) {
             String fileName = (String) request.getFormatOptions().get("FILENAME");
             if (fileName.contains(".")) {
                 return fileName; // includes extension
@@ -169,8 +167,7 @@ public class DXFOutputFormat extends WFSGetFeatureOutputFormat {
      */
     @Override
     @SuppressWarnings("PMD.CloseResource") // only wrappers created, out is managed by the servlet
-    protected void write(
-            FeatureCollectionResponse featureCollection, OutputStream output, Operation operation)
+    protected void write(FeatureCollectionResponse featureCollection, OutputStream output, Operation operation)
             throws IOException, ServiceException {
         // output format (zipped or not)
         String format = getDxfExtension(operation);
@@ -230,8 +227,7 @@ public class DXFOutputFormat extends WFSGetFeatureOutputFormat {
                 dxfWriter.setOption(
                         "writeattributes", writeAttributes.toLowerCase().equals("true"));
             }
-            if (blocks != null && blocks.toLowerCase().equals("true"))
-                dxfWriter.setOption("geometryasblock", true);
+            if (blocks != null && blocks.toLowerCase().equals("true")) dxfWriter.setOption("geometryasblock", true);
             // set optional colors
             if (colors != null) {
                 try {
@@ -243,8 +239,7 @@ public class DXFOutputFormat extends WFSGetFeatureOutputFormat {
                 } catch (Throwable t) {
                     LOGGER.log(
                             Level.WARNING,
-                            "format option colors ignored by DXFOutputFormat due to a wrong format: "
-                                    + t.getMessage());
+                            "format option colors ignored by DXFOutputFormat due to a wrong format: " + t.getMessage());
                 }
             }
             // set optional line types
@@ -258,8 +253,7 @@ public class DXFOutputFormat extends WFSGetFeatureOutputFormat {
 
                 } catch (Throwable t) {
                     LOGGER.warning(
-                            "format option ltypes ignored by DXFOutputFormat due to a wrong format: "
-                                    + t.getMessage());
+                            "format option ltypes ignored by DXFOutputFormat due to a wrong format: " + t.getMessage());
                 }
             }
 
@@ -277,9 +271,7 @@ public class DXFOutputFormat extends WFSGetFeatureOutputFormat {
             zipStream = null;
             w = null;
 
-        } else
-            throw new UnsupportedOperationException(
-                    "Version " + version + " not supported by dxf output format");
+        } else throw new UnsupportedOperationException("Version " + version + " not supported by dxf output format");
     }
 
     @SuppressWarnings("unchecked")
@@ -288,8 +280,7 @@ public class DXFOutputFormat extends WFSGetFeatureOutputFormat {
         if (gft.getFormatOptions().get("LAYERS") instanceof String) {
             layers = ((String) gft.getFormatOptions().get("LAYERS")).split(",");
         } else if (gft.getFormatOptions().get("LAYERS") instanceof List) {
-            layers =
-                    (String[]) ((List) gft.getFormatOptions().get("LAYERS")).toArray(new String[0]);
+            layers = (String[]) ((List) gft.getFormatOptions().get("LAYERS")).toArray(new String[0]);
         }
         return layers;
     }

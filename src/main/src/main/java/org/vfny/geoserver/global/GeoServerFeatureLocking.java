@@ -35,8 +35,7 @@ public class GeoServerFeatureLocking extends GeoServerFeatureStore implements Si
      * @param locking GeoTools2 FeatureSource
      * @param settings Settings for this store
      */
-    GeoServerFeatureLocking(
-            FeatureLocking<SimpleFeatureType, SimpleFeature> locking, Settings settings) {
+    GeoServerFeatureLocking(FeatureLocking<SimpleFeatureType, SimpleFeature> locking, Settings settings) {
         super(locking, settings);
     }
 

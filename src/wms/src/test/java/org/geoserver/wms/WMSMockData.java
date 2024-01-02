@@ -97,17 +97,16 @@ public class WMSMockData {
         catalog.add(workspaceInfo);
         catalog.setDefaultWorkspace(workspaceInfo);
 
-        defaultStyle =
-                new StyleInfoImpl(catalog) {
-                    /** Override so it does not try to load a file from disk */
-                    @Override
-                    public Style getStyle() throws IOException {
-                        StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory(null);
-                        Style style = styleFactory.createStyle();
-                        style.setName("Default Style");
-                        return style;
-                    }
-                };
+        defaultStyle = new StyleInfoImpl(catalog) {
+            /** Override so it does not try to load a file from disk */
+            @Override
+            public Style getStyle() throws IOException {
+                StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory(null);
+                Style style = styleFactory.createStyle();
+                style.setName("Default Style");
+                return style;
+            }
+        };
         defaultStyle.setFilename("defaultStyleFileName");
         defaultStyle.setId("defaultStyleId");
         defaultStyle.setName("defaultStyleName");
@@ -126,16 +125,14 @@ public class WMSMockData {
         dataStoreInfo.setWorkspace(workspaceInfo);
 
         dataStore = new MemoryDataStore();
-        dataStore.setNamespaceURI(
-                "http://geoserver.org"); // required for GeoTools 12 implemetnation of
+        dataStore.setNamespaceURI("http://geoserver.org"); // required for GeoTools 12 implemetnation of
         // MemoryDataStore
-        ResourcePool resourcePool =
-                new ResourcePool(catalog) {
-                    @Override
-                    public DataStore getDataStore(DataStoreInfo info) throws IOException {
-                        return dataStore;
-                    }
-                };
+        ResourcePool resourcePool = new ResourcePool(catalog) {
+            @Override
+            public DataStore getDataStore(DataStoreInfo info) throws IOException {
+                return dataStore;
+            }
+        };
         catalog.setResourcePool(resourcePool);
 
         mockGeoServer = new GeoServerImpl();
@@ -254,25 +251,24 @@ public class WMSMockData {
      * Creates a vector layer with associated FeatureType in the internal MemoryDataStore with the
      * given type and two attributes: name:String and geom:geometryType
      */
-    public MapLayerInfo addFeatureTypeLayer(
-            final String name, Class<? extends Geometry> geometryType) throws IOException {
+    public MapLayerInfo addFeatureTypeLayer(final String name, Class<? extends Geometry> geometryType)
+            throws IOException {
 
         final DataStore dataStore = this.dataStore;
-        FeatureTypeInfoImpl featureTypeInfo =
-                new FeatureTypeInfoImpl(catalog) {
-                    /**
-                     * Override to avoid going down to the catalog and geoserver resource loader etc
-                     */
-                    @Override
-                    public FeatureSource<? extends FeatureType, ? extends Feature> getFeatureSource(
-                            ProgressListener listener, Hints hints) {
-                        try {
-                            return dataStore.getFeatureSource(getQualifiedName());
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                };
+        FeatureTypeInfoImpl featureTypeInfo = new FeatureTypeInfoImpl(catalog) {
+            /**
+             * Override to avoid going down to the catalog and geoserver resource loader etc
+             */
+            @Override
+            public FeatureSource<? extends FeatureType, ? extends Feature> getFeatureSource(
+                    ProgressListener listener, Hints hints) {
+                try {
+                    return dataStore.getFeatureSource(getQualifiedName());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        };
         featureTypeInfo.setName(name);
         featureTypeInfo.setNativeName(name);
         featureTypeInfo.setEnabled(true);
@@ -310,8 +306,7 @@ public class WMSMockData {
 
     public SimpleFeature addFeature(final SimpleFeatureType featureType, final Object[] values)
             throws IOException, ParseException {
-        SimpleFeatureStore fs =
-                (SimpleFeatureStore) dataStore.getFeatureSource(featureType.getName());
+        SimpleFeatureStore fs = (SimpleFeatureStore) dataStore.getFeatureSource(featureType.getName());
 
         SimpleFeatureBuilder sfb = new SimpleFeatureBuilder(featureType);
         sfb.addAll(values);

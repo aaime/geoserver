@@ -26,8 +26,7 @@ public class LDAPUtils {
 
     /** Creates an LdapContext from a configuration object. */
     public static LdapContextSource createLdapContext(LDAPBaseSecurityServiceConfig ldapConfig) {
-        LdapContextSource ldapContext =
-                new DefaultSpringSecurityContextSource(ldapConfig.getServerURL());
+        LdapContextSource ldapContext = new DefaultSpringSecurityContextSource(ldapConfig.getServerURL());
         ldapContext.setCacheEnvironmentProperties(false);
         ldapContext.setAuthenticationSource(new SpringSecurityAuthenticationSource());
 
@@ -35,8 +34,7 @@ public class LDAPUtils {
             // TLS does not play nicely with pooled connections
             ldapContext.setPooled(false);
 
-            DefaultTlsDirContextAuthenticationStrategy tls =
-                    new DefaultTlsDirContextAuthenticationStrategy();
+            DefaultTlsDirContextAuthenticationStrategy tls = new DefaultTlsDirContextAuthenticationStrategy();
             tls.setHostnameVerifier((hostname, session) -> true);
 
             ldapContext.setAuthenticationStrategy(tls);
@@ -54,26 +52,23 @@ public class LDAPUtils {
         } else {
             // if we have the authenticated context we build a new LdapTemplate
             // using it
-            authTemplate =
-                    new SpringSecurityLdapTemplate(
-                            new ContextSource() {
+            authTemplate = new SpringSecurityLdapTemplate(new ContextSource() {
 
-                                @Override
-                                public DirContext getReadOnlyContext() throws NamingException {
-                                    return ctx;
-                                }
+                @Override
+                public DirContext getReadOnlyContext() throws NamingException {
+                    return ctx;
+                }
 
-                                @Override
-                                public DirContext getReadWriteContext() throws NamingException {
-                                    return ctx;
-                                }
+                @Override
+                public DirContext getReadWriteContext() throws NamingException {
+                    return ctx;
+                }
 
-                                @Override
-                                public DirContext getContext(String principal, String credentials)
-                                        throws NamingException {
-                                    return ctx;
-                                }
-                            });
+                @Override
+                public DirContext getContext(String principal, String credentials) throws NamingException {
+                    return ctx;
+                }
+            });
         }
         return authTemplate;
     }
@@ -86,26 +81,23 @@ public class LDAPUtils {
             authTemplate = template;
             ((AbstractContextSource) authTemplate.getContextSource()).setAnonymousReadOnly(true);
         } else {
-            authTemplate =
-                    new SpringSecurityLdapTemplate(
-                            new ContextSource() {
+            authTemplate = new SpringSecurityLdapTemplate(new ContextSource() {
 
-                                @Override
-                                public DirContext getReadOnlyContext() throws NamingException {
-                                    return ctxSupplier.get();
-                                }
+                @Override
+                public DirContext getReadOnlyContext() throws NamingException {
+                    return ctxSupplier.get();
+                }
 
-                                @Override
-                                public DirContext getReadWriteContext() throws NamingException {
-                                    return ctxSupplier.get();
-                                }
+                @Override
+                public DirContext getReadWriteContext() throws NamingException {
+                    return ctxSupplier.get();
+                }
 
-                                @Override
-                                public DirContext getContext(String principal, String credentials)
-                                        throws NamingException {
-                                    return ctxSupplier.get();
-                                }
-                            });
+                @Override
+                public DirContext getContext(String principal, String credentials) throws NamingException {
+                    return ctxSupplier.get();
+                }
+            });
         }
         return authTemplate;
     }

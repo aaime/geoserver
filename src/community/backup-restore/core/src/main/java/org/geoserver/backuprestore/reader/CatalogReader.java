@@ -36,10 +36,7 @@ import org.springframework.util.ClassUtils;
  */
 @SuppressWarnings({"rawtypes"})
 public abstract class CatalogReader<T> extends BackupRestoreItem<T>
-        implements ItemStream,
-                ItemStreamReader<T>,
-                ResourceAwareItemReaderItemStream<T>,
-                InitializingBean {
+        implements ItemStream, ItemStreamReader<T>, ResourceAwareItemReaderItemStream<T>, InitializingBean {
 
     protected Class clazz;
 
@@ -60,8 +57,7 @@ public abstract class CatalogReader<T> extends BackupRestoreItem<T>
 
     private boolean saveState = true;
 
-    private final ExecutionContextUserSupport executionContextUserSupport =
-            new ExecutionContextUserSupport();
+    private final ExecutionContextUserSupport executionContextUserSupport = new ExecutionContextUserSupport();
 
     /**
      * The name of the component which will be used as a stem for keys in the {@link
@@ -223,8 +219,7 @@ public abstract class CatalogReader<T> extends BackupRestoreItem<T>
 
         for (CatalogAdditionalResourcesReader rd : additionalResourceReaders) {
             if (rd.canHandle(item)) {
-                rd.readAdditionalResources(
-                        backupFacade, Files.asResource(resource.getFile()), item);
+                rd.readAdditionalResources(backupFacade, Files.asResource(resource.getFile()), item);
             }
         }
     }

@@ -48,11 +48,7 @@ public class DGGSFilterTransformer extends DuplicatingFilterVisitor {
 
     static final FilterFactory FF = CommonFactoryFinder.getFilterFactory();
 
-    public static Filter adapt(
-            Filter filter,
-            DGGSInstance dggs,
-            DGGSResolutionCalculator resolutions,
-            int resolution) {
+    public static Filter adapt(Filter filter, DGGSInstance dggs, DGGSResolutionCalculator resolutions, int resolution) {
         DGGSFilterTransformer adapter = new DGGSFilterTransformer(dggs, resolutions, resolution);
         return (Filter) filter.accept(adapter, null);
     }
@@ -60,8 +56,7 @@ public class DGGSFilterTransformer extends DuplicatingFilterVisitor {
     DGGSInstance dggs;
     int resolution;
 
-    public DGGSFilterTransformer(
-            DGGSInstance dggs, DGGSResolutionCalculator resolutions, int resolution) {
+    public DGGSFilterTransformer(DGGSInstance dggs, DGGSResolutionCalculator resolutions, int resolution) {
         this.dggs = dggs;
         this.resolution = resolution;
     }
@@ -86,8 +81,7 @@ public class DGGSFilterTransformer extends DuplicatingFilterVisitor {
     @Override
     public Object visit(Intersects filter, Object extraData) {
         // assuming a single geometry property in the DGGS output type
-        if (filter.getExpression1() instanceof PropertyName
-                && filter.getExpression2() instanceof Literal) {
+        if (filter.getExpression1() instanceof PropertyName && filter.getExpression2() instanceof Literal) {
             Polygon polygon = (Polygon) filter.getExpression2().evaluate(Polygon.class);
             Iterator<Zone> zones = dggs.polygon(polygon, resolution, true);
             return getFilterFrom(dggs, zones, resolution);
@@ -113,8 +107,7 @@ public class DGGSFilterTransformer extends DuplicatingFilterVisitor {
             //            return FF.or(filters);
             return super.visit(filter, extraData);
         } else {
-            return getFilterFrom(
-                    dggs, dggs.zonesFromEnvelope(envelope, resolution, true), resolution);
+            return getFilterFrom(dggs, dggs.zonesFromEnvelope(envelope, resolution, true), resolution);
         }
     }
 
@@ -125,8 +118,7 @@ public class DGGSFilterTransformer extends DuplicatingFilterVisitor {
             expressions.add(FF.literal(zones.next().getId()));
         }
         if (expressions.size() == 1) return Filter.EXCLUDE;
-        Function inFunction =
-                FF.function("in", expressions.toArray(new Expression[expressions.size()]));
+        Function inFunction = FF.function("in", expressions.toArray(new Expression[expressions.size()]));
         return FF.equal(inFunction, FF.literal(Boolean.TRUE), false);
     }
 
@@ -159,14 +151,12 @@ public class DGGSFilterTransformer extends DuplicatingFilterVisitor {
             filters.add(or);
         }
         if (inExpressions.size() > 1) {
-            Function inFunction =
-                    FF.function("in", inExpressions.toArray(new Expression[inExpressions.size()]));
+            Function inFunction = FF.function("in", inExpressions.toArray(new Expression[inExpressions.size()]));
             Filter directChildMatches = FF.equal(inFunction, FF.literal(Boolean.TRUE), false);
             filters.add(directChildMatches);
         }
 
-        PropertyIsEqualTo resolutionFilter =
-                FF.equal(FF.property(DGGSStore.RESOLUTION), FF.literal(resolution), true);
+        PropertyIsEqualTo resolutionFilter = FF.equal(FF.property(DGGSStore.RESOLUTION), FF.literal(resolution), true);
         if (filters.size() > 1) {
             return FF.and(FF.or(filters), resolutionFilter);
         } else if (filters.size() == 1) {

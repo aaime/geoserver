@@ -38,8 +38,7 @@ class WritableDataView extends DefaultView implements SimpleFeatureStore {
     }
 
     @Override
-    public List<FeatureId> addFeatures(
-            FeatureCollection<SimpleFeatureType, SimpleFeature> featureCollection)
+    public List<FeatureId> addFeatures(FeatureCollection<SimpleFeatureType, SimpleFeature> featureCollection)
             throws IOException {
         return delegate.addFeatures(featureCollection);
     }
@@ -59,22 +58,19 @@ class WritableDataView extends DefaultView implements SimpleFeatureStore {
     }
 
     @Override
-    public void modifyFeatures(Name[] attributeNames, Object[] attributeValues, Filter filter)
-            throws IOException {
+    public void modifyFeatures(Name[] attributeNames, Object[] attributeValues, Filter filter) throws IOException {
         Filter mixedFilter = mixFilter(filter);
         delegate.modifyFeatures(attributeNames, attributeValues, mixedFilter);
     }
 
     @Override
-    public void modifyFeatures(Name attributeName, Object attributeValue, Filter filter)
-            throws IOException {
+    public void modifyFeatures(Name attributeName, Object attributeValue, Filter filter) throws IOException {
         Filter mixedFilter = mixFilter(filter);
         delegate.modifyFeatures(attributeName, attributeValue, mixedFilter);
     }
 
     @Override
-    public void setFeatures(FeatureReader<SimpleFeatureType, SimpleFeature> reader)
-            throws IOException {
+    public void setFeatures(FeatureReader<SimpleFeatureType, SimpleFeature> reader) throws IOException {
         // need to overwrite only the features in this view
         removeFeatures(Filter.INCLUDE);
         addFeatures(DataUtilities.collection(reader));
@@ -91,15 +87,13 @@ class WritableDataView extends DefaultView implements SimpleFeatureStore {
     }
 
     @Override
-    public void modifyFeatures(String name, Object attributeValue, Filter filter)
-            throws IOException {
+    public void modifyFeatures(String name, Object attributeValue, Filter filter) throws IOException {
         Filter mixedFilter = mixFilter(filter);
         delegate.modifyFeatures(name, attributeValue, mixedFilter);
     }
 
     @Override
-    public void modifyFeatures(String[] names, Object[] attributeValues, Filter filter)
-            throws IOException {
+    public void modifyFeatures(String[] names, Object[] attributeValues, Filter filter) throws IOException {
         Filter mixedFilter = mixFilter(filter);
         delegate.modifyFeatures(names, attributeValues, mixedFilter);
     }

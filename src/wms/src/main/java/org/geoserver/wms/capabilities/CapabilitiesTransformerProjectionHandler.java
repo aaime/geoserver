@@ -19,14 +19,12 @@ import org.geotools.renderer.crs.ProjectionHandlerFinder;
  */
 class CapabilitiesTransformerProjectionHandler extends ProjectionHandler {
 
-    public CapabilitiesTransformerProjectionHandler(ProjectionHandler handler)
-            throws FactoryException {
+    public CapabilitiesTransformerProjectionHandler(ProjectionHandler handler) throws FactoryException {
         super(handler.getSourceCRS(), handler.getValidAreaBounds(), handler.getRenderingEnvelope());
     }
 
     @Override
-    protected ReferencedEnvelope transformEnvelope(
-            ReferencedEnvelope envelope, CoordinateReferenceSystem targetCRS)
+    protected ReferencedEnvelope transformEnvelope(ReferencedEnvelope envelope, CoordinateReferenceSystem targetCRS)
             throws TransformException, FactoryException {
         return super.transformEnvelope(envelope, targetCRS);
     }
@@ -43,8 +41,7 @@ class CapabilitiesTransformerProjectionHandler extends ProjectionHandler {
             CoordinateReferenceSystem sourceCrs, CoordinateReferenceSystem targetCrs)
             throws MismatchedDimensionException, FactoryException {
         ProjectionHandler handler =
-                ProjectionHandlerFinder.getHandler(
-                        new ReferencedEnvelope(targetCrs), sourceCrs, false);
+                ProjectionHandlerFinder.getHandler(new ReferencedEnvelope(targetCrs), sourceCrs, false);
         if (handler != null) {
             return new CapabilitiesTransformerProjectionHandler(handler);
         }

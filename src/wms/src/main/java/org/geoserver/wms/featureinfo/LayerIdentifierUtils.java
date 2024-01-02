@@ -69,8 +69,7 @@ public final class LayerIdentifierUtils {
             return featureCollection;
         }
         // get feature collection CRS
-        CoordinateReferenceSystem sourceCrs =
-                featureCollection.getSchema().getCoordinateReferenceSystem();
+        CoordinateReferenceSystem sourceCrs = featureCollection.getSchema().getCoordinateReferenceSystem();
         if (sourceCrs == null) {
             // reprojector requires the source CRS to be defined
             return featureCollection;
@@ -101,15 +100,13 @@ public final class LayerIdentifierUtils {
      * @return the found CRS, may be NULL
      */
     public static CoordinateReferenceSystem getCrs(FeatureCollection featureCollection) {
-        CoordinateReferenceSystem crs =
-                featureCollection.getSchema().getCoordinateReferenceSystem();
+        CoordinateReferenceSystem crs = featureCollection.getSchema().getCoordinateReferenceSystem();
         if (crs != null || featureCollection.isEmpty()) {
             // the feature collection has a defined CRS or the feature collection is empty
             return crs;
         }
         // try to extract the CRS from the geometry descriptor (normally it should be NULL too)
-        GeometryDescriptor geometryDescriptor =
-                featureCollection.getSchema().getGeometryDescriptor();
+        GeometryDescriptor geometryDescriptor = featureCollection.getSchema().getGeometryDescriptor();
         crs = geometryDescriptor == null ? null : geometryDescriptor.getCoordinateReferenceSystem();
         if (crs != null) {
             // the geometry descriptor has a defined CRS

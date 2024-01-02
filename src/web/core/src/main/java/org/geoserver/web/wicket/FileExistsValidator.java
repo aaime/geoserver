@@ -59,10 +59,9 @@ public class FileExistsValidator implements IValidator<String> {
                         connection.setConnectTimeout(10000);
                         try (InputStream is = connection.getInputStream()) {}
                     } catch (Exception e) {
-                        IValidationError err =
-                                new ValidationError("FileExistsValidator.unreachable")
-                                        .addKey("FileExistsValidator.unreachable")
-                                        .setVariable("file", uriSpec);
+                        IValidationError err = new ValidationError("FileExistsValidator.unreachable")
+                                .addKey("FileExistsValidator.unreachable")
+                                .setVariable("file", uriSpec);
                         validatable.error(err);
                     }
                 }
@@ -86,17 +85,13 @@ public class FileExistsValidator implements IValidator<String> {
             relFile = Files.url(baseDirectory, uriSpec);
         } else if (loader != null) {
             // local to data directory?
-            relFile =
-                    Resources.find(
-                            Resources.fromURL(Files.asResource(loader.getBaseDirectory()), uriSpec),
-                            true);
+            relFile = Resources.find(Resources.fromURL(Files.asResource(loader.getBaseDirectory()), uriSpec), true);
         }
 
         if (relFile == null || !relFile.exists()) {
-            IValidationError err =
-                    new ValidationError("FileExistsValidator.fileNotFoundError")
-                            .addKey("FileExistsValidator.fileNotFoundError")
-                            .setVariable("file", uriSpec);
+            IValidationError err = new ValidationError("FileExistsValidator.fileNotFoundError")
+                    .addKey("FileExistsValidator.fileNotFoundError")
+                    .setVariable("file", uriSpec);
             validatable.error(err);
         }
     }

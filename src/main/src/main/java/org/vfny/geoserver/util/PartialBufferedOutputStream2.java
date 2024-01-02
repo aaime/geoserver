@@ -71,8 +71,7 @@ public class PartialBufferedOutputStream2 extends OutputStream {
      * @param response the response with its output stream to write to once the buffer is full
      * @param kilobytes size, in kilobytes, of the buffer
      */
-    public PartialBufferedOutputStream2(HttpServletResponse response, int kilobytes)
-            throws IOException {
+    public PartialBufferedOutputStream2(HttpServletResponse response, int kilobytes) throws IOException {
         if (kilobytes < 1) {
             throw new IllegalArgumentException("Buffer size not greater than 0: " + kilobytes);
         }

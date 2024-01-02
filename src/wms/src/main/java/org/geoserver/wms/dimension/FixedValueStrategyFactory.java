@@ -22,6 +22,5 @@ public interface FixedValueStrategyFactory {
      * @param value The value
      * @param fixedCapabilitiesValue Its capabilities representation
      */
-    public DimensionDefaultValueSelectionStrategy createFixedValueStrategy(
-            Object value, String fixedCapabilitiesValue);
+    public DimensionDefaultValueSelectionStrategy createFixedValueStrategy(Object value, String fixedCapabilitiesValue);
 }

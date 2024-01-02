@@ -85,8 +85,7 @@ public class CloseableIteratorAdapter<T> implements CloseableIterator<T> {
             try {
                 close();
             } finally {
-                LOGGER.warning(
-                        "There is code not closing CloseableIterator!!! Auto closing at finalize().");
+                LOGGER.warning("There is code not closing CloseableIterator!!! Auto closing at finalize().");
             }
         }
     }
@@ -97,8 +96,7 @@ public class CloseableIteratorAdapter<T> implements CloseableIterator<T> {
         return filter(iterator, predicate);
     }
 
-    public static <T> CloseableIterator<T> filter(
-            final Iterator<T> iterator, final Predicate<T> predicate) {
+    public static <T> CloseableIterator<T> filter(final Iterator<T> iterator, final Predicate<T> predicate) {
 
         UnmodifiableIterator<T> filteredNotCloseable = Iterators.filter(iterator, predicate);
         @SuppressWarnings("PMD.CloseResource") // wrapped and returned
@@ -138,8 +136,7 @@ public class CloseableIteratorAdapter<T> implements CloseableIterator<T> {
         return new CloseableIteratorAdapter<>(empty);
     }
 
-    private static <T> com.google.common.base.Predicate<T> filterAdapter(
-            final Filter catalogPredicate) {
+    private static <T> com.google.common.base.Predicate<T> filterAdapter(final Filter catalogPredicate) {
 
         return input -> catalogPredicate.evaluate(input);
     }

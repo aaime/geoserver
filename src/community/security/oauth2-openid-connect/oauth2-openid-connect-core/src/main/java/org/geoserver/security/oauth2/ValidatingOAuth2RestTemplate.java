@@ -56,21 +56,15 @@ class ValidatingOAuth2RestTemplate extends OAuth2RestTemplate {
                     AccessTokenRequest accessTokenRequest = oauth2Context.getAccessTokenRequest();
                     if ((accessTokenRequest.getAuthorizationCode() != null)
                             && (!accessTokenRequest.getAuthorizationCode().isEmpty())) {
-                        LOGGER.fine(
-                                "OIDC: received a CODE from Identity Provider - handing it in for ID/Access Token");
+                        LOGGER.fine("OIDC: received a CODE from Identity Provider - handing it in for ID/Access Token");
                         LOGGER.fine("OIDC: CODE=" + accessTokenRequest.getAuthorizationCode());
                         if (result != null) {
-                            LOGGER.fine(
-                                    "OIDC: Identity Provider returned Token, type="
-                                            + result.getTokenType());
+                            LOGGER.fine("OIDC: Identity Provider returned Token, type=" + result.getTokenType());
                             LOGGER.fine("OIDC: SCOPES=" + String.join(" ", result.getScope()));
                             LOGGER.fine("OIDC: ACCESS TOKEN:" + saferJWT(result.getValue()));
                             if (result.getAdditionalInformation().containsKey("id_token")) {
-                                String idToken =
-                                        saferJWT(
-                                                (String)
-                                                        result.getAdditionalInformation()
-                                                                .get("id_token"));
+                                String idToken = saferJWT((String)
+                                        result.getAdditionalInformation().get("id_token"));
                                 LOGGER.fine("OIDC: ID TOKEN:" + idToken);
                             }
                         }

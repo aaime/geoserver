@@ -128,8 +128,7 @@ public abstract class XStreamServiceLoader<T extends ServiceInfo> implements Ser
 
     public final void save(T service, GeoServer gs, Resource directory) throws Exception {
         String filename = getFilename();
-        Resource resource =
-                directory == null ? resourceLoader.get(filename) : directory.get(filename);
+        Resource resource = directory == null ? resourceLoader.get(filename) : directory.get(filename);
 
         // using resource output stream makes sure we write on a temp file and them move
         try (OutputStream out = resource.out()) {

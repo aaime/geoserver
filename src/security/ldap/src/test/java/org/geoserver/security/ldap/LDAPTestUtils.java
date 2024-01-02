@@ -65,21 +65,14 @@ public class LDAPTestUtils {
      * @since 1.3.2
      */
     public static void startEmbeddedServer(
-            int port,
-            String defaultPartitionSuffix,
-            String defaultPartitionName,
-            boolean allowAnonymousAccess) {
+            int port, String defaultPartitionSuffix, String defaultPartitionName, boolean allowAnonymousAccess) {
         if (embeddedServer != null) {
             throw new IllegalStateException("An embedded server is already started");
         }
 
         try {
-            embeddedServer =
-                    EmbeddedLdapServer.newEmbeddedServer(
-                            defaultPartitionName,
-                            defaultPartitionSuffix,
-                            port,
-                            allowAnonymousAccess);
+            embeddedServer = EmbeddedLdapServer.newEmbeddedServer(
+                    defaultPartitionName, defaultPartitionSuffix, port, allowAnonymousAccess);
         } catch (Exception e) {
             throw new RuntimeException("Failed to start embedded server", e);
         }
@@ -103,8 +96,8 @@ public class LDAPTestUtils {
      *
      * @param allowAnonymous anonymous access is allowed or not
      */
-    public static boolean initLdapServer(
-            boolean allowAnonymous, String ldapServerUrl, String basePath) throws Exception {
+    public static boolean initLdapServer(boolean allowAnonymous, String ldapServerUrl, String basePath)
+            throws Exception {
         return initLdapServer(allowAnonymous, ldapServerUrl, basePath, "data.ldif");
     }
 
@@ -114,8 +107,7 @@ public class LDAPTestUtils {
      * @param allowAnonymous anonymous access is allowed or not
      */
     @SuppressWarnings("PMD.AvoidUsingHardCodedIP")
-    public static boolean initLdapServer(
-            boolean allowAnonymous, String ldapServerUrl, String basePath, String ldifPath)
+    public static boolean initLdapServer(boolean allowAnonymous, String ldapServerUrl, String basePath, String ldifPath)
             throws Exception {
         try {
             if (!portIsBusy("127.0.0.1", LDAP_SERVER_PORT)) {
@@ -166,8 +158,7 @@ public class LDAPTestUtils {
      * @param name the distinguished name of the root node.
      * @throws NamingException if anything goes wrong removing the sub-tree.
      */
-    public static void clearSubContexts(ContextSource contextSource, Name name)
-            throws NamingException {
+    public static void clearSubContexts(ContextSource contextSource, Name name) throws NamingException {
         DirContext ctx = null;
         try {
             ctx = contextSource.getReadWriteContext();
@@ -239,8 +230,7 @@ public class LDAPTestUtils {
         }
     }
 
-    public static void cleanAndSetup(
-            ContextSource contextSource, LdapName rootNode, Resource ldifFile)
+    public static void cleanAndSetup(ContextSource contextSource, LdapName rootNode, Resource ldifFile)
             throws NamingException, IOException {
 
         clearSubContexts(contextSource, rootNode);
@@ -250,10 +240,7 @@ public class LDAPTestUtils {
     @SuppressWarnings({"deprecation", "BanJNDI"})
     private static void loadLdif(DirContext context, Resource ldifFile) throws IOException {
         try {
-            LdapName baseDn =
-                    (LdapName)
-                            context.getEnvironment()
-                                    .get(DefaultDirObjectFactory.JNDI_ENV_BASE_PATH_KEY);
+            LdapName baseDn = (LdapName) context.getEnvironment().get(DefaultDirObjectFactory.JNDI_ENV_BASE_PATH_KEY);
 
             LdifParser parser = new LdifParser(ldifFile);
             parser.open();
@@ -271,13 +258,11 @@ public class LDAPTestUtils {
         }
     }
 
-    public static void loadLdif(DefaultDirectoryService directoryService, Resource ldifFile)
-            throws IOException {
+    public static void loadLdif(DefaultDirectoryService directoryService, Resource ldifFile) throws IOException {
         File tempFile = File.createTempFile("spring_ldap_test", ".ldif");
         try (InputStream inputStream = ldifFile.getInputStream()) {
             IOUtils.copy(inputStream, new FileOutputStream(tempFile));
-            LdifFileLoader fileLoader =
-                    new LdifFileLoader(directoryService.getSession(), tempFile.getAbsolutePath());
+            LdifFileLoader fileLoader = new LdifFileLoader(directoryService.getSession(), tempFile.getAbsolutePath());
             fileLoader.execute();
         } finally {
             try {

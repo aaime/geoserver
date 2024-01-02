@@ -73,10 +73,7 @@ public class DefaultWebFeatureService implements WebFeatureService, ApplicationC
      */
     @Override
     public TransformerBase getCapabilities(GetCapabilitiesType request) throws WFSException {
-        return new GetCapabilities(
-                        getServiceInfo(),
-                        catalog,
-                        WFSExtensions.findExtendedCapabilitiesProviders(context))
+        return new GetCapabilities(getServiceInfo(), catalog, WFSExtensions.findExtendedCapabilitiesProviders(context))
                 .run(new GetCapabilitiesRequest.WFS11(request));
     }
 
@@ -88,10 +85,8 @@ public class DefaultWebFeatureService implements WebFeatureService, ApplicationC
      * @throws WFSException Any service exceptions.
      */
     @Override
-    public FeatureTypeInfo[] describeFeatureType(DescribeFeatureTypeType request)
-            throws WFSException {
-        return new DescribeFeatureType(getServiceInfo(), catalog)
-                .run(new DescribeFeatureTypeRequest.WFS11(request));
+    public FeatureTypeInfo[] describeFeatureType(DescribeFeatureTypeType request) throws WFSException {
+        return new DescribeFeatureType(getServiceInfo(), catalog).run(new DescribeFeatureTypeRequest.WFS11(request));
     }
 
     /**
@@ -117,8 +112,7 @@ public class DefaultWebFeatureService implements WebFeatureService, ApplicationC
      * @throws WFSException Any service exceptions.
      */
     @Override
-    public FeatureCollectionResponse getFeatureWithLock(GetFeatureWithLockType request)
-            throws WFSException {
+    public FeatureCollectionResponse getFeatureWithLock(GetFeatureWithLockType request) throws WFSException {
         return getFeature(request);
     }
 

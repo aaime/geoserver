@@ -27,8 +27,7 @@ public class RetypingFeatureCollection<T extends FeatureType, F extends Feature>
     FeatureCollection<T, F> delegate;
     List<PropertyName> properties;
 
-    public RetypingFeatureCollection(
-            FeatureCollection<T, F> delegate, List<PropertyName> properties) {
+    public RetypingFeatureCollection(FeatureCollection<T, F> delegate, List<PropertyName> properties) {
         super(delegate.getSchema());
         this.delegate = delegate;
         this.properties = properties;

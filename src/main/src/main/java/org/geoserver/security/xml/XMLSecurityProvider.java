@@ -33,8 +33,7 @@ public class XMLSecurityProvider extends GeoServerSecurityProvider {
         xp.getXStream().alias("userGroupService", XMLUserGroupServiceConfig.class);
         xp.getXStream().alias("roleService", XMLRoleServiceConfig.class);
         xp.getXStream().alias("passwordPolicy", PasswordPolicyConfig.class);
-        xp.getXStream()
-                .alias("usernamePassword", UsernamePasswordAuthenticationProviderConfig.class);
+        xp.getXStream().alias("usernamePassword", UsernamePasswordAuthenticationProviderConfig.class);
     }
 
     @Override
@@ -43,8 +42,7 @@ public class XMLSecurityProvider extends GeoServerSecurityProvider {
     }
 
     @Override
-    public GeoServerUserGroupService createUserGroupService(SecurityNamedServiceConfig config)
-            throws IOException {
+    public GeoServerUserGroupService createUserGroupService(SecurityNamedServiceConfig config) throws IOException {
         return new XMLUserGroupService();
     }
 
@@ -54,8 +52,7 @@ public class XMLSecurityProvider extends GeoServerSecurityProvider {
     }
 
     @Override
-    public GeoServerRoleService createRoleService(SecurityNamedServiceConfig config)
-            throws IOException {
+    public GeoServerRoleService createRoleService(SecurityNamedServiceConfig config) throws IOException {
         return new XMLRoleService();
     }
 
@@ -85,8 +82,7 @@ public class XMLSecurityProvider extends GeoServerSecurityProvider {
      * return <code>null</code>.
      */
     @Override
-    public GeoServerAuthenticationProvider createAuthenticationProvider(
-            SecurityNamedServiceConfig config) {
+    public GeoServerAuthenticationProvider createAuthenticationProvider(SecurityNamedServiceConfig config) {
         return new UsernamePasswordAuthenticationProvider();
     }
 
@@ -113,8 +109,7 @@ public class XMLSecurityProvider extends GeoServerSecurityProvider {
     }
 
     @Override
-    public SecurityConfigValidator createConfigurationValidator(
-            GeoServerSecurityManager securityManager) {
+    public SecurityConfigValidator createConfigurationValidator(GeoServerSecurityManager securityManager) {
         return new XMLSecurityConfigValidator(securityManager);
     }
 }

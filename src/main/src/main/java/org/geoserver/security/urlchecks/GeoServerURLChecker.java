@@ -71,10 +71,9 @@ public class GeoServerURLChecker implements URLChecker, DisposableBean {
     }
 
     public AbstractURLCheck get(final String name) throws Exception {
-        Optional<AbstractURLCheck> entry =
-                dao.getChecks().stream()
-                        .filter(urlEntry -> urlEntry.getName().equalsIgnoreCase(name))
-                        .findFirst();
+        Optional<AbstractURLCheck> entry = dao.getChecks().stream()
+                .filter(urlEntry -> urlEntry.getName().equalsIgnoreCase(name))
+                .findFirst();
         if (entry.isPresent()) {
             return entry.get();
         } else {

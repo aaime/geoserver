@@ -47,9 +47,7 @@ public class GeoServerConsoleFlagTest extends GeoServerSystemTestSupport {
 
         assertEquals(mapping.getUrlMap().get(WEB_MAPPING), CONSOLE_DISABLED_PUBLISHER);
         assertEquals(mapping.getUrlMap().get(WEB_WILDCARD_MAPPING), CONSOLE_DISABLED_PUBLISHER);
-        assertEquals(
-                mapping.getUrlMap().get(WEB_RESOURCES_WILDCARD_MAPPING),
-                CONSOLE_DISABLED_PUBLISHER);
+        assertEquals(mapping.getUrlMap().get(WEB_RESOURCES_WILDCARD_MAPPING), CONSOLE_DISABLED_PUBLISHER);
     }
 
     @Test
@@ -60,8 +58,7 @@ public class GeoServerConsoleFlagTest extends GeoServerSystemTestSupport {
 
         assertEquals(mapping.getUrlMap().get(WEB_MAPPING), CONSOLE_ENABLED_PUBLISHER);
         assertEquals(mapping.getUrlMap().get(WEB_WILDCARD_MAPPING), CONSOLE_ENABLED_PUBLISHER);
-        assertEquals(
-                mapping.getUrlMap().get(WEB_RESOURCES_WILDCARD_MAPPING), CONSOLE_ENABLED_PUBLISHER);
+        assertEquals(mapping.getUrlMap().get(WEB_RESOURCES_WILDCARD_MAPPING), CONSOLE_ENABLED_PUBLISHER);
     }
 
     @After

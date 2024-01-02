@@ -120,7 +120,11 @@ public abstract class XmlRequestReader {
     /** Implementation of hashcode. */
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(element).append(version).append(serviceId).toHashCode();
+        return new HashCodeBuilder()
+                .append(element)
+                .append(version)
+                .append(serviceId)
+                .toHashCode();
     }
 
     public String getServiceId() {

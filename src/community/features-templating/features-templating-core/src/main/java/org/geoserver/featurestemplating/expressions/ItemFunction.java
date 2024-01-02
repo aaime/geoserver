@@ -17,12 +17,8 @@ import org.geotools.filter.capability.FunctionNameImpl;
  * value is not quite the same as having an attribute with multiple repetitions)
  */
 public class ItemFunction extends FunctionExpressionImpl {
-    public static FunctionName NAME =
-            new FunctionNameImpl(
-                    "item",
-                    Object.class,
-                    parameter("array", Object.class),
-                    parameter("idx", Integer.class));
+    public static FunctionName NAME = new FunctionNameImpl(
+            "item", Object.class, parameter("array", Object.class), parameter("idx", Integer.class));
 
     public ItemFunction() {
         super(NAME);
@@ -37,8 +33,7 @@ public class ItemFunction extends FunctionExpressionImpl {
         Integer idx = getExpression(1).evaluate(feature, Integer.class);
 
         if (array == null) return null;
-        if (!array.getClass().isArray())
-            throw new IllegalArgumentException("First argument is not an array");
+        if (!array.getClass().isArray()) throw new IllegalArgumentException("First argument is not an array");
 
         if (idx == null) return null;
 

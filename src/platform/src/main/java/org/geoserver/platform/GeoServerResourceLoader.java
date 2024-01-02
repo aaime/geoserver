@@ -55,10 +55,8 @@ import org.springframework.web.context.ServletContextAware;
  *
  * @author Justin Deoliveira, The Open Planning Project, jdeolive@openplans.org
  */
-public class GeoServerResourceLoader extends DefaultResourceLoader
-        implements ResourceStore, ServletContextAware {
-    private static final Logger LOGGER =
-            org.geotools.util.logging.Logging.getLogger("org.geoserver.platform");
+public class GeoServerResourceLoader extends DefaultResourceLoader implements ResourceStore, ServletContextAware {
+    private static final Logger LOGGER = org.geotools.util.logging.Logging.getLogger("org.geoserver.platform");
 
     /**
      * ResourceStore used for configuration resources.
@@ -209,11 +207,10 @@ public class GeoServerResourceLoader extends DefaultResourceLoader
      */
     public File find(File parentFile, String location) throws IOException {
         if (LOGGER.isLoggable(Level.FINEST)) {
-            LOGGER.finest(
-                    "Looking up resource "
-                            + location
-                            + " with parent "
-                            + (parentFile != null ? parentFile.getPath() : "null"));
+            LOGGER.finest("Looking up resource "
+                    + location
+                    + " with parent "
+                    + (parentFile != null ? parentFile.getPath() : "null"));
         }
         Resource resource = get(Paths.convert(getBaseDirectory(), parentFile, location));
         return Resources.find(resource);
@@ -466,8 +463,7 @@ public class GeoServerResourceLoader extends DefaultResourceLoader
      * @param target File to copy content into (must be already created)
      * @param scope Class used as base for classpathResource
      */
-    public void copyFromClassPath(String classpathResource, File target, Class<?> scope)
-            throws IOException {
+    public void copyFromClassPath(String classpathResource, File target, Class<?> scope) throws IOException {
 
         byte[] buffer = new byte[4096];
         int read;
@@ -475,41 +471,30 @@ public class GeoServerResourceLoader extends DefaultResourceLoader
                 OutputStream os = new FileOutputStream(target)) {
             while ((read = is.read(buffer)) > 0) os.write(buffer, 0, read);
         } catch (FileNotFoundException targetException) {
-            throw new IOException(
-                    "Can't write to file "
-                            + target.getAbsolutePath()
-                            + ". Check write permissions on target folder for user "
-                            + System.getProperty("user.name"));
+            throw new IOException("Can't write to file "
+                    + target.getAbsolutePath()
+                    + ". Check write permissions on target folder for user "
+                    + System.getProperty("user.name"));
         } catch (IOException e) {
             LOGGER.log(Level.FINE, "Unable to copy logging configuration file", e);
         }
     }
 
-    private InputStream getStreamFromResource(String classpathResource, Class<?> scope)
-            throws IOException {
+    private InputStream getStreamFromResource(String classpathResource, Class<?> scope) throws IOException {
         InputStream is = null;
         if (scope == null) {
-            is =
-                    Thread.currentThread()
-                            .getContextClassLoader()
-                            .getResourceAsStream(classpathResource);
+            is = Thread.currentThread().getContextClassLoader().getResourceAsStream(classpathResource);
             if (is == null) {
-                throw new IOException(
-                        "Could not load "
-                                + classpathResource
-                                + " from scope "
-                                + Thread.currentThread().getContextClassLoader().toString()
-                                + ".");
+                throw new IOException("Could not load "
+                        + classpathResource
+                        + " from scope "
+                        + Thread.currentThread().getContextClassLoader().toString()
+                        + ".");
             }
         } else {
             is = scope.getResourceAsStream(classpathResource);
             if (is == null) {
-                throw new IOException(
-                        "Could not load "
-                                + classpathResource
-                                + " from scope "
-                                + scope.toString()
-                                + ".");
+                throw new IOException("Could not load " + classpathResource + " from scope " + scope.toString() + ".");
             }
         }
 
@@ -532,9 +517,7 @@ public class GeoServerResourceLoader extends DefaultResourceLoader
     public static String lookupGeoServerDataDirectory(ServletContext servContext) {
 
         final String[] typeStrs = {
-            "Java environment variable ",
-            "Servlet context parameter ",
-            "System environment variable "
+            "Java environment variable ", "Servlet context parameter ", "System environment variable "
         };
 
         String requireFileVar = "GEOSERVER_REQUIRE_FILE";

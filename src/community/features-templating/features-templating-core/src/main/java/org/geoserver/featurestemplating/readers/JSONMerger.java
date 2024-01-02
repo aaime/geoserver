@@ -30,13 +30,11 @@ public class JSONMerger {
 
     public ObjectNode mergeTrees(JsonNode base, JsonNode overlay) {
         // first validate they are both objects
-        if (base.getNodeType() != JsonNodeType.OBJECT
-                || overlay.getNodeType() != JsonNodeType.OBJECT)
-            throw new IllegalArgumentException(
-                    "Trying to merge but either source or target are not objects:\n"
-                            + base.toPrettyString()
-                            + "\n"
-                            + overlay.toPrettyString());
+        if (base.getNodeType() != JsonNodeType.OBJECT || overlay.getNodeType() != JsonNodeType.OBJECT)
+            throw new IllegalArgumentException("Trying to merge but either source or target are not objects:\n"
+                    + base.toPrettyString()
+                    + "\n"
+                    + overlay.toPrettyString());
 
         return mergeTrees((ObjectNode) base, (ObjectNode) overlay);
     }
@@ -88,14 +86,10 @@ public class JSONMerger {
     }
 
     private boolean isDynamicMerge(JsonNode ov, JsonNode bv) {
-        Predicate<JsonNode> isDynamic =
-                node ->
-                        node.isTextual()
-                                && (node.asText().startsWith("${")
-                                        || node.asText().startsWith("$${"));
+        Predicate<JsonNode> isDynamic = node -> node.isTextual()
+                && (node.asText().startsWith("${") || node.asText().startsWith("$${"));
         Predicate<JsonNode> isObject = node -> node.getNodeType() == JsonNodeType.OBJECT;
-        return (isDynamic.test(ov) && isObject.test(bv))
-                || (isDynamic.test(bv) && isObject.test(ov));
+        return (isDynamic.test(ov) && isObject.test(bv)) || (isDynamic.test(bv) && isObject.test(ov));
     }
 
     private void dynamicMergeDirective(ObjectNode merged, String name, JsonNode bv, JsonNode ov) {

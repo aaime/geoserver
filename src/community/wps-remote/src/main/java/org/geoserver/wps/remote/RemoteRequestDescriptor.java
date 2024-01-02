@@ -30,11 +30,7 @@ public class RemoteRequestDescriptor {
 
     /** */
     public RemoteRequestDescriptor(
-            Name servicename,
-            Map<String, Object> input,
-            Map<String, Object> metadata,
-            String pid,
-            String baseURL) {
+            Name servicename, Map<String, Object> input, Map<String, Object> metadata, String pid, String baseURL) {
         super();
         this.servicename = servicename;
         this.input = input;

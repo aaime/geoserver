@@ -53,8 +53,7 @@ public abstract class AbstractAPIExceptionHandler implements APIExceptionHandler
             statusSet = true;
         } else if (t instanceof ServiceException) {
             type = ((ServiceException) t).getCode();
-            OWS20Exception.OWSExceptionCode o20Code =
-                    OWS20Exception.OWSExceptionCode.getByCode(type);
+            OWS20Exception.OWSExceptionCode o20Code = OWS20Exception.OWSExceptionCode.getByCode(type);
             if (o20Code != null) {
                 response.setStatus(o20Code.getHttpCode());
                 statusSet = true;
@@ -68,13 +67,10 @@ public abstract class AbstractAPIExceptionHandler implements APIExceptionHandler
             response.setStatus(400);
             statusSet = true;
             type = OWS20Exception.INVALID_PARAMETER_VALUE;
-            title =
-                    "Invalid syntax "
-                            + ((MethodArgumentTypeMismatchException) t).getValue()
-                            + " for parameter "
-                            + ((MethodArgumentTypeMismatchException) t)
-                                    .getParameter()
-                                    .getParameterName();
+            title = "Invalid syntax "
+                    + ((MethodArgumentTypeMismatchException) t).getValue()
+                    + " for parameter "
+                    + ((MethodArgumentTypeMismatchException) t).getParameter().getParameterName();
         }
         if (!statusSet) response.setStatus(500);
         if (type == null) type = OWS20Exception.NO_APPLICABLE_CODE;
@@ -83,8 +79,7 @@ public abstract class AbstractAPIExceptionHandler implements APIExceptionHandler
         writeResponse(response, t, type, title);
     }
 
-    protected abstract void writeResponse(
-            HttpServletResponse response, Throwable t, String type, String title);
+    protected abstract void writeResponse(HttpServletResponse response, Throwable t, String type, String title);
 
     protected String getDescription(Throwable t) {
         StringBuffer sb = new StringBuffer();

@@ -347,15 +347,12 @@ public class TemplateBuilderMaker {
 
     private IteratingBuilder buildIteratingBuilder() {
         IteratingBuilder iteratingBuilder;
-        if (flatOutput)
-            iteratingBuilder =
-                    new FlatIteratingBuilder(name, namespaces, separator, topLevelFeature);
+        if (flatOutput) iteratingBuilder = new FlatIteratingBuilder(name, namespaces, separator, topLevelFeature);
         else iteratingBuilder = new IteratingBuilder(name, namespaces, topLevelFeature);
         if (source != null) iteratingBuilder.setSource(source);
         if (filter != null) iteratingBuilder.setFilter(filter);
         if (!encondingHints.isEmpty()) iteratingBuilder.getEncodingHints().putAll(encondingHints);
-        if (name != null && rootCollectionName != null && rootCollectionName.equals(name))
-            ownOutput = false;
+        if (name != null && rootCollectionName != null && rootCollectionName.equals(name)) ownOutput = false;
         iteratingBuilder.setOwnOutput(ownOutput);
         iteratingBuilder.setTopLevelFeature(topLevelFeature);
         return iteratingBuilder;
@@ -363,9 +360,7 @@ public class TemplateBuilderMaker {
 
     private CompositeBuilder buildCompositeBuilder() {
         CompositeBuilder compositeBuilder;
-        if (flatOutput)
-            compositeBuilder =
-                    new FlatCompositeBuilder(name, namespaces, separator, topLevelFeature);
+        if (flatOutput) compositeBuilder = new FlatCompositeBuilder(name, namespaces, separator, topLevelFeature);
         else compositeBuilder = new CompositeBuilder(name, namespaces, topLevelFeature);
 
         if (source != null) compositeBuilder.setSource(source);
@@ -377,12 +372,10 @@ public class TemplateBuilderMaker {
 
     private DynamicValueBuilder buildDynamicBuilder() {
         DynamicValueBuilder dynamicValueBuilder;
-        if (flatOutput)
-            dynamicValueBuilder = new FlatDynamicBuilder(name, textContent, namespaces, separator);
+        if (flatOutput) dynamicValueBuilder = new FlatDynamicBuilder(name, textContent, namespaces, separator);
         else dynamicValueBuilder = new DynamicValueBuilder(name, textContent, namespaces);
         if (filter != null) dynamicValueBuilder.setFilter(filter);
-        if (!encondingHints.isEmpty())
-            dynamicValueBuilder.getEncodingHints().putAll(encondingHints);
+        if (!encondingHints.isEmpty()) dynamicValueBuilder.getEncodingHints().putAll(encondingHints);
         return dynamicValueBuilder;
     }
 
@@ -401,15 +394,13 @@ public class TemplateBuilderMaker {
         DynamicMergeBuilder dynamicMergeBuilder =
                 new DynamicMergeBuilder(name, expression, namespaces, node, overlayExpression);
         if (filter != null) dynamicMergeBuilder.setFilter(filter);
-        if (!encondingHints.isEmpty())
-            dynamicMergeBuilder.getEncodingHints().putAll(encondingHints);
+        if (!encondingHints.isEmpty()) dynamicMergeBuilder.getEncodingHints().putAll(encondingHints);
         return dynamicMergeBuilder;
     }
 
     private DynamicIncludeFlatBuilder buildDynamicIncludeFlatBuilder() {
         DynamicIncludeFlatBuilder dynamicIncludeFlatBuilder;
-        dynamicIncludeFlatBuilder =
-                new DynamicIncludeFlatBuilder(textContent, namespaces, baseNode);
+        dynamicIncludeFlatBuilder = new DynamicIncludeFlatBuilder(textContent, namespaces, baseNode);
         if (filter != null) dynamicIncludeFlatBuilder.setFilter(filter);
         if (!encondingHints.isEmpty())
             dynamicIncludeFlatBuilder.getEncodingHints().putAll(encondingHints);
@@ -430,13 +421,11 @@ public class TemplateBuilderMaker {
         boolean hasJsonNode = jsonNode != null;
         boolean hasFilter = filter != null;
         if (flatOutput) {
-            if (hasJsonNode && !hasFilter)
-                staticBuilder = new FlatStaticBuilder(name, jsonNode, namespaces, separator);
+            if (hasJsonNode && !hasFilter) staticBuilder = new FlatStaticBuilder(name, jsonNode, namespaces, separator);
             else staticBuilder = new FlatStaticBuilder(name, textContent, namespaces, separator);
         } else {
 
-            if (hasJsonNode && !hasFilter)
-                staticBuilder = new StaticBuilder(name, jsonNode, namespaces);
+            if (hasJsonNode && !hasFilter) staticBuilder = new StaticBuilder(name, jsonNode, namespaces);
             else staticBuilder = new StaticBuilder(name, textContent, namespaces);
         }
 
@@ -464,8 +453,7 @@ public class TemplateBuilderMaker {
             if (isCollection) result = buildIteratingBuilder();
             else result = buildCompositeBuilder();
         } else {
-            if (textContent != null && textContent.contains(TemplateReader.EXPRSTART))
-                result = buildDynamicBuilder();
+            if (textContent != null && textContent.contains(TemplateReader.EXPRSTART)) result = buildDynamicBuilder();
             else result = buildStaticBuilder();
         }
         localReset();

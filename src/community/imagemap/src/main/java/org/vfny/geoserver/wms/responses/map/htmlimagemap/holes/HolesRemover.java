@@ -67,8 +67,7 @@ public class HolesRemover {
     private LineString holeVerts = null;
     private GeometryFactory gFac = null;
 
-    private IndexableCyclicalLinkedList<Vertex> polygonVertices =
-            new IndexableCyclicalLinkedList<>();
+    private IndexableCyclicalLinkedList<Vertex> polygonVertices = new IndexableCyclicalLinkedList<>();
     private CyclicalList<Vertex> convexVertices = new CyclicalList<>();
     private CyclicalList<Vertex> reflexVertices = new CyclicalList<>();
 
@@ -159,9 +158,7 @@ public class HolesRemover {
         Float closestPoint = null;
         LineSegment closestSegment = new LineSegment();
         for (LineSegment segment : segmentsToTest) {
-            Float intersection =
-                    segment.intersectsWithRay(
-                            rightMostHoleVertex.getPosition(), new Coordinate(1.0, 0.0));
+            Float intersection = segment.intersectsWithRay(rightMostHoleVertex.getPosition(), new Coordinate(1.0, 0.0));
             if (intersection != null) {
                 if (closestPoint == null || closestPoint.floatValue() > intersection.floatValue()) {
                     closestPoint = intersection;
@@ -180,10 +177,9 @@ public class HolesRemover {
         GVector i = new GVector(new double[] {I.x, I.y});
         i.add(new GVector(new double[] {closestPoint.floatValue(), 0.0}));
 
-        Vertex P =
-                (closestSegment.A.getPosition().x > closestSegment.B.getPosition().x)
-                        ? closestSegment.A
-                        : closestSegment.B;
+        Vertex P = (closestSegment.A.getPosition().x > closestSegment.B.getPosition().x)
+                ? closestSegment.A
+                : closestSegment.B;
 
         // construct triangle MIP
         Triangle mip = new Triangle(rightMostHoleVertex, new Vertex(I, 1), P);
@@ -199,12 +195,8 @@ public class HolesRemover {
             float closestDot = -1f;
             for (Vertex v : interiorReflexVertices) {
                 GVector n = new GVector(new double[] {v.getPosition().x, v.getPosition().y});
-                n.sub(
-                        new GVector(
-                                new double[] {
-                                    rightMostHoleVertex.getPosition().x,
-                                    rightMostHoleVertex.getPosition().y
-                                }));
+                n.sub(new GVector(
+                        new double[] {rightMostHoleVertex.getPosition().x, rightMostHoleVertex.getPosition().y}));
                 n.normalize();
                 GVector m = new GVector(new double[] {1.0, 0.0});
                 float dot = (float) m.dot(n);
@@ -293,15 +285,12 @@ public class HolesRemover {
             GVector e2 = new GVector(new double[] {p3.x, p3.y});
             e2.sub(new GVector(new double[] {p2.x, p2.y}));
 
-            if (e1.getElement(0) * e2.getElement(1) - e1.getElement(1) * e2.getElement(0) >= 0)
-                clockWiseCount++;
+            if (e1.getElement(0) * e2.getElement(1) - e1.getElement(1) * e2.getElement(0) >= 0) clockWiseCount++;
             else counterClockWiseCount++;
 
             p1 = p2;
         }
 
-        return (clockWiseCount > counterClockWiseCount)
-                ? WINDING_CLOCKWISE
-                : WINDING_COUNTER_CLOCKWISE;
+        return (clockWiseCount > counterClockWiseCount) ? WINDING_CLOCKWISE : WINDING_COUNTER_CLOCKWISE;
     }
 }

@@ -35,8 +35,7 @@ public class WCSEnvelope extends AbstractBounds {
     /** Creates an empty envelope based on the given coordinate reference system */
     public WCSEnvelope(CoordinateReferenceSystem crs) {
         if (crs == null) {
-            throw new IllegalArgumentException(
-                    "WCSEnvelope coordinate reference system cannot be null");
+            throw new IllegalArgumentException("WCSEnvelope coordinate reference system cannot be null");
         }
         this.crs = crs;
 
@@ -65,10 +64,8 @@ public class WCSEnvelope extends AbstractBounds {
      * Sets the range for the given dimension. If the dimension is the longitude, it is allowed to
      * set a minimum greater than the maximum, this envelope will be assumed to span the dateline
      */
-    public void setRange(int dimension, double minimum, double maximum)
-            throws IndexOutOfBoundsException {
-        if (minimum > maximum
-                && (longitudeDimension != LONGIDUTE_NOT_FOUND && dimension != longitudeDimension)) {
+    public void setRange(int dimension, double minimum, double maximum) throws IndexOutOfBoundsException {
+        if (minimum > maximum && (longitudeDimension != LONGIDUTE_NOT_FOUND && dimension != longitudeDimension)) {
             // Make an empty envelope (min == max)
             // while keeping it legal (min <= max).
             minimum = maximum = 0.5 * (minimum + maximum);
@@ -237,8 +234,7 @@ public class WCSEnvelope extends AbstractBounds {
         // crossing the dateline (e.g. polar, or mercator centered around the dateline)
         return longitudeDimension != LONGIDUTE_NOT_FOUND
                 && (getSpan(longitudeDimension) < 0
-                        || (getMinimum(longitudeDimension) < 180
-                                && getMaximum(longitudeDimension) > 180));
+                        || (getMinimum(longitudeDimension) < 180 && getMaximum(longitudeDimension) > 180));
     }
 
     /** Returns true if the specified dimension index is matching the longitude axis */

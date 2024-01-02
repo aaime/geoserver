@@ -63,8 +63,7 @@ public class MapLayerInfoKvpParser extends KvpParser {
             LayerInfo layerInfo = wms.getLayerByName(layerName);
             if (layerInfo == null) {
                 LayerGroupInfo groupInfo = wms.getLayerGroupByName(layerName);
-                if (groupInfo == null
-                        || LayerGroupInfo.Mode.CONTAINER.equals(groupInfo.getMode())) {
+                if (groupInfo == null || LayerGroupInfo.Mode.CONTAINER.equals(groupInfo.getMode())) {
                     throw new ServiceException(
                             layerName + ": no such layer on this server",
                             "LayerNotDefined",

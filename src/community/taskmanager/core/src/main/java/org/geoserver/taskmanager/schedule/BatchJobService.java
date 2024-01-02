@@ -84,11 +84,7 @@ public interface BatchJobService {
      *     schedule all at once.
      * @param callback run afterwards
      */
-    void scheduleNow(
-            Collection<Batch> batches,
-            int waitInSeconds,
-            int intervalInSeconds,
-            Consumer<Batch> callback);
+    void scheduleNow(Collection<Batch> batches, int waitInSeconds, int intervalInSeconds, Consumer<Batch> callback);
 
     void closeInactiveBatchruns();
 

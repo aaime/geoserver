@@ -50,8 +50,7 @@ public class SecuredObjects {
         // otherwise scan and store (or complain)
         if (candidate == null) {
             // scan the application context
-            List<SecuredObjectFactory> factories =
-                    GeoServerExtensions.extensions(SecuredObjectFactory.class);
+            List<SecuredObjectFactory> factories = GeoServerExtensions.extensions(SecuredObjectFactory.class);
             for (SecuredObjectFactory factory : factories) {
                 if (factory.canSecure(clazz)) {
                     candidate = factory;
@@ -60,9 +59,7 @@ public class SecuredObjects {
             }
             if (candidate == null)
                 throw new IllegalArgumentException(
-                        "Could not find a security wrapper for class "
-                                + clazz
-                                + ", cannot secure the object");
+                        "Could not find a security wrapper for class " + clazz + ", cannot secure the object");
             FACTORY_CACHE.put(clazz, candidate);
         }
 

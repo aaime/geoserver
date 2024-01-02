@@ -24,10 +24,7 @@ public class SecuredLayerGroupInfo extends DecoratingLayerGroupInfo {
      * wrapped so that each layer can be accessed only accordingly to the current user privileges)
      */
     public SecuredLayerGroupInfo(
-            LayerGroupInfo delegate,
-            LayerInfo rootLayer,
-            List<PublishedInfo> layers,
-            List<StyleInfo> styles) {
+            LayerGroupInfo delegate, LayerInfo rootLayer, List<PublishedInfo> layers, List<StyleInfo> styles) {
         super(delegate);
         this.rootLayer = rootLayer;
         this.layers = layers;
@@ -64,8 +61,7 @@ public class SecuredLayerGroupInfo extends DecoratingLayerGroupInfo {
     private static PublishedInfo unwrap(PublishedInfo pi) {
         if (pi instanceof SecuredLayerInfo || pi instanceof SecuredLayerGroupInfo) {
             @SuppressWarnings("unchecked")
-            AbstractDecorator<? extends PublishedInfo> decorator =
-                    (AbstractDecorator<? extends PublishedInfo>) pi;
+            AbstractDecorator<? extends PublishedInfo> decorator = (AbstractDecorator<? extends PublishedInfo>) pi;
 
             return decorator.unwrap(PublishedInfo.class);
         } else {

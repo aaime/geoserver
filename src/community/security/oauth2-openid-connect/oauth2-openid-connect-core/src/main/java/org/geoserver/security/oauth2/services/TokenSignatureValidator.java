@@ -21,8 +21,7 @@ public class TokenSignatureValidator {
      * @param token three part token
      * @throws InvalidSignatureException
      */
-    public void validateSignature(RSAKey rsaPublicKey, JWSObject token)
-            throws InvalidSignatureException {
+    public void validateSignature(RSAKey rsaPublicKey, JWSObject token) throws InvalidSignatureException {
         try {
             JWSVerifier verifier = new RSASSAVerifier(rsaPublicKey);
 
@@ -33,8 +32,7 @@ public class TokenSignatureValidator {
             }
         } catch (JOSEException unableToValidate) {
             throw (InvalidSignatureException)
-                    new InvalidSignatureException(
-                                    "Could not verify signature of the JWT with the given RSA Public Key")
+                    new InvalidSignatureException("Could not verify signature of the JWT with the given RSA Public Key")
                             .initCause(unableToValidate);
         }
     }

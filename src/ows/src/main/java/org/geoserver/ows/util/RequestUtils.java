@@ -60,7 +60,8 @@ public class RequestUtils {
         }
 
         // if no accept list provided, we return the biggest
-        if (acceptedList == null || acceptedList.isEmpty()) return provided.last().toString();
+        if (acceptedList == null || acceptedList.isEmpty())
+            return provided.last().toString();
 
         // next figure out what the client accepts (and check they are good version numbers)
         TreeSet<Version> accepted = new TreeSet<>();
@@ -139,7 +140,8 @@ public class RequestUtils {
         }
 
         // if no accept list provided, we return the biggest supported version
-        if (acceptedList == null || acceptedList.isEmpty()) return provided.last().toString();
+        if (acceptedList == null || acceptedList.isEmpty())
+            return provided.last().toString();
 
         // next figure out what the client accepts (and check they are good version numbers)
         List<Version> accepted = new ArrayList<>();
@@ -164,10 +166,7 @@ public class RequestUtils {
         // exceptionCode="VersionNegotiationFailed"
         if (negotiated == null)
             throw new ServiceException(
-                    "Could not find any matching version "
-                            + acceptedList
-                            + " in supported list: "
-                            + acceptedList,
+                    "Could not find any matching version " + acceptedList + " in supported list: " + acceptedList,
                     "VersionNegotiationFailed");
 
         return negotiated.toString();
@@ -198,8 +197,7 @@ public class RequestUtils {
      *     bytes are preparsed the stream can not be properly reset.
      * @return The buffered reader.
      */
-    public static BufferedReader getBufferedXMLReader(InputStream stream, int xmlLookahead)
-            throws IOException {
+    public static BufferedReader getBufferedXMLReader(InputStream stream, int xmlLookahead) throws IOException {
 
         @SuppressWarnings("PMD.CloseResource")
         Reader reader = XmlCharsetDetector.getCharsetAwareReader(stream);
@@ -216,8 +214,7 @@ public class RequestUtils {
      *     bytes are preparsed the stream can not be properly reset.
      * @return The buffered reader.
      */
-    public static BufferedReader getBufferedXMLReader(Reader reader, int xmlLookahead)
-            throws IOException {
+    public static BufferedReader getBufferedXMLReader(Reader reader, int xmlLookahead) throws IOException {
         // ensure the reader is a buffered reader
 
         if (!(reader instanceof BufferedReader)) {

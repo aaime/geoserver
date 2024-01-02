@@ -42,9 +42,7 @@ class ColorMapLabelMatcherExtractor extends RasterSymbolizerVisitor {
         if (targetAttributeName == null) targetAttributeName = DEFAULT_ATTRIBUTE_NAME;
 
         if (labelIncluded != null
-                && !labelIncluded
-                        .toUpperCase()
-                        .equals(ColorMapLabelMatcher.LabelInFeatureInfoMode.NONE.name())) {
+                && !labelIncluded.toUpperCase().equals(ColorMapLabelMatcher.LabelInFeatureInfoMode.NONE.name())) {
             Integer channelName = extractChannelSelectionName(raster.getChannelSelection());
             ColorMapLabelMatcher colorMapLabelMatcher =
                     new ColorMapLabelMatcher(targetAttributeName, cm, labelIncluded, channelName);
@@ -59,11 +57,7 @@ class ColorMapLabelMatcherExtractor extends RasterSymbolizerVisitor {
     private Integer extractChannelSelectionName(ChannelSelection channelSelection) {
         Integer channelName = null;
         if (channelSelection != null && channelSelection.getGrayChannel() != null)
-            channelName =
-                    channelSelection
-                            .getGrayChannel()
-                            .getChannelName()
-                            .evaluate(null, Integer.class);
+            channelName = channelSelection.getGrayChannel().getChannelName().evaluate(null, Integer.class);
         return channelName;
     }
 }

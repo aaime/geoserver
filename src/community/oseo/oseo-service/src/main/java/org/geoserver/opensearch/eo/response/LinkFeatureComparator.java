@@ -22,7 +22,8 @@ public class LinkFeatureComparator implements Comparator<SimpleFeature> {
 
     public static final LinkFeatureComparator INSTANCE = new LinkFeatureComparator();
 
-    private LinkFeatureComparator() {};
+    private LinkFeatureComparator() {}
+    ;
 
     static final Comparator<String> STRING_COMPARATOR =
             new NullSafeComparator<String>(new ComparableComparator<>(), true);

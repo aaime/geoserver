@@ -28,9 +28,7 @@ public class SortByConverter implements Converter<String, SortBy[]> {
     }
 
     public static final SortBy[] convertString(String spec) {
-        return Arrays.stream(spec.split("\\s*,\\s*"))
-                .map(s -> sortBy(s))
-                .toArray(n -> new SortBy[n]);
+        return Arrays.stream(spec.split("\\s*,\\s*")).map(s -> sortBy(s)).toArray(n -> new SortBy[n]);
     }
 
     private static SortBy sortBy(String spec) {

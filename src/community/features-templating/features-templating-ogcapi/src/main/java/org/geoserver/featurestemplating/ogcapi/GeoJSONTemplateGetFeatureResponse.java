@@ -38,8 +38,7 @@ class GeoJSONTemplateGetFeatureResponse
 
     @Override
     protected GeoJSONWriter getOutputWriter(OutputStream output) throws IOException {
-        return new GeoJSONAPIWriter(
-                new JsonFactory().createGenerator(output, JsonEncoding.UTF8), identifier);
+        return new GeoJSONAPIWriter(new JsonFactory().createGenerator(output, JsonEncoding.UTF8), identifier);
     }
 
     @Override
@@ -52,8 +51,7 @@ class GeoJSONTemplateGetFeatureResponse
             throws IOException {
         boolean isGeoJson = identifier.equals(TemplateIdentifier.GEOJSON);
         if (!isGeoJson) {
-            super.writeAdditionalFieldsInternal(
-                    writer, featureCollection, getFeature, featureCount, bounds);
+            super.writeAdditionalFieldsInternal(writer, featureCollection, getFeature, featureCount, bounds);
             return;
         }
         if (!isSingleFeatureRequest()) {

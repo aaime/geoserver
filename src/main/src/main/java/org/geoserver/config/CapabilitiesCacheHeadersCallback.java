@@ -47,15 +47,13 @@ public class CapabilitiesCacheHeadersCallback extends AbstractDispatcherCallback
             capabilitiesCacheHeadersEnabled = true;
         }
         if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.fine(
-                    "Cache control for capabilities requests and 304 support is enabled: "
-                            + capabilitiesCacheHeadersEnabled);
+            LOGGER.fine("Cache control for capabilities requests and 304 support is enabled: "
+                    + capabilitiesCacheHeadersEnabled);
         }
     }
 
     @Override
-    public Response responseDispatched(
-            Request request, Operation operation, Object result, Response response) {
+    public Response responseDispatched(Request request, Operation operation, Object result, Response response) {
         if (handleCachingHeaders(request)) {
             return new RevalidateTagResponse(response);
         }
@@ -65,8 +63,7 @@ public class CapabilitiesCacheHeadersCallback extends AbstractDispatcherCallback
 
     /** Returns true if the caching headers are enabled and the request is a GetCapabilities one */
     private boolean handleCachingHeaders(Request request) {
-        return capabilitiesCacheHeadersEnabled
-                && "GetCapabilities".equalsIgnoreCase(request.getRequest());
+        return capabilitiesCacheHeadersEnabled && "GetCapabilities".equalsIgnoreCase(request.getRequest());
     }
 
     /**
@@ -133,8 +130,7 @@ public class CapabilitiesCacheHeadersCallback extends AbstractDispatcherCallback
         }
 
         @Override
-        public void write(Object value, OutputStream output, Operation operation)
-                throws IOException, ServiceException {
+        public void write(Object value, OutputStream output, Operation operation) throws IOException, ServiceException {
             delegate.write(value, output, operation);
         }
 

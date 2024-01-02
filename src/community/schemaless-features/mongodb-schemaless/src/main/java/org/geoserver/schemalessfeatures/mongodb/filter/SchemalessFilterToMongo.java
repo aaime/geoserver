@@ -19,8 +19,7 @@ public class SchemalessFilterToMongo extends AbstractFilterToMongo {
 
     private DynamicFeatureType featureType;
 
-    public SchemalessFilterToMongo(
-            DynamicFeatureType featureType, MongoCollection<DBObject> collection) {
+    public SchemalessFilterToMongo(DynamicFeatureType featureType, MongoCollection<DBObject> collection) {
         super();
         this.featureType = featureType;
         this.typeFinder = new MongoTypeFinder(featureType.getName(), collection);
@@ -29,11 +28,7 @@ public class SchemalessFilterToMongo extends AbstractFilterToMongo {
     @Override
     protected String getGeometryPath() {
         Object path =
-                featureType
-                        .getGeometryDescriptor()
-                        .getType()
-                        .getUserData()
-                        .get(MongoSchemalessUtils.GEOMETRY_PATH);
+                featureType.getGeometryDescriptor().getType().getUserData().get(MongoSchemalessUtils.GEOMETRY_PATH);
         if (path == null) path = typeFinder.getGeometryPath();
 
         if (path != null) return path.toString();
@@ -48,8 +43,7 @@ public class SchemalessFilterToMongo extends AbstractFilterToMongo {
     @Override
     protected Class<?> getValueTypeInternal(Expression e) {
         Class<?> clazz = null;
-        if (e instanceof PropertyName)
-            clazz = typeFinder.getAttributeType(((PropertyName) e).getPropertyName());
+        if (e instanceof PropertyName) clazz = typeFinder.getAttributeType(((PropertyName) e).getPropertyName());
         return clazz;
     }
 }

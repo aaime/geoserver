@@ -74,9 +74,7 @@ public class ClipBoard implements Serializable {
      * @param target AjaxRequestTarget to update the marks on the view
      */
     public void setItems(
-            Collection<? extends TreeNode<Resource>> nodes,
-            boolean clipBoardIsCopy,
-            AjaxRequestTarget target) {
+            Collection<? extends TreeNode<Resource>> nodes, boolean clipBoardIsCopy, AjaxRequestTarget target) {
         treeView.clearMarked(MARK_CUT);
         treeView.clearMarked(MARK_COPY);
         for (TreeNode<Resource> clipBoardItem : items) {

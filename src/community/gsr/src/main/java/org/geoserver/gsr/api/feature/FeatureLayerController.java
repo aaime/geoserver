@@ -41,12 +41,9 @@ import org.springframework.web.bind.annotation.*;
 
 /** Controller for the Feature Service layer endpoint */
 @RestController
-@RequestMapping(
-        path = "/gsr/services/{workspaceName}/FeatureServer",
-        produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/gsr/services/{workspaceName}/FeatureServer", produces = MediaType.APPLICATION_JSON_VALUE)
 public class FeatureLayerController extends AbstractGSRController {
-    private static final Logger LOGGER =
-            org.geotools.util.logging.Logging.getLogger(FeatureLayerController.class);
+    private static final Logger LOGGER = org.geotools.util.logging.Logging.getLogger(FeatureLayerController.class);
 
     @Autowired
     public FeatureLayerController(@Qualifier("geoServer") GeoServer geoServer) {
@@ -56,19 +53,14 @@ public class FeatureLayerController extends AbstractGSRController {
     @ResponseBody
     @GetMapping(path = "/{layerId}", name = "FeatureServerGetFeature")
     @HTMLResponseBody(templateName = "featurelayer.ftl", fileName = "featurelayer.html")
-    public FeatureLayer featureGet(
-            @PathVariable String workspaceName, @PathVariable Integer layerId) throws IOException {
+    public FeatureLayer featureGet(@PathVariable String workspaceName, @PathVariable Integer layerId)
+            throws IOException {
         LayerOrTable entry;
         try {
             entry = LayerDAO.find(catalog, workspaceName, layerId);
         } catch (IOException e) {
             throw new NoSuchElementException(
-                    "Unavailable table or layer in workspace \""
-                            + workspaceName
-                            + "\" for id "
-                            + layerId
-                            + ":"
-                            + e);
+                    "Unavailable table or layer in workspace \"" + workspaceName + "\" for id " + layerId + ":" + e);
         }
         if (entry == null) {
             throw new NoSuchElementException(
@@ -76,22 +68,12 @@ public class FeatureLayerController extends AbstractGSRController {
         }
         FeatureLayer layer = new FeatureLayer(entry);
         layer.getPath()
-                .addAll(
-                        Arrays.asList(
-                                new Link(workspaceName, workspaceName),
-                                new Link(workspaceName + "/" + "FeatureServer", "FeatureServer"),
-                                new Link(
-                                        workspaceName + "/" + "FeatureServer/" + layerId,
-                                        entry.getName())));
+                .addAll(Arrays.asList(
+                        new Link(workspaceName, workspaceName),
+                        new Link(workspaceName + "/" + "FeatureServer", "FeatureServer"),
+                        new Link(workspaceName + "/" + "FeatureServer/" + layerId, entry.getName())));
         layer.getInterfaces()
-                .add(
-                        new Link(
-                                workspaceName
-                                        + "/"
-                                        + "FeatureServer/"
-                                        + layerId
-                                        + "?f=json&pretty=true",
-                                "REST"));
+                .add(new Link(workspaceName + "/" + "FeatureServer/" + layerId + "?f=json&pretty=true", "REST"));
         return layer;
     }
 
@@ -139,8 +121,7 @@ public class FeatureLayerController extends AbstractGSRController {
             @RequestParam(name = "spatialRel", required = false) String spatialRelText,
             @RequestParam(name = "rollbackOnFailure", required = false, defaultValue = "false")
                     boolean rollbackOnFailure,
-            @RequestParam(name = "returnEditMoment", required = false, defaultValue = "false")
-                    boolean returnEditMoment)
+            @RequestParam(name = "returnEditMoment", required = false, defaultValue = "false") boolean returnEditMoment)
             throws IOException, ServiceException {
 
         return deleteFeatures(
@@ -177,29 +158,27 @@ public class FeatureLayerController extends AbstractGSRController {
                     "No table or layer in workspace \"" + workspaceName + "\" for id " + layerId);
         }
         LayerInfo l = entry.layer;
-        FeatureCollection features =
-                FeatureDAO.getFeatureCollectionForLayer(
-                        workspaceName,
-                        entry.getId(),
-                        geometryTypeName,
-                        geometryText,
-                        inSRText,
-                        null,
-                        spatialRelText,
-                        objectIdsText,
-                        null,
-                        null,
-                        null,
-                        null,
-                        whereClause,
-                        false,
-                        null,
-                        l);
+        FeatureCollection features = FeatureDAO.getFeatureCollectionForLayer(
+                workspaceName,
+                entry.getId(),
+                geometryTypeName,
+                geometryText,
+                inSRText,
+                null,
+                spatialRelText,
+                objectIdsText,
+                null,
+                null,
+                null,
+                null,
+                whereClause,
+                false,
+                null,
+                l);
         long[] ids = FeatureEncoder.objectIds(features).getObjectIds();
         List<Long> idsList = Arrays.stream(ids).boxed().collect(Collectors.toList());
         FeatureTypeInfo featureTypeInfo = (FeatureTypeInfo) l.getResource();
-        return FeatureDAO.deleteFeatures(
-                featureTypeInfo, idsList, returnEditMoment, rollbackOnFailure);
+        return FeatureDAO.deleteFeatures(featureTypeInfo, idsList, returnEditMoment, rollbackOnFailure);
     }
 
     /** @See FeatureLayerController#featureDelete */
@@ -252,12 +231,10 @@ public class FeatureLayerController extends AbstractGSRController {
             @RequestParam String features,
             @RequestParam(name = "rollbackOnFailure", required = false, defaultValue = "false")
                     boolean rollbackOnFailure,
-            @RequestParam(name = "returnEditMoment", required = false, defaultValue = "false")
-                    boolean returnEditMoment)
+            @RequestParam(name = "returnEditMoment", required = false, defaultValue = "false") boolean returnEditMoment)
             throws IOException, ServiceException {
         FeatureArray featureArray = jsonStringToFeatureArray(features);
-        return updateFeatures(
-                featureArray, workspaceName, layerId, rollbackOnFailure, returnEditMoment);
+        return updateFeatures(featureArray, workspaceName, layerId, rollbackOnFailure, returnEditMoment);
     }
 
     /** @See FeatureLayerController#updateFeaturesPost */
@@ -308,12 +285,10 @@ public class FeatureLayerController extends AbstractGSRController {
             @RequestParam String features,
             @RequestParam(name = "rollbackOnFailure", required = false, defaultValue = "false")
                     boolean rollbackOnFailure,
-            @RequestParam(name = "returnEditMoment", required = false, defaultValue = "false")
-                    boolean returnEditMoment)
+            @RequestParam(name = "returnEditMoment", required = false, defaultValue = "false") boolean returnEditMoment)
             throws IOException, ServiceException {
         FeatureArray featureArray = jsonStringToFeatureArray(features);
-        return addFeatures(
-                featureArray, workspaceName, layerId, rollbackOnFailure, returnEditMoment);
+        return addFeatures(featureArray, workspaceName, layerId, rollbackOnFailure, returnEditMoment);
     }
 
     /** @See FeatureLayerController#addFeaturesPost */
@@ -374,8 +349,7 @@ public class FeatureLayerController extends AbstractGSRController {
             @RequestParam(name = "deletes", required = false) String deletes,
             @RequestParam(name = "rollbackOnFailure", required = false, defaultValue = "false")
                     boolean rollbackOnFailure,
-            @RequestParam(name = "returnEditMoment", required = false, defaultValue = "false")
-                    boolean returnEditMoment)
+            @RequestParam(name = "returnEditMoment", required = false, defaultValue = "false") boolean returnEditMoment)
             throws IOException, ServiceException {
 
         EditResults addEditResults = null;
@@ -385,35 +359,20 @@ public class FeatureLayerController extends AbstractGSRController {
         if (adds != null) {
             FeatureArray addsArray = jsonStringToFeatureArray(adds);
             if (addsArray.features != null && addsArray.features.size() > 0) {
-                addEditResults =
-                        addFeatures(
-                                addsArray,
-                                workspaceName,
-                                layerId,
-                                returnEditMoment,
-                                rollbackOnFailure);
+                addEditResults = addFeatures(addsArray, workspaceName, layerId, returnEditMoment, rollbackOnFailure);
             }
         }
 
         if (updates != null) {
             FeatureArray updatesArray = jsonStringToFeatureArray(updates);
-            if (updatesArray != null
-                    && updatesArray.features != null
-                    && updatesArray.features.size() > 0) {
+            if (updatesArray != null && updatesArray.features != null && updatesArray.features.size() > 0) {
                 updateEditResults =
-                        updateFeatures(
-                                updatesArray,
-                                workspaceName,
-                                layerId,
-                                returnEditMoment,
-                                rollbackOnFailure);
+                        updateFeatures(updatesArray, workspaceName, layerId, returnEditMoment, rollbackOnFailure);
             }
         }
 
         if (deletes != null && deletes.length() > 0) {
-            deleteEditResults =
-                    deleteFeatures(
-                            workspaceName, layerId, deletes, returnEditMoment, rollbackOnFailure);
+            deleteEditResults = deleteFeatures(workspaceName, layerId, deletes, returnEditMoment, rollbackOnFailure);
         }
 
         return new EditResults(
@@ -482,17 +441,13 @@ public class FeatureLayerController extends AbstractGSRController {
      * @throws IOException
      * @throws ServiceException
      */
-    @PostMapping(
-            path = "/applyEdits",
-            consumes = APPLICATION_FORM_URLENCODED_VALUE,
-            name = "FeatureServerApplyEdits")
+    @PostMapping(path = "/applyEdits", consumes = APPLICATION_FORM_URLENCODED_VALUE, name = "FeatureServerApplyEdits")
     public List<EditResults> applyEditsByService(
             @PathVariable String workspaceName,
             @RequestParam String edits,
             @RequestParam(name = "rollbackOnFailure", required = false, defaultValue = "false")
                     boolean rollbackOnFailure,
-            @RequestParam(name = "returnEditMoment", required = false, defaultValue = "false")
-                    boolean returnEditMoment,
+            @RequestParam(name = "returnEditMoment", required = false, defaultValue = "false") boolean returnEditMoment,
             @RequestParam(name = "honorSequenceOfEdits", required = false, defaultValue = "false")
                     boolean honorSequenceOfEdits)
             throws IOException, ServiceException {
@@ -513,48 +468,37 @@ public class FeatureLayerController extends AbstractGSRController {
                 if (layerEdits.getAdds() != null
                         && layerEdits.getAdds().features != null
                         && layerEdits.getAdds().features.size() > 0) {
-                    addEditResults =
-                            addFeatures(
-                                    layerEdits.getAdds(),
-                                    workspaceName,
-                                    layerEdits.getId(),
-                                    returnEditMoment,
-                                    rollbackOnFailure);
+                    addEditResults = addFeatures(
+                            layerEdits.getAdds(),
+                            workspaceName,
+                            layerEdits.getId(),
+                            returnEditMoment,
+                            rollbackOnFailure);
                 }
 
                 if (layerEdits.getUpdates() != null
                         && layerEdits.getUpdates().features != null
                         && layerEdits.getUpdates().features.size() > 0) {
-                    updateEditResults =
-                            updateFeatures(
-                                    layerEdits.getUpdates(),
-                                    workspaceName,
-                                    layerEdits.getId(),
-                                    returnEditMoment,
-                                    rollbackOnFailure);
+                    updateEditResults = updateFeatures(
+                            layerEdits.getUpdates(),
+                            workspaceName,
+                            layerEdits.getId(),
+                            returnEditMoment,
+                            rollbackOnFailure);
                 }
 
                 if (layerEdits.getDeletes() != null && layerEdits.getDeletes().size() > 0) {
-                    String objectIdString =
-                            layerEdits.getDeletes().stream()
-                                    .map(String::valueOf)
-                                    .collect(Collectors.joining(","));
-                    deleteEditResults =
-                            deleteFeatures(
-                                    workspaceName,
-                                    layerEdits.getId(),
-                                    objectIdString,
-                                    returnEditMoment,
-                                    rollbackOnFailure);
+                    String objectIdString = layerEdits.getDeletes().stream()
+                            .map(String::valueOf)
+                            .collect(Collectors.joining(","));
+                    deleteEditResults = deleteFeatures(
+                            workspaceName, layerEdits.getId(), objectIdString, returnEditMoment, rollbackOnFailure);
                 }
 
-                editResults.add(
-                        new EditResults(
-                                addEditResults != null ? addEditResults.addResults : null,
-                                updateEditResults != null ? updateEditResults.updateResults : null,
-                                deleteEditResults != null
-                                        ? deleteEditResults.deleteResults
-                                        : null));
+                editResults.add(new EditResults(
+                        addEditResults != null ? addEditResults.addResults : null,
+                        updateEditResults != null ? updateEditResults.updateResults : null,
+                        deleteEditResults != null ? deleteEditResults.deleteResults : null));
             }
 
         } else {

@@ -227,21 +227,16 @@ public class GeoServerApplication extends WebApplication
          * standard ones so it takes precedence. Otherwise it won't be hit due to GeoServerStringResourceLoader never resolving to null but falling
          * back to the default language
          */
-        List<IStringResourceLoader> alternateResourceLoaders =
-                getBeansOfType(IStringResourceLoader.class);
+        List<IStringResourceLoader> alternateResourceLoaders = getBeansOfType(IStringResourceLoader.class);
         for (IStringResourceLoader loader : alternateResourceLoaders) {
             LOGGER.info("Registering alternate resource loader: " + loader);
             getResourceSettings().getStringResourceLoaders().add(loader);
         }
 
-        getResourceSettings()
-                .getStringResourceLoaders()
-                .add(0, new GeoServerStringResourceLoader());
+        getResourceSettings().getStringResourceLoaders().add(0, new GeoServerStringResourceLoader());
         getDebugSettings().setAjaxDebugModeEnabled(false);
         getJavaScriptLibrarySettings()
-                .setJQueryReference(
-                        new JavaScriptResourceReference(
-                                JQueryResourceReference.class, JQUERY_VERSION_3));
+                .setJQueryReference(new JavaScriptResourceReference(JQueryResourceReference.class, JQUERY_VERSION_3));
         getApplicationSettings().setPageExpiredErrorPage(GeoServerExpiredPage.class);
         // generates infinite redirections, commented out for the moment
         // getSecuritySettings().setCryptFactory(GeoserverWicketEncrypterFactory.get());
@@ -249,14 +244,12 @@ public class GeoServerApplication extends WebApplication
         // theoretically, this replaces the old GeoServerRequestEncodingStrategy
         // by making the URLs encrypted at will
         GeoServerSecurityManager securityManager = getBeanOfType(GeoServerSecurityManager.class);
-        setRootRequestMapper(
-                new DynamicCryptoMapper(getRootRequestMapper(), securityManager, this));
+        setRootRequestMapper(new DynamicCryptoMapper(getRootRequestMapper(), securityManager, this));
 
         getRequestCycleListeners().add(new CallbackRequestCycleListener(this));
 
         // Csrf Protection
-        Boolean geoserverCsrfDisabled =
-                Boolean.valueOf(GeoServerExtensions.getProperty(GEOSERVER_CSRF_DISABLED));
+        Boolean geoserverCsrfDisabled = Boolean.valueOf(GeoServerExtensions.getProperty(GEOSERVER_CSRF_DISABLED));
         String geoserverCsrfWhitelist = GeoServerExtensions.getProperty(GEOSERVER_CSRF_WHITELIST);
 
         // Don't add a new lister each time init() is called
@@ -293,40 +286,29 @@ public class GeoServerApplication extends WebApplication
             case DEFAULT:
                 getRequestCycleSettings()
                         .setRenderStrategy(
-                                defaultIsRedirect
-                                        ? RenderStrategy.REDIRECT_TO_BUFFER
-                                        : RenderStrategy.ONE_PASS_RENDER);
+                                defaultIsRedirect ? RenderStrategy.REDIRECT_TO_BUFFER : RenderStrategy.ONE_PASS_RENDER);
         }
     }
 
     @Override
     public IProvider<IExceptionMapper> getExceptionMapperProvider() {
         // IProvider is functional, remove a bit of boilerplate
-        return () ->
-                new DefaultExceptionMapper() {
-                    @Override
-                    protected IRequestHandler mapUnexpectedExceptions(
-                            Exception e, Application application) {
+        return () -> new DefaultExceptionMapper() {
+            @Override
+            protected IRequestHandler mapUnexpectedExceptions(Exception e, Application application) {
 
-                        return createPageRequestHandler(
-                                new PageProvider(new GeoServerErrorPage(e)));
-                    }
-                };
+                return createPageRequestHandler(new PageProvider(new GeoServerErrorPage(e)));
+            }
+        };
     }
 
     @Override
     public RuntimeConfigurationType getConfigurationType() {
-        String config =
-                GeoServerExtensions.getProperty(
-                        "wicket." + Application.CONFIGURATION, getApplicationContext());
+        String config = GeoServerExtensions.getProperty("wicket." + Application.CONFIGURATION, getApplicationContext());
         if (config == null) {
             return DEPLOYMENT;
-        } else if (!"DEPLOYMENT".equalsIgnoreCase(config)
-                && !"DEVELOPMENT".equalsIgnoreCase(config)) {
-            LOGGER.warning(
-                    "Unknown Wicket configuration value '"
-                            + config
-                            + "', defaulting to DEPLOYMENT");
+        } else if (!"DEPLOYMENT".equalsIgnoreCase(config) && !"DEVELOPMENT".equalsIgnoreCase(config)) {
+            LOGGER.warning("Unknown Wicket configuration value '" + config + "', defaulting to DEPLOYMENT");
             return DEPLOYMENT;
         } else {
             return RuntimeConfigurationType.valueOf(config.toUpperCase());
@@ -367,8 +349,7 @@ public class GeoServerApplication extends WebApplication
 
     /** Refreshes the locale cookie, to maintain its presence in future requests */
     public void refreshLocaleCookie(Response response, Locale locale) {
-        Cookie languageCookie =
-                new Cookie(GeoServerApplication.LANGUAGE_COOKIE_NAME, locale.getLanguage());
+        Cookie languageCookie = new Cookie(GeoServerApplication.LANGUAGE_COOKIE_NAME, locale.getLanguage());
         languageCookie.setMaxAge(GeoServerApplication.LANGUAGE_COOKIE_AGE);
         ((WebResponse) response).addCookie(languageCookie);
     }
@@ -387,9 +368,7 @@ public class GeoServerApplication extends WebApplication
         locator.set(File.class, dd.getConverter(File.class));
         locator.set(URI.class, dd.getConverter(URI.class));
         locator.set(URL.class, dd.getConverter(URL.class));
-        locator.set(
-                Measure.class,
-                new GeoToolsConverterAdapter(MeasureConverterFactory.CONVERTER, Measure.class));
+        locator.set(Measure.class, new GeoToolsConverterAdapter(MeasureConverterFactory.CONVERTER, Measure.class));
 
         return locator;
     }
@@ -464,8 +443,7 @@ public class GeoServerApplication extends WebApplication
         }
 
         @Override
-        public IRequestHandler onException(
-                org.apache.wicket.request.cycle.RequestCycle cycle, Exception ex) {
+        public IRequestHandler onException(org.apache.wicket.request.cycle.RequestCycle cycle, Exception ex) {
             for (WicketCallback callback : callbacks) {
                 callback.onRuntimeException(cycle, ex);
             }
@@ -497,9 +475,8 @@ public class GeoServerApplication extends WebApplication
      */
     public HttpServletRequest servletRequest(Request req) {
         if (req == null || !(req instanceof ServletWebRequest)) {
-            throw new IllegalStateException(
-                    "Request not of type ServletWebRequest, was: "
-                            + (req == null ? "null" : req.getClass().getName()));
+            throw new IllegalStateException("Request not of type ServletWebRequest, was: "
+                    + (req == null ? "null" : req.getClass().getName()));
         }
 
         return ((ServletWebRequest) req).getContainerRequest();
@@ -507,8 +484,7 @@ public class GeoServerApplication extends WebApplication
 
     @Override
     public void onApplicationEvent(ApplicationEvent event) {
-        if (event instanceof AuthenticationSuccessEvent
-                || event instanceof InteractiveAuthenticationSuccessEvent) {
+        if (event instanceof AuthenticationSuccessEvent || event instanceof InteractiveAuthenticationSuccessEvent) {
             if (Session.exists()) {
                 WebSession.get().replaceSession();
             }

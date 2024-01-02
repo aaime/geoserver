@@ -27,8 +27,7 @@ public class GetRecordsTest extends MDTestSupport {
         // insert extra metadata
         ResourceInfo forestInfo = getCatalog().getLayerByName("Forests").getResource();
         forestInfo.getMetadata().put("date", "09/10/2012");
-        forestInfo.setLatLonBoundingBox(
-                new ReferencedEnvelope(-200, -180, -100, -90, CRS.decode("EPSG:4326")));
+        forestInfo.setLatLonBoundingBox(new ReferencedEnvelope(-200, -180, -100, -90, CRS.decode("EPSG:4326")));
         forestInfo.getKeywords().add(new Keyword("CustomKeyWord-1"));
         forestInfo.getKeywords().add(new Keyword("CustomKeyWord-2"));
         forestInfo.setDescription("Land with lots of trees on.");
@@ -39,9 +38,8 @@ public class GetRecordsTest extends MDTestSupport {
 
     @Test
     public void testAllRecordsPaged() throws Exception {
-        String request =
-                "csw?service=CSW&version=2.0.2&request=GetRecords&typeNames=gmd:MD_Metadata"
-                        + "&resultType=results&elementSetName=full&outputSchema=http://www.isotc211.org/2005/gmd";
+        String request = "csw?service=CSW&version=2.0.2&request=GetRecords&typeNames=gmd:MD_Metadata"
+                + "&resultType=results&elementSetName=full&outputSchema=http://www.isotc211.org/2005/gmd";
 
         Document d = getAsDOM(request);
         // print(d);
@@ -60,10 +58,9 @@ public class GetRecordsTest extends MDTestSupport {
 
     @Test
     public void testAllRecords() throws Exception {
-        String request =
-                "csw?service=CSW&version=2.0.2&request=GetRecords&typeNames=gmd:MD_Metadata"
-                        + "&resultType=results&elementSetName=full&outputSchema=http://www.isotc211.org/2005/gmd"
-                        + "&maxRecords=100";
+        String request = "csw?service=CSW&version=2.0.2&request=GetRecords&typeNames=gmd:MD_Metadata"
+                + "&resultType=results&elementSetName=full&outputSchema=http://www.isotc211.org/2005/gmd"
+                + "&maxRecords=100";
         Document d = getAsDOM(request);
         // print(d);
         // validateSchema(d.getElementsByTagName("//gmd:MD_MetaData"));
@@ -189,10 +186,9 @@ public class GetRecordsTest extends MDTestSupport {
 
     @Test
     public void testAllRecordsBrief() throws Exception {
-        String request =
-                "csw?service=CSW&version=2.0.2&request=GetRecords&typeNames=gmd:MD_Metadata"
-                        + "&resultType=results&elementSetName=brief&outputSchema=http://www.isotc211.org/2005/gmd"
-                        + "&maxRecords=100";
+        String request = "csw?service=CSW&version=2.0.2&request=GetRecords&typeNames=gmd:MD_Metadata"
+                + "&resultType=results&elementSetName=brief&outputSchema=http://www.isotc211.org/2005/gmd"
+                + "&maxRecords=100";
         Document d = getAsDOM(request);
         print(d);
         // validateSchema(d.getElementsByTagName("//gmd:MD_MetaData"));
@@ -342,9 +338,8 @@ public class GetRecordsTest extends MDTestSupport {
     @Test
     public void testLayerDisabledServiceRecords() throws Exception {
         disableCWSOnLinesLayer();
-        String request =
-                "csw?service=CSW&version=2.0.2&request=GetRecords&typeNames=gmd:MD_Metadata"
-                        + "&resultType=results&elementSetName=full&outputSchema=http://www.isotc211.org/2005/gmd";
+        String request = "csw?service=CSW&version=2.0.2&request=GetRecords&typeNames=gmd:MD_Metadata"
+                + "&resultType=results&elementSetName=full&outputSchema=http://www.isotc211.org/2005/gmd";
         Document doc = getAsDOM(request);
 
         assertXpathEvaluatesTo(
@@ -360,9 +355,8 @@ public class GetRecordsTest extends MDTestSupport {
     @Test
     public void testLayerEnabledServiceRecords() throws Exception {
         enableCWSOnLinesLayer();
-        String request =
-                "csw?service=CSW&version=2.0.2&request=GetRecords&typeNames=gmd:MD_Metadata"
-                        + "&resultType=results&elementSetName=full&outputSchema=http://www.isotc211.org/2005/gmd";
+        String request = "csw?service=CSW&version=2.0.2&request=GetRecords&typeNames=gmd:MD_Metadata"
+                + "&resultType=results&elementSetName=full&outputSchema=http://www.isotc211.org/2005/gmd";
         Document doc = getAsDOM(request);
 
         assertXpathEvaluatesTo(

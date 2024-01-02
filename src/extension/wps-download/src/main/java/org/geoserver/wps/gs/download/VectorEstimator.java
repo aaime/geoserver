@@ -97,8 +97,7 @@ class VectorEstimator {
 
         // access feature source and collection of features
         final SimpleFeatureSource featureSource =
-                (SimpleFeatureSource)
-                        resourceInfo.getFeatureSource(null, GeoTools.getDefaultHints());
+                (SimpleFeatureSource) resourceInfo.getFeatureSource(null, GeoTools.getDefaultHints());
 
         // basic filter preparation
         Filter ra = Filter.INCLUDE;
@@ -115,11 +114,9 @@ class VectorEstimator {
             }
             final String dataGeomName =
                     featureSource.getSchema().getGeometryDescriptor().getLocalName();
-            final Intersects intersectionFilter =
-                    FeatureUtilities.DEFAULT_FILTER_FACTORY.intersects(
-                            FeatureUtilities.DEFAULT_FILTER_FACTORY.property(dataGeomName),
-                            FeatureUtilities.DEFAULT_FILTER_FACTORY.literal(
-                                    roiManager.getSafeRoiInNativeCRS()));
+            final Intersects intersectionFilter = FeatureUtilities.DEFAULT_FILTER_FACTORY.intersects(
+                    FeatureUtilities.DEFAULT_FILTER_FACTORY.property(dataGeomName),
+                    FeatureUtilities.DEFAULT_FILTER_FACTORY.literal(roiManager.getSafeRoiInNativeCRS()));
             ra = FeatureUtilities.DEFAULT_FILTER_FACTORY.and(ra, intersectionFilter);
         }
 
@@ -146,8 +143,7 @@ class VectorEstimator {
         }
         if (maxFeatures > 0 && count > maxFeatures) {
             if (LOGGER.isLoggable(Level.SEVERE)) {
-                LOGGER.log(
-                        Level.SEVERE, "MaxFeatures limit exceeded. " + count + " > " + maxFeatures);
+                LOGGER.log(Level.SEVERE, "MaxFeatures limit exceeded. " + count + " > " + maxFeatures);
             }
             return false;
         }

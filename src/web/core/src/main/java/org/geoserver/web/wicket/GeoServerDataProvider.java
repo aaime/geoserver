@@ -475,8 +475,7 @@ public abstract class GeoServerDataProvider<T> extends SortableDataProvider<T, O
             } catch (NestedNullException nne) {
                 return null;
             } catch (Exception e) {
-                throw new RuntimeException(
-                        "Could not find property " + propertyPath + " in " + bean.getClass(), e);
+                throw new RuntimeException("Could not find property " + propertyPath + " in " + bean.getClass(), e);
             }
         }
 

@@ -92,10 +92,8 @@ public class GeoServerXMLConfiguration extends XmlConfiguration {
     protected void stripGeoServerLogFile(Node node) {
         if (isType(node, APPENDERS_NODE)) {
             node.getChildren()
-                    .removeIf(
-                            appender ->
-                                    isGeoServerLogFile(appender, ROLLING_FILE_NODE)
-                                            || isGeoServerLogFile(appender, FILE_APPENDER_NODE));
+                    .removeIf(appender -> isGeoServerLogFile(appender, ROLLING_FILE_NODE)
+                            || isGeoServerLogFile(appender, FILE_APPENDER_NODE));
         }
         if (isType(node, LOGGERS_NODE)) {
             for (final Node logger : node.getChildren()) {
@@ -211,8 +209,7 @@ public class GeoServerXMLConfiguration extends XmlConfiguration {
         String fileName = fileName();
         String fileNameTemplate = attributeGet(node, "fileName");
         if (fileNameTemplate != null) {
-            LOGGER.debug(
-                    "Preconfiguration geoserverlogfile.RollingFile.filename=", fileNameTemplate);
+            LOGGER.debug("Preconfiguration geoserverlogfile.RollingFile.filename=", fileNameTemplate);
 
             String path = applyPathTemplate(fileName, fileNameTemplate);
             attributePut(node, "fileName", path);
@@ -220,9 +217,7 @@ public class GeoServerXMLConfiguration extends XmlConfiguration {
         }
         String filePatternTemplate = attributeGet(node, "filePattern");
         if (filePatternTemplate != null) {
-            LOGGER.debug(
-                    "Preconfiguration geoserverlogfile.RollingFile.filePattern=",
-                    filePatternTemplate);
+            LOGGER.debug("Preconfiguration geoserverlogfile.RollingFile.filePattern=", filePatternTemplate);
 
             String pattern = applyPathTemplate(fileName, filePatternTemplate);
             attributePut(node, "filePattern", pattern);
@@ -333,11 +328,10 @@ public class GeoServerXMLConfiguration extends XmlConfiguration {
             }
             for (LoggerConfig loggerConfig : getLoggers().values()) {
                 if (loggerConfig.getAppenders().containsKey("geoserverlogfile")) {
-                    LOGGER.warn(
-                            "Logger '"
-                                    + loggerConfig.getName()
-                                    + "' includes suppressed 'geoserverlogfile':"
-                                    + loggerConfig.getAppenders().get("geoserverlogfile"));
+                    LOGGER.warn("Logger '"
+                            + loggerConfig.getName()
+                            + "' includes suppressed 'geoserverlogfile':"
+                            + loggerConfig.getAppenders().get("geoserverlogfile"));
                 }
             }
         }
@@ -348,11 +342,10 @@ public class GeoServerXMLConfiguration extends XmlConfiguration {
             }
             for (LoggerConfig loggerConfig : getLoggers().values()) {
                 if (loggerConfig.getAppenders().containsKey("stdout")) {
-                    LOGGER.warn(
-                            "Logger '"
-                                    + loggerConfig.getName()
-                                    + "' includes suppressed 'stdout':"
-                                    + loggerConfig.getAppenders().get("stdout"));
+                    LOGGER.warn("Logger '"
+                            + loggerConfig.getName()
+                            + "' includes suppressed 'stdout':"
+                            + loggerConfig.getAppenders().get("stdout"));
                 }
             }
         }

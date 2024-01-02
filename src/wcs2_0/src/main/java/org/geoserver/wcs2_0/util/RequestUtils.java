@@ -81,7 +81,8 @@ public class RequestUtils {
         }
 
         // if no accept list provided, we return the biggest supported version
-        if (acceptedList == null || acceptedList.isEmpty()) return provided.last().toString();
+        if (acceptedList == null || acceptedList.isEmpty())
+            return provided.last().toString();
 
         // next figure out what the client accepts (and check they are good version numbers)
         List<Version> accepted = new ArrayList<>();
@@ -106,8 +107,7 @@ public class RequestUtils {
         // exceptionCode="VersionNegotiationFailed"
         if (negotiated == null)
             throw new OWS20Exception(
-                    "Could not find any matching version",
-                    OWS20Exception.OWSExceptionCode.VersionNegotiationFailed);
+                    "Could not find any matching version", OWS20Exception.OWSExceptionCode.VersionNegotiationFailed);
 
         return negotiated.toString();
     }
@@ -152,8 +152,7 @@ public class RequestUtils {
         ////
         try {
             final ReferencedEnvelope coverageEnvelope = WCSUtils.fitEnvelope(cinfo, reader);
-            if (!coverageEnvelope.intersects(
-                    (BoundingBox) ReferencedEnvelope.reference(readGG.getEnvelope()))) {
+            if (!coverageEnvelope.intersects((BoundingBox) ReferencedEnvelope.reference(readGG.getEnvelope()))) {
                 return null;
             }
 
@@ -198,7 +197,8 @@ public class RequestUtils {
             // also have a READ_GRIDGEOMETRY2D. In such case we just
             // override it with the one we just build for this
             // request.
-            final String readGGName = AbstractGridFormat.READ_GRIDGEOMETRY2D.getName().toString();
+            final String readGGName =
+                    AbstractGridFormat.READ_GRIDGEOMETRY2D.getName().toString();
             final String readInterpolationName =
                     ImageMosaicFormat.INTERPOLATION.getName().toString();
             final String overviewPolicyName =
@@ -223,9 +223,7 @@ public class RequestUtils {
             }
 
             // did we find anything?
-            if (!foundGG
-                    || !foundInterpolation
-                    || !foundOverviewPolicy) { // || !(foundBgColor && bgColor != null)) {
+            if (!foundGG || !foundInterpolation || !foundOverviewPolicy) { // || !(foundBgColor && bgColor != null)) {
                 // add the correct read geometry to the supplied
                 // params since we did not find anything
                 List<GeneralParameterValue> paramList = new ArrayList<>();
@@ -236,9 +234,7 @@ public class RequestUtils {
                 if (!foundInterpolation) {
                     paramList.add(readInterpolation);
                 }
-                if (!foundOverviewPolicy
-                        && readOverview != null
-                        && readOverview.getValue() != null) {
+                if (!foundOverviewPolicy && readOverview != null && readOverview.getValue() != null) {
                     paramList.add(readOverview);
                 }
 
@@ -277,8 +273,7 @@ public class RequestUtils {
      *
      * @param reader the {@link GridCoverage2DReader} that we'll read the coverage from
      */
-    public static GridCoverage2D readSampleGridCoverage(GridCoverage2DReader reader)
-            throws Exception {
+    public static GridCoverage2D readSampleGridCoverage(GridCoverage2DReader reader) throws Exception {
         //
         // Now reading a fake small GridCoverage just to retrieve meta
         // information about bands:
@@ -306,10 +301,8 @@ public class RequestUtils {
         final GridEnvelope2D testRange = new GridEnvelope2D(minX, minY, maxX, maxY);
 
         // build the corresponding envelope
-        final MathTransform gridToWorldCorner =
-                reader.getOriginalGridToWorld(PixelInCell.CELL_CORNER);
-        final GeneralBounds testEnvelope =
-                CRS.transform(gridToWorldCorner, new GeneralBounds(testRange.getBounds()));
+        final MathTransform gridToWorldCorner = reader.getOriginalGridToWorld(PixelInCell.CELL_CORNER);
+        final GeneralBounds testEnvelope = CRS.transform(gridToWorldCorner, new GeneralBounds(testRange.getBounds()));
         testEnvelope.setCoordinateReferenceSystem(originalEnvelope.getCoordinateReferenceSystem());
 
         // make sure mosaics with many superimposed tiles won't blow up with
@@ -339,16 +332,14 @@ public class RequestUtils {
     }
 
     /** Grabs the reader from the specified coverage */
-    public static GridCoverage2DReader getCoverageReader(CoverageInfo ci)
-            throws IOException, Exception {
+    public static GridCoverage2DReader getCoverageReader(CoverageInfo ci) throws IOException, Exception {
         // get a reader for this coverage
         final CoverageStoreInfo store = ci.getStore();
         final GridCoverageReader reader_ =
                 ci.getGridCoverageReader(new DefaultProgressListener(), GeoTools.getDefaultHints());
         if (reader_ == null) {
-            throw new Exception(
-                    "Unable to acquire a reader for this coverage with format: "
-                            + store.getFormat().getName());
+            throw new Exception("Unable to acquire a reader for this coverage with format: "
+                    + store.getFormat().getName());
         }
         final GridCoverage2DReader reader = (GridCoverage2DReader) reader_;
         return reader;
@@ -357,10 +348,7 @@ public class RequestUtils {
     /** Makes sure the version is present and supported */
     public static void checkVersion(String version) {
         if (version == null) {
-            throw new WCS20Exception(
-                    "Missing version",
-                    OWS20Exception.OWSExceptionCode.MissingParameterValue,
-                    version);
+            throw new WCS20Exception("Missing version", OWS20Exception.OWSExceptionCode.MissingParameterValue, version);
         }
 
         if (!WCS20Const.V201.equals(version) && !WCS20Const.V20.equals(version)) {
@@ -372,9 +360,7 @@ public class RequestUtils {
     public static void checkService(String serviceName) {
         if (serviceName == null) {
             throw new WCS20Exception(
-                    "Missing service name",
-                    OWS20Exception.OWSExceptionCode.MissingParameterValue,
-                    "service");
+                    "Missing service name", OWS20Exception.OWSExceptionCode.MissingParameterValue, "service");
         }
         if (!"WCS".equals(serviceName)) {
             throw new WCS20Exception(

@@ -20,8 +20,7 @@ import org.geoserver.platform.resource.Resources;
  *
  * @author Alessio Fabiani, GeoSolutions
  */
-public class StyleInfoAdditionalResourceWriter
-        implements CatalogAdditionalResourcesWriter<StyleInfo> {
+public class StyleInfoAdditionalResourceWriter implements CatalogAdditionalResourcesWriter<StyleInfo> {
 
     @Override
     public boolean canHandle(Object item) {
@@ -29,8 +28,7 @@ public class StyleInfoAdditionalResourceWriter
     }
 
     @Override
-    public void writeAdditionalResources(Backup backupFacade, Resource base, StyleInfo item)
-            throws IOException {
+    public void writeAdditionalResources(Backup backupFacade, Resource base, StyleInfo item) throws IOException {
         Resource styleFile = backupFacade.getGeoServerDataDirectory().get(item, item.getFilename());
 
         if (styleFile != null && Resources.exists(styleFile)) {

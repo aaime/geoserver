@@ -27,8 +27,7 @@ public class EnvelopeAxesLabelsMapper {
         Utilities.ensureNonNull("envelope", envelope);
         final CoordinateReferenceSystem crs = envelope.getCoordinateReferenceSystem();
         if (crs == null) {
-            throw new IllegalStateException(
-                    "Unable to determine axes names as envelope does not include srs");
+            throw new IllegalStateException("Unable to determine axes names as envelope does not include srs");
         }
 
         // handle axes switch for geographic crs
@@ -49,16 +48,12 @@ public class EnvelopeAxesLabelsMapper {
             int northing = -1, easting = -1;
             for (int i = 0; i < dimension; i++) {
                 final CoordinateSystemAxis axis = cs.getAxis(i);
-                if (Math.abs(
-                                DefaultCoordinateSystemAxis.getAngle(
-                                        axis.getDirection(),
-                                        DefaultCoordinateSystemAxis.LONGITUDE.getDirection()))
+                if (Math.abs(DefaultCoordinateSystemAxis.getAngle(
+                                axis.getDirection(), DefaultCoordinateSystemAxis.LONGITUDE.getDirection()))
                         < 1E-6) {
                     easting = i;
-                } else if (Math.abs(
-                                DefaultCoordinateSystemAxis.getAngle(
-                                        axis.getDirection(),
-                                        DefaultCoordinateSystemAxis.LATITUDE.getDirection()))
+                } else if (Math.abs(DefaultCoordinateSystemAxis.getAngle(
+                                axis.getDirection(), DefaultCoordinateSystemAxis.LATITUDE.getDirection()))
                         < 1E-6) {
                     northing = i;
                 }
@@ -80,8 +75,7 @@ public class EnvelopeAxesLabelsMapper {
                 || label.equals("Lon")
                 || label.equals("Long")) {
             return "Long";
-        } else if (label.equals(DefaultCoordinateSystemAxis.LATITUDE.getAbbreviation())
-                || label.equals("Lat")) {
+        } else if (label.equals(DefaultCoordinateSystemAxis.LATITUDE.getAbbreviation()) || label.equals("Lat")) {
             return "Lat";
         } else {
 

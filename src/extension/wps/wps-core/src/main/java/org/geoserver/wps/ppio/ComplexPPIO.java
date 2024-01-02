@@ -61,10 +61,10 @@ public abstract class ComplexPPIO extends ProcessParameterIO {
      * Encodes the internal object representation of a parameter into an output stream using
      * specific encoding parameters
      */
-    public void encode(Object value, Map<String, Object> encodingParameters, OutputStream os)
-            throws Exception {
+    public void encode(Object value, Map<String, Object> encodingParameters, OutputStream os) throws Exception {
         encode(value, os);
-    };
+    }
+    ;
 
     /**
      * Provides a suitable extension for the output file. Implement this if the file extension is

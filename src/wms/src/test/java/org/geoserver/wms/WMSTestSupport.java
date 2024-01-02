@@ -102,8 +102,7 @@ public abstract class WMSTestSupport extends GeoServerSystemTestSupport {
     protected static final Color COLOR_PLACES_GRAY = new Color(170, 170, 170);
     protected static final Color COLOR_LAKES_BLUE = new Color(64, 64, 192);
 
-    protected static final QName VIKING =
-            new QName(SystemTestData.CITE_URI, "viking", SystemTestData.CITE_PREFIX);
+    protected static final QName VIKING = new QName(SystemTestData.CITE_URI, "viking", SystemTestData.CITE_PREFIX);
 
     /** @return The global wms singleton from the application context. */
     protected WMS getWMS() {
@@ -227,19 +226,15 @@ public abstract class WMSTestSupport extends GeoServerSystemTestSupport {
             style = catalog.getStyleByName(styleName).getStyle();
         }
 
-        FeatureTypeInfo info =
-                catalog.getFeatureTypeByName(layerName.getPrefix(), layerName.getLocalPart());
+        FeatureTypeInfo info = catalog.getFeatureTypeByName(layerName.getPrefix(), layerName.getLocalPart());
         Layer layer = null;
         if (info != null) {
-            FeatureSource<? extends FeatureType, ? extends Feature> featureSource =
-                    info.getFeatureSource(null, null);
+            FeatureSource<? extends FeatureType, ? extends Feature> featureSource = info.getFeatureSource(null, null);
 
             layer = new FeatureLayer(featureSource, style);
         } else {
             // try a coverage
-            CoverageInfo cinfo =
-                    catalog.getCoverageByName(
-                            layerName.getNamespaceURI(), layerName.getLocalPart());
+            CoverageInfo cinfo = catalog.getCoverageByName(layerName.getNamespaceURI(), layerName.getLocalPart());
             GridCoverage2D cov = (GridCoverage2D) cinfo.getGridCoverage(null, null);
 
             layer = new GridCoverageLayer(cov, style);
@@ -323,8 +318,7 @@ public abstract class WMSTestSupport extends GeoServerSystemTestSupport {
      * @param tr , the transformer to run the transformation with and produce the result as a DOM
      * @param namespaceAware whether to use a namespace aware parser for the response or not
      */
-    public static Document transform(Object req, TransformerBase tr, boolean namespaceAware)
-            throws Exception {
+    public static Document transform(Object req, TransformerBase tr, boolean namespaceAware) throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         tr.transform(req, out);
 
@@ -343,8 +337,7 @@ public abstract class WMSTestSupport extends GeoServerSystemTestSupport {
             @Override
             public InputSource resolveEntity(String publicId, String systemId)
                     throws org.xml.sax.SAXException, IOException {
-                StringReader reader =
-                        new StringReader("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+                StringReader reader = new StringReader("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
                 InputSource source = new InputSource(reader);
                 source.setPublicId(publicId);
                 source.setSystemId(systemId);
@@ -385,13 +378,12 @@ public abstract class WMSTestSupport extends GeoServerSystemTestSupport {
                         || !System.getProperty("java.awt.headless").equals("true"))
                 && INTERACTIVE) {
             Frame frame = new Frame(frameName);
-            frame.addWindowListener(
-                    new WindowAdapter() {
-                        @Override
-                        public void windowClosing(WindowEvent e) {
-                            e.getWindow().dispose();
-                        }
-                    });
+            frame.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    e.getWindow().dispose();
+                }
+            });
 
             Panel p = new Panel(null) { // no layout manager so it respects
                         // setSize
@@ -429,8 +421,7 @@ public abstract class WMSTestSupport extends GeoServerSystemTestSupport {
      * Performs some checks on an image response such as the mime type and attempts to read the
      * actual image into a buffered image.
      */
-    protected void checkImage(
-            MockHttpServletResponse response, String mimeType, int width, int height) {
+    protected void checkImage(MockHttpServletResponse response, String mimeType, int width, int height) {
         try {
             if (response.getContentType().contains("text")) {
                 assertEquals(response.getContentAsString(), mimeType, response.getContentType());
@@ -462,32 +453,25 @@ public abstract class WMSTestSupport extends GeoServerSystemTestSupport {
      * @param template The name of the template.
      * @param body The content of the template.
      */
-    protected void setupTemplate(QName featureTypeName, String template, String body)
-            throws IOException {
+    protected void setupTemplate(QName featureTypeName, String template, String body) throws IOException {
 
-        ResourceInfo info =
-                getCatalog().getResourceByName(toName(featureTypeName), ResourceInfo.class);
+        ResourceInfo info = getCatalog().getResourceByName(toName(featureTypeName), ResourceInfo.class);
         Resources.copy(
                 new ByteArrayInputStream(body.getBytes()), getDataDirectory().get(info), template);
     }
 
-    protected LayerGroupInfo createLakesPlacesLayerGroup(
-            Catalog catalog, LayerGroupInfo.Mode mode, LayerInfo rootLayer) throws Exception {
+    protected LayerGroupInfo createLakesPlacesLayerGroup(Catalog catalog, LayerGroupInfo.Mode mode, LayerInfo rootLayer)
+            throws Exception {
         return createLakesPlacesLayerGroup(catalog, "lakes_and_places", mode, rootLayer);
     }
 
     protected LayerGroupInfo createLakesPlacesLayerGroup(
-            Catalog catalog, String name, LayerGroupInfo.Mode mode, LayerInfo rootLayer)
-            throws Exception {
+            Catalog catalog, String name, LayerGroupInfo.Mode mode, LayerInfo rootLayer) throws Exception {
         return createLakesPlacesLayerGroup(catalog, name, null, mode, rootLayer, null);
     }
 
     protected LayerGroupInfo createLakesPlacesLayerGroup(
-            Catalog catalog,
-            String name,
-            WorkspaceInfo ws,
-            LayerGroupInfo.Mode mode,
-            LayerInfo rootLayer)
+            Catalog catalog, String name, WorkspaceInfo ws, LayerGroupInfo.Mode mode, LayerInfo rootLayer)
             throws Exception {
         return createLakesPlacesLayerGroup(catalog, name, ws, mode, rootLayer, null);
     }
@@ -539,27 +523,22 @@ public abstract class WMSTestSupport extends GeoServerSystemTestSupport {
         }
         List<LayerGroupInfo> groups = rawCatalog.getLayerGroups();
         int opaqueDelta = groups.stream().anyMatch(lg -> OPAQUE_GROUP.equals(lg.getName())) ? 2 : 0;
-        int expectedLayerCount =
-                layers.size() + groups.size() - 1 /* nested layer group */ - opaqueDelta;
+        int expectedLayerCount = layers.size() + groups.size() - 1 /* nested layer group */ - opaqueDelta;
         return expectedLayerCount;
     }
 
     /** Validates a document against the */
     protected void checkWms13ValidationErrors(Document dom) throws Exception {
-        Parser p =
-                new Parser(
-                        (Configuration)
-                                Class.forName("org.geotools.wms.v1_3.WMSConfiguration")
-                                        .getDeclaredConstructor()
-                                        .newInstance());
+        Parser p = new Parser((Configuration) Class.forName("org.geotools.wms.v1_3.WMSConfiguration")
+                .getDeclaredConstructor()
+                .newInstance());
         p.setValidating(true);
         p.parse(new DOMSource(dom));
 
         if (!p.getValidationErrors().isEmpty()) {
             for (Exception exception : p.getValidationErrors()) {
                 SAXParseException ex = (SAXParseException) exception;
-                LOGGER.warning(
-                        ex.getLineNumber() + "," + ex.getColumnNumber() + " -" + ex.toString());
+                LOGGER.warning(ex.getLineNumber() + "," + ex.getColumnNumber() + " -" + ex.toString());
             }
             fail("Document did not validate.");
         }
@@ -590,11 +569,7 @@ public abstract class WMSTestSupport extends GeoServerSystemTestSupport {
     }
 
     protected LayerGroupInfo lakesAndPlacesWithGroupStyle(
-            String lgName,
-            Mode mode,
-            String lgStyleName,
-            List<PublishedInfo> styleLayers,
-            List<StyleInfo> styleStyles)
+            String lgName, Mode mode, String lgStyleName, List<PublishedInfo> styleLayers, List<StyleInfo> styleStyles)
             throws Exception {
         createLakesPlacesLayerGroup(getCatalog(), lgName, mode, null);
         LayerGroupInfo groupInfo = getCatalog().getLayerGroupByName(lgName);

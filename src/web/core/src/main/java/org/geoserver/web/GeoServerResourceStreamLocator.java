@@ -68,9 +68,7 @@ public class GeoServerResourceStreamLocator extends ResourceStreamLocator {
                         // Java .properties files are encoded in ISO-8859-1
                         // Support wicket .utf8.properties convention indicating UTF8 encoding
                         Charset charset =
-                                p.endsWith(".utf8.properties")
-                                        ? StandardCharsets.UTF_8
-                                        : StandardCharsets.ISO_8859_1;
+                                p.endsWith(".utf8.properties") ? StandardCharsets.UTF_8 : StandardCharsets.ISO_8859_1;
 
                         try (InputStream in = url.openStream()) {
                             try (Reader reader = new InputStreamReader(in, charset)) {
@@ -119,12 +117,7 @@ public class GeoServerResourceStreamLocator extends ResourceStreamLocator {
 
     @Override
     public IResourceNameIterator newResourceNameIterator(
-            String path,
-            Locale locale,
-            String style,
-            String variation,
-            String extension,
-            boolean strict) {
+            String path, Locale locale, String style, String variation, String extension, boolean strict) {
 
         Iterable<String> extensions = null;
 
@@ -146,10 +139,7 @@ public class GeoServerResourceStreamLocator extends ResourceStreamLocator {
             // ensure the path doesn't contain the extension, sometimes this method is called with
             // extension == null,
             // in which case the extension is usually in the path
-            path =
-                    FilenameUtils.getPathNoEndSeparator(path)
-                            + "/"
-                            + FilenameUtils.getBaseName(path);
+            path = FilenameUtils.getPathNoEndSeparator(path) + "/" + FilenameUtils.getBaseName(path);
             return new ResourceNameIterator(path, style, variation, null, extensions, false);
         }
 

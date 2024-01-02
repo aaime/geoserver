@@ -122,11 +122,9 @@ public class Predicates {
         return equal(property, expected, MatchAction.ANY);
     }
 
-    public static Filter equal(
-            final String property, final Object expected, final MatchAction matchAction) {
+    public static Filter equal(final String property, final Object expected, final MatchAction matchAction) {
         final boolean matchCase = true;
-        return factory.equal(
-                factory.property(property), factory.literal(expected), matchCase, matchAction);
+        return factory.equal(factory.property(property), factory.literal(expected), matchCase, matchAction);
     }
 
     /**
@@ -318,8 +316,7 @@ public class Predicates {
     }
 
     public static Filter isInstanceOf(Class<?> clazz) {
-        return factory.equals(
-                factory.function("isInstanceOf", factory.literal(clazz)), factory.literal(true));
+        return factory.equals(factory.function("isInstanceOf", factory.literal(clazz)), factory.literal(true));
     }
 
     /**

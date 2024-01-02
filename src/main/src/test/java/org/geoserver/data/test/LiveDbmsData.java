@@ -41,10 +41,7 @@ import org.geotools.util.logging.Logging;
  *
  * @author Andrea Aime - TOPP
  */
-@SuppressWarnings({
-    "PMD.JUnit4TestShouldUseBeforeAnnotation",
-    "PMD.JUnit4TestShouldUseAfterAnnotation"
-})
+@SuppressWarnings({"PMD.JUnit4TestShouldUseBeforeAnnotation", "PMD.JUnit4TestShouldUseAfterAnnotation"})
 public class LiveDbmsData extends LiveSystemTestData {
     private static final Logger LOGGER = Logging.getLogger(LiveDbmsData.class);
 
@@ -84,8 +81,7 @@ public class LiveDbmsData extends LiveSystemTestData {
      *       all tables and views and then recreates them, if a statement fails it'll be logged and
      *       skipped anyways. This makes it possible to inspect the database contents
      */
-    public LiveDbmsData(File dataDirSourceDirectory, String fixtureId, File sqlScript)
-            throws IOException {
+    public LiveDbmsData(File dataDirSourceDirectory, String fixtureId, File sqlScript) throws IOException {
         super(dataDirSourceDirectory);
         this.fixture = lookupFixture(fixtureId);
         this.fixtureId = fixtureId;
@@ -109,12 +105,11 @@ public class LiveDbmsData extends LiveSystemTestData {
         if (!base.exists()) base.mkdir();
         File fixtureFile = new File(base, fixtureId + ".properties");
         if (!fixtureFile.exists()) {
-            final String warning =
-                    "Disabling test based on fixture "
-                            + fixtureId
-                            + " since the file "
-                            + fixtureFile
-                            + " could not be found";
+            final String warning = "Disabling test based on fixture "
+                    + fixtureId
+                    + " since the file "
+                    + fixtureFile
+                    + " could not be found";
             disableTest(warning);
             return null;
         }
@@ -160,13 +155,12 @@ public class LiveDbmsData extends LiveSystemTestData {
             try {
                 ds = DataStoreFinder.getDataStore(filters);
                 if (ds == null) {
-                    final String warning =
-                            "Disabling online test based on '"
-                                    + fixtureId
-                                    + "', "
-                                    + "could not find a data store compatible "
-                                    + "with the following connection properties: "
-                                    + filters;
+                    final String warning = "Disabling online test based on '"
+                            + fixtureId
+                            + "', "
+                            + "could not find a data store compatible "
+                            + "with the following connection properties: "
+                            + filters;
                     disableTest(warning);
                     return;
                 }
@@ -174,15 +168,14 @@ public class LiveDbmsData extends LiveSystemTestData {
                 conn = getDatabaseConnection(ds);
 
                 if (conn == null) {
-                    final String warning =
-                            "Disabling online test based on '"
-                                    + fixtureId
-                                    + "', "
-                                    + "could not extract a JDBC connection from the datastore '"
-                                    + ds.getClass()
-                                    + " obtained using the following "
-                                    + "connection properties: "
-                                    + filters;
+                    final String warning = "Disabling online test based on '"
+                            + fixtureId
+                            + "', "
+                            + "could not extract a JDBC connection from the datastore '"
+                            + ds.getClass()
+                            + " obtained using the following "
+                            + "connection properties: "
+                            + filters;
                     disableTest(warning);
                     return;
                 }
@@ -194,8 +187,7 @@ public class LiveDbmsData extends LiveSystemTestData {
                 while ((command = reader.readLine()) != null) {
                     command = command.trim();
                     // skip comments and empty lines
-                    if ("".equals(command) || command.startsWith("--") || command.startsWith("#"))
-                        continue;
+                    if ("".equals(command) || command.startsWith("--") || command.startsWith("#")) continue;
 
                     // execute but do not complain, only log the failures
                     try {

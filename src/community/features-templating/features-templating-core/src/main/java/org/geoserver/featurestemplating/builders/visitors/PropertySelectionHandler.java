@@ -39,8 +39,7 @@ public interface PropertySelectionHandler {
      * @return true if the templateBuilder evaluation result should be included in the final output,
      *     false otherwise.
      */
-    boolean isBuilderSelected(
-            AbstractTemplateBuilder templateBuilder, PropertySelectionContext extradata);
+    boolean isBuilderSelected(AbstractTemplateBuilder templateBuilder, PropertySelectionContext extradata);
 
     /**
      * Prune the JsonNode node from the attributes that are not selected.

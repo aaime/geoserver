@@ -125,13 +125,11 @@ public class LegacyServiceExceptionHandler extends ServiceExceptionHandler {
 
         // xml schema location
         if ((schemaLocation != null) && (dtdLocation == null)) {
-            String fullSchemaLocation =
-                    buildSchemaURL(baseURL(request.getHttpRequest()), schemaLocation);
+            String fullSchemaLocation = buildSchemaURL(baseURL(request.getHttpRequest()), schemaLocation);
 
             sb.append("xmlns=\"http://www.opengis.net/ogc\" ");
             sb.append("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" ");
-            sb.append(
-                    "xsi:schemaLocation=\"http://www.opengis.net/ogc " + fullSchemaLocation + "\"");
+            sb.append("xsi:schemaLocation=\"http://www.opengis.net/ogc " + fullSchemaLocation + "\"");
         }
 
         sb.append(">");
@@ -181,8 +179,7 @@ public class LegacyServiceExceptionHandler extends ServiceExceptionHandler {
             // throw new RuntimeException(e);
             // Hmm, not much we can do here.  I guess log the fact that we couldn't write out the
             // exception and be done with it...
-            LOGGER.log(
-                    Level.INFO, "Problem writing exception information back to calling client:", e);
+            LOGGER.log(Level.INFO, "Problem writing exception information back to calling client:", e);
         }
     }
 }

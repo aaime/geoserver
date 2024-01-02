@@ -40,8 +40,7 @@ public class CoverageReaderFileConverter implements CoverageReaderInputObjectCon
      * @return
      */
     @Override
-    public Optional<File> convert(
-            Object input, @Nullable CoverageInfo coverageInfo, @Nullable Hints hints) {
+    public Optional<File> convert(Object input, @Nullable CoverageInfo coverageInfo, @Nullable Hints hints) {
         return convert(input, coverageInfo, null, hints);
     }
 

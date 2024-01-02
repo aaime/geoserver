@@ -104,16 +104,14 @@ import org.springframework.security.core.Authentication;
 
 public class ResourceConfigurationPageTest extends GeoServerWicketTestSupport {
 
-    protected static QName TIMERANGES =
-            new QName(MockData.SF_URI, "timeranges", MockData.SF_PREFIX);
+    protected static QName TIMERANGES = new QName(MockData.SF_URI, "timeranges", MockData.SF_PREFIX);
 
     protected static QName LINES = new QName(MockData.SF_URI, "null_srid_line", MockData.SF_PREFIX);
 
     @Override
     protected void onSetUp(SystemTestData testData) throws Exception {
         super.onSetUp(testData);
-        testData.addRasterLayer(
-                TIMERANGES, "timeranges.zip", null, null, SystemTestData.class, getCatalog());
+        testData.addRasterLayer(TIMERANGES, "timeranges.zip", null, null, SystemTestData.class, getCatalog());
 
         testData.addVectorLayer(
                 LINES,
@@ -125,24 +123,17 @@ public class ResourceConfigurationPageTest extends GeoServerWicketTestSupport {
 
     @Test
     public void testBasic() {
-        LayerInfo layer =
-                getGeoServerApplication()
-                        .getCatalog()
-                        .getLayerByName(getLayerId(MockData.BASIC_POLYGONS));
+        LayerInfo layer = getGeoServerApplication().getCatalog().getLayerByName(getLayerId(MockData.BASIC_POLYGONS));
 
         login();
         tester.startPage(new ResourceConfigurationPage(layer, false));
         tester.assertLabel("publishedinfoname", layer.getResource().prefixedName());
-        tester.assertComponent(
-                "publishedinfo:tabs:panel:theList:0:content", BasicResourceConfig.class);
+        tester.assertComponent("publishedinfo:tabs:panel:theList:0:content", BasicResourceConfig.class);
     }
 
     @Test
     public void testResourceConfigurationPageInfoLabels() {
-        LayerInfo layer =
-                getGeoServerApplication()
-                        .getCatalog()
-                        .getLayerByName(getLayerId(MockData.BASIC_POLYGONS));
+        LayerInfo layer = getGeoServerApplication().getCatalog().getLayerByName(getLayerId(MockData.BASIC_POLYGONS));
         login();
         tester.startPage(new ResourceConfigurationPage(layer, false));
 
@@ -157,10 +148,7 @@ public class ResourceConfigurationPageTest extends GeoServerWicketTestSupport {
 
     @Test
     public void testUpdateResource() {
-        LayerInfo layer =
-                getGeoServerApplication()
-                        .getCatalog()
-                        .getLayerByName(getLayerId(MockData.GEOMETRYLESS));
+        LayerInfo layer = getGeoServerApplication().getCatalog().getLayerByName(getLayerId(MockData.GEOMETRYLESS));
 
         login();
         ResourceConfigurationPage page = new ResourceConfigurationPage(layer, false);
@@ -168,18 +156,15 @@ public class ResourceConfigurationPageTest extends GeoServerWicketTestSupport {
         tester.startPage(page);
         tester.assertContainsNot("the_geom");
 
-        FeatureTypeInfo info =
-                getCatalog()
-                        .getResourceByName(MockData.BRIDGES.getLocalPart(), FeatureTypeInfo.class);
+        FeatureTypeInfo info = getCatalog().getResourceByName(MockData.BRIDGES.getLocalPart(), FeatureTypeInfo.class);
 
         // Apply the new feature to the page
-        page.add(
-                new AjaxEventBehavior("ondblclick") {
-                    @Override
-                    public void onEvent(AjaxRequestTarget target) {
-                        page.updateResource(info, target);
-                    }
-                });
+        page.add(new AjaxEventBehavior("ondblclick") {
+            @Override
+            public void onEvent(AjaxRequestTarget target) {
+                page.updateResource(info, target);
+            }
+        });
         tester.executeAjaxEvent(page, "ondblclick");
 
         // verify contents were updated
@@ -191,10 +176,7 @@ public class ResourceConfigurationPageTest extends GeoServerWicketTestSupport {
         CatalogFactory fac = getGeoServerApplication().getCatalog().getFactory();
         FeatureTypeInfo fti = fac.createFeatureType();
         fti.setName("mylayer");
-        fti.setStore(
-                getGeoServerApplication()
-                        .getCatalog()
-                        .getDataStoreByName(MockData.POLYGONS.getPrefix()));
+        fti.setStore(getGeoServerApplication().getCatalog().getDataStoreByName(MockData.POLYGONS.getPrefix()));
         LayerInfo layer = fac.createLayer();
         layer.setResource(fti);
 
@@ -234,15 +216,12 @@ public class ResourceConfigurationPageTest extends GeoServerWicketTestSupport {
         ResourceConfigurationPage page = new ResourceConfigurationPage(layer, true);
         tester.startPage(page);
         // print(tester.getLastRenderedPage(), true, true, true);
-        tester.executeAjaxEvent(
-                "publishedinfo:tabs:panel:theList:0:content:referencingForm:computeLatLon",
-                "onclick");
+        tester.executeAjaxEvent("publishedinfo:tabs:panel:theList:0:content:referencingForm:computeLatLon", "onclick");
         // print(tester.getLastRenderedPage(), true, true, true);
         // we used to have error messages
         tester.assertNoErrorMessage();
-        Component llbox =
-                tester.getComponentFromLastRenderedPage(
-                        "publishedinfo:tabs:panel:theList:0:content:referencingForm:latLonBoundingBox");
+        Component llbox = tester.getComponentFromLastRenderedPage(
+                "publishedinfo:tabs:panel:theList:0:content:referencingForm:latLonBoundingBox");
         ReferencedEnvelope re = (ReferencedEnvelope) llbox.getDefaultModelObject();
         assertEquals(-93, re.getMinX(), 0.1);
         assertEquals(4.5, re.getMinY(), 0.1);
@@ -252,49 +231,38 @@ public class ResourceConfigurationPageTest extends GeoServerWicketTestSupport {
 
     @Test
     public void testParametersUI() throws Exception {
-        LayerInfo layer =
-                getGeoServerApplication().getCatalog().getLayerByName(getLayerId(TIMERANGES));
+        LayerInfo layer = getGeoServerApplication().getCatalog().getLayerByName(getLayerId(TIMERANGES));
 
         login();
         tester.startPage(new ResourceConfigurationPage(layer, false));
         // print(tester.getLastRenderedPage(), true, true);
 
         // get the list of parameters in the UI
-        ListView parametersList =
-                (ListView)
-                        tester.getComponentFromLastRenderedPage(
-                                "publishedinfo:tabs:panel:theList:1:content:parameters");
-        parametersList.visitChildren(
-                ParamPanel.class,
-                (c, v) -> {
-                    MapModel mapModel = (MapModel) c.getDefaultModel();
-                    String parameterKey = mapModel.getExpression();
-                    if (USE_JAI_IMAGEREAD.getName().getCode().equals(parameterKey)
-                            || ACCURATE_RESOLUTION.getName().getCode().equals(parameterKey)
-                            || ALLOW_MULTITHREADING.getName().getCode().equals(parameterKey)
-                            || RESCALE_PIXELS.getName().getCode().equals(parameterKey)) {
-                        assertThat(
-                                parameterKey, c, CoreMatchers.instanceOf(CheckBoxParamPanel.class));
-                    } else if (EXCESS_GRANULE_REMOVAL.getName().getCode().equals(parameterKey)
-                            || FOOTPRINT_BEHAVIOR.getName().getCode().equals(parameterKey)
-                            || MERGE_BEHAVIOR.getName().getCode().equals(parameterKey)
-                            || OVERVIEW_POLICY.getName().getCode().equals(parameterKey)) {
-                        assertThat(
-                                parameterKey,
-                                c,
-                                CoreMatchers.instanceOf(DropDownChoiceParamPanel.class));
-                    } else if (BACKGROUND_COLOR.getName().getCode().equals(parameterKey)
-                            || OUTPUT_TRANSPARENT_COLOR.getName().getCode().equals(parameterKey)
-                            || INPUT_TRANSPARENT_COLOR.getName().getCode().equals(parameterKey)) {
-                        assertThat(
-                                parameterKey, c, CoreMatchers.instanceOf(ColorPickerPanel.class));
-                    } else {
-                        assertThat(parameterKey, c, CoreMatchers.instanceOf(TextParamPanel.class));
-                    }
-                });
+        ListView parametersList = (ListView)
+                tester.getComponentFromLastRenderedPage("publishedinfo:tabs:panel:theList:1:content:parameters");
+        parametersList.visitChildren(ParamPanel.class, (c, v) -> {
+            MapModel mapModel = (MapModel) c.getDefaultModel();
+            String parameterKey = mapModel.getExpression();
+            if (USE_JAI_IMAGEREAD.getName().getCode().equals(parameterKey)
+                    || ACCURATE_RESOLUTION.getName().getCode().equals(parameterKey)
+                    || ALLOW_MULTITHREADING.getName().getCode().equals(parameterKey)
+                    || RESCALE_PIXELS.getName().getCode().equals(parameterKey)) {
+                assertThat(parameterKey, c, CoreMatchers.instanceOf(CheckBoxParamPanel.class));
+            } else if (EXCESS_GRANULE_REMOVAL.getName().getCode().equals(parameterKey)
+                    || FOOTPRINT_BEHAVIOR.getName().getCode().equals(parameterKey)
+                    || MERGE_BEHAVIOR.getName().getCode().equals(parameterKey)
+                    || OVERVIEW_POLICY.getName().getCode().equals(parameterKey)) {
+                assertThat(parameterKey, c, CoreMatchers.instanceOf(DropDownChoiceParamPanel.class));
+            } else if (BACKGROUND_COLOR.getName().getCode().equals(parameterKey)
+                    || OUTPUT_TRANSPARENT_COLOR.getName().getCode().equals(parameterKey)
+                    || INPUT_TRANSPARENT_COLOR.getName().getCode().equals(parameterKey)) {
+                assertThat(parameterKey, c, CoreMatchers.instanceOf(ColorPickerPanel.class));
+            } else {
+                assertThat(parameterKey, c, CoreMatchers.instanceOf(TextParamPanel.class));
+            }
+        });
         tester.assertComponent(
-                "publishedinfo:tabs:panel:theList:1:content:parameters:0:parameterPanel",
-                CheckBoxParamPanel.class);
+                "publishedinfo:tabs:panel:theList:1:content:parameters:0:parameterPanel", CheckBoxParamPanel.class);
     }
 
     @Test
@@ -312,20 +280,16 @@ public class ResourceConfigurationPageTest extends GeoServerWicketTestSupport {
         // print(tester.getLastRenderedPage(), true, true);
 
         // get the list of parameters in the UI
-        ListView parametersList =
-                (ListView)
-                        tester.getComponentFromLastRenderedPage(
-                                "publishedinfo:tabs:panel:theList:1:content:parameters");
+        ListView parametersList = (ListView)
+                tester.getComponentFromLastRenderedPage("publishedinfo:tabs:panel:theList:1:content:parameters");
         AtomicBoolean editorFound = new AtomicBoolean(false);
-        parametersList.visitChildren(
-                ParamPanel.class,
-                (c, v) -> {
-                    MapModel mapModel = (MapModel) c.getDefaultModel();
-                    String parameterKey = mapModel.getExpression();
-                    if (bandCode.equals(parameterKey)) {
-                        editorFound.set(true);
-                    }
-                });
+        parametersList.visitChildren(ParamPanel.class, (c, v) -> {
+            MapModel mapModel = (MapModel) c.getDefaultModel();
+            String parameterKey = mapModel.getExpression();
+            if (bandCode.equals(parameterKey)) {
+                editorFound.set(true);
+            }
+        });
         assertTrue("Bands parameter not found", editorFound.get());
     }
 
@@ -338,20 +302,16 @@ public class ResourceConfigurationPageTest extends GeoServerWicketTestSupport {
         tester.startPage(new ResourceConfigurationPage(layer, false));
 
         // locate the overview parameter editor
-        ListView parametersList =
-                (ListView)
-                        tester.getComponentFromLastRenderedPage(
-                                "publishedinfo:tabs:panel:theList:1:content:parameters");
+        ListView parametersList = (ListView)
+                tester.getComponentFromLastRenderedPage("publishedinfo:tabs:panel:theList:1:content:parameters");
         AtomicReference<Object> ref = new AtomicReference<>(null);
-        parametersList.visitChildren(
-                ParamPanel.class,
-                (c, v) -> {
-                    MapModel mapModel = (MapModel) c.getDefaultModel();
-                    String parameterKey = mapModel.getExpression();
-                    if (OVERVIEW_POLICY.getName().getCode().equals(parameterKey)) {
-                        ref.set(c.getPageRelativePath().substring("publishedInfo".length() + 1));
-                    }
-                });
+        parametersList.visitChildren(ParamPanel.class, (c, v) -> {
+            MapModel mapModel = (MapModel) c.getDefaultModel();
+            String parameterKey = mapModel.getExpression();
+            if (OVERVIEW_POLICY.getName().getCode().equals(parameterKey)) {
+                ref.set(c.getPageRelativePath().substring("publishedInfo".length() + 1));
+            }
+        });
 
         FormTester ft = tester.newFormTester("publishedinfo");
         ft.select(ref.get() + ":border:border_body:paramValue", 2);
@@ -361,8 +321,7 @@ public class ResourceConfigurationPageTest extends GeoServerWicketTestSupport {
 
         // check it was saved
         CoverageInfo ci =
-                catalog.getResourceByName(
-                        TIMERANGES.getPrefix(), TIMERANGES.getLocalPart(), CoverageInfo.class);
+                catalog.getResourceByName(TIMERANGES.getPrefix(), TIMERANGES.getLocalPart(), CoverageInfo.class);
         Map<String, Serializable> parameters = ci.getParameters();
         assertEquals("NEAREST", parameters.get(OVERVIEW_POLICY.getName().toString()));
     }
@@ -383,8 +342,7 @@ public class ResourceConfigurationPageTest extends GeoServerWicketTestSupport {
         tester.executeAjaxEvent("publishedinfo:apply", "submit");
         // no errors, and page is still the same
         tester.assertNoErrorMessage();
-        assertThat(
-                tester.getLastRenderedPage(), Matchers.instanceOf(ResourceConfigurationPage.class));
+        assertThat(tester.getLastRenderedPage(), Matchers.instanceOf(ResourceConfigurationPage.class));
 
         // check the title was updated
         assertEquals(newTitle, getCatalog().getLayerByName(layerId).getTitle());
@@ -397,18 +355,13 @@ public class ResourceConfigurationPageTest extends GeoServerWicketTestSupport {
         String baseURL = TestHttpClientProvider.MOCKSERVER;
         MockHttpClient client = new MockHttpClient();
 
-        URL descURL =
-                new URL(baseURL + "/wfs?REQUEST=DescribeFeatureType&VERSION=1.1.0&SERVICE=WFS");
-        client.expectGet(
-                descURL, new MockHttpResponse(getClass().getResource("/desc_110.xml"), "text/xml"));
+        URL descURL = new URL(baseURL + "/wfs?REQUEST=DescribeFeatureType&VERSION=1.1.0&SERVICE=WFS");
+        client.expectGet(descURL, new MockHttpResponse(getClass().getResource("/desc_110.xml"), "text/xml"));
 
-        URL descFeatureURL =
-                new URL(
-                        baseURL
-                                + "/wfs?NAMESPACE=xmlns%28topp%3Dhttp%3A%2F%2Fwww.topp.com%29&TYPENAME=topp%3Aroads22&REQUEST=DescribeFeatureType&VERSION=1.1.0&SERVICE=WFS");
-        client.expectGet(
-                descFeatureURL,
-                new MockHttpResponse(getClass().getResource("/desc_feature.xml"), "text/xml"));
+        URL descFeatureURL = new URL(
+                baseURL
+                        + "/wfs?NAMESPACE=xmlns%28topp%3Dhttp%3A%2F%2Fwww.topp.com%29&TYPENAME=topp%3Aroads22&REQUEST=DescribeFeatureType&VERSION=1.1.0&SERVICE=WFS");
+        client.expectGet(descFeatureURL, new MockHttpResponse(getClass().getResource("/desc_feature.xml"), "text/xml"));
 
         TestHttpClientProvider.bind(client, descURL);
         TestHttpClientProvider.bind(client, descFeatureURL);
@@ -428,10 +381,7 @@ public class ResourceConfigurationPageTest extends GeoServerWicketTestSupport {
 
         // MOCKING Feature Type
         XStreamPersister xp = new XStreamPersisterFactory().createXMLPersister();
-        FeatureTypeInfo ftInfo =
-                xp.load(
-                        getClass().getResourceAsStream("/featuretype.xml"),
-                        FeatureTypeInfoImpl.class);
+        FeatureTypeInfo ftInfo = xp.load(getClass().getResourceAsStream("/featuretype.xml"), FeatureTypeInfoImpl.class);
         ftInfo.setStore(storeInfo);
         final String actualNativeSRS = ftInfo.getSRS();
         getCatalog().add(ftInfo);
@@ -451,8 +401,7 @@ public class ResourceConfigurationPageTest extends GeoServerWicketTestSupport {
         tester.startPage(new ResourceConfigurationPage(layerInfo, false));
 
         // click the FIND button next to Native SRS text field to open SRS selection popup
-        tester.clickLink(
-                "publishedinfo:tabs:panel:theList:0:content:referencingForm:nativeSRS:find", true);
+        tester.clickLink("publishedinfo:tabs:panel:theList:0:content:referencingForm:nativeSRS:find", true);
 
         // verify Layer`s resource is updated with metadata
         assertNotNull(layerInfo.getResource().getMetadata().get(FeatureTypeInfo.OTHER_SRS));
@@ -463,10 +412,9 @@ public class ResourceConfigurationPageTest extends GeoServerWicketTestSupport {
                 true);
 
         // assert that native SRS has changed from EPSG:26713 to urn:ogc:def:crs:EPSG::4326
-        String newNativeSRS =
-                tester.getComponentFromLastRenderedPage(
-                                "publishedinfo:tabs:panel:theList:0:content:referencingForm:nativeSRS:srs")
-                        .getDefaultModelObjectAsString();
+        String newNativeSRS = tester.getComponentFromLastRenderedPage(
+                        "publishedinfo:tabs:panel:theList:0:content:referencingForm:nativeSRS:srs")
+                .getDefaultModelObjectAsString();
         assertFalse(newNativeSRS.equalsIgnoreCase(actualNativeSRS));
         assertTrue(newNativeSRS.equalsIgnoreCase("urn:ogc:def:crs:EPSG::4326"));
 
@@ -475,7 +423,8 @@ public class ResourceConfigurationPageTest extends GeoServerWicketTestSupport {
         ft.submit("save");
 
         // check that native SRS is updated in catalog after submitting the page
-        String savedSRS = getCatalog().getLayerByName(layerInfo.getName()).getResource().getSRS();
+        String savedSRS =
+                getCatalog().getLayerByName(layerInfo.getName()).getResource().getSRS();
         assertFalse(savedSRS.equalsIgnoreCase(actualNativeSRS));
     }
 
@@ -495,28 +444,25 @@ public class ResourceConfigurationPageTest extends GeoServerWicketTestSupport {
         // assert no error occurred on page and page is available for configuration
         tester.assertNoErrorMessage();
         // assert that native srs is set empty
-        String nativeSRSTextFieldValue =
-                tester.getComponentFromLastRenderedPage(
-                                "publishedinfo:tabs:panel:theList:0:content:referencingForm:nativeSRS:srs")
-                        .getDefaultModelObjectAsString();
+        String nativeSRSTextFieldValue = tester.getComponentFromLastRenderedPage(
+                        "publishedinfo:tabs:panel:theList:0:content:referencingForm:nativeSRS:srs")
+                .getDefaultModelObjectAsString();
         assertTrue(nativeSRSTextFieldValue.isEmpty());
         // assert Find link is not visible
-        tester.assertInvisible(
-                "publishedinfo:tabs:panel:theList:0:content:referencingForm:nativeSRS:find");
+        tester.assertInvisible("publishedinfo:tabs:panel:theList:0:content:referencingForm:nativeSRS:find");
     }
 
     @Test
     public void testSecurityTabInactiveWithNoDeafaultAccessManager() {
         TestResourceAccessManager manager = new TestResourceAccessManager();
         SecureCatalogImpl oldSc = (SecureCatalogImpl) GeoServerExtensions.bean("secureCatalog");
-        SecureCatalogImpl sc =
-                new SecureCatalogImpl(getCatalog(), manager) {
+        SecureCatalogImpl sc = new SecureCatalogImpl(getCatalog(), manager) {
 
-                    @Override
-                    protected boolean isAdmin(Authentication authentication) {
-                        return false;
-                    }
-                };
+            @Override
+            protected boolean isAdmin(Authentication authentication) {
+                return false;
+            }
+        };
         applicationContext.getBeanFactory().destroyBean("secureCatalog");
         GeoServerExtensionsHelper.clear();
         GeoServerExtensionsHelper.singleton("secureCatalog", sc, SecureCatalogImpl.class);
@@ -526,8 +472,7 @@ public class ResourceConfigurationPageTest extends GeoServerWicketTestSupport {
         login();
         tester.startPage(new ResourceConfigurationPage(layer, false));
         try {
-            TabbedPanel tabs =
-                    (TabbedPanel) tester.getComponentFromLastRenderedPage("publishedinfo:tabs");
+            TabbedPanel tabs = (TabbedPanel) tester.getComponentFromLastRenderedPage("publishedinfo:tabs");
             assertEquals(3, tabs.getTabs().size());
         } finally {
             applicationContext.getBeanFactory().destroyBean("secureCatalog");
@@ -542,9 +487,7 @@ public class ResourceConfigurationPageTest extends GeoServerWicketTestSupport {
         MockHttpClient client = new MockHttpClient();
         Catalog catalog = getCatalog();
         URL descURL = new URL(baseURL + "/wmts?REQUEST=GetCapabilities&VERSION=1.0.0&SERVICE=WMTS");
-        client.expectGet(
-                descURL,
-                new MockHttpResponse(getClass().getResource("/wmts_getCaps.xml"), "text/xml"));
+        client.expectGet(descURL, new MockHttpResponse(getClass().getResource("/wmts_getCaps.xml"), "text/xml"));
 
         TestHttpClientProvider.bind(client, descURL);
         WMTSStoreInfo storeInfo = new WMTSStoreInfoImpl(getCatalog());
@@ -556,20 +499,17 @@ public class ResourceConfigurationPageTest extends GeoServerWicketTestSupport {
         storeInfo.setDateModified(new Date());
         catalog.add(storeInfo);
         XStreamPersister xp = new XStreamPersisterFactory().createXMLPersister();
-        WMTSLayerInfo wmtsInfo =
-                xp.load(getClass().getResourceAsStream("/wmtsLayerInfo.xml"), WMTSLayerInfo.class);
+        WMTSLayerInfo wmtsInfo = xp.load(getClass().getResourceAsStream("/wmtsLayerInfo.xml"), WMTSLayerInfo.class);
         final String actualNativeSRS = wmtsInfo.getSRS();
         wmtsInfo.setStore(storeInfo);
         catalog.add(wmtsInfo);
-        LayerInfo layerInfo =
-                xp.load(getClass().getResourceAsStream("/wmtsLayer.xml"), LayerInfo.class);
+        LayerInfo layerInfo = xp.load(getClass().getResourceAsStream("/wmtsLayer.xml"), LayerInfo.class);
         layerInfo.setResource(wmtsInfo);
         // page should show additional SRS in WMTS cap document
         login();
         tester.startPage(new ResourceConfigurationPage(layerInfo, true));
         // click the FIND button next to open SRS selection popup
-        tester.clickLink(
-                "publishedinfo:tabs:panel:theList:0:content:referencingForm:nativeSRS:find");
+        tester.clickLink("publishedinfo:tabs:panel:theList:0:content:referencingForm:nativeSRS:find");
 
         // verify Layer`s resource is updated with metadata
         assertNotNull(layerInfo.getResource().getMetadata().get(FeatureTypeInfo.OTHER_SRS));
@@ -580,10 +520,9 @@ public class ResourceConfigurationPageTest extends GeoServerWicketTestSupport {
                 true);
 
         // assert that native SRS has changed
-        String newNativeSRS =
-                tester.getComponentFromLastRenderedPage(
-                                "publishedinfo:tabs:panel:theList:0:content:referencingForm:nativeSRS:srs")
-                        .getDefaultModelObjectAsString();
+        String newNativeSRS = tester.getComponentFromLastRenderedPage(
+                        "publishedinfo:tabs:panel:theList:0:content:referencingForm:nativeSRS:srs")
+                .getDefaultModelObjectAsString();
         assertFalse(newNativeSRS.equalsIgnoreCase(actualNativeSRS));
     }
 
@@ -605,32 +544,28 @@ public class ResourceConfigurationPageTest extends GeoServerWicketTestSupport {
         login();
         tester.startPage(new ResourceConfigurationPage(layerInfo, true));
         // click the FIND button next to open SRS selection popup
-        tester.clickLink(
-                "publishedinfo:tabs:panel:theList:0:content:referencingForm:nativeSRS:find");
+        tester.clickLink("publishedinfo:tabs:panel:theList:0:content:referencingForm:nativeSRS:find");
 
         // verify Layer`s resource is updated with metadata
         assertNotNull(layerInfo.getResource().getMetadata().get(FeatureTypeInfo.OTHER_SRS));
 
-        DataView epsgContainer =
-                (DataView)
-                        tester.getComponentFromLastRenderedPage(
-                                "publishedinfo:tabs:panel:theList:0:content:referencingForm:nativeSRS:popup:content:table:listContainer:items");
+        DataView epsgContainer = (DataView)
+                tester.getComponentFromLastRenderedPage(
+                        "publishedinfo:tabs:panel:theList:0:content:referencingForm:nativeSRS:popup:content:table:listContainer:items");
 
         // we got two epsg in the otherSrs container
         assertEquals(3, epsgContainer.size());
 
-        Component epsgComponent1 =
-                tester.getComponentFromLastRenderedPage(
-                        "publishedinfo:tabs:panel:theList:0:content:referencingForm:nativeSRS:popup:content:table:listContainer:items:1:itemProperties:0:component:link:label");
-        Component epsgComponent2 =
-                tester.getComponentFromLastRenderedPage(
-                        "publishedinfo:tabs:panel:theList:0:content:referencingForm:nativeSRS:popup:content:table:listContainer:items:2:itemProperties:0:component:link:label");
-        Component epsgComponent3 =
-                tester.getComponentFromLastRenderedPage(
-                        "publishedinfo:tabs:panel:theList:0:content:referencingForm:nativeSRS:popup:content:table:listContainer:items:3:itemProperties:0:component:link:label");
+        Component epsgComponent1 = tester.getComponentFromLastRenderedPage(
+                "publishedinfo:tabs:panel:theList:0:content:referencingForm:nativeSRS:popup:content:table:listContainer:items:1:itemProperties:0:component:link:label");
+        Component epsgComponent2 = tester.getComponentFromLastRenderedPage(
+                "publishedinfo:tabs:panel:theList:0:content:referencingForm:nativeSRS:popup:content:table:listContainer:items:2:itemProperties:0:component:link:label");
+        Component epsgComponent3 = tester.getComponentFromLastRenderedPage(
+                "publishedinfo:tabs:panel:theList:0:content:referencingForm:nativeSRS:popup:content:table:listContainer:items:3:itemProperties:0:component:link:label");
 
         // checks that they have been properly displayed with not urn format being cut
-        assertEquals("urn:ogc:def:crs:EPSG::3006", epsgComponent1.getDefaultModel().getObject());
+        assertEquals(
+                "urn:ogc:def:crs:EPSG::3006", epsgComponent1.getDefaultModel().getObject());
 
         // not urn format but checking as well
         assertEquals("EPSG:3857", epsgComponent2.getDefaultModel().getObject());
@@ -653,10 +588,9 @@ public class ResourceConfigurationPageTest extends GeoServerWicketTestSupport {
         // assert no error occurred on page and page is available for configuration
         tester.assertNoErrorMessage();
         // assert that native srs is correctly set
-        String nativeSRSTextFieldValue =
-                tester.getComponentFromLastRenderedPage(
-                                "publishedinfo:tabs:panel:theList:0:content:referencingForm:nativeSRS:srs")
-                        .getDefaultModelObjectAsString();
+        String nativeSRSTextFieldValue = tester.getComponentFromLastRenderedPage(
+                        "publishedinfo:tabs:panel:theList:0:content:referencingForm:nativeSRS:srs")
+                .getDefaultModelObjectAsString();
         assertEquals("Asserting EPSG code", "EPSG:4326", nativeSRSTextFieldValue);
     }
 
@@ -672,9 +606,7 @@ public class ResourceConfigurationPageTest extends GeoServerWicketTestSupport {
         FormTester form = tester.newFormTester("publishedinfo");
 
         // enable i18n for title
-        form.setValue(
-                "tabs:panel:theList:0:content:titleAndAbstract:titleLabel:titleLabel_i18nCheckbox",
-                true);
+        form.setValue("tabs:panel:theList:0:content:titleAndAbstract:titleLabel:titleLabel_i18nCheckbox", true);
         tester.executeAjaxEvent(
                 "publishedinfo:tabs:panel:theList:0:content:titleAndAbstract:titleLabel:titleLabel_i18nCheckbox",
                 "change");
@@ -702,9 +634,7 @@ public class ResourceConfigurationPageTest extends GeoServerWicketTestSupport {
                 "click");
 
         // enable i18n for abstract
-        form.setValue(
-                "tabs:panel:theList:0:content:titleAndAbstract:abstractLabel:abstractLabel_i18nCheckbox",
-                true);
+        form.setValue("tabs:panel:theList:0:content:titleAndAbstract:abstractLabel:abstractLabel_i18nCheckbox", true);
         tester.executeAjaxEvent(
                 "publishedinfo:tabs:panel:theList:0:content:titleAndAbstract:abstractLabel:abstractLabel_i18nCheckbox",
                 "change");
@@ -746,9 +676,7 @@ public class ResourceConfigurationPageTest extends GeoServerWicketTestSupport {
         FormTester form = tester.newFormTester("publishedinfo");
 
         // enable i18n for title
-        form.setValue(
-                "tabs:panel:theList:0:content:titleAndAbstract:titleLabel:titleLabel_i18nCheckbox",
-                true);
+        form.setValue("tabs:panel:theList:0:content:titleAndAbstract:titleLabel:titleLabel_i18nCheckbox", true);
         tester.executeAjaxEvent(
                 "publishedinfo:tabs:panel:theList:0:content:titleAndAbstract:titleLabel:titleLabel_i18nCheckbox",
                 "change");
@@ -776,9 +704,7 @@ public class ResourceConfigurationPageTest extends GeoServerWicketTestSupport {
         MockHttpClient client = new MockHttpClient();
         Catalog catalog = getCatalog();
         URL descURL = new URL(baseURL + "/wmts?REQUEST=GetCapabilities&VERSION=1.1.0&SERVICE=WMS");
-        client.expectGet(
-                descURL,
-                new MockHttpResponse(getClass().getResource("/wms_getCaps_CRS.xml"), "text/xml"));
+        client.expectGet(descURL, new MockHttpResponse(getClass().getResource("/wms_getCaps_CRS.xml"), "text/xml"));
 
         TestHttpClientProvider.bind(client, descURL);
         WMSStoreInfo storeInfo = new WMSStoreInfoImpl(getCatalog());
@@ -798,10 +724,9 @@ public class ResourceConfigurationPageTest extends GeoServerWicketTestSupport {
         login();
         tester.startPage(new ResourceConfigurationPage(layerInfo, true));
 
-        String nativeSRSTextFieldValue =
-                tester.getComponentFromLastRenderedPage(
-                                "publishedinfo:tabs:panel:theList:0:content:referencingForm:nativeSRS:srs")
-                        .getDefaultModelObjectAsString();
+        String nativeSRSTextFieldValue = tester.getComponentFromLastRenderedPage(
+                        "publishedinfo:tabs:panel:theList:0:content:referencingForm:nativeSRS:srs")
+                .getDefaultModelObjectAsString();
         assertEquals("EPSG:3395", nativeSRSTextFieldValue);
     }
 
@@ -811,15 +736,12 @@ public class ResourceConfigurationPageTest extends GeoServerWicketTestSupport {
         // page should show additional SRS in WMTS cap document
         login();
         tester.startPage(new ResourceConfigurationPage(layerInfo, true));
-        ReferencedEnvelope oldEnvelope =
-                (ReferencedEnvelope)
-                        tester.getComponentFromLastRenderedPage(
-                                        "publishedinfo:tabs:panel:theList:0:content:referencingForm:nativeBoundingBox")
-                                .getDefaultModel()
-                                .getObject();
+        ReferencedEnvelope oldEnvelope = (ReferencedEnvelope) tester.getComponentFromLastRenderedPage(
+                        "publishedinfo:tabs:panel:theList:0:content:referencingForm:nativeBoundingBox")
+                .getDefaultModel()
+                .getObject();
         // click the FIND button next to open SRS selection popup
-        tester.clickLink(
-                "publishedinfo:tabs:panel:theList:0:content:referencingForm:nativeSRS:find");
+        tester.clickLink("publishedinfo:tabs:panel:theList:0:content:referencingForm:nativeSRS:find");
 
         // verify Layer`s resource is updated with metadata
         assertNotNull(layerInfo.getResource().getMetadata().get(FeatureTypeInfo.OTHER_SRS));
@@ -828,23 +750,15 @@ public class ResourceConfigurationPageTest extends GeoServerWicketTestSupport {
         tester.clickLink(
                 "publishedinfo:tabs:panel:theList:0:content:referencingForm:nativeSRS:popup:content:table:listContainer:items:1:itemProperties:0:component:link",
                 true);
-        tester.clickLink(
-                "publishedinfo:tabs:panel:theList:0:content:referencingForm:computeNative", true);
+        tester.clickLink("publishedinfo:tabs:panel:theList:0:content:referencingForm:computeNative", true);
         // assert that native SRS has changed
-        ReferencedEnvelope newEnvelope =
-                (ReferencedEnvelope)
-                        tester.getComponentFromLastRenderedPage(
-                                        "publishedinfo:tabs:panel:theList:0:content:referencingForm:nativeBoundingBox")
-                                .getDefaultModel()
-                                .getObject();
+        ReferencedEnvelope newEnvelope = (ReferencedEnvelope) tester.getComponentFromLastRenderedPage(
+                        "publishedinfo:tabs:panel:theList:0:content:referencingForm:nativeBoundingBox")
+                .getDefaultModel()
+                .getObject();
         // these are defined in capabilities
-        ReferencedEnvelope envelope =
-                new ReferencedEnvelope(
-                        4305696.0,
-                        8500000.0,
-                        -1200000.0,
-                        2994304.0,
-                        CRS.decode("urn:ogc:def:crs:EPSG::3006"));
+        ReferencedEnvelope envelope = new ReferencedEnvelope(
+                4305696.0, 8500000.0, -1200000.0, 2994304.0, CRS.decode("urn:ogc:def:crs:EPSG::3006"));
         // the envelope was updated
         assertNotEquals(oldEnvelope, newEnvelope);
         // it equals the expected
@@ -856,12 +770,10 @@ public class ResourceConfigurationPageTest extends GeoServerWicketTestSupport {
         URL descURL = configureMockWMTSCapClient();
         WMTSStoreInfo storeInfo = configureWMTSStoreInfo(catalog, descURL, storeName);
         XStreamPersister xp = new XStreamPersisterFactory().createXMLPersister();
-        WMTSLayerInfo wmtsInfo =
-                xp.load(getClass().getResourceAsStream("/wmtsLayerInfo.xml"), WMTSLayerInfo.class);
+        WMTSLayerInfo wmtsInfo = xp.load(getClass().getResourceAsStream("/wmtsLayerInfo.xml"), WMTSLayerInfo.class);
         wmtsInfo.setStore(storeInfo);
         catalog.add(wmtsInfo);
-        LayerInfo layerInfo =
-                xp.load(getClass().getResourceAsStream("/wmtsLayer.xml"), LayerInfo.class);
+        LayerInfo layerInfo = xp.load(getClass().getResourceAsStream("/wmtsLayer.xml"), LayerInfo.class);
         layerInfo.setResource(wmtsInfo);
         return layerInfo;
     }
@@ -870,9 +782,7 @@ public class ResourceConfigurationPageTest extends GeoServerWicketTestSupport {
         String baseURL = TestHttpClientProvider.MOCKSERVER;
         MockHttpClient client = new MockHttpClient();
         URL descURL = new URL(baseURL + "/wmts?REQUEST=GetCapabilities&VERSION=1.0.0&SERVICE=WMTS");
-        client.expectGet(
-                descURL,
-                new MockHttpResponse(getClass().getResource("/wmts_getCaps.xml"), "text/xml"));
+        client.expectGet(descURL, new MockHttpResponse(getClass().getResource("/wmts_getCaps.xml"), "text/xml"));
 
         TestHttpClientProvider.bind(client, descURL);
         return descURL;
@@ -898,8 +808,7 @@ public class ResourceConfigurationPageTest extends GeoServerWicketTestSupport {
         login();
         tester.startPage(new ResourceConfigurationPage(layer, false));
         tester.assertLabel("publishedinfoname", layerId);
-        tester.assertComponent(
-                "publishedinfo:tabs:panel:theList:0:content", BasicResourceConfig.class);
+        tester.assertComponent("publishedinfo:tabs:panel:theList:0:content", BasicResourceConfig.class);
 
         // starts with the normal attribute viewer enabled
         String attributesPanel = "publishedinfo:tabs:panel:theList:1:content:attributePanel:";
@@ -920,9 +829,8 @@ public class ResourceConfigurationPageTest extends GeoServerWicketTestSupport {
         tester.assertInvisible(attributesPanel + "attributesTable");
         tester.assertVisible(attributesPanel + "attributesEditor");
         // check one attribute
-        String edit1 =
-                "publishedinfo:tabs:panel:theList:1:content:attributePanel:attributesEditor:table"
-                        + ":listContainer:items:1:itemProperties:";
+        String edit1 = "publishedinfo:tabs:panel:theList:1:content:attributePanel:attributesEditor:table"
+                + ":listContainer:items:1:itemProperties:";
         tester.assertModelValue(edit1 + "2:component:text", "description");
         tester.assertModelValue(edit1 + "3:component:type", java.lang.String.class);
         tester.assertModelValue(edit1 + "4:component:area", "description");
@@ -930,9 +838,8 @@ public class ResourceConfigurationPageTest extends GeoServerWicketTestSupport {
         tester.assertModelValue(edit1 + "6:component:check", true);
 
         // customize one attribute
-        String formEdit1 =
-                "tabs:panel:theList:1:content:attributePanel:attributesEditor:table"
-                        + ":listContainer:items:1:itemProperties:";
+        String formEdit1 = "tabs:panel:theList:1:content:attributePanel:attributesEditor:table"
+                + ":listContainer:items:1:itemProperties:";
         form.setValue(formEdit1 + "2:component:text", "abstract");
         String cql = "Concatenate(description, ' and more!')";
         form.setValue(formEdit1 + "4:component:area", cql);
@@ -950,8 +857,7 @@ public class ResourceConfigurationPageTest extends GeoServerWicketTestSupport {
         assertEquals(6, attributes.size());
         AttributeTypeInfo att = attributes.get(0);
         assertEquals("abstract", att.getName());
-        assertEquals(
-                "attribute described", att.getDescription().toString(GeoServerDefaultLocale.get()));
+        assertEquals("attribute described", att.getDescription().toString(GeoServerDefaultLocale.get()));
         assertEquals(cql, att.getSource());
     }
 
@@ -1001,9 +907,7 @@ public class ResourceConfigurationPageTest extends GeoServerWicketTestSupport {
         assertTrue(text.contains("Basic Resource Info"));
         assertTrue(text.contains("Feature Type Details"));
         assertTrue(text.contains("Edit sql view"));
-        assertTrue(
-                text.contains(
-                        "Failed to load attribute list, internal error is: Column NAD not found"));
+        assertTrue(text.contains("Failed to load attribute list, internal error is: Column NAD not found"));
 
         // After updating SQL view correctly error message should not be present
         VirtualTable vt1 = new VirtualTable("test", "SELECT FID,NAME FROM \"Forests\"");
@@ -1018,9 +922,7 @@ public class ResourceConfigurationPageTest extends GeoServerWicketTestSupport {
         assertTrue(text1.contains("Basic Resource Info"));
         assertTrue(text1.contains("Feature Type Details"));
         assertTrue(text1.contains("Edit sql view"));
-        assertFalse(
-                text1.contains(
-                        "Failed to load attribute list, internal error is: Column NAD not found"));
+        assertFalse(text1.contains("Failed to load attribute list, internal error is: Column NAD not found"));
     }
 
     void addFeature(SimpleFeatureStore store, String wkt, Object... atts) throws Exception {

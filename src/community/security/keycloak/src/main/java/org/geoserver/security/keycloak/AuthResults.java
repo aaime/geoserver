@@ -55,23 +55,20 @@ class AuthResults implements AuthenticationEntryPoint {
             details = (SimpleKeycloakAccount) authentication.getDetails();
 
             assert ((SimpleKeycloakAccount) details).getPrincipal() instanceof KeycloakPrincipal;
-            final KeycloakPrincipal principal =
-                    (KeycloakPrincipal) ((SimpleKeycloakAccount) details).getPrincipal();
+            final KeycloakPrincipal principal = (KeycloakPrincipal) ((SimpleKeycloakAccount) details).getPrincipal();
 
             username = principal.getName();
 
             if (principal.getKeycloakSecurityContext().getIdToken() != null) {
-                username =
-                        principal.getKeycloakSecurityContext().getIdToken().getPreferredUsername();
+                username = principal.getKeycloakSecurityContext().getIdToken().getPreferredUsername();
             }
         } else {
             username = authentication.getPrincipal();
             details = authentication.getDetails();
         }
 
-        this.authentication =
-                new UsernamePasswordAuthenticationToken(
-                        username, authentication.getCredentials(), authentication.getAuthorities());
+        this.authentication = new UsernamePasswordAuthenticationToken(
+                username, authentication.getCredentials(), authentication.getAuthorities());
         ((UsernamePasswordAuthenticationToken) this.authentication).setDetails(details);
         this.challenge = null;
     }
@@ -100,9 +97,7 @@ class AuthResults implements AuthenticationEntryPoint {
 
     @Override
     public void commence(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            AuthenticationException authException)
+            HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
             throws IOException, ServletException {
         challenge(request, response);
     }

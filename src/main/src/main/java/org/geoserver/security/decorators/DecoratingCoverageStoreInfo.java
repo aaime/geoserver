@@ -28,8 +28,7 @@ import org.geotools.util.factory.Hints;
  * @param <T>
  * @param <F>
  */
-public class DecoratingCoverageStoreInfo extends AbstractDecorator<CoverageStoreInfo>
-        implements CoverageStoreInfo {
+public class DecoratingCoverageStoreInfo extends AbstractDecorator<CoverageStoreInfo> implements CoverageStoreInfo {
 
     public DecoratingCoverageStoreInfo(CoverageStoreInfo delegate) {
         super(delegate);
@@ -141,8 +140,7 @@ public class DecoratingCoverageStoreInfo extends AbstractDecorator<CoverageStore
     }
 
     @Override
-    public GridCoverageReader getGridCoverageReader(ProgressListener listener, Hints hints)
-            throws IOException {
+    public GridCoverageReader getGridCoverageReader(ProgressListener listener, Hints hints) throws IOException {
         return delegate.getGridCoverageReader(listener, hints);
     }
 

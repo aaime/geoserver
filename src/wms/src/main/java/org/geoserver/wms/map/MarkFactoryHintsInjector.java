@@ -86,10 +86,7 @@ public class MarkFactoryHintsInjector {
             if (StringUtils.isNotBlank(factoriesStr)) {
                 List<String> factoryNames = Arrays.asList(factoriesStr.split(","));
                 if (validateIdentifiers(factoryNames)) {
-                    LOGGER.log(
-                            Level.FINE,
-                            "Configured MarkFactory precedence found: {0}",
-                            factoryNames);
+                    LOGGER.log(Level.FINE, "Configured MarkFactory precedence found: {0}", factoryNames);
                     return factoryNames;
                 }
             }
@@ -99,10 +96,9 @@ public class MarkFactoryHintsInjector {
     }
 
     private boolean validateIdentifiers(List<String> identifiers) {
-        List<String> availableFactories =
-                IteratorUtils.toList(DynamicSymbolFactoryFinder.getMarkFactories()).stream()
-                        .map(mf -> mf.getClass().getSimpleName())
-                        .collect(Collectors.toList());
+        List<String> availableFactories = IteratorUtils.toList(DynamicSymbolFactoryFinder.getMarkFactories()).stream()
+                .map(mf -> mf.getClass().getSimpleName())
+                .collect(Collectors.toList());
         for (String identifier : identifiers) {
             if (!availableFactories.contains(identifier)) {
                 LOGGER.log(

@@ -28,10 +28,7 @@ abstract class LambdaTransformerBase extends TransformerBase {
         }
 
         public LambdaTranslatorSupport(
-                ContentHandler contentHandler,
-                String prefix,
-                String nsURI,
-                SchemaLocationSupport schemaLocation) {
+                ContentHandler contentHandler, String prefix, String nsURI, SchemaLocationSupport schemaLocation) {
             super(contentHandler, prefix, nsURI, schemaLocation);
         }
 
@@ -48,8 +45,7 @@ abstract class LambdaTransformerBase extends TransformerBase {
         }
 
         /** Encodes an element, delegating encoding its sub-elements to the content encoder */
-        protected void element(
-                String elementName, Runnable contentsEncoder, Attributes attributes) {
+        protected void element(String elementName, Runnable contentsEncoder, Attributes attributes) {
             if (attributes != null) {
                 start(elementName, attributes);
             } else {

@@ -42,8 +42,7 @@ public class BestGuessRegionatingStrategy implements RegionatingStrategy {
         SimpleFeatureType type = ((SimpleFeatureSource) layer.getFeatureSource()).getSchema();
         Class<?> geomtype = type.getGeometryDescriptor().getType().getBinding();
 
-        if (Point.class.isAssignableFrom(geomtype))
-            return new RandomRegionatingStrategy(gs).getFilter(context, layer);
+        if (Point.class.isAssignableFrom(geomtype)) return new RandomRegionatingStrategy(gs).getFilter(context, layer);
 
         return new GeometryRegionatingStrategy(gs).getFilter(context, layer);
     }

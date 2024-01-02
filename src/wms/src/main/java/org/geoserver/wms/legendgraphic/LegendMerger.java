@@ -302,15 +302,7 @@ public class LegendMerger {
                 boolean forceLabelsOff,
                 boolean forceTitlesOff) {
             return new LegendMerger.MergeOptions(
-                    imageStack,
-                    dx,
-                    dy,
-                    margin,
-                    labelMargin,
-                    req,
-                    forceLabelsOn,
-                    forceLabelsOff,
-                    forceTitlesOff);
+                    imageStack, dx, dy, margin, labelMargin, req, forceLabelsOn, forceLabelsOff, forceTitlesOff);
         }
     }
 
@@ -336,12 +328,7 @@ public class LegendMerger {
             finalLegend = buildFinalHLegend(rows, mergeOptions);
         } else if (layout == LegendLayout.VERTICAL) {
             Column[] columns =
-                    createColumns(
-                            nodes,
-                            mergeOptions.getColumnHeight(),
-                            mergeOptions.getColumns(),
-                            null,
-                            false);
+                    createColumns(nodes, mergeOptions.getColumnHeight(), mergeOptions.getColumns(), null, false);
             finalLegend = buildFinalVLegend(columns, mergeOptions);
         }
 
@@ -359,8 +346,7 @@ public class LegendMerger {
      * @param mergeOptions options to be used for merging
      * @return the image with all the images on the argument list.
      */
-    public static BufferedImage mergeLegends(
-            Rule[] rules, GetLegendGraphicRequest req, MergeOptions mergeOptions) {
+    public static BufferedImage mergeLegends(Rule[] rules, GetLegendGraphicRequest req, MergeOptions mergeOptions) {
         ImageList imageStack = mergeOptions.getImageStack();
 
         // Builds legend nodes (graphics + label)
@@ -375,15 +361,14 @@ public class LegendMerger {
                 if (rules != null && rules[i] != null) {
                     BufferedImage label = renderLabel(img, rules[i], req, mergeOptions);
                     if (label != null) {
-                        img =
-                                joinBufferedImageHorizzontally(
-                                        img,
-                                        label,
-                                        mergeOptions.getLabelFont(),
-                                        mergeOptions.isAntialias(),
-                                        mergeOptions.isTransparent(),
-                                        mergeOptions.getBackgroundColor(),
-                                        mergeOptions.getLabelMargin());
+                        img = joinBufferedImageHorizzontally(
+                                img,
+                                label,
+                                mergeOptions.getLabelFont(),
+                                mergeOptions.isAntialias(),
+                                mergeOptions.isTransparent(),
+                                mergeOptions.getBackgroundColor(),
+                                mergeOptions.getLabelMargin());
                     }
                     nodes.add(img);
                 } else {
@@ -400,12 +385,7 @@ public class LegendMerger {
             finalLegend = buildFinalHLegend(rows, mergeOptions);
         } else if (layout == LegendLayout.VERTICAL) {
             Column[] columns =
-                    createColumns(
-                            nodes,
-                            mergeOptions.getColumnHeight(),
-                            mergeOptions.getColumns(),
-                            req,
-                            true);
+                    createColumns(nodes, mergeOptions.getColumnHeight(), mergeOptions.getColumns(), req, true);
             finalLegend = buildFinalVLegend(columns, mergeOptions);
         }
 
@@ -441,14 +421,13 @@ public class LegendMerger {
             for (int i = 0; i < imgCount; i = i + 2) {
                 BufferedImage lbl = imageStack.get(i);
                 BufferedImage img = imageStack.get(i + 1);
-                img =
-                        joinBufferedImageVertically(
-                                lbl,
-                                img,
-                                mergeOptions.getLabelFont(),
-                                mergeOptions.isAntialias(),
-                                mergeOptions.isTransparent(),
-                                mergeOptions.getBackgroundColor());
+                img = joinBufferedImageVertically(
+                        lbl,
+                        img,
+                        mergeOptions.getLabelFont(),
+                        mergeOptions.isAntialias(),
+                        mergeOptions.isTransparent(),
+                        mergeOptions.getBackgroundColor());
                 nodes.add(img);
             }
         }
@@ -534,11 +513,7 @@ public class LegendMerger {
      * @param checkColor check for presence of color in legend
      */
     private static Column[] createColumns(
-            ImageList nodes,
-            int maxHeight,
-            int maxColumns,
-            GetLegendGraphicRequest req,
-            boolean checkColor) {
+            ImageList nodes, int maxHeight, int maxColumns, GetLegendGraphicRequest req, boolean checkColor) {
 
         // call new method
 
@@ -728,12 +703,8 @@ public class LegendMerger {
         final BufferedImage finalLegend =
                 ImageUtils.createImage(totalWidth, totalHeight, null, options.isTransparent());
         final Map<RenderingHints.Key, Object> hintsMap = new HashMap<>();
-        Graphics2D finalGraphics =
-                ImageUtils.prepareTransparency(
-                        options.isTransparent(),
-                        options.getBackgroundColor(),
-                        finalLegend,
-                        hintsMap);
+        Graphics2D finalGraphics = ImageUtils.prepareTransparency(
+                options.isTransparent(), options.getBackgroundColor(), finalLegend, hintsMap);
         // finalGraphics.setFont(labelFont);
         if (options.isAntialias()) {
             finalGraphics.setRenderingHint(
@@ -790,12 +761,8 @@ public class LegendMerger {
         final BufferedImage finalLegend =
                 ImageUtils.createImage(totalWidth, totalHeight, null, options.isTransparent());
         final Map<RenderingHints.Key, Object> hintsMap = new HashMap<>();
-        Graphics2D finalGraphics =
-                ImageUtils.prepareTransparency(
-                        options.isTransparent(),
-                        options.getBackgroundColor(),
-                        finalLegend,
-                        hintsMap);
+        Graphics2D finalGraphics = ImageUtils.prepareTransparency(
+                options.isTransparent(), options.getBackgroundColor(), finalLegend, hintsMap);
         // finalGraphics.setFont(labelFont);
         if (options.isAntialias()) {
             finalGraphics.setRenderingHint(
@@ -848,15 +815,12 @@ public class LegendMerger {
         // create a new buffer and draw two image into the new image
         BufferedImage newImage = ImageUtils.createImage(wid, height, null, transparent);
         final Map<RenderingHints.Key, Object> hintsMap = new HashMap<>();
-        Graphics2D g2 =
-                ImageUtils.prepareTransparency(transparent, backgroundColor, newImage, hintsMap);
+        Graphics2D g2 = ImageUtils.prepareTransparency(transparent, backgroundColor, newImage, hintsMap);
         g2.setFont(labelFont);
         if (useAA) {
-            g2.setRenderingHint(
-                    RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         } else {
-            g2.setRenderingHint(
-                    RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+            g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
         }
         // move the images to the vertical center of the row
         int imgOffset = (int) Math.round((height - img.getHeight()) / 2d);
@@ -892,15 +856,12 @@ public class LegendMerger {
         // create a new buffer and draw two image into the new image
         BufferedImage newImage = ImageUtils.createImage(wid, height, null, transparent);
         final Map<RenderingHints.Key, Object> hintsMap = new HashMap<>();
-        Graphics2D g2 =
-                ImageUtils.prepareTransparency(transparent, backgroundColor, newImage, hintsMap);
+        Graphics2D g2 = ImageUtils.prepareTransparency(transparent, backgroundColor, newImage, hintsMap);
         g2.setFont(labelFont);
         if (useAA) {
-            g2.setRenderingHint(
-                    RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         } else {
-            g2.setRenderingHint(
-                    RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+            g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
         }
         // move the images to the vertical center of the row
         g2.drawImage(label, null, 0, 0);
@@ -924,8 +885,7 @@ public class LegendMerger {
         if (!options.isForceLabelsOff() && rule != null) {
             String label = LegendUtils.getRuleLabel(rule, req);
             if (label != null && label.length() > 0) {
-                final BufferedImage renderedLabel =
-                        getRenderedLabel((BufferedImage) img, label, req);
+                final BufferedImage renderedLabel = getRenderedLabel((BufferedImage) img, label, req);
                 labelImg = renderedLabel;
             }
         }
@@ -936,19 +896,16 @@ public class LegendMerger {
      * Renders a label on the given image, using parameters from the request for the rendering
      * style.
      */
-    protected static BufferedImage getRenderedLabel(
-            BufferedImage image, String label, GetLegendGraphicRequest req) {
+    protected static BufferedImage getRenderedLabel(BufferedImage image, String label, GetLegendGraphicRequest req) {
         final Graphics2D graphics = image.createGraphics();
         Font labelFont = LegendUtils.getLabelFont(req);
         boolean useAA = LegendUtils.isFontAntiAliasing(req);
 
         graphics.setFont(labelFont);
         if (useAA) {
-            graphics.setRenderingHint(
-                    RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         } else {
-            graphics.setRenderingHint(
-                    RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+            graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
         }
         return LegendUtils.renderLabel(label, graphics, req);
     }

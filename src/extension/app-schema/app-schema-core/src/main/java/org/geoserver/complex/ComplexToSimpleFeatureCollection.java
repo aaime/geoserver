@@ -74,8 +74,7 @@ public class ComplexToSimpleFeatureCollection implements SimpleFeatureCollection
      * rules.
      */
     protected SimpleFeatureType buildConvertedType() {
-        FeatureTypeConverter converter =
-                new FeatureTypeConverter(delegate.getSchema(), rulesMap, namespaceSupport);
+        FeatureTypeConverter converter = new FeatureTypeConverter(delegate.getSchema(), rulesMap, namespaceSupport);
         return converter.produceSimpleType();
     }
 
@@ -197,15 +196,13 @@ public class ComplexToSimpleFeatureCollection implements SimpleFeatureCollection
             String attrPath = rulesMap.get(simpleName);
             // if it's a rule based attribute, use the expression
             if (attrPath != null) {
-                AttributeExpressionImpl expression =
-                        new AttributeExpressionImpl(attrPath, namespaceSupport);
+                AttributeExpressionImpl expression = new AttributeExpressionImpl(attrPath, namespaceSupport);
                 return expression.evaluate(feature);
             }
             // not rule based, look up simple feature based on simple name
-            Optional<Property> propertyOpt =
-                    feature.getProperties().stream()
-                            .filter(prop -> simpleName.equals(prop.getName().getLocalPart()))
-                            .findFirst();
+            Optional<Property> propertyOpt = feature.getProperties().stream()
+                    .filter(prop -> simpleName.equals(prop.getName().getLocalPart()))
+                    .findFirst();
             if (propertyOpt.isPresent()) {
                 return propertyOpt.get().getValue();
             }

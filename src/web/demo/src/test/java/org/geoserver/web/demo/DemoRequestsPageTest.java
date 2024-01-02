@@ -54,8 +54,7 @@ public class DemoRequestsPageTest extends GeoServerWicketTestSupport {
         tester.assertComponent("demoRequestsForm", Form.class);
         tester.assertComponent("demoRequestsForm:demoRequestsList", DropDownChoice.class);
         tester.assertComponent("demoRequestsForm:url", TextField.class);
-        tester.assertComponent(
-                "demoRequestsForm:body:editorContainer:editorParent:editor", TextArea.class);
+        tester.assertComponent("demoRequestsForm:body:editorContainer:editorParent:editor", TextArea.class);
         tester.assertComponent("demoRequestsForm:username", TextField.class);
         tester.assertComponent("demoRequestsForm:password", PasswordTextField.class);
         tester.assertComponent("demoRequestsForm:submit", AjaxSubmitLink.class);
@@ -75,9 +74,7 @@ public class DemoRequestsPageTest extends GeoServerWicketTestSupport {
                 Arrays.asList(new String[] {"WFS_getFeature-1.1.xml", "WMS_describeLayer.url"});
 
         DropDownChoice dropDown =
-                (DropDownChoice)
-                        tester.getComponentFromLastRenderedPage(
-                                "demoRequestsForm:demoRequestsList");
+                (DropDownChoice) tester.getComponentFromLastRenderedPage("demoRequestsForm:demoRequestsList");
         List choices = dropDown.getChoices();
         assertEquals(expectedList, choices);
     }
@@ -274,9 +271,7 @@ public class DemoRequestsPageTest extends GeoServerWicketTestSupport {
     @Test
     public void testSerializable() {
         DemoRequestsPage page = new DemoRequestsPage();
-        DemoRequestsPage page2 =
-                (DemoRequestsPage)
-                        SerializationUtils.deserialize(SerializationUtils.serialize(page));
+        DemoRequestsPage page2 = (DemoRequestsPage) SerializationUtils.deserialize(SerializationUtils.serialize(page));
         assertEquals(page.demoDir, page2.demoDir);
     }
 }

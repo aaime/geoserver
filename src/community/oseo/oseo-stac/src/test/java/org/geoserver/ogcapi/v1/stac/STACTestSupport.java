@@ -63,8 +63,7 @@ public class STACTestSupport extends OGCApiTestSupport {
         GeoServer gs = getGeoServer();
         OSEOInfo service = gs.getService(OSEOInfo.class);
         service.setTitle(STAC_TITLE);
-        service.getGlobalQueryables()
-                .addAll(Arrays.asList("id", "geometry", "collection", "eo:cloud_cover"));
+        service.getGlobalQueryables().addAll(Arrays.asList("id", "geometry", "collection", "eo:cloud_cover"));
         gs.save(service);
 
         setupBasicOpenSearch(testData, getCatalog(), gs, false);
@@ -86,8 +85,7 @@ public class STACTestSupport extends OGCApiTestSupport {
      * @throws IOException
      */
     public OpenSearchAccess getOpenSearchAccess() throws IOException {
-        OpenSearchAccessProvider provider =
-                GeoServerExtensions.bean(OpenSearchAccessProvider.class);
+        OpenSearchAccessProvider provider = GeoServerExtensions.bean(OpenSearchAccessProvider.class);
         return provider.getOpenSearchAccess();
     }
 
@@ -120,8 +118,7 @@ public class STACTestSupport extends OGCApiTestSupport {
         GeoServerDataDirectory dd = getDataDirectory();
         Resource target = dd.get(targetPath, template);
         if (getClass().getResource(template) == null)
-            throw new IllegalArgumentException(
-                    "Could not find " + template + " relative to " + getClass());
+            throw new IllegalArgumentException("Could not find " + template + " relative to " + getClass());
         try (InputStream is = getClass().getResourceAsStream(template);
                 OutputStream os = target.out()) {
             IOUtils.copy(is, os);
@@ -203,17 +200,14 @@ public class STACTestSupport extends OGCApiTestSupport {
         assertEquals(
                 "http://localhost:8080/geoserver/ogc/stac/v1/collections/SENTINEL2",
                 readSingle(s2Sample, "links[?(@.rel == 'collection')].href"));
+        assertEquals("application/json", readSingle(s2Sample, "links[?(@.rel == 'collection')].type"));
         assertEquals(
-                "application/json", readSingle(s2Sample, "links[?(@.rel == 'collection')].type"));
-        assertEquals(
-                "http://localhost:8080/geoserver/ogc/stac/v1",
-                readSingle(s2Sample, "links[?(@.rel == 'root')].href"));
+                "http://localhost:8080/geoserver/ogc/stac/v1", readSingle(s2Sample, "links[?(@.rel == 'root')].href"));
         assertEquals("application/json", readSingle(s2Sample, "links[?(@.rel == 'root')].type"));
         assertEquals(
                 "http://localhost:8080/geoserver/ogc/stac/v1/collections/SENTINEL2/items/S2A_OPER_MSI_L1C_TL_MTI__20170308T220244_A008933_T11SLT_N02.04",
                 readSingle(s2Sample, "links[?(@.rel == 'self')].href"));
-        assertEquals(
-                "application/geo+json", readSingle(s2Sample, "links[?(@.rel == 'self')].type"));
+        assertEquals("application/geo+json", readSingle(s2Sample, "links[?(@.rel == 'self')].type"));
     }
 
     /** Checks the array contains the given coordinates in <code>x, y</code> order. */

@@ -22,15 +22,14 @@ public class PolygonFunction extends DGGSSetFunctionBase {
 
     Set<String> zoneIds;
 
-    public static FunctionName NAME =
-            functionName(
-                    "dggsPolygon",
-                    "result:Boolean",
-                    "zoneId:String",
-                    "polygon:org.locationtech.jts.geom.Polygon",
-                    "resolution:Integer",
-                    "compact:Boolean",
-                    "dggs:org.geotools.dggs.DGGSInstance");
+    public static FunctionName NAME = functionName(
+            "dggsPolygon",
+            "result:Boolean",
+            "zoneId:String",
+            "polygon:org.locationtech.jts.geom.Polygon",
+            "resolution:Integer",
+            "compact:Boolean",
+            "dggs:org.geotools.dggs.DGGSInstance");
 
     public PolygonFunction() {
         super(NAME);
@@ -43,23 +42,19 @@ public class PolygonFunction extends DGGSSetFunctionBase {
         String testedZoneId = (String) getParameterValue(object, 0);
         if (testedZoneId == null) return false;
 
-        return matches(
-                testedZoneId,
-                () -> {
-                    // check params
-                    Polygon polygon = (Polygon) getParameterValue(object, 1);
-                    Integer resolution = (Integer) getParameterValue(object, 2);
-                    Boolean compact =
-                            Optional.ofNullable((Boolean) getParameterValue(null, 3)).orElse(false);
-                    DGGSInstance dggs = (DGGSInstance) getParameterValue(object, 4);
-                    if (polygon == null || resolution == null || dggs == null)
-                        return Collections.emptyIterator();
+        return matches(testedZoneId, () -> {
+            // check params
+            Polygon polygon = (Polygon) getParameterValue(object, 1);
+            Integer resolution = (Integer) getParameterValue(object, 2);
+            Boolean compact =
+                    Optional.ofNullable((Boolean) getParameterValue(null, 3)).orElse(false);
+            DGGSInstance dggs = (DGGSInstance) getParameterValue(object, 4);
+            if (polygon == null || resolution == null || dggs == null) return Collections.emptyIterator();
 
-                    // check resolution first
-                    if (dggs.getZone(testedZoneId).getResolution() != resolution)
-                        return Collections.emptyIterator();
-                    return dggs.polygon(polygon, resolution, compact);
-                });
+            // check resolution first
+            if (dggs.getZone(testedZoneId).getResolution() != resolution) return Collections.emptyIterator();
+            return dggs.polygon(polygon, resolution, compact);
+        });
     }
 
     @Override
@@ -80,7 +75,8 @@ public class PolygonFunction extends DGGSSetFunctionBase {
         if (!isStable()) throw new IllegalStateException("Source parameters are not stable");
         Polygon polygon = (Polygon) getParameterValue(null, 1);
         Integer resolution = (Integer) getParameterValue(null, 2);
-        Boolean compact = Optional.ofNullable((Boolean) getParameterValue(null, 3)).orElse(false);
+        Boolean compact =
+                Optional.ofNullable((Boolean) getParameterValue(null, 3)).orElse(false);
         DGGSInstance dggs = (DGGSInstance) getParameterValue(null, 4);
 
         return dggs.polygon(polygon, resolution, compact);

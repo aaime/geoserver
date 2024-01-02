@@ -17,8 +17,7 @@ import org.geotools.util.Version;
  *
  * @author Jesse Eichar, camptocamp
  */
-public interface WFSExtendedCapabilitiesProvider
-        extends ExtendedCapabilitiesProvider<WFSInfo, GetCapabilitiesRequest> {
+public interface WFSExtendedCapabilitiesProvider extends ExtendedCapabilitiesProvider<WFSInfo, GetCapabilitiesRequest> {
 
     /**
      * Returns the extra profiles this plugin is adding to the base specification for the given

@@ -72,10 +72,8 @@ public class ReprojectingFeatureCollection extends DecoratingSimpleFeatureCollec
     /** Transformation hints */
     Hints hints = new Hints(Hints.LENIENT_DATUM_SHIFT, Boolean.TRUE);
 
-    public ReprojectingFeatureCollection(
-            SimpleFeatureCollection delegate, CoordinateReferenceSystem target)
-            throws SchemaException, OperationNotFoundException, FactoryRegistryException,
-                    FactoryException {
+    public ReprojectingFeatureCollection(SimpleFeatureCollection delegate, CoordinateReferenceSystem target)
+            throws SchemaException, OperationNotFoundException, FactoryRegistryException, FactoryException {
         super(delegate);
 
         this.target = target;
@@ -88,18 +86,15 @@ public class ReprojectingFeatureCollection extends DecoratingSimpleFeatureCollec
         CoordinateReferenceSystem source = delegate.getSchema().getCoordinateReferenceSystem();
 
         if (source != null) {
-            MathTransform tx =
-                    ReferencingFactoryFinder.getCoordinateOperationFactory(hints)
-                            .createOperation(source, target)
-                            .getMathTransform();
+            MathTransform tx = ReferencingFactoryFinder.getCoordinateOperationFactory(hints)
+                    .createOperation(source, target)
+                    .getMathTransform();
 
-            GeometryCoordinateSequenceTransformer transformer =
-                    new GeometryCoordinateSequenceTransformer();
+            GeometryCoordinateSequenceTransformer transformer = new GeometryCoordinateSequenceTransformer();
             transformer.setMathTransform(tx);
             transformers.put(source, transformer);
         } else {
-            throw new RuntimeException(
-                    "Source was null in trying to create a reprojected feature collection!");
+            throw new RuntimeException("Source was null in trying to create a reprojected feature collection!");
         }
     }
 
@@ -139,8 +134,7 @@ public class ReprojectingFeatureCollection extends DecoratingSimpleFeatureCollec
             DefaultCRSFilterVisitor defaulter = new DefaultCRSFilterVisitor(FF, crs);
             filter = (Filter) filter.accept(defaulter, null);
             if (crsDelegate != null && !CRS.equalsIgnoreMetadata(crs, crsDelegate)) {
-                ReprojectingFilterVisitor reprojector =
-                        new ReprojectingFilterVisitor(FF, delegate.getSchema());
+                ReprojectingFilterVisitor reprojector = new ReprojectingFilterVisitor(FF, delegate.getSchema());
                 filter = (Filter) filter.accept(reprojector, null);
             }
         }
@@ -149,8 +143,7 @@ public class ReprojectingFeatureCollection extends DecoratingSimpleFeatureCollec
 
         if (sub != null) {
             try {
-                ReprojectingFeatureCollection wrapper =
-                        new ReprojectingFeatureCollection(sub, target);
+                ReprojectingFeatureCollection wrapper = new ReprojectingFeatureCollection(sub, target);
                 wrapper.setDefaultSource(defaultSource);
 
                 return wrapper;
@@ -251,12 +244,9 @@ public class ReprojectingFeatureCollection extends DecoratingSimpleFeatureCollec
                             MathTransform2D tx;
 
                             try {
-                                tx =
-                                        (MathTransform2D)
-                                                ReferencingFactoryFinder
-                                                        .getCoordinateOperationFactory(hints)
-                                                        .createOperation(crs, target)
-                                                        .getMathTransform();
+                                tx = (MathTransform2D) ReferencingFactoryFinder.getCoordinateOperationFactory(hints)
+                                        .createOperation(crs, target)
+                                        .getMathTransform();
                             } catch (Exception e) {
                                 String msg = "Could not transform for crs: " + crs;
                                 throw (IOException) new IOException(msg).initCause(e);

@@ -51,10 +51,6 @@ public interface ToolWrapper {
      * @return the output file
      */
     public File convert(
-            File inputData,
-            File outputDirectory,
-            String typeName,
-            Format format,
-            CoordinateReferenceSystem crs)
+            File inputData, File outputDirectory, String typeName, Format format, CoordinateReferenceSystem crs)
             throws IOException, InterruptedException;
 }

@@ -29,8 +29,7 @@ public class ProxyBase implements InvocationHandler {
         if ((method.getName().startsWith("get") || method.getName().startsWith("is"))
                 && method.getParameterTypes().length == 0) {
 
-            String property =
-                    method.getName().substring(method.getName().startsWith("get") ? 3 : 2);
+            String property = method.getName().substring(method.getName().startsWith("get") ? 3 : 2);
 
             return handleGet(proxy, method, property);
         }
@@ -61,8 +60,7 @@ public class ProxyBase implements InvocationHandler {
         return method.invoke(proxy, null);
     }
 
-    protected void handleSet(Object proxy, Method method, Object value, String property)
-            throws Throwable {
+    protected void handleSet(Object proxy, Method method, Object value, String property) throws Throwable {
         properties().put(property, value);
     }
 

@@ -40,18 +40,16 @@ public class JSONFieldSupport {
      * Used to parse JSON strings into JSON trees. Single instance as creation is expensive, and the
      * object is shareable and thread safe
      */
-    private static ObjectMapper MAPPER =
-            new ObjectMapper(new JsonFactory().enable(JsonParser.Feature.ALLOW_COMMENTS));
+    private static ObjectMapper MAPPER = new ObjectMapper(new JsonFactory().enable(JsonParser.Feature.ALLOW_COMMENTS));
 
     /**
      * Used to parse JSON strings into JSON trees where the attributes are sorted by key
      * alphanumerically.
      */
-    public static ObjectMapper SORT_BY_KEY_MAPPER =
-            JsonMapper.builder()
-                    .enable(JsonParser.Feature.ALLOW_COMMENTS)
-                    .nodeFactory(new SortingNodeFactory())
-                    .build();
+    public static ObjectMapper SORT_BY_KEY_MAPPER = JsonMapper.builder()
+            .enable(JsonParser.Feature.ALLOW_COMMENTS)
+            .nodeFactory(new SortingNodeFactory())
+            .build();
 
     /**
      * Checks if the current result can be evaluated into a JSONNode, based on type information
@@ -62,11 +60,10 @@ public class JSONFieldSupport {
             if (contextObject instanceof ComplexAttribute) {
                 // see if there is an indication it was a JSON field
                 if (expression instanceof JsonPointerFunction
-                        || isJSONField(
-                                Optional.ofNullable(((ComplexAttribute) contextObject).getType())
-                                        .map(ct -> expression.evaluate(ct))
-                                        .filter(d -> d instanceof PropertyDescriptor)
-                                        .map(d -> (PropertyDescriptor) d))) {
+                        || isJSONField(Optional.ofNullable(((ComplexAttribute) contextObject).getType())
+                                .map(ct -> expression.evaluate(ct))
+                                .filter(d -> d instanceof PropertyDescriptor)
+                                .map(d -> (PropertyDescriptor) d))) {
                     return parseJSON(result);
                 }
             } else if (result instanceof Attribute) {
@@ -75,9 +72,7 @@ public class JSONFieldSupport {
                 }
             }
         } catch (JsonProcessingException ex) {
-            LOGGER.log(
-                    Level.FINE,
-                    "Failed to parse JSON from attribute that was supposed to be a JSON field");
+            LOGGER.log(Level.FINE, "Failed to parse JSON from attribute that was supposed to be a JSON field");
         }
         // fall back on the original value otherwise
         return result;

@@ -57,7 +57,8 @@ import org.springframework.oxm.jaxb.Jaxb2Marshaller;
  */
 public class MapMLGetFeatureOutputFormat extends WFSGetFeatureOutputFormat {
 
-    @Autowired private Jaxb2Marshaller mapmlMarshaller;
+    @Autowired
+    private Jaxb2Marshaller mapmlMarshaller;
 
     private String base;
     private String path;
@@ -74,16 +75,12 @@ public class MapMLGetFeatureOutputFormat extends WFSGetFeatureOutputFormat {
     }
 
     @Override
-    protected void write(
-            FeatureCollectionResponse featureCollectionResponse,
-            OutputStream out,
-            Operation getFeature)
+    protected void write(FeatureCollectionResponse featureCollectionResponse, OutputStream out, Operation getFeature)
             throws IOException, ServiceException {
 
         List<FeatureCollection> featureCollections = featureCollectionResponse.getFeatures();
         if (featureCollections.size() != 1) {
-            throw new ServiceException(
-                    "MapML OutputFormat does not support Multiple Feature Type output.");
+            throw new ServiceException("MapML OutputFormat does not support Multiple Feature Type output.");
         }
         FeatureCollection featureCollection = featureCollections.get(0);
         if (!(featureCollection instanceof SimpleFeatureCollection)) {
@@ -138,10 +135,8 @@ public class MapMLGetFeatureOutputFormat extends WFSGetFeatureOutputFormat {
         MapMLGenerator featureBuilder = new MapMLGenerator();
         int numDecimals = this.getNumDecimals(featureCollections, gs, gs.getCatalog());
         featureBuilder.setNumDecimals(numDecimals);
-        featureBuilder.setForcedDecimal(
-                this.getForcedDecimal(featureCollections, gs, gs.getCatalog()));
-        featureBuilder.setPadWithZeros(
-                this.getPadWithZeros(featureCollections, gs, gs.getCatalog()));
+        featureBuilder.setForcedDecimal(this.getForcedDecimal(featureCollections, gs, gs.getCatalog()));
+        featureBuilder.setPadWithZeros(this.getPadWithZeros(featureCollections, gs, gs.getCatalog()));
         try (SimpleFeatureIterator iterator = fc.features()) {
             while (iterator.hasNext()) {
                 SimpleFeature feature = iterator.next();
@@ -201,8 +196,7 @@ public class MapMLGetFeatureOutputFormat extends WFSGetFeatureOutputFormat {
             // "MapML" CRS 'authority'
             // so that nobody can be surprised by x,y axis order in WGS84 data
             crs = (responseCRS instanceof GeodeticCRS) ? "gcrs" : "pcrs";
-            projection.setContent(
-                    crs.equalsIgnoreCase("gcrs") ? cite + ":" + responseCRSCode : responseCRSCode);
+            projection.setContent(crs.equalsIgnoreCase("gcrs") ? cite + ":" + responseCRSCode : responseCRSCode);
             coordinateSystem.setContent(crs);
         }
         extent.setContent(getExtent(layerInfo, responseCRSCode, responseCRS));
@@ -220,20 +214,17 @@ public class MapMLGetFeatureOutputFormat extends WFSGetFeatureOutputFormat {
         URI srsName = null;
         try {
             boolean wfs1 = getFeature.getService().getVersion().toString().startsWith("1");
-            srsName =
-                    wfs1
-                            ? ((QueryTypeImpl)
-                                            ((GetFeatureTypeImpl) getFeature.getParameters()[0])
-                                                    .getQuery()
-                                                    .get(0))
-                                    .getSrsName()
-                            : ((net.opengis.wfs20.impl.QueryTypeImpl)
-                                            ((net.opengis.wfs20.impl.GetFeatureTypeImpl)
-                                                            getFeature.getParameters()[0])
-                                                    .getAbstractQueryExpressionGroup()
-                                                    .get(0)
-                                                    .getValue())
-                                    .getSrsName();
+            srsName = wfs1
+                    ? ((QueryTypeImpl) ((GetFeatureTypeImpl) getFeature.getParameters()[0])
+                                    .getQuery()
+                                    .get(0))
+                            .getSrsName()
+                    : ((net.opengis.wfs20.impl.QueryTypeImpl) ((net.opengis.wfs20.impl.GetFeatureTypeImpl)
+                                            getFeature.getParameters()[0])
+                                    .getAbstractQueryExpressionGroup()
+                                    .get(0)
+                                    .getValue())
+                            .getSrsName();
         } catch (Exception e) {
         }
         return srsName;
@@ -245,8 +236,7 @@ public class MapMLGetFeatureOutputFormat extends WFSGetFeatureOutputFormat {
      * @param responseCRS used to transform source bbox to, if necessary
      * @return
      */
-    private String getExtent(
-            LayerInfo layerInfo, String responseCRSCode, CoordinateReferenceSystem responseCRS) {
+    private String getExtent(LayerInfo layerInfo, String responseCRSCode, CoordinateReferenceSystem responseCRS) {
         String extent = "";
         ResourceInfo r = layerInfo.getResource();
         ReferencedEnvelope re;
@@ -271,8 +261,7 @@ public class MapMLGetFeatureOutputFormat extends WFSGetFeatureOutputFormat {
                 minNorthing = re.getMinY();
                 maxEasting = re.getMaxX();
                 maxNorthing = re.getMaxY();
-                extent =
-                        String.format(pcrsFormat, minEasting, maxNorthing, maxEasting, minNorthing);
+                extent = String.format(pcrsFormat, minEasting, maxNorthing, maxEasting, minNorthing);
             }
         } catch (Exception e) {
             if (tcrs != null) {
@@ -287,9 +276,7 @@ public class MapMLGetFeatureOutputFormat extends WFSGetFeatureOutputFormat {
                     minNorthing = tcrs.getBounds().getMin().y;
                     maxEasting = tcrs.getBounds().getMax().x;
                     maxNorthing = tcrs.getBounds().getMax().y;
-                    extent =
-                            String.format(
-                                    pcrsFormat, minEasting, maxNorthing, maxEasting, minNorthing);
+                    extent = String.format(pcrsFormat, minEasting, maxNorthing, maxEasting, minNorthing);
                 }
             }
         }
@@ -304,29 +291,20 @@ public class MapMLGetFeatureOutputFormat extends WFSGetFeatureOutputFormat {
     private List<Link> alternateProjections() {
         ArrayList<Link> links = new ArrayList<>();
         Set<String> projections = TiledCRSConstants.tiledCRSBySrsName.keySet();
-        projections.forEach(
-                (String p) -> {
-                    Link l = new Link();
-                    TiledCRSParams projection = TiledCRSConstants.lookupTCRS(p);
-                    l.setProjection(ProjType.fromValue(projection.getName()));
-                    l.setRel(RelType.ALTERNATE);
-                    this.query.put("srsName", projection.getCode());
-                    HashMap<String, String> kvp = new HashMap<>(this.query.size());
-                    this.query
-                            .keySet()
-                            .forEach(
-                                    key -> {
-                                        kvp.put(key, this.query.getOrDefault(key, "").toString());
-                                    });
-                    l.setHref(
-                            ResponseUtils.urlDecode(
-                                    ResponseUtils.buildURL(
-                                            this.base,
-                                            this.path,
-                                            kvp,
-                                            URLMangler.URLType.SERVICE)));
-                    links.add(l);
-                });
+        projections.forEach((String p) -> {
+            Link l = new Link();
+            TiledCRSParams projection = TiledCRSConstants.lookupTCRS(p);
+            l.setProjection(ProjType.fromValue(projection.getName()));
+            l.setRel(RelType.ALTERNATE);
+            this.query.put("srsName", projection.getCode());
+            HashMap<String, String> kvp = new HashMap<>(this.query.size());
+            this.query.keySet().forEach(key -> {
+                kvp.put(key, this.query.getOrDefault(key, "").toString());
+            });
+            l.setHref(ResponseUtils.urlDecode(
+                    ResponseUtils.buildURL(this.base, this.path, kvp, URLMangler.URLType.SERVICE)));
+            links.add(l);
+        });
 
         return links;
     }

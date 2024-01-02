@@ -32,8 +32,7 @@ import org.geotools.util.decorate.AbstractDecorator;
  *
  * @author Andrea Aime
  */
-public class DecoratingLayerGroupInfo extends AbstractDecorator<LayerGroupInfo>
-        implements LayerGroupInfo {
+public class DecoratingLayerGroupInfo extends AbstractDecorator<LayerGroupInfo> implements LayerGroupInfo {
 
     public DecoratingLayerGroupInfo(LayerGroupInfo delegate) {
         super(delegate);

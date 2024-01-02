@@ -42,8 +42,7 @@ public class ServiceResourceProvider implements ApplicationContextAware {
      */
     public List<String> getServicesForResource(ResourceInfo resource) {
         List<String> services = servicesList();
-        List<ServiceResourceVoter> voters =
-                GeoServerExtensions.extensions(ServiceResourceVoter.class, context);
+        List<ServiceResourceVoter> voters = GeoServerExtensions.extensions(ServiceResourceVoter.class, context);
         return services.stream()
                 .filter(s -> !isServiceHidden(resource, s, voters))
                 .collect(Collectors.toCollection(ArrayList::new));
@@ -67,8 +66,7 @@ public class ServiceResourceProvider implements ApplicationContextAware {
      * @param voters Voters available to check resource compatibility with service
      * @return True if any voter declares resource incompatible with the service type
      */
-    private boolean isServiceHidden(
-            ResourceInfo resource, String serviceType, List<ServiceResourceVoter> voters) {
+    private boolean isServiceHidden(ResourceInfo resource, String serviceType, List<ServiceResourceVoter> voters) {
         return voters.stream().anyMatch(v -> v.hideService(serviceType, resource));
     }
 
@@ -78,9 +76,7 @@ public class ServiceResourceProvider implements ApplicationContextAware {
      * @return list of all service types
      */
     private List<String> servicesList() {
-        return geoServer.getServices().stream()
-                .map(si -> si.getType())
-                .collect(Collectors.toList());
+        return geoServer.getServices().stream().map(si -> si.getType()).collect(Collectors.toList());
     }
 
     @Override

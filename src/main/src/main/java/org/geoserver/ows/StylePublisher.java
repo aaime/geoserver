@@ -86,9 +86,7 @@ public class StylePublisher extends AbstractURLPublisher {
             switch (resource.getType()) {
                 case RESOURCE:
                     // don't allow access to the style .xml files
-                    return resource.name().endsWith(".xml")
-                            ? null
-                            : URLs.fileToUrl(resource.file());
+                    return resource.name().endsWith(".xml") ? null : URLs.fileToUrl(resource.file());
                 case DIRECTORY:
                 case UNDEFINED:
                 default:

@@ -57,8 +57,7 @@ public final class XStreamUtils {
      * @param obj The object to serialize.
      * @param xp The persister.
      */
-    public static void xStreamPersist(Resource r, Object obj, XStreamPersister xp)
-            throws IOException {
+    public static void xStreamPersist(Resource r, Object obj, XStreamPersister xp) throws IOException {
 
         try (OutputStream out = r.out()) {
             xp.save(obj, out);

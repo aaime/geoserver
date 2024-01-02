@@ -20,8 +20,7 @@ public class Validators {
      * Returns a clone of the validators collection where none of the validators implementing one of
      * the specified filter classes is available
      */
-    public static List<Validator> filterOutClasses(
-            Collection<Validator> validators, Class<?>... filteredClasses) {
+    public static List<Validator> filterOutClasses(Collection<Validator> validators, Class<?>... filteredClasses) {
         if (validators == null) {
             return null;
         }

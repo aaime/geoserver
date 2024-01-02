@@ -41,10 +41,7 @@ public class RequestInfo {
     /** Constructs a {@link RequestInfo} object, generating content based on the passed request. */
     public RequestInfo(HttpServletRequest request) {
         // http://host:port/appName
-        baseURL =
-                request.getRequestURL()
-                        .toString()
-                        .replace(request.getRequestURI(), request.getContextPath());
+        baseURL = request.getRequestURL().toString().replace(request.getRequestURI(), request.getContextPath());
 
         servletPath = request.getServletPath();
         pagePath = request.getServletPath() + request.getPathInfo();
@@ -126,8 +123,7 @@ public class RequestInfo {
     public static RequestInfo get() {
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         if (requestAttributes == null) return null;
-        return (RequestInfo)
-                requestAttributes.getAttribute(RequestInfo.KEY, RequestAttributes.SCOPE_REQUEST);
+        return (RequestInfo) requestAttributes.getAttribute(RequestInfo.KEY, RequestAttributes.SCOPE_REQUEST);
     }
 
     public Map<String, String[]> getQueryMap() {
@@ -140,7 +136,6 @@ public class RequestInfo {
         if (requestAttributes == null) {
             throw new IllegalStateException("Request attributes are not set");
         }
-        requestAttributes.setAttribute(
-                RequestInfo.KEY, requestInfo, RequestAttributes.SCOPE_REQUEST);
+        requestAttributes.setAttribute(RequestInfo.KEY, requestInfo, RequestAttributes.SCOPE_REQUEST);
     }
 }

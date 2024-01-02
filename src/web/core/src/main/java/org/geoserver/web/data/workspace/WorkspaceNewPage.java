@@ -60,62 +60,58 @@ public class WorkspaceNewPage extends GeoServerSecuredPage {
         Form form = new Form("form");
         List<ITab> tabs = new ArrayList<>();
 
-        tabs.add(
-                new AbstractTab(new Model<>("Basic Info")) {
+        tabs.add(new AbstractTab(new Model<>("Basic Info")) {
 
-                    private static final long serialVersionUID = 1L;
+            private static final long serialVersionUID = 1L;
 
-                    @Override
-                    public WebMarkupContainer getPanel(String panelId) {
-                        try {
-                            infoPanel = new WsNewInfoPanel(panelId, model);
-                            return infoPanel;
-                        } catch (Exception e) {
-                            throw new WicketRuntimeException(e);
-                        }
-                    }
-                });
+            @Override
+            public WebMarkupContainer getPanel(String panelId) {
+                try {
+                    infoPanel = new WsNewInfoPanel(panelId, model);
+                    return infoPanel;
+                } catch (Exception e) {
+                    throw new WicketRuntimeException(e);
+                }
+            }
+        });
         if (AccessDataRuleInfoManager.canAccess()) {
-            tabs.add(
-                    new AbstractTab(new Model<>("Security")) {
+            tabs.add(new AbstractTab(new Model<>("Security")) {
 
-                        private static final long serialVersionUID = 1L;
+                private static final long serialVersionUID = 1L;
 
-                        @Override
-                        public WebMarkupContainer getPanel(String panelId) {
-                            try {
-                                AccessDataRuleInfoManager manager = new AccessDataRuleInfoManager();
-                                ListModel<DataAccessRuleInfo> ownModel =
-                                        new ListModel<>(
-                                                manager.getDataAccessRuleInfo(model.getObject()));
-                                accessdataPanel = new AccessDataRulePanel(panelId, model, ownModel);
-                                return accessdataPanel;
-                            } catch (Exception e) {
-                                throw new WicketRuntimeException(e);
-                            }
-                        }
-                    });
+                @Override
+                public WebMarkupContainer getPanel(String panelId) {
+                    try {
+                        AccessDataRuleInfoManager manager = new AccessDataRuleInfoManager();
+                        ListModel<DataAccessRuleInfo> ownModel =
+                                new ListModel<>(manager.getDataAccessRuleInfo(model.getObject()));
+                        accessdataPanel = new AccessDataRulePanel(panelId, model, ownModel);
+                        return accessdataPanel;
+                    } catch (Exception e) {
+                        throw new WicketRuntimeException(e);
+                    }
+                }
+            });
         }
 
-        tabbedPanel =
-                new TabbedPanel<ITab>("tabs", tabs) {
+        tabbedPanel = new TabbedPanel<ITab>("tabs", tabs) {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected WebMarkupContainer newLink(String linkId, final int index) {
+                return new SubmitLink(linkId) {
 
                     private static final long serialVersionUID = 1L;
 
                     @Override
-                    protected WebMarkupContainer newLink(String linkId, final int index) {
-                        return new SubmitLink(linkId) {
+                    public void onSubmit() {
 
-                            private static final long serialVersionUID = 1L;
-
-                            @Override
-                            public void onSubmit() {
-
-                                setSelectedTab(index);
-                            }
-                        };
+                        setSelectedTab(index);
                     }
                 };
+            }
+        };
         form.add(tabbedPanel);
 
         form.add(submitLink());
@@ -181,10 +177,7 @@ public class WorkspaceNewPage extends GeoServerSecuredPage {
             if (accessdataPanel != null) accessdataPanel.save();
             doReturn(WorkspacePage.class);
         } catch (IOException e) {
-            LOGGER.log(
-                    Level.INFO,
-                    "Error saving access rules associated to workspace " + workspace.getName(),
-                    e);
+            LOGGER.log(Level.INFO, "Error saving access rules associated to workspace " + workspace.getName(), e);
             error(e.getMessage() == null ? e.toString() : e.getMessage());
         }
     }
@@ -251,20 +244,17 @@ public class WorkspaceNewPage extends GeoServerSecuredPage {
             TextField<String> nameTextField = new TextField<>("name");
             nameTextField.setRequired(true);
             nameTextField.add(new XMLNameValidator());
-            nameTextField.add(
-                    new StringValidator() {
+            nameTextField.add(new StringValidator() {
 
-                        private static final long serialVersionUID = -5475431734680134780L;
+                private static final long serialVersionUID = -5475431734680134780L;
 
-                        @Override
-                        public void validate(IValidatable<String> validatable) {
-                            if (CatalogImpl.DEFAULT.equals(validatable.getValue())) {
-                                validatable.error(
-                                        new ValidationError("defaultWsError")
-                                                .addKey("defaultWsError"));
-                            }
-                        }
-                    });
+                @Override
+                public void validate(IValidatable<String> validatable) {
+                    if (CatalogImpl.DEFAULT.equals(validatable.getValue())) {
+                        validatable.error(new ValidationError("defaultWsError").addKey("defaultWsError"));
+                    }
+                }
+            });
             add(nameTextField.setRequired(true));
 
             nsUriTextField = new TextField<>("uri", new Model<>());
@@ -277,8 +267,7 @@ public class WorkspaceNewPage extends GeoServerSecuredPage {
             add(defaultChk);
 
             // add checkbox for isolated workspaces
-            CheckBox isolatedChk =
-                    new CheckBox("isolated", new PropertyModel<>(model.getObject(), "isolated"));
+            CheckBox isolatedChk = new CheckBox("isolated", new PropertyModel<>(model.getObject(), "isolated"));
             if (!getCatalog().getCatalogCapabilities().supportsIsolatedWorkspaces()) {
                 // is isolated workspaces are not supported by the current catalog disable them
                 isolatedChk.setEnabled(false);

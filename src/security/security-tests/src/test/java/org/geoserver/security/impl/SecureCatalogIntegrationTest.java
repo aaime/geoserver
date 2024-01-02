@@ -35,9 +35,7 @@ public class SecureCatalogIntegrationTest extends GeoServerSystemTestSupport {
 
         File security = new File(testData.getDataDirectoryRoot(), "security");
         File layers = new File(security, "layers.properties");
-        IOUtils.copy(
-                SecureCatalogIntegrationTest.class.getResourceAsStream("functional.properties"),
-                layers);
+        IOUtils.copy(SecureCatalogIntegrationTest.class.getResourceAsStream("functional.properties"), layers);
     }
 
     @Test

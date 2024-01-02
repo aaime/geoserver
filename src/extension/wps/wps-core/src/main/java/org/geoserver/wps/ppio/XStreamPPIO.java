@@ -48,13 +48,13 @@ public class XStreamPPIO extends XMLPPIO {
      * package names, have tags starts with a capital letter, and flatten out collections
      */
     protected SecureXStream buildXStream() {
-        SecureXStream stream =
-                new SecureXStream() {
-                    @Override
-                    protected MapperWrapper wrapMapper(MapperWrapper next) {
-                        return new UppercaseTagMapper(new PackageStrippingMapper(next));
-                    };
-                };
+        SecureXStream stream = new SecureXStream() {
+            @Override
+            protected MapperWrapper wrapMapper(MapperWrapper next) {
+                return new UppercaseTagMapper(new PackageStrippingMapper(next));
+            }
+            ;
+        };
         stream.allowTypes(new Class[] {getType()});
         return stream;
     }

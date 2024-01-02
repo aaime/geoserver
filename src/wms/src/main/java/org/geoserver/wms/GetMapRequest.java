@@ -367,14 +367,12 @@ public class GetMapRequest extends WMSRequest implements Cloneable {
     }
 
     public void setStyles(List<Style> styles) {
-        this.mandatoryParams.styles =
-                styles == null ? Collections.emptyList() : new ArrayList<>(styles);
+        this.mandatoryParams.styles = styles == null ? Collections.emptyList() : new ArrayList<>(styles);
     }
 
     /** Sets interpolations methods for layers. */
     public void setInterpolations(List<Interpolation> interpolations) {
-        this.optionalParams.interpolationMethods =
-                interpolations == null ? Collections.emptyList() : interpolations;
+        this.optionalParams.interpolationMethods = interpolations == null ? Collections.emptyList() : interpolations;
     }
 
     /**
@@ -481,8 +479,7 @@ public class GetMapRequest extends WMSRequest implements Cloneable {
     }
 
     public void setTransparent(Boolean transparent) {
-        this.optionalParams.transparent =
-                (transparent != null) ? transparent.booleanValue() : false;
+        this.optionalParams.transparent = (transparent != null) ? transparent.booleanValue() : false;
     }
 
     public void setBuffer(int buffer) {
@@ -761,8 +758,7 @@ public class GetMapRequest extends WMSRequest implements Cloneable {
         StringBuffer returnString = new StringBuffer("\nGetMap Request");
         returnString.append("\n version: " + version);
         returnString.append("\n output format: " + mandatoryParams.format);
-        returnString.append(
-                "\n width height: " + mandatoryParams.width + "," + mandatoryParams.height);
+        returnString.append("\n width height: " + mandatoryParams.width + "," + mandatoryParams.height);
         returnString.append("\n bbox: " + mandatoryParams.bbox);
         returnString.append("\n layers: ");
 

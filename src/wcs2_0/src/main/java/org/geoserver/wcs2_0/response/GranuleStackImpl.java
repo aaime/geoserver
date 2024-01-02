@@ -37,8 +37,7 @@ import org.geotools.referencing.operation.transform.ProjectiveTransform;
  *
  * @author Daniele Romagnoli, GeoSolutions SAS
  */
-public class GranuleStackImpl extends GridCoverage2D /*AbstractGridCoverage*/
-        implements GranuleStack {
+public class GranuleStackImpl extends GridCoverage2D /*AbstractGridCoverage*/ implements GranuleStack {
 
     /**
      * Right now, all CoverageResponseDelegate work with GridCoverage2D. Therefore, in order to
@@ -53,11 +52,9 @@ public class GranuleStackImpl extends GridCoverage2D /*AbstractGridCoverage*/
 
         static GridEnvelope SAMPLE_GRID_ENVELOPE = new GridEnvelope2D(new Rectangle(0, 0, 1, 1));
 
-        static MathTransform SAMPLE_TRANSFORM =
-                ProjectiveTransform.create(AffineTransform.getScaleInstance(1, 1));
+        static MathTransform SAMPLE_TRANSFORM = ProjectiveTransform.create(AffineTransform.getScaleInstance(1, 1));
 
-        static PlanarImage SAMPLE_IMAGE =
-                new TiledImage(new BufferedImage(1, 1, BufferedImage.TYPE_BYTE_GRAY), false);
+        static PlanarImage SAMPLE_IMAGE = new TiledImage(new BufferedImage(1, 1, BufferedImage.TYPE_BYTE_GRAY), false);
 
         protected DummyGridCoverage2D(CharSequence name, CoordinateReferenceSystem crs)
                 throws IllegalArgumentException {
@@ -66,11 +63,7 @@ public class GranuleStackImpl extends GridCoverage2D /*AbstractGridCoverage*/
                     SAMPLE_IMAGE,
                     new GridGeometry2D(
                             SAMPLE_GRID_ENVELOPE,
-                            new GeneralBounds(
-                                    SAMPLE_GRID_ENVELOPE,
-                                    PixelInCell.CELL_CENTER,
-                                    SAMPLE_TRANSFORM,
-                                    crs)),
+                            new GeneralBounds(SAMPLE_GRID_ENVELOPE, PixelInCell.CELL_CENTER, SAMPLE_TRANSFORM, crs)),
                     null,
                     null,
                     null,
@@ -90,8 +83,7 @@ public class GranuleStackImpl extends GridCoverage2D /*AbstractGridCoverage*/
     private List<GridCoverage2D> coverages;
 
     /** Granule stack constructor. */
-    public GranuleStackImpl(
-            CharSequence name, CoordinateReferenceSystem crs, List<DimensionBean> dimensions) {
+    public GranuleStackImpl(CharSequence name, CoordinateReferenceSystem crs, List<DimensionBean> dimensions) {
         super(name, new DummyGridCoverage2D(name, crs));
         this.dimensions = dimensions;
         this.coverages = new ArrayList<>();
@@ -110,8 +102,7 @@ public class GranuleStackImpl extends GridCoverage2D /*AbstractGridCoverage*/
     }
 
     @Override
-    public Object evaluate(Position point)
-            throws PointOutsideCoverageException, CannotEvaluateException {
+    public Object evaluate(Position point) throws PointOutsideCoverageException, CannotEvaluateException {
         throw new UnsupportedOperationException(
                 "This is a multidimensional coverage, you should access its contents calling getGranules");
     }

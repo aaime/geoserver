@@ -55,17 +55,13 @@ public class InternationalContentHelper {
     public static final String ACCEPTLANGUAGES_PARAM = "ACCEPTLANGUAGES";
 
     public InternationalContentHelper(
-            String[] acceptLanguages,
-            ServiceInfo serviceInfo,
-            List<LayerInfo> layers,
-            List<LayerGroupInfo> groups) {
+            String[] acceptLanguages, ServiceInfo serviceInfo, List<LayerInfo> layers, List<LayerGroupInfo> groups) {
         setSupportedLocales(serviceInfo, layers, groups);
         setRequestedLocales(acceptLanguages);
         verify();
     }
 
-    public InternationalContentHelper(
-            String[] acceptLanguages, ServiceInfo serviceInfo, List<ResourceInfo> resources) {
+    public InternationalContentHelper(String[] acceptLanguages, ServiceInfo serviceInfo, List<ResourceInfo> resources) {
         setSupportedLocales(serviceInfo, resources);
         setRequestedLocales(acceptLanguages);
         verify();
@@ -76,9 +72,7 @@ public class InternationalContentHelper {
     }
 
     public InternationalContentHelper(
-            AcceptLanguagesType acceptLanguagesType,
-            ServiceInfo serviceInfo,
-            List<ResourceInfo> resources) {
+            AcceptLanguagesType acceptLanguagesType, ServiceInfo serviceInfo, List<ResourceInfo> resources) {
         setSupportedLocales(serviceInfo, resources);
         setRequestedLocales(acceptLanguagesType);
         verify();
@@ -107,10 +101,9 @@ public class InternationalContentHelper {
             }
         }
         for (String language : withoutVariant) {
-            requestedLocales.addAll(
-                    supportedLocales.stream()
-                            .filter(l -> l != null && l.getLanguage().equals(language))
-                            .collect(Collectors.toSet()));
+            requestedLocales.addAll(supportedLocales.stream()
+                    .filter(l -> l != null && l.getLanguage().equals(language))
+                    .collect(Collectors.toSet()));
             requestedLocales.add(Locale.forLanguageTag(language));
         }
     }
@@ -206,9 +199,7 @@ public class InternationalContentHelper {
         Iterator<Locale> iterator = requestedLocales.iterator();
         while (filtered.isEmpty() && iterator.hasNext()) {
             filtered =
-                    original.stream()
-                            .filter(new KeywordMatch(iterator.next()))
-                            .collect(Collectors.toList());
+                    original.stream().filter(new KeywordMatch(iterator.next())).collect(Collectors.toList());
         }
         if (filtered.isEmpty() && anyMatch) return original;
         return filtered;
@@ -227,16 +218,14 @@ public class InternationalContentHelper {
     public String getString(InternationalString internationalString, boolean nullable) {
         String result = null;
         if (internationalString instanceof GrowableInternationalString) {
-            GrowableInternationalString growable =
-                    (GrowableInternationalString) internationalString;
+            GrowableInternationalString growable = (GrowableInternationalString) internationalString;
             result = getFirstMatchingInternationalValue(growable, requestedLocales);
             // if client specified * try with the supported locales
             if (result == null && anyMatch) {
                 result = growable.toString(GeoServerDefaultLocale.get());
             }
             // see if a default title has been provided
-            if (result == null && growable.getLocales().contains(null))
-                result = growable.toString(null);
+            if (result == null && growable.getLocales().contains(null)) result = growable.toString(null);
         }
         if (result == null && !nullable) result = ERROR_MESSAGE;
         return result;
@@ -253,8 +242,7 @@ public class InternationalContentHelper {
         return getString(internationalString, true);
     }
 
-    private String getFirstMatchingInternationalValue(
-            GrowableInternationalString growable, Set<Locale> locales) {
+    private String getFirstMatchingInternationalValue(GrowableInternationalString growable, Set<Locale> locales) {
         String result = null;
         if (locales != null && !locales.isEmpty()) {
             Set<Locale> growableLocales = growable.getLocales();
@@ -279,8 +267,7 @@ public class InternationalContentHelper {
         this.supportedLocales = candidates;
     }
 
-    private void setSupportedLocales(
-            ServiceInfo info, List<LayerInfo> layerInfos, List<LayerGroupInfo> groups) {
+    private void setSupportedLocales(ServiceInfo info, List<LayerInfo> layerInfos, List<LayerGroupInfo> groups) {
         Set<Locale> candidates = new HashSet<>();
         candidates.addAll(getLocales(info.getInternationalTitle()));
         candidates.addAll(getLocales(info.getInternationalAbstract()));
@@ -309,8 +296,7 @@ public class InternationalContentHelper {
         candidates.addAll(getLocales(contact.getInternationalOnlineResource()));
     }
 
-    private void setSupportedLocalesFromGroups(
-            Set<Locale> candidates, List<LayerGroupInfo> groups) {
+    private void setSupportedLocalesFromGroups(Set<Locale> candidates, List<LayerGroupInfo> groups) {
         for (LayerGroupInfo groupInfo : groups) {
             candidates.addAll(getLocales(groupInfo.getInternationalTitle()));
             candidates.addAll(getLocales(groupInfo.getInternationalAbstract()));
@@ -348,12 +334,8 @@ public class InternationalContentHelper {
     private Set<Locale> getLocales(InternationalString internationalString) {
         Set<Locale> found;
         if (internationalString instanceof GrowableInternationalString) {
-            GrowableInternationalString growable =
-                    (GrowableInternationalString) internationalString;
-            found =
-                    growable.getLocales().stream()
-                            .filter(l -> l != null)
-                            .collect(Collectors.toSet());
+            GrowableInternationalString growable = (GrowableInternationalString) internationalString;
+            found = growable.getLocales().stream().filter(l -> l != null).collect(Collectors.toSet());
         } else {
             found = Collections.emptySet();
         }
@@ -363,29 +345,24 @@ public class InternationalContentHelper {
     public void verify() {
         if (requestedLocales != null && !requestedLocales.isEmpty()) {
             String requested =
-                    requestedLocales.stream()
-                            .map(l -> l.toLanguageTag())
-                            .collect(Collectors.joining(","));
+                    requestedLocales.stream().map(l -> l.toLanguageTag()).collect(Collectors.joining(","));
             if (supportedLocales == null || supportedLocales.isEmpty()) {
-                throw new UnsupportedOperationException(
-                        "Content has been requested in one of the following languages: "
-                                + requested
-                                + ". But there is no international content defined");
+                throw new UnsupportedOperationException("Content has been requested in one of the following languages: "
+                        + requested
+                        + ". But there is no international content defined");
             } else {
                 if (anyMatch) return;
-                String supported =
-                        supportedLocales.stream()
-                                .filter(l -> l != null)
-                                .map(l -> l.toLanguageTag())
-                                .collect(Collectors.joining(","));
+                String supported = supportedLocales.stream()
+                        .filter(l -> l != null)
+                        .map(l -> l.toLanguageTag())
+                        .collect(Collectors.joining(","));
                 for (Locale locale : requestedLocales) {
                     if (supportedLocales.contains(locale)) return;
                 }
-                throw new UnsupportedOperationException(
-                        "Content has been requested in one of the following languages: "
-                                + requested
-                                + ". But supported languages are: "
-                                + supported);
+                throw new UnsupportedOperationException("Content has been requested in one of the following languages: "
+                        + requested
+                        + ". But supported languages are: "
+                        + supported);
             }
         }
     }

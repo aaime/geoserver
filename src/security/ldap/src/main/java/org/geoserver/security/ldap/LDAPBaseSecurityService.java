@@ -118,12 +118,7 @@ public abstract class LDAPBaseSecurityService extends AbstractGeoServerSecurityS
                 }
                 lookupUserForDn = m.group(3).equals("1");
                 userMembershipPattern =
-                        Pattern.compile(
-                                "^"
-                                        + Pattern.quote(m.group(2))
-                                        + "(.*)"
-                                        + Pattern.quote(m.group(4))
-                                        + "$");
+                        Pattern.compile("^" + Pattern.quote(m.group(2)) + "(.*)" + Pattern.quote(m.group(4)) + "$");
             }
         }
         if (!isEmpty(ldapConfig.getGroupMembershipAttribute())) {
@@ -162,12 +157,7 @@ public abstract class LDAPBaseSecurityService extends AbstractGeoServerSecurityS
                     userNameAttribute = m.group(1);
                 }
                 userNamePattern =
-                        Pattern.compile(
-                                "^"
-                                        + Pattern.quote(m.group(2))
-                                        + "(.*)"
-                                        + Pattern.quote(m.group(4))
-                                        + "$");
+                        Pattern.compile("^" + Pattern.quote(m.group(2)) + "(.*)" + Pattern.quote(m.group(4)) + "$");
             }
         }
         if (!isEmpty(ldapConfig.getUserNameAttribute())) {
@@ -187,8 +177,7 @@ public abstract class LDAPBaseSecurityService extends AbstractGeoServerSecurityS
         if (!isEmpty(ldapConfig.getNestedGroupSearchFilter()))
             this.nestedGroupSearchFilter = ldapConfig.getNestedGroupSearchFilter();
         else this.nestedGroupSearchFilter = "member= {0}";
-        if (ldapConfig.getMaxGroupSearchLevel() >= 0)
-            this.maxGroupSearchLevel = ldapConfig.getMaxGroupSearchLevel();
+        if (ldapConfig.getMaxGroupSearchLevel() >= 0) this.maxGroupSearchLevel = ldapConfig.getMaxGroupSearchLevel();
         else this.maxGroupSearchLevel = 10;
     }
 
@@ -212,22 +201,19 @@ public abstract class LDAPBaseSecurityService extends AbstractGeoServerSecurityS
         final AtomicReference<String> userName = new AtomicReference<>(user);
 
         if (lookupUserForDn) {
-            authenticateIfNeeded(
-                    (ctx, ldapEntryIdentification) -> {
-                        DirContextOperations obj =
-                                (DirContextOperations)
-                                        LDAPUtils.getLdapTemplateInContext(ctx, template)
-                                                .lookup(user);
-                        Object attribute = obj.getObjectAttribute(userNameAttribute);
-                        if (attribute != null) {
-                            String name = attribute.toString();
-                            Matcher m = userNamePattern.matcher(name);
-                            if (m.matches()) {
-                                name = m.group(1);
-                            }
-                            userName.set(name);
-                        }
-                    });
+            authenticateIfNeeded((ctx, ldapEntryIdentification) -> {
+                DirContextOperations obj = (DirContextOperations)
+                        LDAPUtils.getLdapTemplateInContext(ctx, template).lookup(user);
+                Object attribute = obj.getObjectAttribute(userNameAttribute);
+                if (attribute != null) {
+                    String name = attribute.toString();
+                    Matcher m = userNamePattern.matcher(name);
+                    if (m.matches()) {
+                        name = m.group(1);
+                    }
+                    userName.set(name);
+                }
+            });
         }
         return userName.get();
     }
@@ -235,19 +221,16 @@ public abstract class LDAPBaseSecurityService extends AbstractGeoServerSecurityS
     protected String lookupDn(String username) {
         final AtomicReference<String> dn = new AtomicReference<>(username);
         if (lookupUserForDn) {
-            authenticateIfNeeded(
-                    (ctx, ldapEntryIdentification) -> {
-                        try {
-                            dn.set(
-                                    LDAPUtils.getLdapTemplateInContext(ctx, template)
-                                            .searchForSingleEntry(
-                                                    "", userNameFilter, new String[] {username})
-                                            .getDn()
-                                            .toString());
-                        } catch (Exception e) {
-                            // not found, let's use username instead
-                        }
-                    });
+            authenticateIfNeeded((ctx, ldapEntryIdentification) -> {
+                try {
+                    dn.set(LDAPUtils.getLdapTemplateInContext(ctx, template)
+                            .searchForSingleEntry("", userNameFilter, new String[] {username})
+                            .getDn()
+                            .toString());
+                } catch (Exception e) {
+                    // not found, let's use username instead
+                }
+            });
         }
 
         return dn.get();

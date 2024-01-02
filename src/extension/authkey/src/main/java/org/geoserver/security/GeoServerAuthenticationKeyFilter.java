@@ -89,9 +89,7 @@ public class GeoServerAuthenticationKeyFilter extends GeoServerSecurityFilter
                     SecurityContextHolder.getContext().getAuthentication();
             if (postAuthentication != null && cacheKey != null) {
                 if (cacheAuthentication(postAuthentication, (HttpServletRequest) request)) {
-                    getSecurityManager()
-                            .getAuthenticationCache()
-                            .put(getName(), cacheKey, postAuthentication);
+                    getSecurityManager().getAuthenticationCache().put(getName(), cacheKey, postAuthentication);
                 }
             }
         }
@@ -128,8 +126,7 @@ public class GeoServerAuthenticationKeyFilter extends GeoServerSecurityFilter
      * Try to authenticate and adds {@link GeoServerRole#AUTHENTICATED_ROLE} Does NOT authenticate
      * {@link GeoServerUser#ROOT_USERNAME}
      */
-    protected void doAuthenticate(
-            HttpServletRequest request, HttpServletResponse response, String authKey)
+    protected void doAuthenticate(HttpServletRequest request, HttpServletResponse response, String authKey)
             throws IOException {
 
         if (authKey == null) return;
@@ -151,11 +148,9 @@ public class GeoServerAuthenticationKeyFilter extends GeoServerSecurityFilter
         for (GrantedAuthority auth : user.getAuthorities()) {
             roles.add((GeoServerRole) auth);
         }
-        if (roles.contains(GeoServerRole.AUTHENTICATED_ROLE) == false)
-            roles.add(GeoServerRole.AUTHENTICATED_ROLE);
+        if (roles.contains(GeoServerRole.AUTHENTICATED_ROLE) == false) roles.add(GeoServerRole.AUTHENTICATED_ROLE);
 
-        KeyAuthenticationToken result =
-                new KeyAuthenticationToken(authKey, authKeyParamName, user, roles);
+        KeyAuthenticationToken result = new KeyAuthenticationToken(authKey, authKeyParamName, user, roles);
 
         SecurityContextHolder.getContext().setAuthentication(result);
     }

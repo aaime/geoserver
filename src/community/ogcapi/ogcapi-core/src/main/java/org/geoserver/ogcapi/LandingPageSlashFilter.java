@@ -45,8 +45,7 @@ public class LandingPageSlashFilter implements GeoServerFilter, ApplicationConte
     }
 
     @Override
-    public void doFilter(
-            ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
             throws IOException, ServletException {
         if (servletRequest instanceof HttpServletRequest
                 && isLandingPageWithSlash((HttpServletRequest) servletRequest)) {
@@ -82,8 +81,7 @@ public class LandingPageSlashFilter implements GeoServerFilter, ApplicationConte
 
         // check if the first component is a workspace or a layer group
         String token1 = components[0];
-        if (catalog.getWorkspaceByName(token1) == null
-                && catalog.getLayerGroupByName(token1) == null) return false;
+        if (catalog.getWorkspaceByName(token1) == null && catalog.getLayerGroupByName(token1) == null) return false;
 
         // is it a match now?
         if (landingPageSlash.equals(toLandingPath(components, 1))) return true;
@@ -107,10 +105,9 @@ public class LandingPageSlashFilter implements GeoServerFilter, ApplicationConte
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        services =
-                applicationContext.getBeansWithAnnotation(APIService.class).values().stream()
-                        .map(o -> APIDispatcher.getApiServiceAnnotation(o.getClass()))
-                        .collect(Collectors.toList());
+        services = applicationContext.getBeansWithAnnotation(APIService.class).values().stream()
+                .map(o -> APIDispatcher.getApiServiceAnnotation(o.getClass()))
+                .collect(Collectors.toList());
     }
 
     /**

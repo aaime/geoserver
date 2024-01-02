@@ -26,25 +26,23 @@ public class PDFMaxSizeEnforcer {
     /**
      * Builds a new max errors enforcer. If maxErrors is not positive the enforcer will do nothing
      */
-    public PDFMaxSizeEnforcer(
-            final GTRenderer renderer, final PdfGraphics2D graphics, final int maxSize) {
+    public PDFMaxSizeEnforcer(final GTRenderer renderer, final PdfGraphics2D graphics, final int maxSize) {
         this.maxSize = maxSize;
         this.pdfBytes = graphics.getContent().getInternalBuffer();
 
         if (maxSize > 0) {
-            renderer.addRenderListener(
-                    new RenderListener() {
+            renderer.addRenderListener(new RenderListener() {
 
-                        @Override
-                        public void featureRenderer(SimpleFeature feature) {
-                            if (pdfBytes.size() > maxSize) {
-                                renderer.stopRendering();
-                            }
-                        }
+                @Override
+                public void featureRenderer(SimpleFeature feature) {
+                    if (pdfBytes.size() > maxSize) {
+                        renderer.stopRendering();
+                    }
+                }
 
-                        @Override
-                        public void errorOccurred(Exception e) {}
-                    });
+                @Override
+                public void errorOccurred(Exception e) {}
+            });
         }
     }
 

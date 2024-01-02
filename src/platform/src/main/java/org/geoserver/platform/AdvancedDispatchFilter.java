@@ -84,9 +84,7 @@ public class AdvancedDispatchFilter implements Filter {
 
         @Override
         public String getServletPath() {
-            return servletPath != null
-                    ? servletPath
-                    : ((HttpServletRequest) getRequest()).getServletPath();
+            return servletPath != null ? servletPath : ((HttpServletRequest) getRequest()).getServletPath();
         }
     }
 }

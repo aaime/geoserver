@@ -252,8 +252,7 @@ public class LocalWorkspaceLayersTest extends GeoServerSystemTestSupport {
         assertNotNull(catalog.getLayerGroupByName(GLOBAL_GROUP));
         assertThat(
                 catalog.getLayers(),
-                containsInAnyOrder(
-                        getBuildingsLayer(), getAggregateGeoFeatureLayer(), getBridgesLayer()));
+                containsInAnyOrder(getBuildingsLayer(), getAggregateGeoFeatureLayer(), getBridgesLayer()));
 
         // now simulate WMS getCaps, the layers should not appear in the caps document
         Request request = new Request();
@@ -281,8 +280,7 @@ public class LocalWorkspaceLayersTest extends GeoServerSystemTestSupport {
         assertNotNull(catalog.getLayerGroupByName(GLOBAL_GROUP));
         assertThat(
                 catalog.getLayers(),
-                containsInAnyOrder(
-                        getBuildingsLayer(), getAggregateGeoFeatureLayer(), getBridgesLayer()));
+                containsInAnyOrder(getBuildingsLayer(), getAggregateGeoFeatureLayer(), getBridgesLayer()));
 
         LocalPublished.remove();
     }
@@ -352,8 +350,7 @@ public class LocalWorkspaceLayersTest extends GeoServerSystemTestSupport {
         addLocalGroup(factory, citeWs);
 
         // set a local layer that's not in the group
-        final LayerInfo dividedRoutes =
-                catalog.getLayerByName(getLayerId(SystemTestData.DIVIDED_ROUTES));
+        final LayerInfo dividedRoutes = catalog.getLayerByName(getLayerId(SystemTestData.DIVIDED_ROUTES));
         LocalPublished.set(dividedRoutes);
         assertNotNull(catalog.getLayerByName(dividedRoutes.prefixedName()));
         assertNull(catalog.getLayerGroupByName(GLOBAL_GROUP));

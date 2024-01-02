@@ -69,15 +69,11 @@ import org.junit.rules.TestRule;
  * @author Justin Deoliveira, OpenGeo
  * @param <T>
  */
-@SuppressWarnings({
-    "PMD.JUnit4TestShouldUseBeforeAnnotation",
-    "PMD.JUnit4TestShouldUseAfterAnnotation"
-})
+@SuppressWarnings({"PMD.JUnit4TestShouldUseBeforeAnnotation", "PMD.JUnit4TestShouldUseAfterAnnotation"})
 public abstract class GeoServerBaseTestSupport<T extends TestData> {
 
     /** Common logger for test cases */
-    protected static final Logger LOGGER =
-            org.geotools.util.logging.Logging.getLogger("org.geoserver.test");
+    protected static final Logger LOGGER = org.geotools.util.logging.Logging.getLogger("org.geoserver.test");
 
     /** test data */
     protected static TestData testData;
@@ -96,17 +92,16 @@ public abstract class GeoServerBaseTestSupport<T extends TestData> {
     //  };
 
     @Rule
-    public TestRule runSetup =
-            (base, description) -> {
-                if (description.getAnnotation(RunTestSetup.class) != null) {
-                    try {
-                        doTearDownClass();
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-                return base;
-            };
+    public TestRule runSetup = (base, description) -> {
+        if (description.getAnnotation(RunTestSetup.class) != null) {
+            try {
+                doTearDownClass();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return base;
+    };
 
     /** Checks for existence of a system property named "quietTests". */
     public static boolean isQuietTests() {
@@ -210,20 +205,14 @@ public abstract class GeoServerBaseTestSupport<T extends TestData> {
                 }
                 // reset log4j2 to default, to drop any open files
                 LogManager.shutdown();
-                @SuppressWarnings({
-                    "resource",
-                    "PMD.CloseResource"
-                }) // current context, no need to enforce AutoClosable
+                @SuppressWarnings({"resource", "PMD.CloseResource"}) // current context, no need to enforce AutoClosable
                 LoggerContext loggerContext = (LoggerContext) LogManager.getContext(false);
                 loggerContext.reconfigure(new DefaultConfiguration());
 
                 try {
                     testData.tearDown();
                 } catch (Throwable t) {
-                    LOGGER.log(
-                            Logging.FATAL,
-                            "Failure to remove contents of the temporary data directory: " + t,
-                            t);
+                    LOGGER.log(Logging.FATAL, "Failure to remove contents of the temporary data directory: " + t, t);
                     throw t;
                 }
             } finally {
@@ -290,16 +279,14 @@ public abstract class GeoServerBaseTestSupport<T extends TestData> {
      * exception if multiple are found (should not happen)
      */
     protected Service getService(String id, Version version) {
-        List<Service> services =
-                GeoServerExtensions.extensions(Service.class).stream()
-                        .filter(s -> id.equals(s.getId()) && version.equals(s.getVersion()))
-                        .collect(Collectors.toList());
+        List<Service> services = GeoServerExtensions.extensions(Service.class).stream()
+                .filter(s -> id.equals(s.getId()) && version.equals(s.getVersion()))
+                .collect(Collectors.toList());
         if (services.isEmpty()) {
             return null;
         }
         if (services.size() > 1) {
-            throw new RuntimeException(
-                    "Found more than one service with the required id and version: " + services);
+            throw new RuntimeException("Found more than one service with the required id and version: " + services);
         }
         return services.get(0);
     }

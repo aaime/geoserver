@@ -27,8 +27,7 @@ import org.geoserver.wfs.response.WFSResponse;
  *
  * @author Justin Deoliveira, The Open Planning Project
  */
-public abstract class WFSDescribeFeatureTypeOutputFormat extends WFSResponse
-        implements SOAPAwareResponse {
+public abstract class WFSDescribeFeatureTypeOutputFormat extends WFSResponse implements SOAPAwareResponse {
     /**
      * Constructor which sets the outputFormat.
      *
@@ -82,8 +81,7 @@ public abstract class WFSDescribeFeatureTypeOutputFormat extends WFSResponse
      * @param describeFeatureType The DescribeFeatureType operation descriptor.
      */
     protected abstract void write(
-            FeatureTypeInfo[] featureTypeInfos, OutputStream output, Operation describeFeatureType)
-            throws IOException;
+            FeatureTypeInfo[] featureTypeInfos, OutputStream output, Operation describeFeatureType) throws IOException;
 
     @Override
     public String getAttachmentFileName(Object value, Operation operation) {

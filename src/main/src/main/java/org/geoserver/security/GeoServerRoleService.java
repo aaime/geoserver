@@ -122,8 +122,7 @@ public interface GeoServerRoleService extends GeoServerSecurityService {
      * @param userProps the properties of the user from {@link GeoServerUserGroupService}
      * @return null for no personalization, the personalized properties otherwise
      */
-    Properties personalizeRoleParams(
-            String roleName, Properties roleParams, String userName, Properties userProps)
+    Properties personalizeRoleParams(String roleName, Properties roleParams, String userName, Properties userProps)
             throws IOException;
 
     /**

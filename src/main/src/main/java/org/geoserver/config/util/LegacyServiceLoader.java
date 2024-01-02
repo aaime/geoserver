@@ -75,8 +75,7 @@ public abstract class LegacyServiceLoader<T extends ServiceInfo> implements Serv
      *   ...
      * </pre>
      */
-    protected void readCommon(ServiceInfo service, Map<String, Object> properties, GeoServer gs)
-            throws Exception {
+    protected void readCommon(ServiceInfo service, Map<String, Object> properties, GeoServer gs) throws Exception {
 
         service.setEnabled((Boolean) properties.get("enabled"));
         service.setName((String) properties.get("name"));

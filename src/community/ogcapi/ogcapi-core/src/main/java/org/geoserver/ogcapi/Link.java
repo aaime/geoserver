@@ -35,8 +35,7 @@ public class Link {
      *
      * <p>This is an OGC definition, from OGC API Common Part 1: Core specification.
      */
-    public static final String REL_CONFORMANCE_URI =
-            "http://www.opengis.net/def/rel/ogc/1.0/conformance";
+    public static final String REL_CONFORMANCE_URI = "http://www.opengis.net/def/rel/ogc/1.0/conformance";
 
     /**
      * Refers to the root resource of a dataset in an API.

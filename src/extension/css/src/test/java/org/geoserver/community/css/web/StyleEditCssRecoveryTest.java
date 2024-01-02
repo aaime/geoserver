@@ -42,29 +42,22 @@ public class StyleEditCssRecoveryTest extends GeoServerWicketTestSupport {
 
         Date t0 = new Date(1483228800000L); // Midnight Jan 1, 2017 UTC
         List<String> testStyleNames =
-                Arrays.asList(
-                        oldCssStyle, oldCssStyleWithFormatSLD, oldCssStyleWithSLDManuallyEdited);
+                Arrays.asList(oldCssStyle, oldCssStyleWithFormatSLD, oldCssStyleWithSLDManuallyEdited);
 
         for (String styleName : testStyleNames) {
             for (String ext : Arrays.asList(".css", ".sld", ".xml")) {
-                testData.copyTo(
-                        this.getClass().getResourceAsStream(styleName + ext),
-                        "styles/" + styleName + ext);
-                File f =
-                        Paths.get(
-                                        testData.getDataDirectoryRoot().getAbsolutePath(),
-                                        "styles/" + styleName + ext)
-                                .toFile();
+                testData.copyTo(this.getClass().getResourceAsStream(styleName + ext), "styles/" + styleName + ext);
+                File f = Paths.get(testData.getDataDirectoryRoot().getAbsolutePath(), "styles/" + styleName + ext)
+                        .toFile();
                 f.setLastModified(t0.getTime());
             }
         }
 
         // Make this SLD file appear as if it was edited after being generated from CSS.
-        File manuallyEditedSld =
-                Paths.get(
-                                testData.getDataDirectoryRoot().getAbsolutePath(),
-                                "styles/" + oldCssStyleWithSLDManuallyEdited + ".sld")
-                        .toFile();
+        File manuallyEditedSld = Paths.get(
+                        testData.getDataDirectoryRoot().getAbsolutePath(),
+                        "styles/" + oldCssStyleWithSLDManuallyEdited + ".sld")
+                .toFile();
         manuallyEditedSld.setLastModified(t0.getTime() + 1000000L);
     }
 
@@ -96,11 +89,9 @@ public class StyleEditCssRecoveryTest extends GeoServerWicketTestSupport {
         tester.assertModelValue("styleForm:context:panel:format", "css");
 
         // Assert that the editor text area contains css
-        String editorContents =
-                (String)
-                        tester.getComponentFromLastRenderedPage(
-                                        "styleForm:styleEditor:editorContainer:editorParent:editor")
-                                .getDefaultModelObject();
+        String editorContents = (String)
+                tester.getComponentFromLastRenderedPage("styleForm:styleEditor:editorContainer:editorParent:editor")
+                        .getDefaultModelObject();
         Styles.handler("css").parse(editorContents, null, null, null);
 
         // Assert that the catalog's StyleInfo is now a css style
@@ -126,11 +117,9 @@ public class StyleEditCssRecoveryTest extends GeoServerWicketTestSupport {
         tester.assertModelValue("styleForm:context:panel:format", "css");
 
         // Assert that the editor text area contains css
-        String editorContents =
-                (String)
-                        tester.getComponentFromLastRenderedPage(
-                                        "styleForm:styleEditor:editorContainer:editorParent:editor")
-                                .getDefaultModelObject();
+        String editorContents = (String)
+                tester.getComponentFromLastRenderedPage("styleForm:styleEditor:editorContainer:editorParent:editor")
+                        .getDefaultModelObject();
         Styles.handler("css").parse(editorContents, null, null, null);
 
         // Assert that the catalog's StyleInfo is now a css style
@@ -156,11 +145,9 @@ public class StyleEditCssRecoveryTest extends GeoServerWicketTestSupport {
         tester.assertModelValue("styleForm:context:panel:format", "sld");
 
         // Assert that the editor text area contains SLD
-        String editorContents =
-                (String)
-                        tester.getComponentFromLastRenderedPage(
-                                        "styleForm:styleEditor:editorContainer:editorParent:editor")
-                                .getDefaultModelObject();
+        String editorContents = (String)
+                tester.getComponentFromLastRenderedPage("styleForm:styleEditor:editorContainer:editorParent:editor")
+                        .getDefaultModelObject();
         Styles.handler("sld").parse(editorContents, null, null, null);
 
         // Assert that the catalog's StyleInfo is still a SLD style

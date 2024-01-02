@@ -23,8 +23,7 @@ import org.geoserver.platform.resource.ResourceNotification;
  */
 public abstract class FileWatcher implements ResourceListener {
 
-    protected static Logger LOGGER =
-            org.geotools.util.logging.Logging.getLogger("org.geoserver.security");
+    protected static Logger LOGGER = org.geotools.util.logging.Logging.getLogger("org.geoserver.security");
 
     /** The default delay between every file modification check, set to 10 seconds. */
     // static final public long DEFAULT_DELAY = 10000;

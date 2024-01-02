@@ -24,8 +24,7 @@ public abstract class AbstractGeoServicesConverter extends BaseMessageConverter<
         super(supportedMediaTypes);
     }
 
-    protected AbstractGeoServicesConverter(
-            Charset defaultCharset, MediaType... supportedMediaTypes) {
+    protected AbstractGeoServicesConverter(Charset defaultCharset, MediaType... supportedMediaTypes) {
         super(defaultCharset, supportedMediaTypes);
     }
 

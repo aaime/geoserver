@@ -18,8 +18,7 @@ import org.springframework.context.ApplicationListener;
  * database) or when the OpenSearchAccess is modified, or when the datastore that
  * JDBCOpenSearchAccess is modified.
  */
-public class TemplatesReloader
-        implements GeoServerLifecycleHandler, ApplicationListener<ContextLoadedEvent> {
+public class TemplatesReloader implements GeoServerLifecycleHandler, ApplicationListener<ContextLoadedEvent> {
     static final Logger LOGGER = Logging.getLogger(TemplatesReloader.class);
 
     AbstractTemplates templates;

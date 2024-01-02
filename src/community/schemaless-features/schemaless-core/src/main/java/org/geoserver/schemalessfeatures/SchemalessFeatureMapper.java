@@ -33,8 +33,7 @@ public abstract class SchemalessFeatureMapper<T> {
 
     protected DynamicComplexTypeBuilder typeBuilder;
 
-    public SchemalessFeatureMapper(
-            AttributeBuilder attributeBuilder, DynamicComplexTypeBuilder typeBuilder) {
+    public SchemalessFeatureMapper(AttributeBuilder attributeBuilder, DynamicComplexTypeBuilder typeBuilder) {
         this.attributeBuilder = attributeBuilder;
         this.typeBuilder = typeBuilder;
     }
@@ -58,10 +57,7 @@ public abstract class SchemalessFeatureMapper<T> {
      * @return the propertyDescriptor with the Object Type and descriptor
      */
     protected PropertyDescriptor buildFullyObjectPropertyModelDescriptor(
-            DynamicComplexType parentType,
-            String namespaceURI,
-            String attrName,
-            boolean isCollection) {
+            DynamicComplexType parentType, String namespaceURI, String attrName, boolean isCollection) {
         typeBuilder
                 .nillable(true)
                 .namespaceURI(namespaceURI)
@@ -82,8 +78,7 @@ public abstract class SchemalessFeatureMapper<T> {
         DynamicComplexType nestedFeatureType = typeBuilder.buildNestedFeatureType();
 
         PropertyDescriptor nestedFeatureDescriptor =
-                typeBuilder.buildDescriptor(
-                        capitalizeNameFeature(attrName), nestedFeatureType, isCollection);
+                typeBuilder.buildDescriptor(capitalizeNameFeature(attrName), nestedFeatureType, isCollection);
         complexPropertyType.addPropertyDescriptor(nestedFeatureDescriptor);
         return descriptorProperty;
     }
@@ -109,16 +104,11 @@ public abstract class SchemalessFeatureMapper<T> {
      * @return the simple Attribute
      */
     protected Attribute buildSimpleAttribute(
-            String namespaceURI,
-            String attrName,
-            Object value,
-            DynamicComplexType parentType,
-            boolean isCollection) {
+            String namespaceURI, String attrName, Object value, DynamicComplexType parentType, boolean isCollection) {
         Name name = new NameImpl(namespaceURI, attrName);
         PropertyDescriptor attrDescriptor = parentType.getDescriptor(name);
         boolean shouldRemove =
-                attrDescriptor != null
-                        && attrDescriptor.getType().getBinding().equals(Object.class);
+                attrDescriptor != null && attrDescriptor.getType().getBinding().equals(Object.class);
         if (shouldRemove) parentType.removePropertyDescriptor(attrDescriptor);
         if (attrDescriptor == null || shouldRemove) {
             typeBuilder
@@ -151,8 +141,7 @@ public abstract class SchemalessFeatureMapper<T> {
      * @param parentType the parent ComplexType.
      * @return an Attribute holding a null value.
      */
-    protected Attribute buildNullAttribute(
-            String namespaceURI, String attrName, DynamicComplexType parentType) {
+    protected Attribute buildNullAttribute(String namespaceURI, String attrName, DynamicComplexType parentType) {
         typeBuilder
                 .binding(Object.class)
                 .name(attrName)
@@ -161,8 +150,7 @@ public abstract class SchemalessFeatureMapper<T> {
                 .minOccurs(0)
                 .nillable(true);
         AttributeType attrType = typeBuilder.buildType();
-        PropertyDescriptor attrDescriptor =
-                typeBuilder.buildDescriptor(attrType.getName(), attrType);
+        PropertyDescriptor attrDescriptor = typeBuilder.buildDescriptor(attrType.getName(), attrType);
         if (parentType instanceof DynamicComplexType) {
             parentType.addPropertyDescriptor(attrDescriptor);
         }

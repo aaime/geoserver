@@ -34,11 +34,10 @@ public class PNGJWriter {
         boolean isScanlineSupported = writer.isScanlineSupported(image);
         // If it is not supported, then the image is rescaled to bytes
         if (!isScanlineSupported) {
-            image =
-                    new ImageWorker(image)
-                            .rescaleToBytes()
-                            .forceComponentColorModel()
-                            .getRenderedImage();
+            image = new ImageWorker(image)
+                    .rescaleToBytes()
+                    .forceComponentColorModel()
+                    .getRenderedImage();
         }
 
         RenderedImage output = null;

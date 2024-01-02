@@ -35,10 +35,7 @@ public class CoverageAccessLimits extends DataAccessLimits {
      * @param params Read parameters overrides
      */
     public CoverageAccessLimits(
-            CatalogMode mode,
-            Filter readFilter,
-            MultiPolygon rasterFilter,
-            GeneralParameterValue[] params) {
+            CatalogMode mode, Filter readFilter, MultiPolygon rasterFilter, GeneralParameterValue[] params) {
         super(mode, readFilter);
         this.rasterFilter = rasterFilter;
         this.params = params;

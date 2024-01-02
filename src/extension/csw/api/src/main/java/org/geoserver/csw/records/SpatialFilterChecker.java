@@ -51,9 +51,7 @@ public class SpatialFilterChecker extends DefaultFilterVisitor {
 
             if (!(pn.evaluate(schema) instanceof GeometryDescriptor)) {
                 throw new ServiceException(
-                        "Invalid spatial filter, property "
-                                + pn.getPropertyName()
-                                + " is not a geometry");
+                        "Invalid spatial filter, property " + pn.getPropertyName() + " is not a geometry");
             }
         }
     }

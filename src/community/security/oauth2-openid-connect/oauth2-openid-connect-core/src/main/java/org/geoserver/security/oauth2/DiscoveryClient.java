@@ -52,17 +52,13 @@ public class DiscoveryClient {
                 .ifPresent(uri -> conf.setAccessTokenUri((String) uri));
         Optional.ofNullable(response.get(USERINFO_ENDPOINT_ATTR_NAME))
                 .ifPresent(uri -> conf.setCheckTokenEndpointUrl((String) uri));
-        Optional.ofNullable(response.get(JWK_SET_URI_ATTR_NAME))
-                .ifPresent(uri -> conf.setJwkURI((String) uri));
-        Optional.ofNullable(response.get(END_SESSION_ENDPONT))
-                .ifPresent(uri -> conf.setLogoutUri((String) uri));
-        Optional.ofNullable(response.get(SCOPES_SUPPORTED))
-                .ifPresent(
-                        s -> {
-                            @SuppressWarnings("unchecked")
-                            List<String> scopes = (List<String>) s;
-                            conf.setScopes(collectScopes(scopes));
-                        });
+        Optional.ofNullable(response.get(JWK_SET_URI_ATTR_NAME)).ifPresent(uri -> conf.setJwkURI((String) uri));
+        Optional.ofNullable(response.get(END_SESSION_ENDPONT)).ifPresent(uri -> conf.setLogoutUri((String) uri));
+        Optional.ofNullable(response.get(SCOPES_SUPPORTED)).ifPresent(s -> {
+            @SuppressWarnings("unchecked")
+            List<String> scopes = (List<String>) s;
+            conf.setScopes(collectScopes(scopes));
+        });
     }
 
     private String collectScopes(List<String> scopes) {

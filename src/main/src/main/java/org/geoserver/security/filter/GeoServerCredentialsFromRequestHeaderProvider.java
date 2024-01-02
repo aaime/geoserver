@@ -23,9 +23,7 @@ public class GeoServerCredentialsFromRequestHeaderProvider extends AbstractFilte
     public void configure(XStreamPersister xp) {
         super.configure(xp);
         xp.getXStream()
-                .alias(
-                        "credentialsFromRequestHeaderAuthentication",
-                        CredentialsFromRequestHeaderFilterConfig.class);
+                .alias("credentialsFromRequestHeaderAuthentication", CredentialsFromRequestHeaderFilterConfig.class);
     }
 
     @Override
@@ -39,8 +37,7 @@ public class GeoServerCredentialsFromRequestHeaderProvider extends AbstractFilte
     }
 
     @Override
-    public SecurityConfigValidator createConfigurationValidator(
-            GeoServerSecurityManager securityManager) {
+    public SecurityConfigValidator createConfigurationValidator(GeoServerSecurityManager securityManager) {
         return new CredentialsFromRequestHeaderFilterConfigValidator(securityManager);
     }
 }

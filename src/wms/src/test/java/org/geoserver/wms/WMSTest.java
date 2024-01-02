@@ -48,8 +48,7 @@ import org.junit.Test;
 /** @author Ian Schneider <ischneider@opengeo.org> */
 public class WMSTest extends WMSTestSupport {
 
-    static final QName TIME_WITH_START_END =
-            new QName(MockData.SF_URI, "TimeWithStartEnd", MockData.SF_PREFIX);
+    static final QName TIME_WITH_START_END = new QName(MockData.SF_URI, "TimeWithStartEnd", MockData.SF_PREFIX);
     WMS wms;
 
     @Override
@@ -63,8 +62,7 @@ public class WMSTest extends WMSTestSupport {
                 getCatalog());
     }
 
-    protected void setupStartEndTimeDimension(
-            String featureTypeName, String dimension, String start, String end) {
+    protected void setupStartEndTimeDimension(String featureTypeName, String dimension, String start, String end) {
         FeatureTypeInfo info = getCatalog().getFeatureTypeByName(featureTypeName);
         DimensionInfo di = new DimensionInfoImpl();
         di.setEnabled(true);
@@ -83,10 +81,8 @@ public class WMSTest extends WMSTestSupport {
     @Test
     public void testGetTimeElevationToFilterStartEndDate() throws Exception {
 
-        setupStartEndTimeDimension(
-                TIME_WITH_START_END.getLocalPart(), "time", "startTime", "endTime");
-        setupStartEndTimeDimension(
-                TIME_WITH_START_END.getLocalPart(), "elevation", "startElevation", "endElevation");
+        setupStartEndTimeDimension(TIME_WITH_START_END.getLocalPart(), "time", "startTime", "endTime");
+        setupStartEndTimeDimension(TIME_WITH_START_END.getLocalPart(), "elevation", "startElevation", "endElevation");
 
         /* Reference for test assertions
         TimeElevationWithStartEnd.0=0|2012-02-11Z|2012-02-12Z|1.0|2.0|POLYGON((-180 90, 0 90, 0 0, -180 0, -180 90))
@@ -103,38 +99,19 @@ public class WMSTest extends WMSTestSupport {
         doTimeElevationFilter(format.parse("2012-02-15"), null);
 
         // Test start and end before all ranges.
-        doTimeElevationFilter(
-                new DateRange(format.parse("2012-02-09"), format.parse("2012-02-10")), null);
+        doTimeElevationFilter(new DateRange(format.parse("2012-02-09"), format.parse("2012-02-10")), null);
         // Test start before and end during a range.
-        doTimeElevationFilter(
-                new DateRange(format.parse("2012-02-09"), format.parse("2012-02-11")), null, 0, 2);
+        doTimeElevationFilter(new DateRange(format.parse("2012-02-09"), format.parse("2012-02-11")), null, 0, 2);
         // Test start on and end after or during a range.
-        doTimeElevationFilter(
-                new DateRange(format.parse("2012-02-11"), format.parse("2012-02-13")),
-                null,
-                0,
-                1,
-                2);
+        doTimeElevationFilter(new DateRange(format.parse("2012-02-11"), format.parse("2012-02-13")), null, 0, 1, 2);
         // Test start before and end after all ranges.
-        doTimeElevationFilter(
-                new DateRange(format.parse("2012-02-09"), format.parse("2012-02-14")),
-                null,
-                0,
-                1,
-                2);
+        doTimeElevationFilter(new DateRange(format.parse("2012-02-09"), format.parse("2012-02-14")), null, 0, 1, 2);
         // Test start during and end after a range.
-        doTimeElevationFilter(
-                new DateRange(format.parse("2012-02-13"), format.parse("2012-02-14")), null, 1, 2);
+        doTimeElevationFilter(new DateRange(format.parse("2012-02-13"), format.parse("2012-02-14")), null, 1, 2);
         // Test start during and end during a range.
-        doTimeElevationFilter(
-                new DateRange(format.parse("2012-02-12"), format.parse("2012-02-13")),
-                null,
-                0,
-                1,
-                2);
+        doTimeElevationFilter(new DateRange(format.parse("2012-02-12"), format.parse("2012-02-13")), null, 0, 1, 2);
         // Test start and end after all ranges.
-        doTimeElevationFilter(
-                new DateRange(format.parse("2012-02-15"), format.parse("2012-02-16")), null);
+        doTimeElevationFilter(new DateRange(format.parse("2012-02-15"), format.parse("2012-02-16")), null);
 
         doTimeElevationFilter(null, 0);
         doTimeElevationFilter(null, 1, 0, 2);
@@ -155,18 +132,15 @@ public class WMSTest extends WMSTestSupport {
         doTimeElevationFilter(format.parse("2012-02-11"), 3, 2);
     }
 
-    public void doTimeElevationFilter(Object time, Object elevation, Integer... expectedIds)
-            throws Exception {
+    public void doTimeElevationFilter(Object time, Object elevation, Integer... expectedIds) throws Exception {
 
-        FeatureTypeInfo timeWithStartEnd =
-                getCatalog().getFeatureTypeByName(TIME_WITH_START_END.getLocalPart());
+        FeatureTypeInfo timeWithStartEnd = getCatalog().getFeatureTypeByName(TIME_WITH_START_END.getLocalPart());
         FeatureSource fs = timeWithStartEnd.getFeatureSource(null, null);
 
         List<Object> times = time == null ? null : Arrays.asList(time);
         List<Object> elevations = elevation == null ? null : Arrays.asList(elevation);
 
-        DimensionFilterBuilder builder =
-                new DimensionFilterBuilder(CommonFactoryFinder.getFilterFactory());
+        DimensionFilterBuilder builder = new DimensionFilterBuilder(CommonFactoryFinder.getFilterFactory());
         wms.getTimeFilter(times, timeWithStartEnd, builder);
         wms.getElevationFilter(elevations, timeWithStartEnd, builder);
         Filter filter = builder.getFilter();
@@ -189,8 +163,7 @@ public class WMSTest extends WMSTestSupport {
     @Test
     public void testWMSLifecycleHandlerGraphicCacheReset() throws Exception {
 
-        Iterator<ExternalGraphicFactory> it =
-                DynamicSymbolFactoryFinder.getExternalGraphicFactories();
+        Iterator<ExternalGraphicFactory> it = DynamicSymbolFactoryFinder.getExternalGraphicFactories();
         Map<URL, BufferedImage> imageCache = null;
         while (it.hasNext()) {
             ExternalGraphicFactory egf = it.next();
@@ -225,14 +198,12 @@ public class WMSTest extends WMSTestSupport {
         WMSInfo info = wms.getServiceInfo();
         info.setMaxRequestedDimensionValues(1);
         getGeoServer().save(info);
-        setupStartEndTimeDimension(
-                TIME_WITH_START_END.getLocalPart(), "time", "startTime", "endTime");
+        setupStartEndTimeDimension(TIME_WITH_START_END.getLocalPart(), "time", "startTime", "endTime");
         String name = TIME_WITH_START_END.getLocalPart();
         MapLayerInfo mapLayerInfo = new MapLayerInfo(getCatalog().getLayerByName(name));
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
         formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
-        DateRange dateRange =
-                new DateRange(formatter.parse("2012-02-09"), formatter.parse("2012-02-20"));
+        DateRange dateRange = new DateRange(formatter.parse("2012-02-09"), formatter.parse("2012-02-20"));
         List<Object> times = Arrays.asList(dateRange);
         wms.checkMaxDimensions(mapLayerInfo, times, null, false);
     }
@@ -242,8 +213,7 @@ public class WMSTest extends WMSTestSupport {
         WMSInfo info = wms.getServiceInfo();
         info.setMaxRequestedDimensionValues(1);
         getGeoServer().save(info);
-        setupStartEndTimeDimension(
-                TIME_WITH_START_END.getLocalPart(), "elevation", "startElevation", "endElevation");
+        setupStartEndTimeDimension(TIME_WITH_START_END.getLocalPart(), "elevation", "startElevation", "endElevation");
         String name = TIME_WITH_START_END.getLocalPart();
         MapLayerInfo mapLayerInfo = new MapLayerInfo(getCatalog().getLayerByName(name));
         NumberRange elevationRange = NumberRange.create(0, 99);

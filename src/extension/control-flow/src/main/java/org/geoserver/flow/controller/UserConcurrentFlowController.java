@@ -100,30 +100,15 @@ public class UserConcurrentFlowController extends QueueController {
                 queue.put(request);
             }
         } catch (InterruptedException e) {
-            LOGGER.log(
-                    Level.WARNING,
-                    "Unexpected interruption while " + "blocking on the request queue");
+            LOGGER.log(Level.WARNING, "Unexpected interruption while " + "blocking on the request queue");
         }
         if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.fine(
-                    "UserFlowController("
-                            + queueSize
-                            + ","
-                            + queueId
-                            + ") queue size "
-                            + queue.size());
-            LOGGER.fine(
-                    "UserFlowController("
-                            + queueSize
-                            + ","
-                            + queueId
-                            + ") total queues "
-                            + queues.size());
+            LOGGER.fine("UserFlowController(" + queueSize + "," + queueId + ") queue size " + queue.size());
+            LOGGER.fine("UserFlowController(" + queueSize + "," + queueId + ") total queues " + queues.size());
         }
 
         // cleanup stale queues if necessary
-        if ((queues.size() > maxQueues && (now - lastCleanup) > (maxAge / 10))
-                || (now - lastCleanup) > maxAge) {
+        if ((queues.size() > maxQueues && (now - lastCleanup) > (maxAge / 10)) || (now - lastCleanup) > maxAge) {
             int cleanupCount = 0;
             synchronized (this) {
                 for (String key : queues.keySet()) {
@@ -135,12 +120,7 @@ public class UserConcurrentFlowController extends QueueController {
                 }
                 lastCleanup = now;
                 if (LOGGER.isLoggable(Level.FINE)) {
-                    LOGGER.fine(
-                            "UserFlowController("
-                                    + queueSize
-                                    + ") purged "
-                                    + cleanupCount
-                                    + " stale queues");
+                    LOGGER.fine("UserFlowController(" + queueSize + ") purged " + cleanupCount + " stale queues");
                 }
             }
         }

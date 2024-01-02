@@ -56,8 +56,7 @@ public class PropertySelectionVisitor extends DuplicatingTemplateVisitor {
 
     private static final Logger LOGGER = Logging.getLogger(PropertySelectionVisitor.class);
 
-    public PropertySelectionVisitor(
-            PropertySelectionHandler selectionHandler, PropertyType propertyType) {
+    public PropertySelectionVisitor(PropertySelectionHandler selectionHandler, PropertyType propertyType) {
         this.selectionHandler = selectionHandler;
         this.propertyType = propertyType;
         this.extractor = new FilterAttributeExtractor();
@@ -67,16 +66,14 @@ public class PropertySelectionVisitor extends DuplicatingTemplateVisitor {
     @Override
     public Object visit(IteratingBuilder iteratingBuilder, Object extradata) {
         PropertySelectionContext selectionExtradata = createExtradata(iteratingBuilder, extradata);
-        IteratingBuilder copy =
-                (IteratingBuilder) super.visit(iteratingBuilder, selectionExtradata);
+        IteratingBuilder copy = (IteratingBuilder) super.visit(iteratingBuilder, selectionExtradata);
         return selectBuilder(copy, selectionExtradata);
     }
 
     @Override
     public Object visit(CompositeBuilder compositeBuilder, Object extradata) {
         PropertySelectionContext selectionExtradata = createExtradata(compositeBuilder, extradata);
-        CompositeBuilder copy =
-                (CompositeBuilder) super.visit(compositeBuilder, selectionExtradata);
+        CompositeBuilder copy = (CompositeBuilder) super.visit(compositeBuilder, selectionExtradata);
         return selectBuilder(copy, selectionExtradata);
     }
 
@@ -88,10 +85,8 @@ public class PropertySelectionVisitor extends DuplicatingTemplateVisitor {
         } else if (dynamicBuilder instanceof DynamicIncludeFlatBuilder) {
             result = visit((DynamicIncludeFlatBuilder) dynamicBuilder, extradata);
         } else {
-            PropertySelectionContext selectionExtradata =
-                    createExtradata(dynamicBuilder, extradata);
-            DynamicValueBuilder copy =
-                    (DynamicValueBuilder) super.visit(dynamicBuilder, selectionExtradata);
+            PropertySelectionContext selectionExtradata = createExtradata(dynamicBuilder, extradata);
+            DynamicValueBuilder copy = (DynamicValueBuilder) super.visit(dynamicBuilder, selectionExtradata);
             AbstractTemplateBuilder builder = selectBuilder(copy, selectionExtradata);
             result = wrapJsonValuesBuilder(builder, selectionExtradata);
         }
@@ -120,8 +115,7 @@ public class PropertySelectionVisitor extends DuplicatingTemplateVisitor {
     @Override
     public Object visit(DynamicIncludeFlatBuilder includeFlat, Object extradata) {
         PropertySelectionContext selectionExtradata = createExtradata(includeFlat, extradata);
-        DynamicIncludeFlatBuilder copy =
-                (DynamicIncludeFlatBuilder) super.visit(includeFlat, selectionExtradata);
+        DynamicIncludeFlatBuilder copy = (DynamicIncludeFlatBuilder) super.visit(includeFlat, selectionExtradata);
         return selectBuilder(copy, selectionExtradata);
     }
 
@@ -144,13 +138,9 @@ public class PropertySelectionVisitor extends DuplicatingTemplateVisitor {
     private PropertySelectionWrapper wrapWhenNonStaticKey(AbstractTemplateBuilder builder) {
         PropertySelectionWrapper result = null;
         if (builder instanceof DynamicIncludeFlatBuilder) {
-            result =
-                    new IncludeFlatPropertySelection(
-                            (DynamicIncludeFlatBuilder) builder, selectionHandler);
+            result = new IncludeFlatPropertySelection((DynamicIncludeFlatBuilder) builder, selectionHandler);
         } else if (builder instanceof ArrayIncludeFlatBuilder) {
-            result =
-                    new IncludeArrayPropertySelection(
-                            (ArrayIncludeFlatBuilder) builder, selectionHandler);
+            result = new IncludeArrayPropertySelection((ArrayIncludeFlatBuilder) builder, selectionHandler);
         } else {
             boolean wrap = hasDynamicKey(builder);
             if (builder instanceof DynamicValueBuilder && wrap) {
@@ -160,13 +150,9 @@ public class PropertySelectionVisitor extends DuplicatingTemplateVisitor {
                 StaticBuilder staticBuilder = (StaticBuilder) builder;
                 result = new StaticPropertySelection(staticBuilder, selectionHandler);
             } else if (wrap && builder instanceof CompositeBuilder) {
-                result =
-                        new CompositePropertySelection(
-                                (CompositeBuilder) builder, selectionHandler);
+                result = new CompositePropertySelection((CompositeBuilder) builder, selectionHandler);
             } else if (wrap && builder instanceof IteratingBuilder) {
-                result =
-                        new IteratingPropertySelection(
-                                (IteratingBuilder) builder, selectionHandler);
+                result = new IteratingPropertySelection((IteratingBuilder) builder, selectionHandler);
             }
         }
         return result;
@@ -184,15 +170,11 @@ public class PropertySelectionVisitor extends DuplicatingTemplateVisitor {
         return builder;
     }
 
-    private AbstractTemplateBuilder wrapStaticBuilder(
-            StaticBuilder builder, PropertySelectionContext extradata) {
+    private AbstractTemplateBuilder wrapStaticBuilder(StaticBuilder builder, PropertySelectionContext extradata) {
         AbstractTemplateBuilder result = builder;
         JsonNode jsonValue = builder.getStaticValue();
-        if (jsonValue != null
-                && !jsonValue.isValueNode()
-                && selectionHandler.hasSelectableJsonValue(builder)) {
-            PropertySelectionWrapper wrapper =
-                    new StaticPropertySelection(builder, selectionHandler);
+        if (jsonValue != null && !jsonValue.isValueNode() && selectionHandler.hasSelectableJsonValue(builder)) {
+            PropertySelectionWrapper wrapper = new StaticPropertySelection(builder, selectionHandler);
             if (!extradata.isDynamicKeyParent()) wrapper.setFullKey(extradata.getStaticFullKey());
             result = wrapper;
         }
@@ -203,8 +185,7 @@ public class PropertySelectionVisitor extends DuplicatingTemplateVisitor {
             DynamicValueBuilder builder, PropertySelectionContext extradata) {
         AbstractTemplateBuilder result = builder;
         if (hasJsonField(builder) && selectionHandler.hasSelectableJsonValue(builder)) {
-            PropertySelectionWrapper wrapper =
-                    new DynamicPropertySelection(builder, selectionHandler);
+            PropertySelectionWrapper wrapper = new DynamicPropertySelection(builder, selectionHandler);
             if (!extradata.isDynamicKeyParent()) wrapper.setFullKey(extradata.getStaticFullKey());
             result = wrapper;
         }
@@ -247,16 +228,14 @@ public class PropertySelectionVisitor extends DuplicatingTemplateVisitor {
 
             if (!extradata.isDynamicKeyParent()) {
                 runtimeSelection.setFullKey(extradata.getStaticFullKey());
-                if (selectionHandler.isBuilderSelected(runtimeSelection, extradata))
-                    templateBuilder = runtimeSelection;
+                if (selectionHandler.isBuilderSelected(runtimeSelection, extradata)) templateBuilder = runtimeSelection;
                 else templateBuilder = null;
             } else {
                 templateBuilder = runtimeSelection;
             }
 
             if (templateBuilder != null) {
-                Set<String> props =
-                        extractSelectedProperties(runtimeSelection.getDelegate(), extradata);
+                Set<String> props = extractSelectedProperties(runtimeSelection.getDelegate(), extradata);
                 queryProperties.addAll(props);
             }
         } else {
@@ -273,8 +252,7 @@ public class PropertySelectionVisitor extends DuplicatingTemplateVisitor {
         if (extradata instanceof PropertySelectionContext)
             selectionExtradata = new PropertySelectionContext((PropertySelectionContext) extradata);
         else selectionExtradata = new PropertySelectionContext();
-        if (current instanceof AbstractTemplateBuilder
-                && !selectionExtradata.isDynamicKeyParent()) {
+        if (current instanceof AbstractTemplateBuilder && !selectionExtradata.isDynamicKeyParent()) {
             updateFullStaticKey((AbstractTemplateBuilder) current, selectionExtradata);
         }
         return selectionExtradata;
@@ -291,7 +269,8 @@ public class PropertySelectionVisitor extends DuplicatingTemplateVisitor {
                 String currentFullKey = selectionExtradata.getStaticFullKey();
                 String key = abstractBuilder.getKey(null);
                 if (currentFullKey != null && key != null)
-                    selectionExtradata.setStaticFullKey(currentFullKey.concat(".").concat(key));
+                    selectionExtradata.setStaticFullKey(
+                            currentFullKey.concat(".").concat(key));
                 else if (key != null) selectionExtradata.setStaticFullKey(key);
             }
         }
@@ -323,9 +302,7 @@ public class PropertySelectionVisitor extends DuplicatingTemplateVisitor {
         if (dynamicJsonBuilder.getXpath() != null) {
             props.add(dynamicJsonBuilder.getXpath().getPropertyName());
         } else if (dynamicJsonBuilder.getCql() != null) {
-            dynamicJsonBuilder
-                    .getCql()
-                    .accept(extractor, createExtradata(dynamicJsonBuilder, context));
+            dynamicJsonBuilder.getCql().accept(extractor, createExtradata(dynamicJsonBuilder, context));
         }
         props.addAll(extractor.getAttributeNameSet());
         logQueryAttributes(dynamicJsonBuilder, true, extractor.getAttributeNameSet());
@@ -333,8 +310,7 @@ public class PropertySelectionVisitor extends DuplicatingTemplateVisitor {
         extractor.getPropertyNameSet().clear();
         if (!context.isDynamicKeyParent()) {
             JsonNode jsonNode = dynamicJsonBuilder.getNode();
-            JsonNode node =
-                    selectionHandler.pruneJsonAttributes(jsonNode, context.getStaticFullKey());
+            JsonNode node = selectionHandler.pruneJsonAttributes(jsonNode, context.getStaticFullKey());
             TemplateBuilder tb = dynamicJsonBuilder.getNestedTree(node, null);
             tb.accept(this, context);
         }
@@ -358,8 +334,7 @@ public class PropertySelectionVisitor extends DuplicatingTemplateVisitor {
                 if (key == null) logMsg.append("null key");
                 else logMsg.append("key ").append(key);
             }
-            if (hasAttributes)
-                logMsg.append(": ").append(attributes.stream().collect(Collectors.joining(",")));
+            if (hasAttributes) logMsg.append(": ").append(attributes.stream().collect(Collectors.joining(",")));
         }
     }
 

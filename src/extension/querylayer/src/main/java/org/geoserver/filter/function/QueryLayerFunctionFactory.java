@@ -62,8 +62,7 @@ public class QueryLayerFunctionFactory implements FunctionFactory {
     public void setMaxFeatures(int maxFeatures) {
         if (maxFeatures <= 0) {
             throw new IllegalArgumentException(
-                    "The max features retrieved by a query layer "
-                            + "function must be a positive number");
+                    "The max features retrieved by a query layer " + "function must be a positive number");
         }
         this.maxFeatures = maxFeatures;
     }
@@ -96,8 +95,7 @@ public class QueryLayerFunctionFactory implements FunctionFactory {
         } else if (QUERY_COLLECTION.equals(name)) {
             return new QueryFunction(QUERY_COLLECTION, catalog, args, fallback, false, maxFeatures);
         } else if (COLLECT_GEOMETRIES.equals(name)) {
-            return new CollectGeometriesFunction(
-                    COLLECT_GEOMETRIES, args, fallback, maxCoordinates);
+            return new CollectGeometriesFunction(COLLECT_GEOMETRIES, args, fallback, maxCoordinates);
         } else {
             return null;
         }
@@ -116,8 +114,7 @@ public class QueryLayerFunctionFactory implements FunctionFactory {
         if (catalog == null) {
             LOGGER.log(
                     Level.INFO,
-                    "Looking for functions but the catalog still "
-                            + "has not been set into QueryLayerFunctionFactory");
+                    "Looking for functions but the catalog still " + "has not been set into QueryLayerFunctionFactory");
             return false;
         } else {
             return true;

@@ -44,9 +44,7 @@ class CatalogStoreFeatureCollection extends AbstractFeatureCollection<FeatureTyp
         @Override
         public Object visit(PropertyName expression, Object extraData) {
             return getFactory(extraData)
-                    .property(
-                            "resource." + expression.getPropertyName(),
-                            expression.getNamespaceContext());
+                    .property("resource." + expression.getPropertyName(), expression.getNamespaceContext());
         }
     }
 
@@ -94,14 +92,7 @@ class CatalogStoreFeatureCollection extends AbstractFeatureCollection<FeatureTyp
     @Override
     protected Iterator<Feature> openIterator() {
         return new CatalogStoreFeatureIterator(
-                offset,
-                count,
-                sortOrder,
-                catalogFilter(),
-                catalog,
-                mapping,
-                rd,
-                interpolationProperties);
+                offset, count, sortOrder, catalogFilter(), catalog, mapping, rd, interpolationProperties);
     }
 
     @Override
@@ -120,14 +111,13 @@ class CatalogStoreFeatureCollection extends AbstractFeatureCollection<FeatureTyp
     }
 
     private Filter catalogFilter() {
-        Filter filter =
-                Predicates.and(
-                        // ignore catalog info's that are not enabled
-                        Predicates.equal("enabled", true),
-                        // ignore catalog info's that are not advertised
-                        Predicates.equal("advertised", true),
-                        // ignore catalog info's without id
-                        ff.not(ff.isNull(this.mapping.getIdentifierElement().getContent())));
+        Filter filter = Predicates.and(
+                // ignore catalog info's that are not enabled
+                Predicates.equal("enabled", true),
+                // ignore catalog info's that are not advertised
+                Predicates.equal("advertised", true),
+                // ignore catalog info's without id
+                ff.not(ff.isNull(this.mapping.getIdentifierElement().getContent())));
         filter = Predicates.and(this.filter, filter);
         // build filter compatible with layers
         List<Filter> filtersL = new ArrayList<>();
@@ -145,8 +135,7 @@ class CatalogStoreFeatureCollection extends AbstractFeatureCollection<FeatureTyp
 
     @Override
     public int size() {
-        int remainingSize =
-                catalog.getFacade().count(PublishedInfo.class, catalogFilter()) - offset;
+        int remainingSize = catalog.getFacade().count(PublishedInfo.class, catalogFilter()) - offset;
         return Math.min(count, Math.max(0, remainingSize));
     }
 }

@@ -73,8 +73,7 @@ class ImportTransformFeatureCollection<T extends FeatureType, F extends Feature>
      *
      * <p>The emulates the behavior of the Importer's low-level feature transformation.
      */
-    private class TransformingFeatureIterator<F extends Feature>
-            extends DecoratingFeatureIterator<F> {
+    private class TransformingFeatureIterator<F extends Feature> extends DecoratingFeatureIterator<F> {
 
         SimpleFeatureBuilder featureBuilder;
 
@@ -145,8 +144,7 @@ class ImportTransformFeatureCollection<T extends FeatureType, F extends Feature>
      * Simple FeatureIterator that will handle canceling. If the monitor cancels, the iterator will
      * say there are no more elementss (hasNext() will be false)
      */
-    private class CancelableFeatureIterator<F extends Feature>
-            extends DecoratingFeatureIterator<F> {
+    private class CancelableFeatureIterator<F extends Feature> extends DecoratingFeatureIterator<F> {
         ProgressMonitor monitor;
 
         public CancelableFeatureIterator(FeatureIterator<F> fi, ProgressMonitor monitor) {

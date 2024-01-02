@@ -124,11 +124,10 @@ public class CollectionLayerTest extends OSEORestTestSupport {
         createTest123Collection();
 
         // create the product
-        MockHttpServletResponse response =
-                postAsServletResponse(
-                        "rest/oseo/collections/TEST123/products",
-                        getTestData("/test123-product.json"),
-                        MediaType.APPLICATION_JSON_VALUE);
+        MockHttpServletResponse response = postAsServletResponse(
+                "rest/oseo/collections/TEST123/products",
+                getTestData("/test123-product.json"),
+                MediaType.APPLICATION_JSON_VALUE);
         assertEquals(201, response.getStatus());
         assertEquals(
                 "http://localhost:8080/geoserver/rest/oseo/collections/TEST123/products/TEST123_P1",
@@ -157,21 +156,15 @@ public class CollectionLayerTest extends OSEORestTestSupport {
     @Test
     public void testCreateCollectionSimpleLayer() throws Exception {
         // setup the granules
-        setupDefaultLayer(
-                "/test123-product-granules-rgb.json",
-                "/test123-layer-simple.json",
-                "gs",
-                Boolean.FALSE);
+        setupDefaultLayer("/test123-product-granules-rgb.json", "/test123-layer-simple.json", "gs", Boolean.FALSE);
 
         // check the configuration elements are there too
         LayerInfo layer =
-                validateBasicLayerStructure(
-                        "gs", "test123", new String[] {"RED_BAND", "GREEN_BAND", "BLUE_BAND"});
+                validateBasicLayerStructure("gs", "test123", new String[] {"RED_BAND", "GREEN_BAND", "BLUE_BAND"});
         // ... its style is the default one
         assertThat(layer.getDefaultStyle().getName(), equalTo("raster"));
 
-        BufferedImage image =
-                getAsImage("wms/reflect?layers=gs:test123&format=image/png&width=200", "image/png");
+        BufferedImage image = getAsImage("wms/reflect?layers=gs:test123&format=image/png&width=200", "image/png");
         File expected = new File("src/test/resources/test123-simple-rgb.png");
         ImageAssert.assertEquals(expected, image, 1000);
     }
@@ -179,20 +172,15 @@ public class CollectionLayerTest extends OSEORestTestSupport {
     @Test
     public void testCreateCollectionSimpleCogLayer() throws Exception {
         // setup the granules
-        setupDefaultLayer(
-                "/test123-product-granules-cog.json",
-                "/test123-layer-simple-cog.json",
-                "gs",
-                Boolean.FALSE);
+        setupDefaultLayer("/test123-product-granules-cog.json", "/test123-layer-simple-cog.json", "gs", Boolean.FALSE);
 
         // check the configuration elements are there too
         LayerInfo layer = validateBasicLayerStructure("gs", "test123", new String[] {"GRAY_INDEX"});
         assertThat(layer.getDefaultStyle().getName(), equalTo("raster"));
 
-        BufferedImage image =
-                getAsImage(
-                        "wms/reflect?layers=gs:test123&format=image/png&bbox=-159.44,-82.04,-152.43,-81.06&width=200",
-                        "image/png");
+        BufferedImage image = getAsImage(
+                "wms/reflect?layers=gs:test123&format=image/png&bbox=-159.44,-82.04,-152.43,-81.06&width=200",
+                "image/png");
         File expected = new File("src/test/resources/test123-simple-cog.png");
         ImageAssert.assertEquals(expected, image, 1000);
     }
@@ -207,9 +195,7 @@ public class CollectionLayerTest extends OSEORestTestSupport {
                 Boolean.TRUE);
 
         // check the configuration elements are there too
-        LayerInfo layer =
-                validateBasicLayerStructure(
-                        "gs", "test123", new String[] {"B02", "B03", "B04", "B08"});
+        LayerInfo layer = validateBasicLayerStructure("gs", "test123", new String[] {"B02", "B03", "B04", "B08"});
         assertThat(layer.getDefaultStyle().prefixedName(), equalTo("gs:test123"));
         ChannelSelection cs = getChannelSelection(layer);
         assertEquals("4", cs.getRGBChannels()[0].getChannelName().evaluate(null, String.class));
@@ -217,10 +203,9 @@ public class CollectionLayerTest extends OSEORestTestSupport {
         assertEquals("1", cs.getRGBChannels()[2].getChannelName().evaluate(null, String.class));
         assertNull(cs.getGrayChannel());
 
-        BufferedImage image =
-                getAsImage(
-                        "wms/reflect?layers=gs:test123&format=image/png&bbox=-159.44,-82.04,-152.43,-81.06&width=200",
-                        "image/png");
+        BufferedImage image = getAsImage(
+                "wms/reflect?layers=gs:test123&format=image/png&bbox=-159.44,-82.04,-152.43,-81.06&width=200",
+                "image/png");
         File expected = new File("src/test/resources/test123-multiband-cog.png");
         ImageAssert.assertEquals(expected, image, 1000);
     }
@@ -229,21 +214,15 @@ public class CollectionLayerTest extends OSEORestTestSupport {
     public void testCreateCollectionSimpleLayerTestWorkspace() throws Exception {
         // setup the granules
         setupDefaultLayer(
-                "/test123-product-granules-rgb.json",
-                "/test123-layer-simple-testws.json",
-                "test",
-                Boolean.FALSE);
+                "/test123-product-granules-rgb.json", "/test123-layer-simple-testws.json", "test", Boolean.FALSE);
 
         // check the configuration elements are there too
         LayerInfo layer =
-                validateBasicLayerStructure(
-                        "test", "test123", new String[] {"RED_BAND", "GREEN_BAND", "BLUE_BAND"});
+                validateBasicLayerStructure("test", "test123", new String[] {"RED_BAND", "GREEN_BAND", "BLUE_BAND"});
         // ... its style is the default one
         assertThat(layer.getDefaultStyle().getName(), equalTo("raster"));
 
-        BufferedImage image =
-                getAsImage(
-                        "wms/reflect?layers=test:test123&format=image/png&width=200", "image/png");
+        BufferedImage image = getAsImage("wms/reflect?layers=test:test123&format=image/png&width=200", "image/png");
         File expected = new File("src/test/resources/test123-simple-rgb.png");
         ImageAssert.assertEquals(expected, image, 1000);
     }
@@ -252,13 +231,9 @@ public class CollectionLayerTest extends OSEORestTestSupport {
     public void testCreateCollectionSimpleLayerWithCustomStyle() throws Exception {
         // setup the granules
         setupDefaultLayer(
-                "/test123-product-granules-rgb.json",
-                "/test123-layer-simple-graystyle.json",
-                "gs",
-                Boolean.FALSE);
+                "/test123-product-granules-rgb.json", "/test123-layer-simple-graystyle.json", "gs", Boolean.FALSE);
         LayerInfo layer =
-                validateBasicLayerStructure(
-                        "gs", "test123", new String[] {"RED_BAND", "GREEN_BAND", "BLUE_BAND"});
+                validateBasicLayerStructure("gs", "test123", new String[] {"RED_BAND", "GREEN_BAND", "BLUE_BAND"});
 
         // ... its style is a gray one based on the RED band
         assertThat(layer.getDefaultStyle().prefixedName(), equalTo("gs:test123"));
@@ -266,8 +241,7 @@ public class CollectionLayerTest extends OSEORestTestSupport {
         assertNull(cs.getRGBChannels());
         assertEquals("1", cs.getGrayChannel().getChannelName().evaluate(null, String.class));
 
-        BufferedImage image =
-                getAsImage("wms/reflect?layers=gs:test123&format=image/png&width=200", "image/png");
+        BufferedImage image = getAsImage("wms/reflect?layers=gs:test123&format=image/png&width=200", "image/png");
         File expected = new File("src/test/resources/test123-simple-gray.png");
         ImageAssert.assertEquals(expected, image, 1000);
     }
@@ -284,8 +258,7 @@ public class CollectionLayerTest extends OSEORestTestSupport {
         return rs.getChannelSelection();
     }
 
-    private LayerInfo validateBasicLayerStructure(
-            String workspace, String layerName, String[] expectedNames) {
+    private LayerInfo validateBasicLayerStructure(String workspace, String layerName, String[] expectedNames) {
         // check the configuration elements are there too
         Catalog catalog = getCatalog();
         // ... the store
@@ -298,15 +271,12 @@ public class CollectionLayerTest extends OSEORestTestSupport {
         final CoverageInfo coverageInfo = (CoverageInfo) layer.getResource();
         assertThat(coverageInfo.getStore(), equalTo(store));
         // ... the resource is time enabled
-        DimensionInfo dimension =
-                coverageInfo.getMetadata().get(ResourceInfo.TIME, DimensionInfo.class);
+        DimensionInfo dimension = coverageInfo.getMetadata().get(ResourceInfo.TIME, DimensionInfo.class);
         assertThat(dimension.getAttribute(), equalTo("timeStart"));
         assertThat(dimension.getDefaultValue().getStrategyType(), equalTo(Strategy.MAXIMUM));
         // ... has the expected bands
         String[] names =
-                coverageInfo.getDimensions().stream()
-                        .map(cd -> cd.getName())
-                        .toArray(String[]::new);
+                coverageInfo.getDimensions().stream().map(cd -> cd.getName()).toArray(String[]::new);
         assertThat(expectedNames, equalTo(names));
 
         return layer;
@@ -316,15 +286,10 @@ public class CollectionLayerTest extends OSEORestTestSupport {
     public void testCreateCollectionMultiband() throws Exception {
         // setup the granules
         setupDefaultLayer(
-                "/test123-product-granules-multiband.json",
-                "/test123-layer-multiband.json",
-                "gs",
-                Boolean.TRUE);
+                "/test123-product-granules-multiband.json", "/test123-layer-multiband.json", "gs", Boolean.TRUE);
 
         // check the configuration elements are there too
-        LayerInfo layer =
-                validateBasicLayerStructure(
-                        "gs", "test123", new String[] {"B02", "B03", "B04", "B08"});
+        LayerInfo layer = validateBasicLayerStructure("gs", "test123", new String[] {"B02", "B03", "B04", "B08"});
 
         // ... its style is a RGB one based on the B2, B3, B4
         assertThat(layer.getDefaultStyle().prefixedName(), equalTo("gs:test123"));
@@ -334,8 +299,7 @@ public class CollectionLayerTest extends OSEORestTestSupport {
         assertEquals("1", cs.getRGBChannels()[2].getChannelName().evaluate(null, String.class));
         assertNull(cs.getGrayChannel());
 
-        BufferedImage image =
-                getAsImage("wms/reflect?layers=gs:test123&format=image/png&width=200", "image/png");
+        BufferedImage image = getAsImage("wms/reflect?layers=gs:test123&format=image/png&width=200", "image/png");
         File expected = new File("src/test/resources/test123-multiband.png");
         ImageAssert.assertEquals(expected, image, 1000);
     }
@@ -365,13 +329,8 @@ public class CollectionLayerTest extends OSEORestTestSupport {
                 Boolean.TRUE);
 
         // check the configuration elements are there too
-        LayerInfo layer =
-                validateBasicLayerStructure(
-                        "gs",
-                        "test123",
-                        new String[] {
-                            "VNIR_0", "VNIR_1", "VNIR_2", "QUALITY", "CLOUDSHADOW", "HAZE", "SNOW"
-                        });
+        LayerInfo layer = validateBasicLayerStructure(
+                "gs", "test123", new String[] {"VNIR_0", "VNIR_1", "VNIR_2", "QUALITY", "CLOUDSHADOW", "HAZE", "SNOW"});
         // ... its style has been generated
         assertThat(layer.getDefaultStyle().prefixedName(), equalTo("gs:test123"));
         // ... and it uses all VNIR bands
@@ -381,8 +340,7 @@ public class CollectionLayerTest extends OSEORestTestSupport {
         assertEquals("3", cs.getRGBChannels()[2].getChannelName().evaluate(null, String.class));
         assertNull(cs.getGrayChannel());
 
-        BufferedImage image =
-                getAsImage("wms/reflect?layers=gs:test123&format=image/png&width=200", "image/png");
+        BufferedImage image = getAsImage("wms/reflect?layers=gs:test123&format=image/png&width=200", "image/png");
         File expected = new File("src/test/resources/test123-vnir.png");
         ImageAssert.assertEquals(expected, image, 1000);
     }
@@ -396,13 +354,8 @@ public class CollectionLayerTest extends OSEORestTestSupport {
                 Boolean.TRUE);
 
         // check the configuration elements are there too
-        LayerInfo layer =
-                validateBasicLayerStructure(
-                        "gs",
-                        "test123",
-                        new String[] {
-                            "VNIR_0", "VNIR_1", "VNIR_2", "QUALITY", "CLOUDSHADOW", "HAZE", "SNOW"
-                        });
+        LayerInfo layer = validateBasicLayerStructure(
+                "gs", "test123", new String[] {"VNIR_0", "VNIR_1", "VNIR_2", "QUALITY", "CLOUDSHADOW", "HAZE", "SNOW"});
         // ... its style has been generated
         assertThat(layer.getDefaultStyle().prefixedName(), equalTo("gs:test123"));
         // ... and it uses all two vnir bands and a flag
@@ -412,8 +365,7 @@ public class CollectionLayerTest extends OSEORestTestSupport {
         assertEquals("7", cs.getRGBChannels()[2].getChannelName().evaluate(null, String.class));
         assertNull(cs.getGrayChannel());
 
-        BufferedImage image =
-                getAsImage("wms/reflect?layers=gs:test123&format=image/png&width=200", "image/png");
+        BufferedImage image = getAsImage("wms/reflect?layers=gs:test123&format=image/png&width=200", "image/png");
         File expected = new File("src/test/resources/test123-vnir-snow.png");
         ImageAssert.assertEquals(expected, image, 1000);
     }
@@ -427,13 +379,8 @@ public class CollectionLayerTest extends OSEORestTestSupport {
                 Boolean.TRUE);
 
         // check the configuration elements are there too
-        LayerInfo layer =
-                validateBasicLayerStructure(
-                        "gs",
-                        "test123",
-                        new String[] {
-                            "VNIR_0", "VNIR_1", "VNIR_2", "QUALITY", "CLOUDSHADOW", "HAZE", "SNOW"
-                        });
+        LayerInfo layer = validateBasicLayerStructure(
+                "gs", "test123", new String[] {"VNIR_0", "VNIR_1", "VNIR_2", "QUALITY", "CLOUDSHADOW", "HAZE", "SNOW"});
         // ... its style has been generated
         assertThat(layer.getDefaultStyle().prefixedName(), equalTo("gs:test123"));
         // ... and it uses only a gray band, the snow flag
@@ -442,37 +389,28 @@ public class CollectionLayerTest extends OSEORestTestSupport {
         assertEquals("7", cs.getGrayChannel().getChannelName().evaluate(null, String.class));
 
         // the image is almost black, but not fully
-        BufferedImage image =
-                getAsImage("wms/reflect?layers=gs:test123&format=image/png&width=200", "image/png");
+        BufferedImage image = getAsImage("wms/reflect?layers=gs:test123&format=image/png&width=200", "image/png");
         File expected = new File("src/test/resources/test123-gray-snow.png");
         ImageAssert.assertEquals(expected, image, 1000);
     }
 
     private void setupDefaultLayer(
-            String granuleLocations,
-            String layerDefinition,
-            String workspace,
-            Boolean expectSeparateBands)
+            String granuleLocations, String layerDefinition, String workspace, Boolean expectSeparateBands)
             throws Exception {
         // setup the granules
         String granulesTemplate = getTestStringData(granuleLocations);
         String granules = granulesTemplate.replace("$resources", resourceBase);
-        MockHttpServletResponse response =
-                putAsServletResponse(
-                        "/rest/oseo/collections/TEST123/products/TEST123_P1/granules",
-                        granules,
-                        MediaType.APPLICATION_JSON_VALUE);
+        MockHttpServletResponse response = putAsServletResponse(
+                "/rest/oseo/collections/TEST123/products/TEST123_P1/granules",
+                granules,
+                MediaType.APPLICATION_JSON_VALUE);
         assertEquals(200, response.getStatus());
 
         // create the layer
         boolean previousConfiguration =
-                getAsServletResponse("rest/oseo/collections/TEST123/layer").getStatus()
-                        == HttpStatus.OK.value();
-        response =
-                putAsServletResponse(
-                        "rest/oseo/collections/TEST123/layer",
-                        getTestData(layerDefinition),
-                        MediaType.APPLICATION_JSON_VALUE);
+                getAsServletResponse("rest/oseo/collections/TEST123/layer").getStatus() == HttpStatus.OK.value();
+        response = putAsServletResponse(
+                "rest/oseo/collections/TEST123/layer", getTestData(layerDefinition), MediaType.APPLICATION_JSON_VALUE);
         assertEquals(previousConfiguration ? 200 : 201, response.getStatus());
 
         // check it has been created from REST
@@ -502,8 +440,7 @@ public class CollectionLayerTest extends OSEORestTestSupport {
         DocumentContext json = getAsJSONPath("/rest/oseo/collections/LANDSAT8/layers", 200);
         assertEquals(Integer.valueOf(2), json.read("$.layers.length()"));
         assertEquals(
-                Arrays.asList(
-                        "http://localhost:8080/geoserver/rest/oseo/collections/LANDSAT8/layers/landsat8-SINGLE"),
+                Arrays.asList("http://localhost:8080/geoserver/rest/oseo/collections/LANDSAT8/layers/landsat8-SINGLE"),
                 json.read("$.layers[?(@.name == 'landsat8-SINGLE')].href"));
         assertEquals(
                 Arrays.asList(
@@ -513,8 +450,7 @@ public class CollectionLayerTest extends OSEORestTestSupport {
 
     @Test
     public void testGetCollectionLayerByName() throws Exception {
-        DocumentContext json =
-                getAsJSONPath("/rest/oseo/collections/LANDSAT8/layers/landsat8-SINGLE", 200);
+        DocumentContext json = getAsJSONPath("/rest/oseo/collections/LANDSAT8/layers/landsat8-SINGLE", 200);
         assertEquals("gs", json.read("$.workspace"));
         assertEquals("landsat8-SINGLE", json.read("$.layer"));
         assertEquals(Boolean.FALSE, json.read("$.separateBands"));
@@ -525,18 +461,13 @@ public class CollectionLayerTest extends OSEORestTestSupport {
     @Test
     public void testDeleteCollectionLayer() throws Exception {
         // create something to delete
-        setupDefaultLayer(
-                "/test123-product-granules-rgb.json",
-                "/test123-layer-simple.json",
-                "gs",
-                Boolean.FALSE);
+        setupDefaultLayer("/test123-product-granules-rgb.json", "/test123-layer-simple.json", "gs", Boolean.FALSE);
 
         // check the GeoServer layer is there
         assertNotNull(getCatalog().getLayerByName("test123"));
 
         // remove
-        MockHttpServletResponse response =
-                deleteAsServletResponse("rest/oseo/collections/TEST123/layer");
+        MockHttpServletResponse response = deleteAsServletResponse("rest/oseo/collections/TEST123/layer");
         assertEquals(200, response.getStatus());
 
         // no more there on REST API and on catalog
@@ -559,11 +490,10 @@ public class CollectionLayerTest extends OSEORestTestSupport {
         assertEquals(Integer.valueOf(1), json.read("$.layers.length()"));
 
         // now add another layer
-        MockHttpServletResponse response =
-                putAsServletResponse(
-                        "rest/oseo/collections/TEST123/layers/test123-secondary",
-                        getTestData("/test123-layer-bands-flags-browseMix-secondary.json"),
-                        MediaType.APPLICATION_JSON_VALUE);
+        MockHttpServletResponse response = putAsServletResponse(
+                "rest/oseo/collections/TEST123/layers/test123-secondary",
+                getTestData("/test123-layer-bands-flags-browseMix-secondary.json"),
+                MediaType.APPLICATION_JSON_VALUE);
         assertEquals(201, response.getStatus());
 
         // confirm there are two layers on list now
@@ -582,13 +512,9 @@ public class CollectionLayerTest extends OSEORestTestSupport {
         assertEquals(Boolean.TRUE, json.read("$.heterogeneousCRS"));
 
         // check the configuration elements are there too
-        LayerInfo layer =
-                validateBasicLayerStructure(
-                        "gs",
-                        "test123-secondary",
-                        new String[] {
-                            "VNIR_0", "VNIR_1", "VNIR_2", "QUALITY", "CLOUDSHADOW", "HAZE", "SNOW"
-                        });
+        LayerInfo layer = validateBasicLayerStructure("gs", "test123-secondary", new String[] {
+            "VNIR_0", "VNIR_1", "VNIR_2", "QUALITY", "CLOUDSHADOW", "HAZE", "SNOW"
+        });
         // ... its style has been generated
         assertThat(layer.getDefaultStyle().prefixedName(), equalTo("gs:test123-secondary"));
         // ... and it uses only a gray band, the snow flag
@@ -600,9 +526,7 @@ public class CollectionLayerTest extends OSEORestTestSupport {
 
         // the image is almost black, but not fully
         BufferedImage image =
-                getAsImage(
-                        "wms/reflect?layers=gs:test123-secondary&format=image/png&width=200",
-                        "image/png");
+                getAsImage("wms/reflect?layers=gs:test123-secondary&format=image/png&width=200", "image/png");
         File expected = new File("src/test/resources/test123-vnir-snow.png");
         ImageAssert.assertEquals(expected, image, 1000);
     }
@@ -621,11 +545,10 @@ public class CollectionLayerTest extends OSEORestTestSupport {
         assertEquals(Integer.valueOf(1), json.read("$.layers.length()"));
 
         // now add another layer
-        MockHttpServletResponse response =
-                postAsServletResponse(
-                        "rest/oseo/collections/TEST123/layers",
-                        getTestData("/test123-layer-bands-flags-browseMix-secondary.json"),
-                        MediaType.APPLICATION_JSON_VALUE);
+        MockHttpServletResponse response = postAsServletResponse(
+                "rest/oseo/collections/TEST123/layers",
+                getTestData("/test123-layer-bands-flags-browseMix-secondary.json"),
+                MediaType.APPLICATION_JSON_VALUE);
         assertEquals(201, response.getStatus());
 
         // confirm there are two layers on list now
@@ -644,16 +567,14 @@ public class CollectionLayerTest extends OSEORestTestSupport {
         getAsJSONPath("/rest/oseo/collections/TEST123/layers", 200);
 
         // now go and remove the first, which was the default one
-        MockHttpServletResponse response =
-                deleteAsServletResponse("rest/oseo/collections/TEST123/layers/test123");
+        MockHttpServletResponse response = deleteAsServletResponse("rest/oseo/collections/TEST123/layers/test123");
         assertEquals(200, response.getStatus());
 
         // check it got removed from list
         DocumentContext json = getAsJSONPath("/rest/oseo/collections/TEST123/layers", 200);
         assertEquals(Integer.valueOf(1), json.read("$.layers.length()"));
         assertEquals(
-                Arrays.asList(
-                        "http://localhost:8080/geoserver/rest/oseo/collections/TEST123/layers/test123-secondary"),
+                Arrays.asList("http://localhost:8080/geoserver/rest/oseo/collections/TEST123/layers/test123-secondary"),
                 json.read("$.layers[?(@.name == 'test123-secondary')].href"));
 
         // check it's a 404 on direct request
@@ -669,9 +590,7 @@ public class CollectionLayerTest extends OSEORestTestSupport {
 
         // the image is almost black, but not fully
         BufferedImage image =
-                getAsImage(
-                        "wms/reflect?layers=gs:test123-secondary&format=image/png&width=200",
-                        "image/png");
+                getAsImage("wms/reflect?layers=gs:test123-secondary&format=image/png&width=200", "image/png");
         File expected = new File("src/test/resources/test123-vnir-snow.png");
         ImageAssert.assertEquals(expected, image, 1000);
     }
@@ -679,16 +598,11 @@ public class CollectionLayerTest extends OSEORestTestSupport {
     @Test
     public void testCreateTimeRangesSimpleLayer() throws Exception {
         // setup the granules
-        setupDefaultLayer(
-                "/test123-product-granules-rgb.json",
-                "/test123-layer-timerange.json",
-                "gs",
-                Boolean.FALSE);
+        setupDefaultLayer("/test123-product-granules-rgb.json", "/test123-layer-timerange.json", "gs", Boolean.FALSE);
 
         // check the configuration elements are there too
         LayerInfo layer =
-                validateBasicLayerStructure(
-                        "gs", "test123", new String[] {"RED_BAND", "GREEN_BAND", "BLUE_BAND"});
+                validateBasicLayerStructure("gs", "test123", new String[] {"RED_BAND", "GREEN_BAND", "BLUE_BAND"});
         // ... its style is the default one
         assertThat(layer.getDefaultStyle().getName(), equalTo("raster"));
 
@@ -703,9 +617,7 @@ public class CollectionLayerTest extends OSEORestTestSupport {
         assertXpathEvaluatesTo("time", "//wms:Layer/wms:Dimension/@name", dom);
         assertXpathEvaluatesTo("2018-01-01T02:00:00Z", "//wms:Layer/wms:Dimension/@default", dom);
         assertXpathEvaluatesTo(
-                "2018-01-01T00:00:00.000Z/2018-01-01T02:00:00.000Z/PT1S",
-                "//wms:Layer/wms:Dimension",
-                dom);
+                "2018-01-01T00:00:00.000Z/2018-01-01T02:00:00.000Z/PT1S", "//wms:Layer/wms:Dimension", dom);
     }
 
     @Test
@@ -718,9 +630,7 @@ public class CollectionLayerTest extends OSEORestTestSupport {
                 Boolean.TRUE);
 
         // check the configuration elements are there too
-        LayerInfo layer =
-                validateBasicLayerStructure(
-                        "gs", "test123", new String[] {"B02", "B03", "B04", "B08"});
+        LayerInfo layer = validateBasicLayerStructure("gs", "test123", new String[] {"B02", "B03", "B04", "B08"});
 
         // get the capabilites and check the times are indeed ranges
         Document dom = getAsDOM("wms?service=WMS&version=1.3.0&request=GetCapabilities");
@@ -734,8 +644,6 @@ public class CollectionLayerTest extends OSEORestTestSupport {
         assertXpathEvaluatesTo("time", "//wms:Layer/wms:Dimension/@name", dom);
         assertXpathEvaluatesTo("2018-01-01T02:00:00Z", "//wms:Layer/wms:Dimension/@default", dom);
         assertXpathEvaluatesTo(
-                "2018-01-01T00:00:00.000Z/2018-01-01T02:00:00.000Z/PT1S",
-                "//wms:Layer/wms:Dimension",
-                dom);
+                "2018-01-01T00:00:00.000Z/2018-01-01T02:00:00.000Z/PT1S", "//wms:Layer/wms:Dimension", dom);
     }
 }

@@ -58,9 +58,7 @@ public class ISO8601Formatter {
             return sb.toString();
         } else {
             throw new IllegalArgumentException(
-                    "Date argument should be either a Date or a "
-                            + "DateRange, however this one is neither: "
-                            + date);
+                    "Date argument should be either a Date or a " + "DateRange, however this one is neither: " + date);
         }
     }
 

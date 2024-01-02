@@ -31,8 +31,7 @@ public abstract class BeanUtils {
      * @param properties the list of string of properties to update
      * @param values the list of new values to update
      */
-    public static <T> void smartUpdate(
-            final T info, final List<String> properties, final List<Object> values)
+    public static <T> void smartUpdate(final T info, final List<String> properties, final List<Object> values)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         final Iterator<String> itPropertyName = properties.iterator();
         final Iterator<Object> itValue = values.iterator();
@@ -70,11 +69,10 @@ public abstract class BeanUtils {
                     liveMap.putAll((Map) value);
                 } else {
                     if (CatalogUtils.LOGGER.isLoggable(java.util.logging.Level.SEVERE))
-                        CatalogUtils.LOGGER.severe(
-                                "Skipping unwritable property "
-                                        + propertyName
-                                        + " with property type "
-                                        + pd.getPropertyType());
+                        CatalogUtils.LOGGER.severe("Skipping unwritable property "
+                                + propertyName
+                                + " with property type "
+                                + pd.getPropertyType());
                 }
             }
         }

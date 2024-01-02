@@ -78,8 +78,7 @@ public class XStreamPersisterFactory implements ApplicationContextAware {
         // needed for Jettison 1.4.1
         Configuration configuration = new Configuration();
         configuration.setRootElementArrayWrapper(false);
-        JettisonMappedXmlDriver driver =
-                new JettisonMappedXmlDriver(configuration, alwaysSerializeCollectionsAsArray);
+        JettisonMappedXmlDriver driver = new JettisonMappedXmlDriver(configuration, alwaysSerializeCollectionsAsArray);
         return buildPersister(driver);
     }
 
@@ -97,14 +96,10 @@ public class XStreamPersisterFactory implements ApplicationContextAware {
         if (initializers == null || initializers.isEmpty()) {
             // the factory is created also programmatically, and without
             if (applicationContext == null) {
-                initializers =
-                        new ArrayList<>(
-                                GeoServerExtensions.extensions(XStreamPersisterInitializer.class));
+                initializers = new ArrayList<>(GeoServerExtensions.extensions(XStreamPersisterInitializer.class));
             } else {
-                initializers =
-                        new ArrayList<>(
-                                GeoServerExtensions.extensions(
-                                        XStreamPersisterInitializer.class, applicationContext));
+                initializers = new ArrayList<>(
+                        GeoServerExtensions.extensions(XStreamPersisterInitializer.class, applicationContext));
             }
         }
         return initializers;
@@ -114,9 +109,7 @@ public class XStreamPersisterFactory implements ApplicationContextAware {
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
         initializers =
-                new ArrayList<>(
-                        GeoServerExtensions.extensions(
-                                XStreamPersisterInitializer.class, applicationContext));
+                new ArrayList<>(GeoServerExtensions.extensions(XStreamPersisterInitializer.class, applicationContext));
     }
 
     /**

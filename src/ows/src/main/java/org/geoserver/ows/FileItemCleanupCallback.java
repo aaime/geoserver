@@ -21,8 +21,7 @@ public class FileItemCleanupCallback extends AbstractDispatcherCallback {
 
     private static final Logger LOGGER = Logging.getLogger(FileItemCleanupCallback.class);
 
-    private static final ThreadLocal<List<FileItem>> FILE_ITEMS =
-            ThreadLocal.withInitial(Collections::emptyList);
+    private static final ThreadLocal<List<FileItem>> FILE_ITEMS = ThreadLocal.withInitial(Collections::emptyList);
 
     public static void setFileItems(List<FileItem> fileItems) {
         FILE_ITEMS.set(fileItems);

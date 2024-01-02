@@ -59,10 +59,7 @@ public class WFSOutputFormatCallback extends AbstractDispatcherCallback {
         if (outputFormat != null
                 && wfs.getGetFeatureOutputTypes() != null
                 && !wfs.getGetFeatureOutputTypes().contains(outputFormat)) {
-            LOGGER.fine(
-                    "Output Format "
-                            + outputFormat
-                            + " is not enabled for GetFeature due to Global WFS settings");
+            LOGGER.fine("Output Format " + outputFormat + " is not enabled for GetFeature due to Global WFS settings");
             throw InvalidParameterException(outputFormat);
         }
         return operation;
@@ -75,8 +72,7 @@ public class WFSOutputFormatCallback extends AbstractDispatcherCallback {
      */
     public ServiceException InvalidParameterException(String outputFormat) {
         ServiceException e =
-                new ServiceException(
-                        "Invalid Output Format Parameter " + outputFormat, INVALID_PARAMETER_VALUE);
+                new ServiceException("Invalid Output Format Parameter " + outputFormat, INVALID_PARAMETER_VALUE);
         return e;
     }
 }

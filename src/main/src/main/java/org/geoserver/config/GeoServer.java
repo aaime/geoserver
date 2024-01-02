@@ -175,8 +175,7 @@ public interface GeoServer {
      * @return The service with the specified name or <code>null</code> if no such service could be
      *     found within the workspace.
      */
-    <T extends ServiceInfo> T getServiceByName(
-            WorkspaceInfo workspace, String name, Class<T> clazz);
+    <T extends ServiceInfo> T getServiceByName(WorkspaceInfo workspace, String name, Class<T> clazz);
 
     /**
      * The factory used to create configuration object.
@@ -214,10 +213,7 @@ public interface GeoServer {
      * the configuration subsystem.
      */
     void fireGlobalModified(
-            GeoServerInfo global,
-            List<String> propertyNames,
-            List<Object> oldValues,
-            List<Object> newValues);
+            GeoServerInfo global, List<String> propertyNames, List<Object> oldValues, List<Object> newValues);
 
     /**
      * Fires the event for a settings configuration being modified.
@@ -226,10 +222,7 @@ public interface GeoServer {
      * the configuration subsystem.
      */
     void fireSettingsModified(
-            SettingsInfo global,
-            List<String> propertyNames,
-            List<Object> oldValues,
-            List<Object> newValues);
+            SettingsInfo global, List<String> propertyNames, List<Object> oldValues, List<Object> newValues);
 
     /**
      * Fires the event for the logging configuration being modified.
@@ -238,10 +231,7 @@ public interface GeoServer {
      * the configuration subsystem.
      */
     void fireLoggingModified(
-            LoggingInfo logging,
-            List<String> propertyNames,
-            List<Object> oldValues,
-            List<Object> newValues);
+            LoggingInfo logging, List<String> propertyNames, List<Object> oldValues, List<Object> newValues);
 
     /**
      * Fires the event for a service configuration being modified.
@@ -250,10 +240,7 @@ public interface GeoServer {
      * the configuration subsystem.
      */
     void fireServiceModified(
-            ServiceInfo service,
-            List<String> propertyNames,
-            List<Object> oldValues,
-            List<Object> newValues);
+            ServiceInfo service, List<String> propertyNames, List<Object> oldValues, List<Object> newValues);
 
     /** Disposes the configuration. */
     void dispose();

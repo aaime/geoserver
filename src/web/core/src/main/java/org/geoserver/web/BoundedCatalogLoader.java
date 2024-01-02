@@ -27,8 +27,7 @@ class BoundedCatalogLoader<T extends CatalogInfo> implements Serializable {
         this.boundExceeded = false;
     }
 
-    public BoundedCatalogLoader(
-            Catalog catalog, Filter filter, Class<T> target, long timeout, int max) {
+    public BoundedCatalogLoader(Catalog catalog, Filter filter, Class<T> target, long timeout, int max) {
         // perform a bounded load of the catalog
         // (single call, doing count + list is slower and count cannot be stopped mid-way)
         long limit = System.currentTimeMillis() + timeout;

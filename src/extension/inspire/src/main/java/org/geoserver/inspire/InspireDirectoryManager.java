@@ -49,10 +49,9 @@ public class InspireDirectoryManager {
             LOGGER.fine("Error occurred while retrieving languages mappings from inspire dir");
         }
 
-        try (InputStream is =
-                file != null && file.exists()
-                        ? new FileInputStream(file)
-                        : getClass().getResource("available_languages.properties").openStream()) {
+        try (InputStream is = file != null && file.exists()
+                ? new FileInputStream(file)
+                : getClass().getResource("available_languages.properties").openStream()) {
             Properties list = new Properties();
             list.load(is);
             return list;

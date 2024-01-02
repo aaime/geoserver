@@ -68,8 +68,7 @@ public class DemoRequestsPage extends GeoServerBasePage {
             GeoServerResourceLoader loader = this.getGeoServer().getCatalog().getResourceLoader();
             demoDir = Resources.serializable(loader.get("demo"));
         } catch (Exception e) {
-            throw new WicketRuntimeException(
-                    "Can't access demo requests directory: " + e.getMessage());
+            throw new WicketRuntimeException("Can't access demo requests directory: " + e.getMessage());
         }
         DemoRequest request = new DemoRequest(demoDir.path());
         setDefaultModel(new Model<>(request));
@@ -116,24 +115,19 @@ public class DemoRequestsPage extends GeoServerBasePage {
         add(demoRequestsForm);
 
         final List<String> demoList = getDemoList(demoDir);
-        final IModel<String> reqFileNameModel =
-                new PropertyModel<>(requestModel, "requestFileName");
-        final DropDownChoice<String> demoRequestsList =
-                new Select2DropDownChoice<>(
-                        "demoRequestsList",
-                        reqFileNameModel,
-                        demoList,
-                        new ChoiceRenderer<String>() {
-                            @Override
-                            public String getIdValue(String obj, int index) {
-                                return obj;
-                            }
+        final IModel<String> reqFileNameModel = new PropertyModel<>(requestModel, "requestFileName");
+        final DropDownChoice<String> demoRequestsList = new Select2DropDownChoice<>(
+                "demoRequestsList", reqFileNameModel, demoList, new ChoiceRenderer<String>() {
+                    @Override
+                    public String getIdValue(String obj, int index) {
+                        return obj;
+                    }
 
-                            @Override
-                            public Object getDisplayValue(String obj) {
-                                return obj;
-                            }
-                        });
+                    @Override
+                    public Object getDisplayValue(String obj) {
+                        return obj;
+                    }
+                });
         demoRequestsForm.add(demoRequestsList);
 
         /*
@@ -141,67 +135,64 @@ public class DemoRequestsPage extends GeoServerBasePage {
          * the EditAreaBehavior to update the body contents inside it, but instead puts the plain
          * TextArea contents above the empty xml editor
          */
-        demoRequestsList.add(
-                new AjaxFormSubmitBehavior(demoRequestsForm, "change") {
+        demoRequestsList.add(new AjaxFormSubmitBehavior(demoRequestsForm, "change") {
 
-                    @Override
-                    protected void onSubmit(AjaxRequestTarget target) {
-                        final String reqFileName = demoRequestsList.getModelValue();
-                        final String contents;
-                        String proxyBaseUrl;
-                        final String baseUrl;
-                        {
-                            HttpServletRequest httpServletRequest =
-                                    getGeoServerApplication()
-                                            .servletRequest(DemoRequestsPage.this.getRequest());
-                            proxyBaseUrl = GeoServerExtensions.getProperty("PROXY_BASE_URL");
-                            if (StringUtils.isEmpty(proxyBaseUrl)) {
-                                GeoServer gs = getGeoServer();
-                                proxyBaseUrl = gs.getGlobal().getSettings().getProxyBaseUrl();
-                                if (StringUtils.isEmpty(proxyBaseUrl)) {
-                                    baseUrl = ResponseUtils.baseURL(httpServletRequest);
-                                } else {
-                                    baseUrl = proxyBaseUrl;
-                                }
-                            } else {
-                                baseUrl = proxyBaseUrl;
-                            }
-                        }
-                        try {
-                            contents = getFileContents(reqFileName);
-                        } catch (IOException e) {
-                            LOGGER.log(Level.WARNING, "Can't load demo file " + reqFileName, e);
-                            throw new WicketRuntimeException(
-                                    "Can't load demo file " + reqFileName, e);
-                        }
-
-                        boolean demoRequestIsHttpGet = reqFileName.endsWith(".url");
-                        final String service =
-                                reqFileName.substring(0, reqFileName.indexOf('_')).toLowerCase();
-                        if (demoRequestIsHttpGet) {
-                            String url = ResponseUtils.appendPath(baseUrl, contents);
-                            urlTextField.setModelObject(url);
-                            body.setModelObject("");
+            @Override
+            protected void onSubmit(AjaxRequestTarget target) {
+                final String reqFileName = demoRequestsList.getModelValue();
+                final String contents;
+                String proxyBaseUrl;
+                final String baseUrl;
+                {
+                    HttpServletRequest httpServletRequest =
+                            getGeoServerApplication().servletRequest(DemoRequestsPage.this.getRequest());
+                    proxyBaseUrl = GeoServerExtensions.getProperty("PROXY_BASE_URL");
+                    if (StringUtils.isEmpty(proxyBaseUrl)) {
+                        GeoServer gs = getGeoServer();
+                        proxyBaseUrl = gs.getGlobal().getSettings().getProxyBaseUrl();
+                        if (StringUtils.isEmpty(proxyBaseUrl)) {
+                            baseUrl = ResponseUtils.baseURL(httpServletRequest);
                         } else {
-                            String serviceUrl = ResponseUtils.appendPath(baseUrl, service);
-                            urlTextField.setModelObject(serviceUrl);
-                            body.setModelObject(contents);
+                            baseUrl = proxyBaseUrl;
                         }
-
-                        // target.add(urlTextField);
-                        // target.add(body);
-                        /*
-                         * Need to setResponsePage, addComponent causes the EditAreaBehavior to sometimes
-                         * not updating properly
-                         */
-                        setResponsePage(DemoRequestsPage.this);
+                    } else {
+                        baseUrl = proxyBaseUrl;
                     }
+                }
+                try {
+                    contents = getFileContents(reqFileName);
+                } catch (IOException e) {
+                    LOGGER.log(Level.WARNING, "Can't load demo file " + reqFileName, e);
+                    throw new WicketRuntimeException("Can't load demo file " + reqFileName, e);
+                }
 
-                    @Override
-                    protected void onError(AjaxRequestTarget target) {
-                        // nothing to do
-                    }
-                });
+                boolean demoRequestIsHttpGet = reqFileName.endsWith(".url");
+                final String service =
+                        reqFileName.substring(0, reqFileName.indexOf('_')).toLowerCase();
+                if (demoRequestIsHttpGet) {
+                    String url = ResponseUtils.appendPath(baseUrl, contents);
+                    urlTextField.setModelObject(url);
+                    body.setModelObject("");
+                } else {
+                    String serviceUrl = ResponseUtils.appendPath(baseUrl, service);
+                    urlTextField.setModelObject(serviceUrl);
+                    body.setModelObject(contents);
+                }
+
+                // target.add(urlTextField);
+                // target.add(body);
+                /*
+                 * Need to setResponsePage, addComponent causes the EditAreaBehavior to sometimes
+                 * not updating properly
+                 */
+                setResponsePage(DemoRequestsPage.this);
+            }
+
+            @Override
+            protected void onError(AjaxRequestTarget target) {
+                // nothing to do
+            }
+        });
 
         urlTextField = new TextField<>("url", new PropertyModel<>(requestModel, "requestUrl"));
         urlTextField.setMarkupId("requestUrl");
@@ -229,36 +220,30 @@ public class DemoRequestsPage extends GeoServerBasePage {
         // responseWindow.setPageMapName("demoResponse");
         responseWindow.setCookieName("demoResponse");
 
-        responseWindow.setPageCreator(
-                (ModalWindow.PageCreator) () -> new DemoRequestResponse(requestModel));
+        responseWindow.setPageCreator((ModalWindow.PageCreator) () -> new DemoRequestResponse(requestModel));
 
-        demoRequestsForm.add(
-                new AjaxSubmitLink("submit", demoRequestsForm) {
-                    @Override
-                    public void onSubmit(AjaxRequestTarget target, Form testWfsPostForm) {
-                        responseWindow.show(target);
-                    }
+        demoRequestsForm.add(new AjaxSubmitLink("submit", demoRequestsForm) {
+            @Override
+            public void onSubmit(AjaxRequestTarget target, Form testWfsPostForm) {
+                responseWindow.show(target);
+            }
 
+            @Override
+            protected void updateAjaxAttributes(AjaxRequestAttributes attributes) {
+                super.updateAjaxAttributes(attributes);
+                // we need to force EditArea to update the textarea contents (which it
+                // hides)
+                // before submitting the form, otherwise the contents won't be the ones the
+                // user
+                // edited
+                attributes.getAjaxCallListeners().add(new AjaxCallListener() {
                     @Override
-                    protected void updateAjaxAttributes(AjaxRequestAttributes attributes) {
-                        super.updateAjaxAttributes(attributes);
-                        // we need to force EditArea to update the textarea contents (which it
-                        // hides)
-                        // before submitting the form, otherwise the contents won't be the ones the
-                        // user
-                        // edited
-                        attributes
-                                .getAjaxCallListeners()
-                                .add(
-                                        new AjaxCallListener() {
-                                            @Override
-                                            public CharSequence getBeforeHandler(
-                                                    Component component) {
-                                                return "document.getElementById('requestBody').value = document.gsEditors.requestBody.getValue();";
-                                            }
-                                        });
+                    public CharSequence getBeforeHandler(Component component) {
+                        return "document.getElementById('requestBody').value = document.gsEditors.requestBody.getValue();";
                     }
                 });
+            }
+        });
     }
 
     private List<String> getDemoList(final Resource demoDir) {
@@ -270,9 +255,7 @@ public class DemoRequestsPage extends GeoServerBasePage {
                     demoList.add(name);
                 } else {
                     LOGGER.warning(
-                            "Ignoring file "
-                                    + name
-                                    + " in demo requests directory, only .url and .xml files allowed");
+                            "Ignoring file " + name + " in demo requests directory, only .url and .xml files allowed");
                 }
             }
         }

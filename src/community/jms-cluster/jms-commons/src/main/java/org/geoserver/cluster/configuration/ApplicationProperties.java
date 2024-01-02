@@ -108,9 +108,7 @@ public class ApplicationProperties implements ApplicationContextAware {
         // than strictly necessary
 
         final String[] typeStrs = {
-            "Java environment variable ",
-            "Servlet context parameter ",
-            "System environment variable "
+            "Java environment variable ", "Servlet context parameter ", "System environment variable "
         };
 
         String result = null;

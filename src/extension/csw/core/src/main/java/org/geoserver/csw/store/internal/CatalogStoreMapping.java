@@ -146,12 +146,7 @@ public class CatalogStoreMapping {
     public CatalogStoreMapping subMapping(List<PropertyName> properties, RecordDescriptor rd) {
         Set<String> paths = new HashSet<>();
         for (PropertyName prop : properties) {
-            paths.add(
-                    toDotPath(
-                            XPathUtil.steps(
-                                    rd.getFeatureDescriptor(),
-                                    prop.toString(),
-                                    rd.getNamespaceSupport())));
+            paths.add(toDotPath(XPathUtil.steps(rd.getFeatureDescriptor(), prop.toString(), rd.getNamespaceSupport())));
         }
 
         CatalogStoreMapping mapping = new CatalogStoreMapping();
@@ -164,8 +159,7 @@ public class CatalogStoreMapping {
 
         mapping.identifier = identifier;
 
-        mapping.includeEnvelope =
-                includeEnvelope && paths.contains(rd.getBoundingBoxPropertyName());
+        mapping.includeEnvelope = includeEnvelope && paths.contains(rd.getBoundingBoxPropertyName());
 
         return mapping;
     }
@@ -209,8 +203,7 @@ public class CatalogStoreMapping {
             }
             List<Integer> splitIndexes = new ArrayList<>();
             while (key.contains("%.")) {
-                splitIndexes.add(
-                        StringUtils.countMatches(key.substring(0, key.indexOf("%.")), "."));
+                splitIndexes.add(StringUtils.countMatches(key.substring(0, key.indexOf("%.")), "."));
                 key = key.replaceFirst(Pattern.quote("%."), ".");
             }
 
@@ -256,10 +249,7 @@ public class CatalogStoreMapping {
                 String formattedErrorMessage = e.getMessage();
                 LOGGER.log(Level.SEVERE, formattedErrorMessage, e);
                 throw new IllegalArgumentException(
-                        "Error parsing CQL expression "
-                                + sourceExpr
-                                + ":\n"
-                                + formattedErrorMessage);
+                        "Error parsing CQL expression " + sourceExpr + ":\n" + formattedErrorMessage);
             } catch (Exception e) {
                 String msg = "parsing expression " + sourceExpr;
                 LOGGER.log(Level.SEVERE, msg, e);

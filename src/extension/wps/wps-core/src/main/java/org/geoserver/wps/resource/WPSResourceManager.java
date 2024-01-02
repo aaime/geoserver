@@ -72,13 +72,10 @@ import org.xml.sax.SAXException;
  *     by another machine
  */
 public class WPSResourceManager extends ProcessListenerAdapter
-        implements DispatcherCallback,
-                ApplicationListener<ApplicationEvent>,
-                ApplicationContextAware {
+        implements DispatcherCallback, ApplicationListener<ApplicationEvent>, ApplicationContextAware {
     private static final Logger LOGGER = Logging.getLogger(WPSResourceManager.class);
 
-    static final int COPY_BUFFER_SIZE =
-            Integer.getInteger("org.geoserver.wps.copy.buffer.size", 16386);
+    static final int COPY_BUFFER_SIZE = Integer.getInteger("org.geoserver.wps.copy.buffer.size", 16386);
 
     public static int getCopyBufferSize() {
         return COPY_BUFFER_SIZE;
@@ -205,8 +202,7 @@ public class WPSResourceManager extends ProcessListenerAdapter
      * @param baseUrl - optional, if you don't have it the resource manager will pick one from
      *     Dispatcher.REQUEST
      */
-    public String getOutputResourceUrl(
-            String executionId, String name, String baseUrl, String mimeType) {
+    public String getOutputResourceUrl(String executionId, String name, String baseUrl, String mimeType) {
         // create the link
         Map<String, String> kvp = new LinkedHashMap<>();
         kvp.put("service", "WPS");
@@ -239,11 +235,8 @@ public class WPSResourceManager extends ProcessListenerAdapter
     public Resource getTemporaryResource(String extension) throws IOException {
 
         String executionId = getExecutionId((Boolean) null);
-        Resource resource =
-                artifactsStore.getArtifact(
-                        executionId,
-                        ArtifactType.Temporary,
-                        UUID.randomUUID().toString() + extension);
+        Resource resource = artifactsStore.getArtifact(
+                executionId, ArtifactType.Temporary, UUID.randomUUID().toString() + extension);
         addResource(new WPSResourceResource(resource));
         return resource;
     }
@@ -301,8 +294,7 @@ public class WPSResourceManager extends ProcessListenerAdapter
             File parent = file.getParentFile();
             if (!parent.exists() && !parent.mkdirs()) {
                 LOGGER.severe("Unable to create directory: " + parent);
-                throw new WPSException(
-                        "Output file parent directory does not exist and cannot be created");
+                throw new WPSException("Output file parent directory does not exist and cannot be created");
             }
             return file;
         }
@@ -391,10 +383,7 @@ public class WPSResourceManager extends ProcessListenerAdapter
             try {
                 resource.delete();
             } catch (Throwable t) {
-                LOGGER.log(
-                        Level.WARNING,
-                        "Failed to clean up the WPS resource " + resource.getName(),
-                        t);
+                LOGGER.log(Level.WARNING, "Failed to clean up the WPS resource " + resource.getName(), t);
             }
         }
 
@@ -424,8 +413,7 @@ public class WPSResourceManager extends ProcessListenerAdapter
     }
 
     @Override
-    public Response responseDispatched(
-            Request request, Operation operation, Object result, Response response) {
+    public Response responseDispatched(Request request, Operation operation, Object result, Response response) {
         return null;
     }
 

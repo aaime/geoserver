@@ -36,7 +36,8 @@ public class GeoServicesExceptionResolver extends AbstractHandlerExceptionResolv
     private static final Logger LOGGER =
             org.geotools.util.logging.Logging.getLogger(GeoServicesExceptionResolver.class);
 
-    @Autowired GeoServicesJacksonJsonConverter converter;
+    @Autowired
+    GeoServicesJacksonJsonConverter converter;
 
     public GeoServicesExceptionResolver() {
         setOrder(0);
@@ -53,20 +54,13 @@ public class GeoServicesExceptionResolver extends AbstractHandlerExceptionResolv
 
     @Override
     protected ModelAndView doResolveException(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            Object handler,
-            Exception ex) {
+            HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
         ServiceErrorWrapper exception;
         if (ex instanceof ServiceException) {
             exception = new ServiceErrorWrapper(((ServiceException) ex).error);
         } else {
-            exception =
-                    new ServiceErrorWrapper(
-                            new ServiceError(
-                                    500,
-                                    "Internal Server Error",
-                                    Collections.singletonList(ex.getMessage())));
+            exception = new ServiceErrorWrapper(
+                    new ServiceError(500, "Internal Server Error", Collections.singletonList(ex.getMessage())));
         }
         // Log the full stack trace, since the response just has the error message.
         LOGGER.log(Level.INFO, "Error handling request", ex);

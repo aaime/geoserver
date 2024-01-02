@@ -15,8 +15,7 @@ import org.geoserver.web.data.resource.ResourceConfigurationPanelInfo;
  * Priority is reduced under standard {@link ExtensionPriority#LOWEST} to shows the Elasticsearch
  * link after other panels.
  */
-class ElasticConfigurationPanelInfo extends ResourceConfigurationPanelInfo
-        implements ExtensionPriority {
+class ElasticConfigurationPanelInfo extends ResourceConfigurationPanelInfo implements ExtensionPriority {
 
     private static final long serialVersionUID = 1485404586629946126L;
 

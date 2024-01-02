@@ -29,8 +29,7 @@ public class DecodingUserDetailsService implements UserDetailsService {
     protected GeoServerMultiplexingPasswordEncoder encoder;
 
     /** Creates a new Instance */
-    public static DecodingUserDetailsService newInstance(GeoServerUserGroupService service)
-            throws IOException {
+    public static DecodingUserDetailsService newInstance(GeoServerUserGroupService service) throws IOException {
         DecodingUserDetailsService decodingService = new DecodingUserDetailsService();
         decodingService.setGeoserverUserGroupService(service);
         return decodingService;
@@ -53,8 +52,7 @@ public class DecodingUserDetailsService implements UserDetailsService {
 
     /** loads the user and decodes the password to plain text (if possible). */
     @Override
-    public UserDetails loadUserByUsername(String username)
-            throws UsernameNotFoundException, DataAccessException {
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
         GeoServerUser user = (GeoServerUser) service.loadUserByUsername(username);
         if (user == null) return null;
         try {

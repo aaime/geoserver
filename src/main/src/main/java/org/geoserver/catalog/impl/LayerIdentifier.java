@@ -48,8 +48,7 @@ public class LayerIdentifier implements LayerIdentifierInfo {
             return false;
         }
         LayerIdentifierInfo o2 = (LayerIdentifierInfo) o;
-        return Utilities.equals(authority, o2.getAuthority())
-                && Utilities.equals(identifier, o2.getIdentifier());
+        return Utilities.equals(authority, o2.getAuthority()) && Utilities.equals(identifier, o2.getIdentifier());
     }
 
     @Override

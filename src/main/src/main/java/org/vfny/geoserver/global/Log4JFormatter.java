@@ -299,8 +299,7 @@ public class Log4JFormatter extends Formatter {
          * @param formatter The formatter to use.
          * @throws UnsupportedEncodingException if the encoding is not valid.
          */
-        public Stdout(final Handler handler, final Formatter formatter)
-                throws UnsupportedEncodingException {
+        public Stdout(final Handler handler, final Formatter formatter) throws UnsupportedEncodingException {
             super(System.out, formatter);
             setErrorManager(handler.getErrorManager());
             setFilter(handler.getFilter());

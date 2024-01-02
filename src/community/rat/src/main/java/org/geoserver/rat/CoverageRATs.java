@@ -82,10 +82,7 @@ public class CoverageRATs {
 
             return ((PAMResourceInfo) info).getPAMDataset();
         } catch (IOException e) {
-            LOGGER.log(
-                    Level.INFO,
-                    "Read failed while attempting to check if reader has a PAMDataset",
-                    e);
+            LOGGER.log(Level.INFO, "Read failed while attempting to check if reader has a PAMDataset", e);
         }
         return null;
     }
@@ -134,9 +131,7 @@ public class CoverageRATs {
                 fields.stream().map(f -> f.getUsage()).collect(Collectors.toSet());
 
         if (!fieldUsages.contains(Name) && !fieldUsages.contains(Generic)) {
-            LOGGER.fine(
-                    "No classification names and no generic fields found in RAT for band "
-                            + bandIdx);
+            LOGGER.fine("No classification names and no generic fields found in RAT for band " + bandIdx);
             return null;
         }
 

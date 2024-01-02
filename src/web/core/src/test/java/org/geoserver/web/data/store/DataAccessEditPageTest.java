@@ -65,10 +65,8 @@ public class DataAccessEditPageTest extends GeoServerWicketTestSupport {
         print(tester.getLastRenderedPage(), true, true);
 
         tester.assertLabel("dataStoreForm:storeType", "Properties");
-        tester.assertModelValue(
-                "dataStoreForm:dataStoreNamePanel:border:border_body:paramValue", "cite");
-        String expectedPath =
-                new File(getTestData().getDataDirectoryRoot(), "cite").getCanonicalPath();
+        tester.assertModelValue("dataStoreForm:dataStoreNamePanel:border:border_body:paramValue", "cite");
+        String expectedPath = new File(getTestData().getDataDirectoryRoot(), "cite").getCanonicalPath();
         tester.assertModelValue(
                 "dataStoreForm:parametersPanel:parameters:0:parameterPanel:fileInput:border:border_body:paramValue",
                 expectedPath);
@@ -114,9 +112,7 @@ public class DataAccessEditPageTest extends GeoServerWicketTestSupport {
         tester.debugComponentTrees();
         tester.assertRenderedPage(DataAccessEditPage.class);
 
-        List<String> l =
-                Lists.transform(
-                        tester.getMessages(FeedbackMessage.ERROR), input -> input.toString());
+        List<String> l = Lists.transform(tester.getMessages(FeedbackMessage.ERROR), input -> input.toString());
         assertTrue(l.contains("Field 'Data Source Name' is required."));
         // tester.assertErrorMessages(new String[] { "Field 'Data Source Name' is required." });
     }
@@ -132,8 +128,7 @@ public class DataAccessEditPageTest extends GeoServerWicketTestSupport {
         final FormTester formTester = tester.newFormTester("dataStoreForm");
         print(tester.getLastRenderedPage(), true, true);
         final String wsDropdownPath = "dataStoreForm:workspacePanel:border:border_body:paramValue";
-        final String namespaceParamPath =
-                "dataStoreForm:parametersPanel:parameters:1:parameterPanel:paramValue";
+        final String namespaceParamPath = "dataStoreForm:parametersPanel:parameters:1:parameterPanel:paramValue";
         final String directoryParamPath =
                 "dataStoreForm:parametersPanel:parameters:0:parameterPanel:border:border_body:paramValue";
 
@@ -142,7 +137,8 @@ public class DataAccessEditPageTest extends GeoServerWicketTestSupport {
         // tester.assertModelValue(namespaceParamPath, getCatalog().getNamespaceByPrefix(
         // MockData.CITE_PREFIX));
         tester.assertModelValue(
-                namespaceParamPath, catalog.getNamespaceByPrefix(MockData.CITE_PREFIX).getURI());
+                namespaceParamPath,
+                catalog.getNamespaceByPrefix(MockData.CITE_PREFIX).getURI());
 
         Serializable directory = store.getConnectionParameters().get("directory");
         tester.assertModelValue(directoryParamPath, directory);
@@ -180,13 +176,9 @@ public class DataAccessEditPageTest extends GeoServerWicketTestSupport {
         assertEquals(expectedNamespace.getURI(), namespace);
 
         // was the namespace for the datastore resources updated?
-        List<FeatureTypeInfo> resourcesByStore =
-                catalog.getResourcesByStore(dataStore, FeatureTypeInfo.class);
+        List<FeatureTypeInfo> resourcesByStore = catalog.getResourcesByStore(dataStore, FeatureTypeInfo.class);
         for (FeatureTypeInfo ft : resourcesByStore) {
-            assertEquals(
-                    "Namespace for " + ft.getName() + " was not updated",
-                    expectedNamespace,
-                    ft.getNamespace());
+            assertEquals("Namespace for " + ft.getName() + " was not updated", expectedNamespace, ft.getNamespace());
         }
     }
 
@@ -204,14 +196,12 @@ public class DataAccessEditPageTest extends GeoServerWicketTestSupport {
 
             FormTester form = tester.newFormTester("dataStoreForm");
             form.select("workspacePanel:border:border_body:paramValue", 4);
-            Component wsDropDown =
-                    tester.getComponentFromLastRenderedPage(
-                            "dataStoreForm:workspacePanel:border:border_body:paramValue");
+            Component wsDropDown = tester.getComponentFromLastRenderedPage(
+                    "dataStoreForm:workspacePanel:border:border_body:paramValue");
             tester.executeAjaxEvent(wsDropDown, "change");
             form.setValue("dataStoreNamePanel:border:border_body:paramValue", "foo");
             form.setValue(
-                    "parametersPanel:parameters:0:parameterPanel:fileInput:border:border_body:paramValue",
-                    "/foo");
+                    "parametersPanel:parameters:0:parameterPanel:fileInput:border:border_body:paramValue", "/foo");
             tester.clickLink("dataStoreForm:save", true);
             tester.assertNoErrorMessage();
             catalog.save(ds);
@@ -237,14 +227,12 @@ public class DataAccessEditPageTest extends GeoServerWicketTestSupport {
 
             FormTester form = tester.newFormTester("dataStoreForm");
             form.select("workspacePanel:border:border_body:paramValue", 4);
-            Component wsDropDown =
-                    tester.getComponentFromLastRenderedPage(
-                            "dataStoreForm:workspacePanel:border:border_body:paramValue");
+            Component wsDropDown = tester.getComponentFromLastRenderedPage(
+                    "dataStoreForm:workspacePanel:border:border_body:paramValue");
             tester.executeAjaxEvent(wsDropDown, "change");
             form.setValue("dataStoreNamePanel:border:border_body:paramValue", "foo");
             form.setValue(
-                    "parametersPanel:parameters:0:parameterPanel:fileInput:border:border_body:paramValue",
-                    "/foo");
+                    "parametersPanel:parameters:0:parameterPanel:fileInput:border:border_body:paramValue", "/foo");
             tester.clickLink("dataStoreForm:save", true);
             tester.assertNoErrorMessage();
             catalog.save(ds);
@@ -279,15 +267,11 @@ public class DataAccessEditPageTest extends GeoServerWicketTestSupport {
         // look for the dropdown.. we cannot "identify" it but we can check there is a dropdown
         // with the properly converted enum value
         MarkupContainer container =
-                (MarkupContainer)
-                        tester.getLastRenderedPage()
-                                .get("dataStoreForm:parametersPanel:parameters");
+                (MarkupContainer) tester.getLastRenderedPage().get("dataStoreForm:parametersPanel:parameters");
         DropDownChoiceParamPanel dropDown = null;
         for (Component component : container) {
-            if (component instanceof ListItem
-                    && component.get("parameterPanel") instanceof DropDownChoiceParamPanel) {
-                DropDownChoiceParamPanel panel =
-                        (DropDownChoiceParamPanel) component.get("parameterPanel");
+            if (component instanceof ListItem && component.get("parameterPanel") instanceof DropDownChoiceParamPanel) {
+                DropDownChoiceParamPanel panel = (DropDownChoiceParamPanel) component.get("parameterPanel");
                 if (panel.getDefaultModelObject() == SslMode.DISABLE) {
                     dropDown = panel;
                 }

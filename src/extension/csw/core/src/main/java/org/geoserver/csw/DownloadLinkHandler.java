@@ -92,8 +92,7 @@ public class DownloadLinkHandler {
 
                 // Hash the file and setup the download link
                 String hashFile = hashFile(mainFile);
-                StringBuilder builder =
-                        new StringBuilder(baseLink.replace(FILE_TEMPLATE, hashFile));
+                StringBuilder builder = new StringBuilder(baseLink.replace(FILE_TEMPLATE, hashFile));
                 Map<String, Object> metadata = element.getMetadata();
                 if (metadata != null && !metadata.isEmpty()) {
 
@@ -122,8 +121,7 @@ public class DownloadLinkHandler {
                 }
                 return builder.toString();
             } catch (IOException | NoSuchAlgorithmException e) {
-                throw new RuntimeException(
-                        "Unable to encode the specified file:" + canonicalPath, e.getCause());
+                throw new RuntimeException("Unable to encode the specified file:" + canonicalPath, e.getCause());
             }
         }
 
@@ -166,9 +164,7 @@ public class DownloadLinkHandler {
                         .append(dateFormat.format(dateRange.getMaxValue()));
             } else if (domain instanceof NumberRange) {
                 NumberRange numberRange = (NumberRange) domain;
-                builder.append(numberRange.getMinValue())
-                        .append("/")
-                        .append(numberRange.getMaxValue());
+                builder.append(numberRange.getMinValue()).append("/").append(numberRange.getMaxValue());
             } else if (domain instanceof Range) {
                 // Generic range
                 Range range = (Range) domain;
@@ -185,14 +181,13 @@ public class DownloadLinkHandler {
     }
 
     /** Template download link to be updated with actual values */
-    protected static String LINK =
-            "ows?service=CSW&version=${version}&request="
-                    + "DirectDownload&"
-                    + RESOURCE_ID_PARAMETER
-                    + "=${nameSpace}:${layerName}&"
-                    + FILE_PARAMETER
-                    + "="
-                    + FILE_TEMPLATE;
+    protected static String LINK = "ows?service=CSW&version=${version}&request="
+            + "DirectDownload&"
+            + RESOURCE_ID_PARAMETER
+            + "=${nameSpace}:${layerName}&"
+            + FILE_PARAMETER
+            + "="
+            + FILE_TEMPLATE;
 
     /** Generate download links for the specified info object. */
     public CloseableIterator<String> generateDownloadLinks(CatalogInfo info) {
@@ -228,26 +223,22 @@ public class DownloadLinkHandler {
      * Return an {@link Iterator} containing {@link String}s representing the downloadLinks
      * associated to the provided {@link CoverageInfo} object.
      */
-    protected CloseableIterator<String> linksFromCoverage(
-            String baseURL, CoverageInfo coverageInfo) {
+    protected CloseableIterator<String> linksFromCoverage(String baseURL, CoverageInfo coverageInfo) {
         GridCoverage2DReader reader;
         try {
-            reader =
-                    (GridCoverage2DReader)
-                            coverageInfo.getGridCoverageReader(null, GeoTools.getDefaultHints());
+            reader = (GridCoverage2DReader) coverageInfo.getGridCoverageReader(null, GeoTools.getDefaultHints());
             String name = DirectDownload.extractName(coverageInfo);
             if (reader == null) {
-                throw new IllegalArgumentException(
-                        "No reader available for the specified coverage: " + name);
+                throw new IllegalArgumentException("No reader available for the specified coverage: " + name);
             }
             ResourceInfo resourceInfo = reader.getInfo(name);
             if (resourceInfo instanceof FileResourceInfo) {
                 FileResourceInfo fileResourceInfo = (FileResourceInfo) resourceInfo;
 
                 // Replace the template URL with proper values
-                String baseLink =
-                        baseURL.replace("${nameSpace}", coverageInfo.getNamespace().getName())
-                                .replace("${layerName}", coverageInfo.getName());
+                String baseLink = baseURL.replace(
+                                "${nameSpace}", coverageInfo.getNamespace().getName())
+                        .replace("${layerName}", coverageInfo.getName());
 
                 return new CloseableLinksIterator<>(baseLink, fileResourceInfo.getFiles(null));
             } else {

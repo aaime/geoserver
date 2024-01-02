@@ -39,8 +39,7 @@ import org.geoserver.web.GeoServerApplication;
  *
  * @author Justin Deoliveira, OpenGeo
  */
-public class SecurityNamedServiceEditPage<T extends SecurityNamedServiceConfig>
-        extends SecurityNamedServicePage<T> {
+public class SecurityNamedServiceEditPage<T extends SecurityNamedServiceConfig> extends SecurityNamedServicePage<T> {
 
     SecurityNamedServicePanelInfo panelInfo;
 
@@ -79,13 +78,12 @@ public class SecurityNamedServiceEditPage<T extends SecurityNamedServiceConfig>
                             handleSubmit(getForm());
                         }
                     }.setVisible(getSecurityManager().checkAuthenticationForAdminRole()));
-            form.add(
-                    new Link("cancel") {
-                        @Override
-                        public void onClick() {
-                            doReturn();
-                        }
-                    });
+            form.add(new Link("cancel") {
+                @Override
+                public void onClick() {
+                    doReturn();
+                }
+            });
         }
     }
 
@@ -113,13 +111,12 @@ public class SecurityNamedServiceEditPage<T extends SecurityNamedServiceConfig>
             List<ITab> tabs = new ArrayList<>();
 
             // add the primary panel to the first tab
-            tabs.add(
-                    new AbstractTab(new StringResourceModel("settings", (IModel<?>) null)) {
-                        @Override
-                        public Panel getPanel(String panelId) {
-                            return new ContentPanel(panelId, config);
-                        }
-                    });
+            tabs.add(new AbstractTab(new StringResourceModel("settings", (IModel<?>) null)) {
+                @Override
+                public Panel getPanel(String panelId) {
+                    return new ContentPanel(panelId, config);
+                }
+            });
 
             // add tabs contributed by the server
             @SuppressWarnings("unchecked")
@@ -132,13 +129,12 @@ public class SecurityNamedServiceEditPage<T extends SecurityNamedServiceConfig>
                 SecurityNamedServiceEditPage.this.panel.doLoad(config.getObject());
             } catch (final Exception e) {
                 // add the error tab
-                tabs.add(
-                        new AbstractTab(new StringResourceModel("error", (IModel<?>) null)) {
-                            @Override
-                            public Panel getPanel(String panelId) {
-                                return new ErrorPanel(panelId, e);
-                            }
-                        });
+                tabs.add(new AbstractTab(new StringResourceModel("error", (IModel<?>) null)) {
+                    @Override
+                    public Panel getPanel(String panelId) {
+                        return new ErrorPanel(panelId, e);
+                    }
+                });
             }
             add(new TabbedPanel<>("panel", tabs));
         }
@@ -151,18 +147,18 @@ public class SecurityNamedServiceEditPage<T extends SecurityNamedServiceConfig>
 
             add(new Label("message", new PropertyModel<>(error, "message")));
             add(new TextArea<>("stackTrace", new Model<>(handleStackTrace(error))));
-            add(
-                    new AjaxLink("copy") {
-                        @Override
-                        public void onClick(AjaxRequestTarget target) {
-                            copyToClipBoard(handleStackTrace(error));
-                        }
-                    });
+            add(new AjaxLink("copy") {
+                @Override
+                public void onClick(AjaxRequestTarget target) {
+                    copyToClipBoard(handleStackTrace(error));
+                }
+            });
         }
 
         public String getLabelKey() {
             return "error";
-        };
+        }
+        ;
 
         String handleStackTrace(Exception error) {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -199,10 +195,7 @@ public class SecurityNamedServiceEditPage<T extends SecurityNamedServiceConfig>
 
         if (panelInfos.isEmpty()) {
             throw new RuntimeException(
-                    "Unable to find panel info for service config: "
-                            + config
-                            + ", service class: "
-                            + serviceClass);
+                    "Unable to find panel info for service config: " + config + ", service class: " + serviceClass);
         }
         if (panelInfos.size() > 1) {
             // filter by strict equals
@@ -220,10 +213,7 @@ public class SecurityNamedServiceEditPage<T extends SecurityNamedServiceConfig>
                 return l.get(0);
             }
             throw new RuntimeException(
-                    "Found multiple panel infos for service config: "
-                            + config
-                            + ", service class: "
-                            + serviceClass);
+                    "Found multiple panel infos for service config: " + config + ", service class: " + serviceClass);
         }
 
         // found just one

@@ -80,8 +80,7 @@ public class ConfigurableBlobStore implements BlobStore {
     /** Save the listeners to re-apply them to the delegate blobstore upon config changes */
     private BlobStoreListenerList listeners = new BlobStoreListenerList();
 
-    public ConfigurableBlobStore(
-            BlobStore defaultStore, MemoryBlobStore memoryStore, NullBlobStore nullStore) {
+    public ConfigurableBlobStore(BlobStore defaultStore, MemoryBlobStore memoryStore, NullBlobStore nullStore) {
         // Initialization
         configured = new AtomicBoolean(false);
         actualOperations = new AtomicLong(0);
@@ -563,8 +562,7 @@ public class ConfigurableBlobStore implements BlobStore {
             // layers in order to check
             // which must not be cached
             if (!initialization) {
-                Iterable<GeoServerTileLayer> geoServerTileLayers =
-                        GWC.get().getGeoServerTileLayers();
+                Iterable<GeoServerTileLayer> geoServerTileLayers = GWC.get().getGeoServerTileLayers();
 
                 for (GeoServerTileLayer layer : geoServerTileLayers) {
                     if (layer.getInfo().isEnabled() && !layer.getInfo().isInMemoryCached()) {
@@ -619,8 +617,7 @@ public class ConfigurableBlobStore implements BlobStore {
     }
 
     @Override
-    public boolean deleteByParameters(String layerName, Map<String, String> parameters)
-            throws StorageException {
+    public boolean deleteByParameters(String layerName, Map<String, String> parameters) throws StorageException {
         // Check if the blobstore has already been configured
         if (configured.get()) {
             // Increment the number of current operations
@@ -640,8 +637,7 @@ public class ConfigurableBlobStore implements BlobStore {
     }
 
     @Override
-    public boolean deleteByParametersId(String layerName, String parametersId)
-            throws StorageException {
+    public boolean deleteByParametersId(String layerName, String parametersId) throws StorageException {
         // Check if the blobstore has already been configured
         if (configured.get()) {
             // Increment the number of current operations

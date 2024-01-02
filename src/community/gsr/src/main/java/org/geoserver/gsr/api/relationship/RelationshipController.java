@@ -23,18 +23,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /** Controller for the Relationship Service */
-@APIService(
-        service = "Relationships",
-        version = "1.0",
-        landingPage = "/gsr/services",
-        serviceClass = WFSInfo.class)
+@APIService(service = "Relationships", version = "1.0", landingPage = "/gsr/services", serviceClass = WFSInfo.class)
 @RestController
-@RequestMapping(
-        path = "/gsr/relationships/{workspaceName}",
-        produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/gsr/relationships/{workspaceName}", produces = MediaType.APPLICATION_JSON_VALUE)
 public class RelationshipController {
-    private static final Logger LOGGER =
-            org.geotools.util.logging.Logging.getLogger(RelationshipController.class);
+    private static final Logger LOGGER = org.geotools.util.logging.Logging.getLogger(RelationshipController.class);
 
     private final RelationshipDAO relationshipDAO;
 
@@ -91,8 +84,7 @@ public class RelationshipController {
     @RequestMapping(path = "/originTable/{originTable}")
     public List<RelationshipClass> getRelationshipClassByWorkspaceAndOrigin(
             @PathVariable String workspaceName, @PathVariable String originTable) {
-        return relationshipDAO.getRelationshipClassesByWorkspaceAndOriginTable(
-                workspaceName, originTable);
+        return relationshipDAO.getRelationshipClassesByWorkspaceAndOriginTable(workspaceName, originTable);
     }
 
     /**
@@ -105,8 +97,7 @@ public class RelationshipController {
     @RequestMapping(path = "/destinationTable/{destinationTable}")
     public List<RelationshipClass> getRelationshipClassByWorkspaceAndDestination(
             @PathVariable String workspaceName, @PathVariable String destinationTable) {
-        return relationshipDAO.getRelationshipClassesByWorkspaceAndDestinationTable(
-                workspaceName, destinationTable);
+        return relationshipDAO.getRelationshipClassesByWorkspaceAndDestinationTable(workspaceName, destinationTable);
     }
 
     /**
@@ -130,15 +121,14 @@ public class RelationshipController {
                 relationshipClass.getOriginForeignKey())) {
             return relationshipDAO.upsertRelationshipClass(workspaceName, relationshipClass);
         } else {
-            LOGGER.info(
-                    "Unable to match the source and destination fields "
-                            + relationshipClass.getOriginTable()
-                            + ":"
-                            + relationshipClass.getOriginPrimaryKey()
-                            + " "
-                            + relationshipClass.getDestinationTable()
-                            + ":"
-                            + relationshipClass.getOriginForeignKey());
+            LOGGER.info("Unable to match the source and destination fields "
+                    + relationshipClass.getOriginTable()
+                    + ":"
+                    + relationshipClass.getOriginPrimaryKey()
+                    + " "
+                    + relationshipClass.getDestinationTable()
+                    + ":"
+                    + relationshipClass.getOriginForeignKey());
             throw new IllegalArgumentException(relationshipClass.toString());
         }
     }
@@ -162,15 +152,14 @@ public class RelationshipController {
                 relationshipClass.getOriginForeignKey())) {
             return relationshipDAO.upsertRelationshipClass(workspaceName, relationshipClass);
         } else {
-            LOGGER.info(
-                    "Unable to match the source and destination fields "
-                            + relationshipClass.getOriginTable()
-                            + ":"
-                            + relationshipClass.getOriginPrimaryKey()
-                            + " "
-                            + relationshipClass.getDestinationTable()
-                            + ":"
-                            + relationshipClass.getOriginForeignKey());
+            LOGGER.info("Unable to match the source and destination fields "
+                    + relationshipClass.getOriginTable()
+                    + ":"
+                    + relationshipClass.getOriginPrimaryKey()
+                    + " "
+                    + relationshipClass.getDestinationTable()
+                    + ":"
+                    + relationshipClass.getOriginForeignKey());
             throw new IllegalArgumentException(relationshipClass.toString());
         }
     }
@@ -203,8 +192,7 @@ public class RelationshipController {
      * @return
      */
     @RequestMapping(path = "/delete/{relationshipId}")
-    public Boolean deleteRelationshipClass(
-            @PathVariable String workspaceName, @PathVariable Long relationshipId) {
+    public Boolean deleteRelationshipClass(@PathVariable String workspaceName, @PathVariable Long relationshipId) {
         return relationshipDAO.deleteRelationshipClass(workspaceName, relationshipId);
     }
 
@@ -217,11 +205,9 @@ public class RelationshipController {
      */
     @ExceptionHandler({IllegalArgumentException.class})
     public ResponseEntity<Object> handleMethodArgumentTypeMismatch(IllegalArgumentException ex) {
-        RelationshipClassErrorMessage relationshipClassErrorMessage =
-                new RelationshipClassErrorMessage();
+        RelationshipClassErrorMessage relationshipClassErrorMessage = new RelationshipClassErrorMessage();
         relationshipClassErrorMessage.setRelationshipClass(ex.getMessage());
-        relationshipClassErrorMessage.setErrorMessage(
-                "Unable to match the source and destination fields");
+        relationshipClassErrorMessage.setErrorMessage("Unable to match the source and destination fields");
         return new ResponseEntity<Object>(relationshipClassErrorMessage, HttpStatus.BAD_REQUEST);
     }
 }

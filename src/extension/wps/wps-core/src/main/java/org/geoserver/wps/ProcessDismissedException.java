@@ -28,8 +28,7 @@ public class ProcessDismissedException extends RuntimeException {
 
     private static String getMessageFromListener(ProgressListener listener) {
         // see if we went beyond the maximum time allowed
-        while (!(listener instanceof MaxExecutionTimeListener)
-                && (listener instanceof DelegateProgressListener)) {
+        while (!(listener instanceof MaxExecutionTimeListener) && (listener instanceof DelegateProgressListener)) {
             DelegateProgressListener d = (DelegateProgressListener) listener;
             listener = d.getDelegate();
         }

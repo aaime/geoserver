@@ -67,8 +67,7 @@ public abstract class FreeMarkerTemplateManager {
 
     private static Configuration templateConfig;
 
-    private static DirectTemplateFeatureCollectionFactory tfcFactory =
-            new DirectTemplateFeatureCollectionFactory();
+    private static DirectTemplateFeatureCollectionFactory tfcFactory = new DirectTemplateFeatureCollectionFactory();
 
     private static Logger logger = Logging.getLogger(FreeMarkerTemplateManager.class);
     private static FreemarkerStaticsAccessRule staticsAccessRule;
@@ -80,19 +79,17 @@ public abstract class FreeMarkerTemplateManager {
         logger.fine("Initializing with " + tmpRule);
         for (RuleItem tmpItem : tmpRule.getAllowedItems()) {
             if (tmpItem.isNumberedAlias()) {
-                logger.warning(
-                        "Granting access to static members of "
-                                + tmpItem.getClassName()
-                                + " using the variable name "
-                                + tmpItem.getAlias()
-                                + " to keep names unique.");
+                logger.warning("Granting access to static members of "
+                        + tmpItem.getClassName()
+                        + " using the variable name "
+                        + tmpItem.getAlias()
+                        + " to keep names unique.");
             } else if (logger.isLoggable(Level.FINER)) {
-                logger.finer(
-                        "Granting access to static members of "
-                                + tmpItem.getClassName()
-                                + " using the variable name "
-                                + tmpItem.getAlias()
-                                + ".");
+                logger.finer("Granting access to static members of "
+                        + tmpItem.getClassName()
+                        + " using the variable name "
+                        + tmpItem.getAlias()
+                        + ".");
             }
         }
         staticsAccessRule = tmpRule;
@@ -103,42 +100,36 @@ public abstract class FreeMarkerTemplateManager {
         // over instantiations of kml writer
         initStaticsAccessRule();
         templateConfig = TemplateUtils.getSafeConfiguration();
-        templateConfig.setObjectWrapper(
-                new FeatureWrapper(tfcFactory) {
+        templateConfig.setObjectWrapper(new FeatureWrapper(tfcFactory) {
 
-                    @Override
-                    public TemplateModel wrap(Object object) throws TemplateModelException {
-                        if (object instanceof FeatureCollection) {
-                            SimpleHash map = (SimpleHash) super.wrap(object);
-                            map.put("request", Dispatcher.REQUEST.get().getKvp());
-                            map.put("environment", new EnvironmentVariablesTemplateModel());
-                            map.put("Math", getStaticModel("java.lang.Math"));
-                            map.put(
-                                    "geoJSON",
-                                    getStaticModel(
-                                            "org.geoserver.wms.featureinfo.GeoJSONTemplateManager"));
-                            addConfiguredStatics(map);
-                            return map;
-                        }
-                        return super.wrap(object);
-                    }
+            @Override
+            public TemplateModel wrap(Object object) throws TemplateModelException {
+                if (object instanceof FeatureCollection) {
+                    SimpleHash map = (SimpleHash) super.wrap(object);
+                    map.put("request", Dispatcher.REQUEST.get().getKvp());
+                    map.put("environment", new EnvironmentVariablesTemplateModel());
+                    map.put("Math", getStaticModel("java.lang.Math"));
+                    map.put("geoJSON", getStaticModel("org.geoserver.wms.featureinfo.GeoJSONTemplateManager"));
+                    addConfiguredStatics(map);
+                    return map;
+                }
+                return super.wrap(object);
+            }
 
-                    private void addConfiguredStatics(SimpleHash aMap)
-                            throws TemplateModelException {
-                        if (staticsAccessRule.isUnrestricted()) {
-                            aMap.put("statics", getStaticModels());
-                        } else if (staticsAccessRule.getAllowedItems().isEmpty()) {
-                            for (RuleItem tmpItem : staticsAccessRule.getAllowedItems()) {
-                                aMap.put(tmpItem.getAlias(), tmpItem.getClassName());
-                            }
-                        }
+            private void addConfiguredStatics(SimpleHash aMap) throws TemplateModelException {
+                if (staticsAccessRule.isUnrestricted()) {
+                    aMap.put("statics", getStaticModels());
+                } else if (staticsAccessRule.getAllowedItems().isEmpty()) {
+                    for (RuleItem tmpItem : staticsAccessRule.getAllowedItems()) {
+                        aMap.put(tmpItem.getAlias(), tmpItem.getClassName());
                     }
+                }
+            }
 
-                    private TemplateHashModel getStaticModel(String path)
-                            throws TemplateModelException {
-                        return (TemplateHashModel) getStaticModels().get(path);
-                    }
-                });
+            private TemplateHashModel getStaticModel(String path) throws TemplateModelException {
+                return (TemplateHashModel) getStaticModels().get(path);
+            }
+        });
         // as we want to look up different templates for each resource, the templates cannot
         // be cached by name. Freemarker used to clear the cache when setting the loader,
         // but does not do that anymore since
@@ -157,16 +148,14 @@ public abstract class FreeMarkerTemplateManager {
 
     private OutputFormat format;
 
-    public FreeMarkerTemplateManager(
-            OutputFormat format, final WMS wms, GeoServerResourceLoader resourceLoader) {
+    public FreeMarkerTemplateManager(OutputFormat format, final WMS wms, GeoServerResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
         this.wms = wms;
         this.format = format;
     }
 
     /** Writes the features to the output */
-    public boolean write(
-            FeatureCollectionType results, GetFeatureInfoRequest request, OutputStream out)
+    public boolean write(FeatureCollectionType results, GetFeatureInfoRequest request, OutputStream out)
             throws ServiceException, IOException {
         // setup the writer
         final Charset charSet = wms.getCharSet();
@@ -226,14 +215,12 @@ public abstract class FreeMarkerTemplateManager {
      * @param osw
      * @throws IOException
      */
-    protected void processTemplate(
-            String templateType, FeatureCollection fc, Template template, OutputStreamWriter osw)
+    protected void processTemplate(String templateType, FeatureCollection fc, Template template, OutputStreamWriter osw)
             throws IOException {
         try {
             template.process(fc, osw);
         } catch (TemplateException e) {
-            String msg =
-                    "Error occurred processing " + templateType + " template " + template.getName();
+            String msg = "Error occurred processing " + templateType + " template " + template.getName();
             if (fc != null) {
                 Name name = FeatureCollectionDecorator.getName(fc);
                 msg += " for featureType " + (name == null ? null : name.getLocalPart());
@@ -242,8 +229,7 @@ public abstract class FreeMarkerTemplateManager {
         }
     }
 
-    protected Template getContentTemplate(FeatureCollection fc, Charset charset)
-            throws IOException {
+    protected Template getContentTemplate(FeatureCollection fc, Charset charset) throws IOException {
         Template content = null;
         if (fc != null && fc.size() > 0) {
             ResourceInfo ri = wms.getResourceInfo(FeatureCollectionDecorator.getName(fc));
@@ -258,14 +244,12 @@ public abstract class FreeMarkerTemplateManager {
         return content;
     }
 
-    protected Template getTemplate(ResourceInfo ri, Charset charset, String name)
-            throws IOException {
+    protected Template getTemplate(ResourceInfo ri, Charset charset, String name) throws IOException {
         String templateName = getTemplateFileName(name);
         return getTemplate(ri, templateName, charset);
     }
 
-    private Template getTemplate(ResourceInfo ri, String templateFileName, Charset charset)
-            throws IOException {
+    private Template getTemplate(ResourceInfo ri, String templateFileName, Charset charset) throws IOException {
 
         synchronized (templateConfig) {
             // setup template subsystem
@@ -297,14 +281,11 @@ public abstract class FreeMarkerTemplateManager {
     protected abstract String getTemplateFileName(String filename);
 
     /** Check the needed files exists according to the output format */
-    protected abstract boolean templatesExist(
-            Template header, Template footer, List<FeatureCollection> collections)
+    protected abstract boolean templatesExist(Template header, Template footer, List<FeatureCollection> collections)
             throws IOException;
 
     protected abstract void handleContent(
-            List<FeatureCollection> collections,
-            OutputStreamWriter osw,
-            GetFeatureInfoRequest request)
+            List<FeatureCollection> collections, OutputStreamWriter osw, GetFeatureInfoRequest request)
             throws IOException;
 
     public void setTemplateLoader(GeoServerTemplateLoader templateLoader) {

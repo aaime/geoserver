@@ -55,6 +55,5 @@ public interface ExtendedCapabilitiesProvider
      * Allows the provider to customize the layer scale range, this can be used to advertise limited
      * visibility of the layer on a user by users basis.
      */
-    NumberRange<Double> overrideScaleDenominators(
-            PublishedInfo layer, NumberRange<Double> scaleDenominators);
+    NumberRange<Double> overrideScaleDenominators(PublishedInfo layer, NumberRange<Double> scaleDenominators);
 }

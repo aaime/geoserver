@@ -60,10 +60,7 @@ public class EditResults {
      *     Features;
      */
     public EditResults(
-            Integer id,
-            List<EditResult> addResults,
-            List<EditResult> updateResults,
-            List<EditResult> deleteResults) {
+            Integer id, List<EditResult> addResults, List<EditResult> updateResults, List<EditResult> deleteResults) {
         this(id, null, addResults, updateResults, deleteResults);
     }
 
@@ -75,10 +72,7 @@ public class EditResults {
      * @param deleteResults the delete results, or null. Only applicable for Apply Edits (Layer) and
      *     Delete Features;
      */
-    public EditResults(
-            List<EditResult> addResults,
-            List<EditResult> updateResults,
-            List<EditResult> deleteResults) {
+    public EditResults(List<EditResult> addResults, List<EditResult> updateResults, List<EditResult> deleteResults) {
         this(null, addResults, updateResults, deleteResults);
     }
 

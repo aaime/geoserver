@@ -63,8 +63,7 @@ public class SpringDelegatingFilter implements Filter {
         }
 
         @Override
-        public void doFilter(ServletRequest request, ServletResponse response)
-                throws IOException, ServletException {
+        public void doFilter(ServletRequest request, ServletResponse response) throws IOException, ServletException {
 
             if (filter < filters.size()) {
                 filters.get(filter++).doFilter(request, response, this);

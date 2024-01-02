@@ -24,10 +24,7 @@ public class VerticalTransformDescriptor extends OperationDescriptorImpl {
         {"GlobalName", "verticalTransform"},
         {"LocalName", "vertical"},
         {"Vendor", "it.geosolutions.jaiext"},
-        {
-            "Description",
-            "This class executes the operation selected by the user on each pixel of the source images "
-        },
+        {"Description", "This class executes the operation selected by the user on each pixel of the source images "},
         {"DocURL", "Not Defined"},
         {"Version", "1.0"},
         {"arg0Desc", "2D Coordinates Math Transform"},
@@ -36,9 +33,7 @@ public class VerticalTransformDescriptor extends OperationDescriptorImpl {
     };
 
     /** Input Parameter name */
-    private static final String[] paramNames = {
-        "coordinatesTransform", "verticalTransform", "noData"
-    };
+    private static final String[] paramNames = {"coordinatesTransform", "verticalTransform", "noData"};
 
     /** Input Parameter class */
     private static final Class<?>[] paramClasses = {
@@ -67,8 +62,7 @@ public class VerticalTransformDescriptor extends OperationDescriptorImpl {
             RenderingHints hints,
             RenderedImage... sources) {
 
-        ParameterBlockJAI pb =
-                new ParameterBlockJAI("verticalTransform", RenderedRegistryMode.MODE_NAME);
+        ParameterBlockJAI pb = new ParameterBlockJAI("verticalTransform", RenderedRegistryMode.MODE_NAME);
         RenderedImage img = sources[0];
         pb.setSource(img, 0);
 

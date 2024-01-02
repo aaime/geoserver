@@ -27,12 +27,11 @@ import org.geotools.filter.capability.FunctionNameImpl;
  */
 public class ServiceLinkFunction extends FunctionImpl {
 
-    public static FunctionName NAME =
-            new FunctionNameImpl(
-                    "serviceLink",
-                    String.class,
-                    parameter("template", String.class),
-                    parameter("param", Object.class, 0, Integer.MAX_VALUE));
+    public static FunctionName NAME = new FunctionNameImpl(
+            "serviceLink",
+            String.class,
+            parameter("template", String.class),
+            parameter("param", Object.class, 0, Integer.MAX_VALUE));
 
     public ServiceLinkFunction() {
         this.functionName = NAME;
@@ -44,12 +43,11 @@ public class ServiceLinkFunction extends FunctionImpl {
         String template = params.get(0).evaluate(feature, String.class);
         if (template == null) return null;
 
-        Object[] templateParameters =
-                params.stream()
-                        .skip(1)
-                        .map(p -> p.evaluate(feature, String.class))
-                        .map(v -> v != null ? ResponseUtils.urlEncode(v) : null)
-                        .toArray();
+        Object[] templateParameters = params.stream()
+                .skip(1)
+                .map(p -> p.evaluate(feature, String.class))
+                .map(v -> v != null ? ResponseUtils.urlEncode(v) : null)
+                .toArray();
 
         String uri = String.format(template, templateParameters);
         Map<String, String> kvp = lenientQueryStringParse(uri);
@@ -67,18 +65,16 @@ public class ServiceLinkFunction extends FunctionImpl {
      */
     private Map<String, String> lenientQueryStringParse(String path) {
         Map<String, String> kvp = new LinkedHashMap<>();
-        KvpUtils.parseQueryString(path)
-                .forEach(
-                        (k, v) -> {
-                            if (v instanceof String) {
-                                kvp.put(k, (String) v);
-                            } else if (v instanceof String[]) {
-                                kvp.put(k, ((String[]) v)[0]);
-                            } else if (v != null) {
-                                // generic fallback
-                                kvp.put(k, v.toString());
-                            }
-                        });
+        KvpUtils.parseQueryString(path).forEach((k, v) -> {
+            if (v instanceof String) {
+                kvp.put(k, (String) v);
+            } else if (v instanceof String[]) {
+                kvp.put(k, ((String[]) v)[0]);
+            } else if (v != null) {
+                // generic fallback
+                kvp.put(k, v.toString());
+            }
+        });
         return kvp;
     }
 }

@@ -88,25 +88,11 @@ public class IpFlowController extends QueueController {
                 queue.put(request);
             }
         } catch (InterruptedException e) {
-            LOGGER.log(
-                    Level.WARNING,
-                    "Unexpected interruption while " + "blocking on the request queue");
+            LOGGER.log(Level.WARNING, "Unexpected interruption while " + "blocking on the request queue");
         }
         if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.fine(
-                    "IpFlowController("
-                            + queueSize
-                            + ","
-                            + incomingIp
-                            + ") queue size "
-                            + queue.size());
-            LOGGER.fine(
-                    "IpFlowController("
-                            + queueSize
-                            + ","
-                            + incomingIp
-                            + ") total queues "
-                            + queues.size());
+            LOGGER.fine("IpFlowController(" + queueSize + "," + incomingIp + ") queue size " + queue.size());
+            LOGGER.fine("IpFlowController(" + queueSize + "," + incomingIp + ") total queues " + queues.size());
         }
         return retval;
     }

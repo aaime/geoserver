@@ -50,8 +50,7 @@ public class PutIgnoringExtensionContentNegotiationStrategy implements ContentNe
      *     by webRequest matches. Otherwise returns an empty list (never null).
      */
     @Override
-    public List<MediaType> resolveMediaTypes(NativeWebRequest webRequest)
-            throws HttpMediaTypeNotAcceptableException {
+    public List<MediaType> resolveMediaTypes(NativeWebRequest webRequest) throws HttpMediaTypeNotAcceptableException {
         HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
         if (request != null
                 && pathMatcher.getMatchingCondition(request) != null

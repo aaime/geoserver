@@ -30,7 +30,8 @@ import org.junit.rules.TemporaryFolder;
 /** Tests for {@link GeoServerResourceLoader}. */
 public class GeoServerResourceLoaderTest {
 
-    @Rule public TemporaryFolder tempFolder = new TemporaryFolder();
+    @Rule
+    public TemporaryFolder tempFolder = new TemporaryFolder();
 
     /**
      * Test {@link GeoServerResourceLoader#requireFile(String, String)} for a single file that
@@ -68,9 +69,8 @@ public class GeoServerResourceLoaderTest {
     public void testRequireSingleMissingFileOfTwo() {
         assertThrows(
                 IllegalArgumentException.class,
-                () ->
-                        GeoServerResourceLoader.requireFile(
-                                "pom.xml" + File.pathSeparator + "does-not-exist", "Test fixture"));
+                () -> GeoServerResourceLoader.requireFile(
+                        "pom.xml" + File.pathSeparator + "does-not-exist", "Test fixture"));
     }
 
     /**
@@ -89,8 +89,7 @@ public class GeoServerResourceLoaderTest {
         System.setProperty("GEOSERVER_REQUIRE_FILE", "pom.xml");
         System.clearProperty("GEOSERVER_DATA_DIR");
         try {
-            Assert.assertEquals(
-                    "data", GeoServerResourceLoader.lookupGeoServerDataDirectory(context));
+            Assert.assertEquals("data", GeoServerResourceLoader.lookupGeoServerDataDirectory(context));
         } finally {
             System.clearProperty("GEOSERVER_REQUIRE_FILE");
         }
@@ -125,15 +124,13 @@ public class GeoServerResourceLoaderTest {
     @Test
     public void testLookupRequireMissingFileServlet() {
         ServletContext context = EasyMock.createMock(ServletContext.class);
-        EasyMock.expect(context.getInitParameter("GEOSERVER_REQUIRE_FILE"))
-                .andReturn("does-not-exist");
+        EasyMock.expect(context.getInitParameter("GEOSERVER_REQUIRE_FILE")).andReturn("does-not-exist");
         EasyMock.expect(context.getInitParameter("GEOSERVER_DATA_DIR")).andReturn(null);
         EasyMock.expect(context.getInitParameter("GEOSERVER_DATA_ROOT")).andReturn(null);
         EasyMock.expect(context.getRealPath("/data")).andReturn("data");
         EasyMock.replay(context);
         assertThrows(
-                IllegalArgumentException.class,
-                () -> GeoServerResourceLoader.lookupGeoServerDataDirectory(context));
+                IllegalArgumentException.class, () -> GeoServerResourceLoader.lookupGeoServerDataDirectory(context));
     }
 
     @Test
@@ -173,6 +170,8 @@ public class GeoServerResourceLoaderTest {
             out.write("someText".getBytes());
         }
 
-        assertEquals("someText", Files.asCharSource(res.file(), Charset.defaultCharset()).read());
+        assertEquals(
+                "someText",
+                Files.asCharSource(res.file(), Charset.defaultCharset()).read());
     }
 }

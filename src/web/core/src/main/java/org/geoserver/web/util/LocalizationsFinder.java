@@ -32,11 +32,9 @@ public class LocalizationsFinder {
     static {
         try {
             PathMatchingResourcePatternResolver resolver =
-                    new PathMatchingResourcePatternResolver(
-                            LocalizationsFinder.class.getClassLoader());
+                    new PathMatchingResourcePatternResolver(LocalizationsFinder.class.getClassLoader());
             LinkedHashSet<Locale> locales = new LinkedHashSet<>();
-            for (Resource resource :
-                    resolver.getResources("classpath*:/GeoServerApplication_*.properties")) {
+            for (Resource resource : resolver.getResources("classpath*:/GeoServerApplication_*.properties")) {
                 String name = resource.getFilename();
                 if (name != null) {
                     try {
@@ -45,10 +43,7 @@ public class LocalizationsFinder {
                         Locale locale = LocaleUtils.toLocale(language);
                         locales.add(locale);
                     } catch (Exception e) {
-                        LOGGER.log(
-                                Level.FINE,
-                                "Skipping file " + name + ", could not extract a Locale from it",
-                                e);
+                        LOGGER.log(Level.FINE, "Skipping file " + name + ", could not extract a Locale from it", e);
                     }
                 }
             }

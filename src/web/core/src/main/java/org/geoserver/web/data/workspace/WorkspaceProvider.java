@@ -59,26 +59,23 @@ public class WorkspaceProvider extends GeoServerDataProvider<WorkspaceInfo> {
      * @see #decorateDefault(WorkspaceInfo, WorkspaceInfo)
      * @see #isDefaultWorkspace(WorkspaceInfo)
      */
-    public static Property<WorkspaceInfo> DEFAULT =
-            new AbstractProperty<WorkspaceInfo>("default") {
+    public static Property<WorkspaceInfo> DEFAULT = new AbstractProperty<WorkspaceInfo>("default") {
 
-                private static final long serialVersionUID = 7732697329315316826L;
+        private static final long serialVersionUID = 7732697329315316826L;
 
-                @Override
-                public Object getPropertyValue(WorkspaceInfo item) {
-                    return isDefaultWorkspace(item);
-                }
-            };
+        @Override
+        public Object getPropertyValue(WorkspaceInfo item) {
+            return isDefaultWorkspace(item);
+        }
+    };
 
     public static Property<WorkspaceInfo> ISOLATED = new BeanProperty<>("isolated", "isolated");
 
     static List<Property<WorkspaceInfo>> PROPERTIES = List.of(NAME, DEFAULT, ISOLATED);
 
-    public static final Property<WorkspaceInfo> MODIFIED_TIMESTAMP =
-            new BeanProperty<>("datemodfied", "dateModified");
+    public static final Property<WorkspaceInfo> MODIFIED_TIMESTAMP = new BeanProperty<>("datemodfied", "dateModified");
 
-    public static final Property<WorkspaceInfo> CREATED_TIMESTAMP =
-            new BeanProperty<>("datecreated", "dateCreated");
+    public static final Property<WorkspaceInfo> CREATED_TIMESTAMP = new BeanProperty<>("datecreated", "dateCreated");
 
     public WorkspaceProvider() {
         setSort(NAME.getName(), SortOrder.ASCENDING);
@@ -159,10 +156,8 @@ public class WorkspaceProvider extends GeoServerDataProvider<WorkspaceInfo> {
         List<Property<WorkspaceInfo>> modifiedPropertiesList = new ArrayList<>(PROPERTIES);
         // check geoserver properties
         SettingsInfo settings = getSettings();
-        if (settings.isShowCreatedTimeColumnsInAdminList())
-            modifiedPropertiesList.add(CREATED_TIMESTAMP);
-        if (settings.isShowModifiedTimeColumnsInAdminList())
-            modifiedPropertiesList.add(MODIFIED_TIMESTAMP);
+        if (settings.isShowCreatedTimeColumnsInAdminList()) modifiedPropertiesList.add(CREATED_TIMESTAMP);
+        if (settings.isShowModifiedTimeColumnsInAdminList()) modifiedPropertiesList.add(MODIFIED_TIMESTAMP);
         return modifiedPropertiesList;
     }
 

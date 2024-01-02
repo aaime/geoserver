@@ -47,8 +47,7 @@ public class Transaction {
     /** logger */
     static Logger LOGGER = org.geotools.util.logging.Logging.getLogger("org.geoserver.wfs");
 
-    private static final int DELETE_BATCH_SIZE =
-            Integer.getInteger("org.geoserver.wfs.deleteBatchSize", 100);
+    private static final int DELETE_BATCH_SIZE = Integer.getInteger("org.geoserver.wfs.deleteBatchSize", 100);
 
     /** WFS configuration */
     protected WFSInfo wfs;
@@ -71,8 +70,7 @@ public class Transaction {
         this.catalog = catalog;
 
         // register element handlers, listeners and plugins
-        transactionElementHandlers.addAll(
-                GeoServerExtensions.extensions(TransactionElementHandler.class));
+        transactionElementHandlers.addAll(GeoServerExtensions.extensions(TransactionElementHandler.class));
         transactionListeners.addAll(GeoServerExtensions.extensions(TransactionListener.class));
         transactionCallbacks.addAll(GeoServerExtensions.extensions(TransactionCallback.class));
         // plugins are listeners too, but I want to make sure they are notified
@@ -152,8 +150,7 @@ public class Transaction {
         // List of type names, maintain this list because of the insert hack
         // described below
         // List typeNames = new ArrayList();
-        Map<TransactionElement, TransactionElementHandler> elementHandlers =
-                gatherElementHandlers(request);
+        Map<TransactionElement, TransactionElementHandler> elementHandlers = gatherElementHandlers(request);
 
         // Gather feature types required by transaction elements and validate
         // the elements
@@ -162,8 +159,8 @@ public class Transaction {
         //
         // (I am using element rather than transaction sub request
         // to agree with the spec docs)
-        for (Entry<TransactionElement, TransactionElementHandler>
-                elementTransactionElementHandlerEntry : elementHandlers.entrySet()) {
+        for (Entry<TransactionElement, TransactionElementHandler> elementTransactionElementHandlerEntry :
+                elementHandlers.entrySet()) {
             Entry entry = elementTransactionElementHandlerEntry;
             TransactionElement element = (TransactionElement) entry.getKey();
             TransactionElementHandler handler = (TransactionElementHandler) entry.getValue();
@@ -181,8 +178,7 @@ public class Transaction {
                     namespaceURI = catalog.getDefaultNamespace().getURI();
                 }
 
-                LOGGER.fine(
-                        "Locating FeatureSource uri:'" + namespaceURI + "' name:'" + name + "'");
+                LOGGER.fine("Locating FeatureSource uri:'" + namespaceURI + "' name:'" + name + "'");
 
                 final FeatureTypeInfo meta = catalog.getFeatureTypeByName(namespaceURI, name);
 
@@ -204,19 +200,15 @@ public class Transaction {
                 String typeRef = meta.getStore().getName() + ":" + meta.getName();
 
                 String URI = meta.getNamespace().getURI();
-                QName elementName = new QName(URI, meta.getName(), meta.getNamespace().getPrefix());
+                QName elementName =
+                        new QName(URI, meta.getName(), meta.getNamespace().getPrefix());
                 QName elementNameDefault = null;
 
                 if (catalog.getDefaultNamespace().getURI().equals(URI)) {
                     elementNameDefault = new QName(meta.getName());
                 }
 
-                LOGGER.fine(
-                        "located FeatureType w/ typeRef '"
-                                + typeRef
-                                + "' and elementName '"
-                                + elementName
-                                + "'");
+                LOGGER.fine("located FeatureType w/ typeRef '" + typeRef + "' and elementName '" + elementName + "'");
 
                 if (stores.containsKey(elementName)) {
                     // typeName already loaded
@@ -224,8 +216,7 @@ public class Transaction {
                 }
 
                 try {
-                    FeatureSource<? extends FeatureType, ? extends Feature> source =
-                            meta.getFeatureSource(null, null);
+                    FeatureSource<? extends FeatureType, ? extends Feature> source = meta.getFeatureSource(null, null);
 
                     if (source instanceof FeatureStore) {
                         FeatureStore<? extends FeatureType, ? extends Feature> store =
@@ -243,8 +234,7 @@ public class Transaction {
                         throw new WFSTransactionException(msg, (String) null, element.getHandle());
                     }
                 } catch (IOException ioException) {
-                    String msg =
-                            elementName + " is not available: " + ioException.getLocalizedMessage();
+                    String msg = elementName + " is not available: " + ioException.getLocalizedMessage();
                     throw new WFSTransactionException(msg, ioException, element.getHandle());
                 }
             }
@@ -262,9 +252,8 @@ public class Transaction {
             LOGGER.finer("got lockId: " + authorizationID);
 
             if (!lockExists(authorizationID)) {
-                String mesg =
-                        "Attempting to use a lockID that does not exist"
-                                + ", it has either expired or was entered wrong.";
+                String mesg = "Attempting to use a lockID that does not exist"
+                        + ", it has either expired or was entered wrong.";
                 throw new WFSException(request, mesg, "InvalidParameterValue");
             }
 
@@ -273,10 +262,7 @@ public class Transaction {
             } catch (IOException ioException) {
                 // This is a real failure - not associated with a element
                 //
-                throw new WFSException(
-                        request,
-                        "Authorization ID '" + authorizationID + "' not useable",
-                        ioException);
+                throw new WFSException(request, "Authorization ID '" + authorizationID + "' not useable", ioException);
             }
         }
 
@@ -291,8 +277,7 @@ public class Transaction {
         Exception exception = null;
 
         try {
-            BatchManager batchManager =
-                    createBatchManager(request, multiplexer, stores, elementHandlers, result);
+            BatchManager batchManager = createBatchManager(request, multiplexer, stores, elementHandlers, result);
             batchManager.run();
         } catch (WFSTransactionException e) {
             LOGGER.log(Level.SEVERE, "Transaction failed", e);
@@ -313,9 +298,7 @@ public class Transaction {
             }
 
             result.addAction(
-                    e.getCode() != null ? e.getCode() : "InvalidParameterValue",
-                    e.getLocator(),
-                    e.getMessage());
+                    e.getCode() != null ? e.getCode() : "InvalidParameterValue", e.getLocator(), e.getMessage());
         }
 
         // commit
@@ -393,8 +376,7 @@ public class Transaction {
         if (exception != null) {
             // WFS 2.0 wants us to throw the exception
             if (request.getVersion() != null && request.getVersion().startsWith("2")) {
-                if (!(exception instanceof WFSException
-                        && ((WFSException) exception).getCode() != null)) {
+                if (!(exception instanceof WFSException && ((WFSException) exception).getCode() != null)) {
                     // wrap to get the default code
                     exception = new WFSException(request, exception);
                 }
@@ -433,8 +415,7 @@ public class Transaction {
             Map<QName, FeatureStore> stores,
             Map<TransactionElement, TransactionElementHandler> elementHandlers,
             TransactionResponse result) {
-        return new BatchManager(
-                request, multiplexer, stores, result, elementHandlers, DELETE_BATCH_SIZE);
+        return new BatchManager(request, multiplexer, stores, result, elementHandlers, DELETE_BATCH_SIZE);
     }
 
     private TransactionRequest fireBeforeTransaction(TransactionRequest request) {
@@ -445,8 +426,7 @@ public class Transaction {
         return request;
     }
 
-    private void fireAfterTransaction(
-            TransactionRequest request, TransactionResponse result, boolean committed) {
+    private void fireAfterTransaction(TransactionRequest request, TransactionResponse result, boolean committed) {
         for (TransactionCallback tp : transactionCallbacks) {
             tp.afterTransaction(request, result, committed);
         }
@@ -460,8 +440,8 @@ public class Transaction {
     }
 
     /** Looks up the element handlers to be used for each element */
-    private Map<TransactionElement, TransactionElementHandler> gatherElementHandlers(
-            TransactionRequest request) throws WFSTransactionException {
+    private Map<TransactionElement, TransactionElementHandler> gatherElementHandlers(TransactionRequest request)
+            throws WFSTransactionException {
         // JD: use a linked hashmap since the order of elements in a transaction
         // must be respected
         Map<TransactionElement, TransactionElementHandler> map = new LinkedHashMap<>();
@@ -478,8 +458,7 @@ public class Transaction {
      * Finds the best transaction element handler for the specified element type (the one matching
      * the most specialized superclass of type)
      */
-    protected final TransactionElementHandler findElementHandler(Class<?> type)
-            throws WFSTransactionException {
+    protected final TransactionElementHandler findElementHandler(Class<?> type) throws WFSTransactionException {
         List<TransactionElementHandler> matches = new ArrayList<>();
 
         for (TransactionElementHandler handler : transactionElementHandlers) {
@@ -496,14 +475,13 @@ public class Transaction {
 
         if (matches.size() > 1) {
             // sort by class hierarchy
-            Comparator<TransactionElementHandler> comparator =
-                    (h1, h2) -> {
-                        if (h2.getElementClass().isAssignableFrom(h1.getElementClass())) {
-                            return -1;
-                        }
+            Comparator<TransactionElementHandler> comparator = (h1, h2) -> {
+                if (h2.getElementClass().isAssignableFrom(h1.getElementClass())) {
+                    return -1;
+                }
 
-                        return 1;
-                    };
+                return 1;
+            };
 
             Collections.sort(matches, comparator);
         }
@@ -526,8 +504,7 @@ public class Transaction {
      *
      * @return a new geotools transaction
      */
-    protected DefaultTransaction getDatastoreTransaction(TransactionRequest request)
-            throws IOException {
+    protected DefaultTransaction getDatastoreTransaction(TransactionRequest request) throws IOException {
         DefaultTransaction transaction = new DefaultTransaction();
 
         // transfer any tx extended property down to the geotools transaction.
@@ -679,8 +656,7 @@ public class Transaction {
          * TransactionElementHandler}s.
          */
         public void run() {
-            Set<Entry<TransactionElement, TransactionElementHandler>> lEntries =
-                    elementHandlers.entrySet();
+            Set<Entry<TransactionElement, TransactionElementHandler>> lEntries = elementHandlers.entrySet();
 
             for (Entry<TransactionElement, TransactionElementHandler> lEntry : lEntries) {
                 TransactionElement lCurrentElem = lEntry.getKey();

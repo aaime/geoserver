@@ -44,14 +44,18 @@ public class VectorTimeDimensionTest extends VectorTimeTestSupport {
         getCatalog().save(vectorInfo);
         // check that we correctly retrieve the time dimension
         assertThat(
-                DimensionsUtils.extractDimensions(wms, getLayerInfo(), ALL_DOMAINS).size(), is(1));
+                DimensionsUtils.extractDimensions(wms, getLayerInfo(), ALL_DOMAINS)
+                        .size(),
+                is(1));
         // disable the time dimension
         dimensionInfo.setEnabled(false);
         vectorInfo.getMetadata().put(ResourceInfo.TIME, dimensionInfo);
         getCatalog().save(vectorInfo);
         // no dimensions should be available
         assertThat(
-                DimensionsUtils.extractDimensions(wms, getLayerInfo(), ALL_DOMAINS).size(), is(0));
+                DimensionsUtils.extractDimensions(wms, getLayerInfo(), ALL_DOMAINS)
+                        .size(),
+                is(0));
     }
 
     @Test
@@ -63,10 +67,7 @@ public class VectorTimeDimensionTest extends VectorTimeTestSupport {
     @Test
     public void testGetDomainsValues() throws Exception {
         testDomainsValuesRepresentation(
-                DimensionsUtils.NO_LIMIT,
-                false,
-                "2012-02-11T00:00:00.000Z",
-                "2012-02-12T00:00:00.000Z");
+                DimensionsUtils.NO_LIMIT, false, "2012-02-11T00:00:00.000Z", "2012-02-12T00:00:00.000Z");
         testDomainsValuesRepresentation(0, "2012-02-11T00:00:00.000Z--2012-02-12T00:00:00.000Z");
     }
 
@@ -79,8 +80,7 @@ public class VectorTimeDimensionTest extends VectorTimeTestSupport {
                 "2012-02-11T00:00:00.000Z/2012-02-13T00:00:00.000Z",
                 "2012-02-12T00:00:00.000Z/2012-02-12T10:00:00.000Z");
 
-        testDomainsValuesRepresentation(
-                0, true, "2012-02-11T00:00:00.000Z--2012-02-13T00:00:00.000Z");
+        testDomainsValuesRepresentation(0, true, "2012-02-11T00:00:00.000Z--2012-02-13T00:00:00.000Z");
     }
 
     @Override

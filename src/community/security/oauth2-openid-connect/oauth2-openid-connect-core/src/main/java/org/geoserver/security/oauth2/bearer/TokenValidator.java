@@ -18,6 +18,5 @@ public interface TokenValidator {
      * @param userInfoClaims - map of claims from the oidc "userInfo" endpoint
      * @throws Exception - if there is a problem, throw an exception.
      */
-    void verifyToken(OpenIdConnectFilterConfig config, Map accessTokenClaims, Map userInfoClaims)
-            throws Exception;
+    void verifyToken(OpenIdConnectFilterConfig config, Map accessTokenClaims, Map userInfoClaims) throws Exception;
 }

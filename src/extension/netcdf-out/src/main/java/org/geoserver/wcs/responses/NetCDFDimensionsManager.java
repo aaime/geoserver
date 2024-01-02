@@ -101,18 +101,13 @@ public class NetCDFDimensionsManager {
                     if (NetCDFUtilities.isATime(dataType)) {
                         tree =
                                 // new TreeSet(new DateRangeComparator());
-                                isRange
-                                        ? new TreeSet<>(new DateRangeComparator())
-                                        : new TreeSet<>();
+                                isRange ? new TreeSet<>(new DateRangeComparator()) : new TreeSet<>();
                     } else {
                         tree = // new TreeSet<Object>();
-                                isRange
-                                        ? new TreeSet<>(new NumberRangeComparator())
-                                        : new TreeSet<>();
+                                isRange ? new TreeSet<>(new NumberRangeComparator()) : new TreeSet<>();
                     }
             }
-            mapper.setDimensionValues(
-                    new NetCDFDimensionsManager.NetCDFDimensionMapping.DimensionValuesSet(tree));
+            mapper.setDimensionValues(new NetCDFDimensionsManager.NetCDFDimensionMapping.DimensionValuesSet(tree));
             add(name, mapper);
         }
 
@@ -132,8 +127,7 @@ public class NetCDFDimensionsManager {
             final Object value = properties.get(dimensionName);
             if (value == null) {
                 if (LOGGER.isLoggable(Level.WARNING)) {
-                    LOGGER.warning(
-                            "No Dimensions available with the specified name: " + dimensionName);
+                    LOGGER.warning("No Dimensions available with the specified name: " + dimensionName);
                 }
             } else {
                 dimension.getDimensionValues().addValue(value);
@@ -288,8 +282,7 @@ public class NetCDFDimensionsManager {
          * @param netCDFCoordinates used to check whether a dimension is related to a coordinate. In
          *     that case, just return the coordinate values.
          */
-        public Array getDimensionData(
-                final boolean rangeValues, NetCDFCoordinate[] netCDFCoordinates) {
+        public Array getDimensionData(final boolean rangeValues, NetCDFCoordinate[] netCDFCoordinates) {
             final String dimensionName = getName();
 
             // Special management for latitude and logitude
@@ -322,12 +315,10 @@ public class NetCDFDimensionsManager {
                 final int numElements = values.size();
 
                 final String dimensionDataType = getCoverageDimension().getDatatype();
-                final DataType netCDFDataType =
-                        NetCDFUtilities.getNetCDFDataType(dimensionDataType);
+                final DataType netCDFDataType = NetCDFUtilities.getNetCDFDataType(dimensionDataType);
 
                 // Get a proper array to contain the dimension values
-                final int[] dimensionSize =
-                        rangeValues ? new int[] {numElements, 2} : new int[] {numElements};
+                final int[] dimensionSize = rangeValues ? new int[] {numElements, 2} : new int[] {numElements};
                 final Array data = NetCDFUtilities.getArray(dimensionSize, netCDFDataType);
 
                 final Index index = data.getIndex();

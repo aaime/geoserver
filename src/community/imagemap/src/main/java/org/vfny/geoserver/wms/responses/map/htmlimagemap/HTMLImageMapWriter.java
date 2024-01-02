@@ -63,9 +63,8 @@ import org.vfny.geoserver.wms.responses.map.htmlimagemap.holes.HolesRemover;
  * @author Mauro Bartolomeoli
  */
 public class HTMLImageMapWriter extends OutputStreamWriter {
-    private static final Logger LOGGER =
-            org.geotools.util.logging.Logging.getLogger(
-                    HTMLImageMapWriter.class.getPackage().getName());
+    private static final Logger LOGGER = org.geotools.util.logging.Logging.getLogger(
+            HTMLImageMapWriter.class.getPackage().getName());
 
     GeometryFactory gFac = new GeometryFactory();
 
@@ -206,7 +205,8 @@ public class HTMLImageMapWriter extends OutputStreamWriter {
         boolean hasElseFilter = false;
 
         for (Rule rule : featureTypeStyle.rules()) {
-            LOGGER.finer(new StringBuffer("Applying rule: ").append(rule.toString()).toString());
+            LOGGER.finer(
+                    new StringBuffer("Applying rule: ").append(rule.toString()).toString());
 
             // does this rule have an else filter
             if (rule.isElseFilter()) {
@@ -310,12 +310,10 @@ public class HTMLImageMapWriter extends OutputStreamWriter {
                     }
                 } catch (IOException e) {
                     buffer = new StringBuffer();
-                    if (LOGGER.isLoggable(Level.WARNING))
-                        LOGGER.warning("Problems encoding shape: " + e.getMessage());
+                    if (LOGGER.isLoggable(Level.WARNING)) LOGGER.warning("Problems encoding shape: " + e.getMessage());
                 } catch (Throwable t) {
                     buffer = new StringBuffer();
-                    if (LOGGER.isLoggable(Level.SEVERE))
-                        LOGGER.severe("Problems encoding shape: " + t.getMessage());
+                    if (LOGGER.isLoggable(Level.SEVERE)) LOGGER.severe("Problems encoding shape: " + t.getMessage());
                 }
             }
         }
@@ -338,8 +336,7 @@ public class HTMLImageMapWriter extends OutputStreamWriter {
          * @param fts "cached" ftss matching the FeatureType of the feature
          * @throws IOException if an error occurs during encoding
          */
-        protected void writeMultiFeature(SimpleFeature ft, FeatureTypeStyle[] fts)
-                throws IOException {
+        protected void writeMultiFeature(SimpleFeature ft, FeatureTypeStyle[] fts) throws IOException {
             reset(ft);
             if (processStyle(ft, fts)) {
                 GeometryCollection geomCollection = (GeometryCollection) ft.getDefaultGeometry();
@@ -383,9 +380,7 @@ public class HTMLImageMapWriter extends OutputStreamWriter {
         protected void startElement(SimpleFeature feature, String suffix) throws IOException {
             // each feature (multi geometry ones are an exception) is represented by an <area> tag
             // each area tag has an id, equal to the feature id, and a shape (rect, poly or circle)
-            writeToBuffer(
-                    "<area shape=\"" + getShape() + "\" id=\"" + feature.getID() + suffix + "\" ",
-                    buffer);
+            writeToBuffer("<area shape=\"" + getShape() + "\" id=\"" + feature.getID() + suffix + "\" ", buffer);
         }
 
         /**
@@ -413,8 +408,7 @@ public class HTMLImageMapWriter extends OutputStreamWriter {
          * @param geom geometry to encode
          * @throws IOException if an error occures during encoding
          */
-        protected abstract void writeGeometry(Geometry geom, StringBuffer buffer)
-                throws IOException;
+        protected abstract void writeGeometry(Geometry geom, StringBuffer buffer) throws IOException;
 
         /**
          * Encodes the geometry "ending" (closing quotes)
@@ -437,8 +431,7 @@ public class HTMLImageMapWriter extends OutputStreamWriter {
             Iterator<String> iter = extraAttributes.keySet().iterator();
             while (iter.hasNext()) {
                 String attrName = iter.next();
-                writeToBuffer(
-                        " " + attrName + "=\"" + extraAttributes.get(attrName) + "\"", buffer);
+                writeToBuffer(" " + attrName + "=\"" + extraAttributes.get(attrName) + "\"", buffer);
             }
             writeToBuffer("/>\n", buffer);
         }
@@ -462,8 +455,7 @@ public class HTMLImageMapWriter extends OutputStreamWriter {
          *     filters.
          * @throws IOException if an error occurs during the process
          */
-        protected boolean processStyle(SimpleFeature ft, FeatureTypeStyle[] ftsList)
-                throws IOException {
+        protected boolean processStyle(SimpleFeature ft, FeatureTypeStyle[] ftsList) throws IOException {
             int total = 0;
             for (FeatureTypeStyle fts : ftsList) {
                 List<Rule> rules = filterRules(fts, ft);
@@ -502,8 +494,7 @@ public class HTMLImageMapWriter extends OutputStreamWriter {
          * @param symbolizer current symbolizer to analyze
          * @throws IOException if an error occurs during the process
          */
-        protected void processSymbolizer(SimpleFeature ft, Rule rule, Symbolizer symbolizer)
-                throws IOException {
+        protected void processSymbolizer(SimpleFeature ft, Rule rule, Symbolizer symbolizer) throws IOException {
             if (symbolizer instanceof TextSymbolizer) {
                 // TODO: any check for label definition needed here?
                 Expression e = SLD.textLabel((TextSymbolizer) symbolizer);
@@ -538,9 +529,7 @@ public class HTMLImageMapWriter extends OutputStreamWriter {
          */
         protected String getPoint(Coordinate c) {
             Point2D transformed = worldToScreen.transform(new Point2D.Double(c.x, c.y), null);
-            return (int) Math.round(transformed.getX())
-                    + ","
-                    + (int) Math.round(transformed.getY());
+            return (int) Math.round(transformed.getX()) + "," + (int) Math.round(transformed.getY());
         }
 
         /**
@@ -561,8 +550,7 @@ public class HTMLImageMapWriter extends OutputStreamWriter {
                 tempBuf.append(" " + p);
             }
             // Close the path if it's not already closed
-            if (!coords[nCoords - 1].equals2D(coords[0]))
-                tempBuf.append(" " + coords[0].x + "," + coords[0].y);
+            if (!coords[nCoords - 1].equals2D(coords[0])) tempBuf.append(" " + coords[0].x + "," + coords[0].y);
             if (tempBuf.length() > 0) writeToBuffer(tempBuf.substring(1), buf);
             else throw new IOException("No coordinates");
         }
@@ -610,8 +598,7 @@ public class HTMLImageMapWriter extends OutputStreamWriter {
          * parameter to define circle radius.
          */
         @Override
-        protected void processSymbolizer(SimpleFeature ft, Rule rule, Symbolizer symbolizer)
-                throws IOException {
+        protected void processSymbolizer(SimpleFeature ft, Rule rule, Symbolizer symbolizer) throws IOException {
             super.processSymbolizer(ft, rule, symbolizer);
             if (symbolizer instanceof PointSymbolizer) {
                 Mark mark = SLD.mark((PointSymbolizer) symbolizer);
@@ -677,8 +664,7 @@ public class HTMLImageMapWriter extends OutputStreamWriter {
          * define the buffer around the linestring.
          */
         @Override
-        protected void processSymbolizer(SimpleFeature ft, Rule rule, Symbolizer symbolizer)
-                throws IOException {
+        protected void processSymbolizer(SimpleFeature ft, Rule rule, Symbolizer symbolizer) throws IOException {
             super.processSymbolizer(ft, rule, symbolizer);
             if (symbolizer instanceof LineSymbolizer) {
                 buffer = SLD.width((LineSymbolizer) symbolizer);
@@ -765,8 +751,7 @@ public class HTMLImageMapWriter extends OutputStreamWriter {
             } else throw new IOException("Impossible to encode: " + geom);
             if (poly != null) {
                 LineString shell = poly.getExteriorRing();
-                if (shell != null && shell.getCoordinates() != null)
-                    writePathContent(shell.getCoordinates(), buf);
+                if (shell != null && shell.getCoordinates() != null) writePathContent(shell.getCoordinates(), buf);
                 else throw new IOException("Nothing to encode");
             } else throw new IOException("Nothing to encode");
         }
@@ -839,8 +824,7 @@ public class HTMLImageMapWriter extends OutputStreamWriter {
                     }
                 } else {
                     buffer = new StringBuffer();
-                    if (LOGGER.isLoggable(Level.WARNING))
-                        LOGGER.warning("Problems encoding shape: null geometry");
+                    if (LOGGER.isLoggable(Level.WARNING)) LOGGER.warning("Problems encoding shape: null geometry");
                 }
             }
         }
@@ -859,8 +843,7 @@ public class HTMLImageMapWriter extends OutputStreamWriter {
          * @throws IOException if an error occurs during the process
          */
         @Override
-        protected boolean processStyle(SimpleFeature ft, FeatureTypeStyle[] ftsList)
-                throws IOException {
+        protected boolean processStyle(SimpleFeature ft, FeatureTypeStyle[] ftsList) throws IOException {
             if (delegateWriter.processStyle(ft, ftsList)) {
                 Iterator<String> iter = delegateWriter.extraAttributes.keySet().iterator();
                 while (iter.hasNext()) {

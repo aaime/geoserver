@@ -82,9 +82,7 @@ public class FileWatcher<T> {
         long now = System.currentTimeMillis();
         if ((now - lastCheck) > 1000) {
             lastCheck = now;
-            stale =
-                    (resource.getType() != Type.UNDEFINED)
-                            && (resource.lastmodified() != lastModified);
+            stale = (resource.getType() != Type.UNDEFINED) && (resource.lastmodified() != lastModified);
         }
         return stale;
     }

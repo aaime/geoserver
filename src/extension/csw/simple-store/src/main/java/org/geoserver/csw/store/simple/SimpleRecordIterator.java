@@ -67,10 +67,7 @@ class SimpleRecordIterator implements Iterator<Feature> {
                     record = null;
                 }
             } catch (Exception e) {
-                LOGGER.log(
-                        Level.INFO,
-                        "Failed to parse the contents of " + file.path() + " as a CSW Record",
-                        e);
+                LOGGER.log(Level.INFO, "Failed to parse the contents of " + file.path() + " as a CSW Record", e);
             }
         }
 
@@ -115,13 +112,12 @@ class SimpleRecordIterator implements Iterator<Feature> {
                         LOGGER.log(Level.INFO, "Failed to parse original record bbox");
                     }
                 }
-                ReferencedEnvelope re =
-                        new ReferencedEnvelope(
-                                (Double) bbox.getLowerCorner().get(0),
-                                (Double) bbox.getUpperCorner().get(0),
-                                (Double) bbox.getLowerCorner().get(1),
-                                (Double) bbox.getUpperCorner().get(1),
-                                crs);
+                ReferencedEnvelope re = new ReferencedEnvelope(
+                        (Double) bbox.getLowerCorner().get(0),
+                        (Double) bbox.getUpperCorner().get(0),
+                        (Double) bbox.getLowerCorner().get(1),
+                        (Double) bbox.getUpperCorner().get(1),
+                        crs);
                 builder.addBoundingBox(re);
             }
         }

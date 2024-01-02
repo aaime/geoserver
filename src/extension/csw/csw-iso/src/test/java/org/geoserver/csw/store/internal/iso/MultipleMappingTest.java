@@ -14,25 +14,16 @@ import org.w3c.dom.Document;
 
 public class MultipleMappingTest extends MDTestSupport {
 
-    private File secondMappingFileIgnore,
-            secondMappingFile,
-            secondMappingFileIgnore2,
-            secondMappingFile2;
+    private File secondMappingFileIgnore, secondMappingFile, secondMappingFileIgnore2, secondMappingFile2;
 
     @Before
     public void load() {
         // copy all mappings into the data directory
-        secondMappingFileIgnore =
-                new File(
-                        testData.getDataDirectoryRoot(),
-                        "csw/MD_Metadata-second.properties.ignore");
-        secondMappingFile =
-                new File(testData.getDataDirectoryRoot(), "csw/MD_Metadata-second.properties");
+        secondMappingFileIgnore = new File(testData.getDataDirectoryRoot(), "csw/MD_Metadata-second.properties.ignore");
+        secondMappingFile = new File(testData.getDataDirectoryRoot(), "csw/MD_Metadata-second.properties");
         // copy all mappings into the data directory
-        secondMappingFileIgnore2 =
-                new File(testData.getDataDirectoryRoot(), "csw/Record-second.properties.ignore");
-        secondMappingFile2 =
-                new File(testData.getDataDirectoryRoot(), "csw/Record-second.properties");
+        secondMappingFileIgnore2 = new File(testData.getDataDirectoryRoot(), "csw/Record-second.properties.ignore");
+        secondMappingFile2 = new File(testData.getDataDirectoryRoot(), "csw/Record-second.properties");
 
         secondMappingFileIgnore.renameTo(secondMappingFile);
         secondMappingFileIgnore2.renameTo(secondMappingFile2);

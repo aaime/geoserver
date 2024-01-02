@@ -149,13 +149,7 @@ public abstract class ImportData implements Serializable {
      */
     @Override
     public String toString() {
-        return "ImportData [format="
-                + format
-                + ", charsetEncoding="
-                + charsetEncoding
-                + ", message="
-                + message
-                + "]";
+        return "ImportData [format=" + format + ", charsetEncoding=" + charsetEncoding + ", message=" + message + "]";
     }
 
     public void setParent(ImportTask task) {

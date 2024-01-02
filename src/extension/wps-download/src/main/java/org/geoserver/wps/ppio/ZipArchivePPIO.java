@@ -40,8 +40,7 @@ public class ZipArchivePPIO extends BinaryPPIO {
     /** Instantiates a new zip archive ppio. */
     public ZipArchivePPIO(int compressionLevel) {
         super(File.class, File.class, "application/zip");
-        if (compressionLevel < ZipOutputStream.STORED
-                || compressionLevel > ZipOutputStream.DEFLATED) {
+        if (compressionLevel < ZipOutputStream.STORED || compressionLevel > ZipOutputStream.DEFLATED) {
             throw new IllegalArgumentException("Invalid Compression Level: " + compressionLevel);
         }
         this.compressionLevel = compressionLevel;
@@ -203,8 +202,7 @@ public class ZipArchivePPIO extends BinaryPPIO {
      * @param buffer the buffer to use for reading/writing
      * @throws IOException in case something bad happen
      */
-    private static void zipFileInternal(File file, ZipOutputStream zipout, byte[] buffer)
-            throws IOException {
+    private static void zipFileInternal(File file, ZipOutputStream zipout, byte[] buffer) throws IOException {
         if (file == null || !file.exists() || !file.canRead()) {
             throw new IllegalArgumentException(
                     "Provided File is not valid and/or reqadable! --> File:" + file != null

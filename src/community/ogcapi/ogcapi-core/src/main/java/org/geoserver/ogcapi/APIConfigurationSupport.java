@@ -27,15 +27,13 @@ import org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHan
 @Component
 public class APIConfigurationSupport extends RestConfiguration {
 
-    static final Logger LOGGER =
-            org.geotools.util.logging.Logging.getLogger("org.geoserver.ogcapi");
+    static final Logger LOGGER = org.geotools.util.logging.Logging.getLogger("org.geoserver.ogcapi");
 
     List<DispatcherCallback> callbacks;
 
     class APIRequestMappingHandlerAdapter extends RequestMappingHandlerAdapter {
         @Override
-        protected ServletInvocableHandlerMethod createInvocableHandlerMethod(
-                HandlerMethod handlerMethod) {
+        protected ServletInvocableHandlerMethod createInvocableHandlerMethod(HandlerMethod handlerMethod) {
             return new APIInvocableHandlerMethod(handlerMethod);
         }
     }
@@ -51,17 +49,11 @@ public class APIConfigurationSupport extends RestConfiguration {
             Request request = Dispatcher.REQUEST.get();
             if (request == null) return super.doInvoke(args);
             Operation operation =
-                    new Operation(
-                            request.getRequest(),
-                            request.getServiceDescriptor(),
-                            getBridgedMethod(),
-                            args);
+                    new Operation(request.getRequest(), request.getServiceDescriptor(), getBridgedMethod(), args);
             operation = fireOperationDispatchedCallback(request, operation);
             request.setOperation(operation);
             try {
-                return operation
-                        .getMethod()
-                        .invoke(operation.getService().getService(), operation.getParameters());
+                return operation.getMethod().invoke(operation.getService().getService(), operation.getParameters());
             } catch (InvocationTargetException e) {
                 Throwable targetException = e.getTargetException();
                 if (targetException instanceof RuntimeException) {

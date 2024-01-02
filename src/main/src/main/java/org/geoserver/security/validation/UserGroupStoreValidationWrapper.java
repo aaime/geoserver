@@ -87,16 +87,14 @@ public class UserGroupStoreValidationWrapper extends UserGroupServiceValidationW
     }
 
     @Override
-    public void associateUserToGroup(GeoServerUser user, GeoServerUserGroup group)
-            throws IOException {
+    public void associateUserToGroup(GeoServerUser user, GeoServerUserGroup group) throws IOException {
         checkExistingUserName(user.getUsername());
         checkExistingGroupName(group.getGroupname());
         getStore().associateUserToGroup(user, group);
     }
 
     @Override
-    public void disAssociateUserFromGroup(GeoServerUser user, GeoServerUserGroup group)
-            throws IOException {
+    public void disAssociateUserFromGroup(GeoServerUser user, GeoServerUserGroup group) throws IOException {
         checkExistingUserName(user.getUsername());
         checkExistingGroupName(group.getGroupname());
         getStore().disAssociateUserFromGroup(user, group);

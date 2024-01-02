@@ -279,9 +279,7 @@ public class WPSInfoImpl extends ServiceInfoImpl implements WPSInfo {
      */
     @Override
     public Integer getMaxSynchronousTotalTime() {
-        return (maxSynchronousTotalTime != null)
-                ? maxSynchronousTotalTime
-                : maxSynchronousExecutionTime;
+        return (maxSynchronousTotalTime != null) ? maxSynchronousTotalTime : maxSynchronousExecutionTime;
     }
 
     @Override
@@ -309,9 +307,7 @@ public class WPSInfoImpl extends ServiceInfoImpl implements WPSInfo {
      */
     @Override
     public Integer getMaxAsynchronousTotalTime() {
-        return (maxAsynchronousTotalTime != null)
-                ? maxAsynchronousTotalTime
-                : maxAsynchronousExecutionTime;
+        return (maxAsynchronousTotalTime != null) ? maxAsynchronousTotalTime : maxAsynchronousExecutionTime;
     }
 
     @Override
@@ -335,35 +331,15 @@ public class WPSInfoImpl extends ServiceInfoImpl implements WPSInfo {
         int result = super.hashCode();
         result = prime * result + ((catalogMode == null) ? 0 : catalogMode.hashCode());
         result = prime * result + ((connectionTimeout == null) ? 0 : connectionTimeout.hashCode());
-        result =
-                prime * result
-                        + ((maxAsynchronousProcesses == null)
-                                ? 0
-                                : maxAsynchronousProcesses.hashCode());
+        result = prime * result + ((maxAsynchronousProcesses == null) ? 0 : maxAsynchronousProcesses.hashCode());
         result = prime * result + maxAsynchronousExecutionTime;
-        result =
-                prime * result
-                        + ((maxAsynchronousTotalTime == null)
-                                ? 0
-                                : maxAsynchronousTotalTime.hashCode());
+        result = prime * result + ((maxAsynchronousTotalTime == null) ? 0 : maxAsynchronousTotalTime.hashCode());
         result = prime * result + maxComplexInputSize;
         result = prime * result + maxSynchronousExecutionTime;
-        result =
-                prime * result
-                        + ((maxSynchronousTotalTime == null)
-                                ? 0
-                                : maxSynchronousTotalTime.hashCode());
-        result =
-                prime * result
-                        + ((maxSynchronousProcesses == null)
-                                ? 0
-                                : maxSynchronousProcesses.hashCode());
+        result = prime * result + ((maxSynchronousTotalTime == null) ? 0 : maxSynchronousTotalTime.hashCode());
+        result = prime * result + ((maxSynchronousProcesses == null) ? 0 : maxSynchronousProcesses.hashCode());
         result = prime * result + ((processGroups == null) ? 0 : processGroups.hashCode());
-        result =
-                prime * result
-                        + ((resourceExpirationTimeout == null)
-                                ? 0
-                                : resourceExpirationTimeout.hashCode());
+        result = prime * result + ((resourceExpirationTimeout == null) ? 0 : resourceExpirationTimeout.hashCode());
         result = prime * result + ((storageDirectory == null) ? 0 : storageDirectory.hashCode());
         return result;
     }

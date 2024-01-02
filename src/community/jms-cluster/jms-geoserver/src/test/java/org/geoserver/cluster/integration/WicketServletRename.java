@@ -16,8 +16,7 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 public class WicketServletRename implements BeanFactoryPostProcessor {
 
     @Override
-    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory)
-            throws BeansException {
+    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
         beanFactory
                 .getBeanDefinition("wicket")
                 .getPropertyValues()

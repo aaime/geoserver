@@ -26,8 +26,7 @@ public interface RetypeFeatureTypeCallback {
      * @param featureType non NULL GeoTools data source feature type
      * @return retyped feature type or the unchanged provided feature type
      */
-    default FeatureType retypeFeatureType(
-            FeatureTypeInfo featureTypeInfo, FeatureType featureType) {
+    default FeatureType retypeFeatureType(FeatureTypeInfo featureTypeInfo, FeatureType featureType) {
         return featureType;
     }
 

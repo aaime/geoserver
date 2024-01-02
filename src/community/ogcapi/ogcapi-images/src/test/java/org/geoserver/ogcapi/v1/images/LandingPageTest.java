@@ -106,17 +106,14 @@ public class LandingPageTest extends ImagesTestSupport {
                 readSingle(
                         json,
                         "links[?(@.rel=='http://www.opengis.net/def/rel/ogc/1.0/data' && @.type=='application/json')].href"),
-                equalTo(
-                        "http://localhost:8080/geoserver/gs/ogc/images/v1/collections?f=application%2Fjson"));
+                equalTo("http://localhost:8080/geoserver/gs/ogc/images/v1/collections?f=application%2Fjson"));
     }
 
     void checkJSONLandingPage(DocumentContext json) {
         assertEquals(12, (int) json.read("links.length()", Integer.class));
         // check landing page links
         assertJSONList(
-                json,
-                "links[?(@.type == 'application/json' && @.href =~ /.*ogc\\/images\\/v1\\/\\?.*/)].rel",
-                "self");
+                json, "links[?(@.type == 'application/json' && @.href =~ /.*ogc\\/images\\/v1\\/\\?.*/)].rel", "self");
         assertJSONList(
                 json,
                 "links[?(@.type != 'application/json' && @.href =~ /.*ogc\\/images\\/v1\\/\\?.*/)].rel",

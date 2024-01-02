@@ -67,10 +67,7 @@ class AggregateOpFactory {
         try {
             return OpType.valueOf(agName);
         } catch (EnumConstantNotPresentException e) {
-            LOGGER.log(
-                    Level.SEVERE,
-                    "The aggregate type specified in the aggregate function was not recognized",
-                    e);
+            LOGGER.log(Level.SEVERE, "The aggregate type specified in the aggregate function was not recognized", e);
             throw new UnsupportedOperationException(
                     "The aggregate type specified in the aggregate function was not recognized");
         }

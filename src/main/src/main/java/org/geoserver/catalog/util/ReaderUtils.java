@@ -134,8 +134,7 @@ public class ReaderUtils {
      * @return The child element found, null if not found.
      * @throws Exception When a child element is required and not found.
      */
-    public static Element[] getChildElements(Element root, String name, boolean mandatory)
-            throws Exception {
+    public static Element[] getChildElements(Element root, String name, boolean mandatory) throws Exception {
         final List<Element> elements = new ArrayList<>();
         Node child = root.getFirstChild();
         while (child != null) {
@@ -149,8 +148,7 @@ public class ReaderUtils {
         }
 
         if (mandatory && (elements.isEmpty())) {
-            throw new Exception(
-                    root.getNodeName() + " does not contains a child element named " + name);
+            throw new Exception(root.getNodeName() + " does not contains a child element named " + name);
         }
 
         return elements.toArray(new Element[0]);
@@ -168,8 +166,7 @@ public class ReaderUtils {
      * @return The child element found, null if not found.
      * @throws Exception When a child element is required and not found.
      */
-    public static Element getChildElement(Element root, String name, boolean mandatory)
-            throws Exception {
+    public static Element getChildElement(Element root, String name, boolean mandatory) throws Exception {
         Node child = root.getFirstChild();
 
         while (child != null) {
@@ -183,8 +180,7 @@ public class ReaderUtils {
         }
 
         if (mandatory && (child == null)) {
-            throw new Exception(
-                    root.getNodeName() + " does not contains a child element named " + name);
+            throw new Exception(root.getNodeName() + " does not contains a child element named " + name);
         }
 
         return null;
@@ -225,8 +221,8 @@ public class ReaderUtils {
      * @return The int value if the attribute was found, the default otherwise.
      * @throws Exception When a attribute element is required and not found.
      */
-    public static int getIntAttribute(
-            Element elem, String attName, boolean mandatory, int defaultValue) throws Exception {
+    public static int getIntAttribute(Element elem, String attName, boolean mandatory, int defaultValue)
+            throws Exception {
         String attValue = getAttribute(elem, attName, mandatory);
 
         if (!mandatory && (attValue == null)) {
@@ -237,13 +233,12 @@ public class ReaderUtils {
             return Integer.parseInt(attValue);
         } catch (Exception ex) {
             if (mandatory) {
-                throw new Exception(
-                        attName
-                                + " attribute of element "
-                                + elem.getNodeName()
-                                + " must be an integer, but it's '"
-                                + attValue
-                                + "'");
+                throw new Exception(attName
+                        + " attribute of element "
+                        + elem.getNodeName()
+                        + " must be an integer, but it's '"
+                        + attValue
+                        + "'");
             } else {
                 return defaultValue;
             }
@@ -263,8 +258,7 @@ public class ReaderUtils {
      * @return The value if the attribute was found, the null otherwise.
      * @throws Exception When a child attribute is required and not found.
      */
-    public static String getAttribute(Element elem, String attName, boolean mandatory)
-            throws Exception {
+    public static String getAttribute(Element elem, String attName, boolean mandatory) throws Exception {
         if (elem == null) {
             if (mandatory) {
                 throw new NullPointerException();
@@ -284,13 +278,9 @@ public class ReaderUtils {
         if (mandatory) {
             if (att == null) {
                 throw new Exception(
-                        "element "
-                                + elem.getNodeName()
-                                + " does not contains an attribute named "
-                                + attName);
+                        "element " + elem.getNodeName() + " does not contains an attribute named " + attName);
             } else if ("".equals(value)) {
-                throw new Exception(
-                        "attribute " + attName + "in element " + elem.getNodeName() + " is empty");
+                throw new Exception("attribute " + attName + "in element " + elem.getNodeName() + " is empty");
             }
         }
 
@@ -311,8 +301,7 @@ public class ReaderUtils {
      * @return The value if the attribute was found, the false otherwise.
      * @throws Exception When a child attribute is required and not found.
      */
-    public static boolean getBooleanAttribute(
-            Element elem, String attName, boolean mandatory, boolean defaultValue)
+    public static boolean getBooleanAttribute(Element elem, String attName, boolean mandatory, boolean defaultValue)
             throws Exception {
         String value = getAttribute(elem, attName, mandatory);
 
@@ -353,8 +342,7 @@ public class ReaderUtils {
      * @return The value if the child was found, the null otherwise.
      * @throws Exception When a child attribute is required and not found.
      */
-    public static String getChildText(Element root, String childName, boolean mandatory)
-            throws Exception {
+    public static String getChildText(Element root, String childName, boolean mandatory) throws Exception {
         Element elem = getChildElement(root, childName, mandatory);
 
         if (elem != null) {
@@ -397,8 +385,8 @@ public class ReaderUtils {
      * @throws Exception If mandatory is set it to <code>true</code> and the child or attribute do
      *     not exist.
      */
-    public static String getChildAttribute(
-            Element root, String childName, String attName, boolean mandatory) throws Exception {
+    public static String getChildAttribute(Element root, String childName, String attName, boolean mandatory)
+            throws Exception {
         Element elem = getChildElement(root, childName);
         if (elem == null) {
             if (mandatory) {
@@ -445,7 +433,8 @@ public class ReaderUtils {
         String value = null;
 
         if (LOGGER.isLoggable(Level.FINER)) {
-            LOGGER.finer(new StringBuffer("getting element text for ").append(elem).toString());
+            LOGGER.finer(
+                    new StringBuffer("getting element text for ").append(elem).toString());
         }
 
         if (elem != null) {
@@ -541,8 +530,7 @@ public class ReaderUtils {
      * @return The double value if the attribute was found, the NaN otherwise.
      * @throws Exception When a attribute element is required and not found.
      */
-    public static double getDoubleAttribute(Element elem, String attName, boolean mandatory)
-            throws Exception {
+    public static double getDoubleAttribute(Element elem, String attName, boolean mandatory) throws Exception {
         String value = getAttribute(elem, attName, mandatory);
 
         if ((value == null) || ("".equals(value))) {
@@ -555,13 +543,12 @@ public class ReaderUtils {
             try {
                 d = Double.parseDouble(value);
             } catch (NumberFormatException ex) {
-                throw new ConfigurationException(
-                        "Illegal attribute value for "
-                                + attName
-                                + " in element "
-                                + elem.getNodeName()
-                                + ". Expected double, but was "
-                                + value);
+                throw new ConfigurationException("Illegal attribute value for "
+                        + attName
+                        + " in element "
+                        + elem.getNodeName()
+                        + ". Expected double, but was "
+                        + value);
             }
         }
 

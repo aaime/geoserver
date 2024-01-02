@@ -22,8 +22,7 @@ import org.geoserver.template.GeoServerTemplateLoader;
  *
  * @author Alessio Fabiani, GeoSolutions
  */
-public class ResourceInfoAdditionalResourceWriter
-        implements CatalogAdditionalResourcesWriter<ResourceInfo> {
+public class ResourceInfoAdditionalResourceWriter implements CatalogAdditionalResourcesWriter<ResourceInfo> {
 
     /*
      *
@@ -44,8 +43,7 @@ public class ResourceInfoAdditionalResourceWriter
         templates.add("height.ftl");
         templates.add("time.ftl");
         templates.add("shapezip.ftl");
-        templates.add(
-                "schema.xsd"); // http://docs.geoserver.org/latest/en/user/services/wfs/schemamapping.html
+        templates.add("schema.xsd"); // http://docs.geoserver.org/latest/en/user/services/wfs/schemamapping.html
     }
 
     @Override
@@ -54,8 +52,7 @@ public class ResourceInfoAdditionalResourceWriter
     }
 
     @Override
-    public void writeAdditionalResources(Backup backupFacade, Resource base, ResourceInfo item)
-            throws IOException {
+    public void writeAdditionalResources(Backup backupFacade, Resource base, ResourceInfo item) throws IOException {
 
         final Resource rootDataDir = backupFacade.getGeoServerDataDirectory().getRoot(Paths.BASE);
 
@@ -71,12 +68,11 @@ public class ResourceInfoAdditionalResourceWriter
                     Resource templateResource = Files.asResource((File) ftl);
 
                     if (Resources.exists(templateResource)) {
-                        final String relative =
-                                rootDataDir
-                                        .dir()
-                                        .toURI()
-                                        .relativize(templateResource.file().toURI())
-                                        .getPath();
+                        final String relative = rootDataDir
+                                .dir()
+                                .toURI()
+                                .relativize(templateResource.file().toURI())
+                                .getPath();
 
                         Resource targetFtl = Resources.fromPath(relative, base.parent());
 

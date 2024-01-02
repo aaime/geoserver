@@ -57,24 +57,17 @@ public final class ReprojectionAxisFlipTest extends AbstractAppSchemaTestSupport
     @Test
     public void testWfsGetFeatureWithBbox() throws Exception {
         if (isGeopkgTest()) return;
-        genericWfsGetFeatureWithBboxTest(
-                () ->
-                        getAsServletResponse(
-                                "wfs?service=WFS"
-                                        + "&version=2.0&request=GetFeature&typeName=st:Station&maxFeatures=1"
-                                        + "&outputFormat=gml32&srsName=urn:ogc:def:crs:EPSG::4052&bbox=3,-3,6,0"));
+        genericWfsGetFeatureWithBboxTest(() -> getAsServletResponse("wfs?service=WFS"
+                + "&version=2.0&request=GetFeature&typeName=st:Station&maxFeatures=1"
+                + "&outputFormat=gml32&srsName=urn:ogc:def:crs:EPSG::4052&bbox=3,-3,6,0"));
     }
 
     @Test
     public void testWfsGetFeatureWithBboxPost() throws Exception {
         if (isGeopkgTest()) return;
         // execute the WFS 2.0 request
-        genericWfsGetFeatureWithBboxTest(
-                () ->
-                        postAsServletResponse(
-                                "wfs",
-                                readResource(
-                                        "/test-data/stations/noDefaultGeometry/requests/wfs20_get_feature_1.xml")));
+        genericWfsGetFeatureWithBboxTest(() -> postAsServletResponse(
+                "wfs", readResource("/test-data/stations/noDefaultGeometry/requests/wfs20_get_feature_1.xml")));
     }
 
     /**

@@ -29,8 +29,7 @@ public class CompositeBuilder extends SourceBuilder {
     }
 
     @Override
-    public void evaluate(TemplateOutputWriter writer, TemplateBuilderContext context)
-            throws IOException {
+    public void evaluate(TemplateOutputWriter writer, TemplateBuilderContext context) throws IOException {
         addSkipObjectEncodingHint(context);
         context = evaluateSource(context);
         Object o = context.getCurrentObj();
@@ -46,8 +45,7 @@ public class CompositeBuilder extends SourceBuilder {
      * @param context the context to be passed to the children
      * @throws IOException
      */
-    protected void evaluateChildren(TemplateOutputWriter writer, TemplateBuilderContext context)
-            throws IOException {
+    protected void evaluateChildren(TemplateOutputWriter writer, TemplateBuilderContext context) throws IOException {
         if (ownOutput) writer.startObject(getKey(context), encodingHints);
         for (TemplateBuilder jb : children) {
             jb.evaluate(writer, context);
@@ -64,10 +62,9 @@ public class CompositeBuilder extends SourceBuilder {
      */
     @Override
     public boolean canWrite(TemplateBuilderContext context) {
-        List<TemplateBuilder> filtered =
-                children.stream()
-                        .filter(b -> b instanceof DynamicValueBuilder || b instanceof SourceBuilder)
-                        .collect(Collectors.toList());
+        List<TemplateBuilder> filtered = children.stream()
+                .filter(b -> b instanceof DynamicValueBuilder || b instanceof SourceBuilder)
+                .collect(Collectors.toList());
         if (filtered.size() == children.size()) {
             int falseCounter = 0;
             for (TemplateBuilder b : filtered) {

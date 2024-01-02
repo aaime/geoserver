@@ -23,14 +23,12 @@ import java.util.regex.Pattern;
  * return a reader that is aware of this charset and can correctly decode document's data.
  */
 public class XmlCharsetDetector {
-    protected static Logger LOGGER =
-            org.geotools.util.logging.Logging.getLogger("org.vfny.geoserver.requests");
+    protected static Logger LOGGER = org.geotools.util.logging.Logging.getLogger("org.vfny.geoserver.requests");
 
     /** In current context naming this "GT", "GREATER_THAN" or like would be misleading. */
     private static final char RIGHT_ANGLE_BRACKET = '\u003E';
 
-    private static final Pattern ENCODING_PATTERN =
-            Pattern.compile("encoding\\s*\\=\\s*\"([^\"]+)\"");
+    private static final Pattern ENCODING_PATTERN = Pattern.compile("encoding\\s*\\=\\s*\"([^\"]+)\"");
 
     /**
      * Maximum number of characters we are expecting in XML Declaration. There are probably will be
@@ -79,24 +77,23 @@ public class XmlCharsetDetector {
         if (LOGGER.isLoggable(Level.FINER)) {
             // Such number of concatenating strings makes me sick.
             // But using StringBuffer will make this uglier, not?
-            LOGGER.finer(
-                    "First 4 bytes of XML doc are : "
-                            + Integer.toHexString((int) b4[0] & 0xff).toUpperCase()
-                            + " ('"
-                            + (char) b4[0]
-                            + "') "
-                            + Integer.toHexString((int) b4[1] & 0xff).toUpperCase()
-                            + " ('"
-                            + (char) b4[1]
-                            + "') "
-                            + Integer.toHexString((int) b4[2] & 0xff).toUpperCase()
-                            + " ('"
-                            + (char) b4[2]
-                            + "') "
-                            + Integer.toHexString((int) b4[3] & 0xff).toUpperCase()
-                            + " ('"
-                            + (char) b4[3]
-                            + "')");
+            LOGGER.finer("First 4 bytes of XML doc are : "
+                    + Integer.toHexString((int) b4[0] & 0xff).toUpperCase()
+                    + " ('"
+                    + (char) b4[0]
+                    + "') "
+                    + Integer.toHexString((int) b4[1] & 0xff).toUpperCase()
+                    + " ('"
+                    + (char) b4[1]
+                    + "') "
+                    + Integer.toHexString((int) b4[2] & 0xff).toUpperCase()
+                    + " ('"
+                    + (char) b4[2]
+                    + "') "
+                    + Integer.toHexString((int) b4[3] & 0xff).toUpperCase()
+                    + " ('"
+                    + (char) b4[3]
+                    + "')");
         }
 
         /*
@@ -205,11 +202,7 @@ public class XmlCharsetDetector {
         String declEncoding = getXmlEncoding(reader);
 
         if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.fine(
-                    "Charset detection phase 2. Charset in XML declaration "
-                            + "is `"
-                            + declEncoding
-                            + "`.");
+            LOGGER.fine("Charset detection phase 2. Charset in XML declaration " + "is `" + declEncoding + "`.");
         }
 
         stream.reset();
@@ -234,11 +227,10 @@ public class XmlCharsetDetector {
              */
             if (!declEncoding.equals("ISO-10646-UCS-2")) {
                 if (LOGGER.isLoggable(Level.FINE)) {
-                    LOGGER.fine(
-                            "Declared charset differs from inferred one. "
-                                    + "Trying to construct InputStreamReader for `"
-                                    + declEncoding
-                                    + "`.");
+                    LOGGER.fine("Declared charset differs from inferred one. "
+                            + "Trying to construct InputStreamReader for `"
+                            + declEncoding
+                            + "`.");
                 }
 
                 reader = new InputStreamReader(stream, declEncoding);
@@ -256,8 +248,7 @@ public class XmlCharsetDetector {
      * @param istream See <code>getCharsetAwareReader(InputStream,
      *                              EncodingInfo)</code>.
      */
-    public static Reader getCharsetAwareReader(InputStream istream)
-            throws IOException, UnsupportedCharsetException {
+    public static Reader getCharsetAwareReader(InputStream istream) throws IOException, UnsupportedCharsetException {
         return getCharsetAwareReader(istream, new EncodingInfo());
     }
 
@@ -289,11 +280,7 @@ public class XmlCharsetDetector {
         }
 
         if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.fine(
-                    "Trying to create reader basing on existing charset "
-                            + "information: `"
-                            + encInfo
-                            + "`.");
+            LOGGER.fine("Trying to create reader basing on existing charset " + "information: `" + encInfo + "`.");
         }
 
         Reader reader = null;
@@ -479,9 +466,7 @@ public class XmlCharsetDetector {
              * megabytes of useless data :)
              */
             for (;
-                    (MAX_XMLDECL_SIZE > count)
-                            && (-1 != (c = reader.read()))
-                            && (RIGHT_ANGLE_BRACKET != (char) c);
+                    (MAX_XMLDECL_SIZE > count) && (-1 != (c = reader.read())) && (RIGHT_ANGLE_BRACKET != (char) c);
                     count++) {
                 sw.write(c);
             }
@@ -497,10 +482,9 @@ public class XmlCharsetDetector {
             }
         } catch (IOException e) {
             if (LOGGER.isLoggable(Level.WARNING)) {
-                LOGGER.warning(
-                        "Failed to extract charset info from XML "
-                                + "declaration due to IOException: "
-                                + e.getMessage());
+                LOGGER.warning("Failed to extract charset info from XML "
+                        + "declaration due to IOException: "
+                        + e.getMessage());
             }
 
             return null;

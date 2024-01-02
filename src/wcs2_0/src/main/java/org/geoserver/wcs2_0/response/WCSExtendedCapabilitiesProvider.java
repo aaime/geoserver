@@ -22,17 +22,13 @@ public abstract class WCSExtendedCapabilitiesProvider
 
     @Override
     public void encode(
-            org.geoserver.ExtendedCapabilitiesProvider.Translator tx,
-            WCSInfo wcs,
-            GetCapabilitiesRequest request)
+            org.geoserver.ExtendedCapabilitiesProvider.Translator tx, WCSInfo wcs, GetCapabilitiesRequest request)
             throws IOException {
         // nothing to do here
     }
 
     public abstract void encodeExtendedOperations(
-            org.geoserver.ExtendedCapabilitiesProvider.Translator tx,
-            WCSInfo wcs,
-            GetCapabilitiesType request)
+            org.geoserver.ExtendedCapabilitiesProvider.Translator tx, WCSInfo wcs, GetCapabilitiesType request)
             throws IOException;
 
     public abstract void encodeExtendedContents(

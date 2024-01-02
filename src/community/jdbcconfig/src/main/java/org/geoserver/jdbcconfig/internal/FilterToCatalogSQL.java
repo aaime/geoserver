@@ -158,8 +158,7 @@ public class FilterToCatalogSQL implements FilterVisitor, ExpressionVisitor {
         MatchAction matchAction = filter.getMatchAction();
         boolean matchingCase = filter.isMatchingCase();
 
-        if (!(filter.getExpression1() instanceof Literal)
-                && !(filter.getExpression2() instanceof Literal)) {
+        if (!(filter.getExpression1() instanceof Literal) && !(filter.getExpression2() instanceof Literal)) {
 
             // comparing two fields with each other
 
@@ -322,8 +321,7 @@ public class FilterToCatalogSQL implements FilterVisitor, ExpressionVisitor {
         final char single = filter.getSingleChar().charAt(0);
         final boolean matchCase = filter.isMatchingCase();
 
-        final String pattern =
-                LikeFilterImpl.convertToSQL92(esc, multi, single, matchCase, literal, false);
+        final String pattern = LikeFilterImpl.convertToSQL92(esc, multi, single, matchCase, literal, false);
 
         // respect match case
         String valueParam = newParam("value", pattern);
@@ -414,13 +412,8 @@ public class FilterToCatalogSQL implements FilterVisitor, ExpressionVisitor {
         // equivalent to not(propertyisequalto)
 
         FilterFactory ff = Predicates.factory;
-        Not not =
-                ff.not(
-                        ff.equal(
-                                filter.getExpression1(),
-                                filter.getExpression2(),
-                                filter.isMatchingCase(),
-                                filter.getMatchAction()));
+        Not not = ff.not(ff.equal(
+                filter.getExpression1(), filter.getExpression2(), filter.isMatchingCase(), filter.getMatchAction()));
         visit(not, extraData);
 
         return extraData;
@@ -479,8 +472,7 @@ public class FilterToCatalogSQL implements FilterVisitor, ExpressionVisitor {
     public Object visit(Not filter, Object extraData) {
         Filter child = filter.getFilter();
         // these filter types are already enclosed in parentheses
-        boolean extraParens =
-                !(child instanceof And || child instanceof Or || child instanceof PropertyIsNull);
+        boolean extraParens = !(child instanceof And || child instanceof Or || child instanceof PropertyIsNull);
         append(extraData, "NOT ", extraParens ? "(" : "");
         child.accept(this, extraData);
         return append(extraData, extraParens ? ")" : "");

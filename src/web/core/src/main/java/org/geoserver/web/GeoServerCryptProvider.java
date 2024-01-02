@@ -42,7 +42,8 @@ class GeoServerCryptProvider implements IProvider<ICrypt> {
             synchronized (this) {
                 if (theCrypt == null) {
                     GeoServerApplication application = GeoServerApplication.get();
-                    theCrypt = application.getSecuritySettings().getCryptFactory().newCrypt();
+                    theCrypt =
+                            application.getSecuritySettings().getCryptFactory().newCrypt();
                 }
             }
         }

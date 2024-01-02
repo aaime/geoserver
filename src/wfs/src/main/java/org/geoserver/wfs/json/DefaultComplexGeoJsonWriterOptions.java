@@ -27,20 +27,14 @@ public class DefaultComplexGeoJsonWriterOptions implements ComplexGeoJsonWriterO
 
     static {
         try {
-            NON_FEATURE_TYPE_PROXY =
-                    Class.forName("org.geotools.data.complex.config.NonFeatureTypeProxy");
+            NON_FEATURE_TYPE_PROXY = Class.forName("org.geotools.data.complex.config.NonFeatureTypeProxy");
         } catch (ClassNotFoundException e) {
             // might be ok if the app-schema datastore is not around
             if (StreamSupport.stream(
                             Spliterators.spliteratorUnknownSize(
                                     DataStoreFinder.getAllDataStores(), Spliterator.ORDERED),
                             false)
-                    .anyMatch(
-                            f ->
-                                    f != null
-                                            && f.getClass()
-                                                    .getSimpleName()
-                                                    .equals("AppSchemaDataAccessFactory"))) {
+                    .anyMatch(f -> f != null && f.getClass().getSimpleName().equals("AppSchemaDataAccessFactory"))) {
                 LOGGER.log(
                         Level.FINE,
                         "Could not find NonFeatureTypeProxy yet App-schema is around, probably the class changed name, package or does not exist anymore",

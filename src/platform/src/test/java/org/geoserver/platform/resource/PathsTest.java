@@ -43,9 +43,7 @@ public class PathsTest {
     public void isAbsolutePath() {
         assertFalse("data directory relative", Paths.isAbsolute("data/tasmania/roads.shp"));
         assertTrue("linux absolute", Paths.isAbsolute("/srv/gis/cadaster/district.geopkg", false));
-        assertTrue(
-                "windows drive absolute",
-                Paths.isAbsolute("D:/gis/cadaster/district.geopkg", true));
+        assertTrue("windows drive absolute", Paths.isAbsolute("D:/gis/cadaster/district.geopkg", true));
         assertFalse("windows drive relative", Paths.isAbsolute("D:fail.shp", true));
     }
 

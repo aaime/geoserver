@@ -151,23 +151,16 @@ public class GetCapabilitiesResponse extends BaseCapabilitiesResponse {
                 spf.setNamespaceAware(true); // xslt _needs_ namespace aware input source
                 SAXParser sp = spf.newSAXParser();
                 XMLReader rawCapsReader = sp.getXMLReader();
-                rawCapsReader.setEntityResolver(
-                        new EntityResolver() {
-                            @Override
-                            public InputSource resolveEntity(String publicId, String systemId)
-                                    throws SAXException {
-                                final String dtdLocation =
-                                        "/schemas/wms/1.1.1/WMS_MS_Capabilities.dtd";
-                                String dtdSystemId =
-                                        getClass().getResource(dtdLocation).toExternalForm();
-                                return new InputSource(dtdSystemId);
-                            }
-                        });
+                rawCapsReader.setEntityResolver(new EntityResolver() {
+                    @Override
+                    public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
+                        final String dtdLocation = "/schemas/wms/1.1.1/WMS_MS_Capabilities.dtd";
+                        String dtdSystemId = getClass().getResource(dtdLocation).toExternalForm();
+                        return new InputSource(dtdSystemId);
+                    }
+                });
 
-                source =
-                        new SAXSource(
-                                rawCapsReader,
-                                new InputSource(new ByteArrayInputStream(rawCapabilities)));
+                source = new SAXSource(rawCapsReader, new InputSource(new ByteArrayInputStream(rawCapabilities)));
             } catch (Exception e) {
                 throw new ServiceException(e);
             }
@@ -208,11 +201,9 @@ public class GetCapabilitiesResponse extends BaseCapabilitiesResponse {
     private String getInternalDTDDeclaration(final GetCapabilitiesRequest request) {
 
         // do we need to add internal DTD declarations?
-        List<ExtendedCapabilitiesProvider> providers =
-                wms.getAvailableExtendedCapabilitiesProviders();
+        List<ExtendedCapabilitiesProvider> providers = wms.getAvailableExtendedCapabilitiesProviders();
 
-        StringBuilder vendorSpecificCapsElements =
-                new StringBuilder("<!ELEMENT VendorSpecificCapabilities (");
+        StringBuilder vendorSpecificCapsElements = new StringBuilder("<!ELEMENT VendorSpecificCapabilities (");
         StringBuilder internalDTDElements = new StringBuilder();
 
         int numRoots = 0;
@@ -258,10 +249,8 @@ public class GetCapabilitiesResponse extends BaseCapabilitiesResponse {
         // check that we have a valid value (same check as the super method)
         if (value == null || !value.getClass().isAssignableFrom(super.getBinding())) {
             // this is not good (same error message as the super method)
-            String message =
-                    String.format(
-                            "%s/%s",
-                            value == null ? "null" : value.getClass().getName(), operation.getId());
+            String message = String.format(
+                    "%s/%s", value == null ? "null" : value.getClass().getName(), operation.getId());
             throw new IllegalArgumentException(message);
         }
         // search for the get capabilities object
@@ -291,7 +280,6 @@ public class GetCapabilitiesResponse extends BaseCapabilitiesResponse {
             }
         }
         // the requested format is not supported, throw an exception
-        throw new RuntimeException(
-                String.format("The request format '%s' is not supported.", format));
+        throw new RuntimeException(String.format("The request format '%s' is not supported.", format));
     }
 }

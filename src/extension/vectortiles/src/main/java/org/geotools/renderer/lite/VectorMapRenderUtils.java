@@ -65,8 +65,7 @@ public class VectorMapRenderUtils {
     public static Query getStyleQuery(Layer layer, WMSMapContent mapContent) throws IOException {
 
         final ReferencedEnvelope renderingArea = mapContent.getRenderingArea();
-        final Rectangle screenSize =
-                new Rectangle(mapContent.getMapWidth(), mapContent.getMapHeight());
+        final Rectangle screenSize = new Rectangle(mapContent.getMapWidth(), mapContent.getMapHeight());
         final double mapScale = getMapScale(mapContent, renderingArea);
 
         final int requestBufferScreen = mapContent.getBuffer();
@@ -75,8 +74,7 @@ public class VectorMapRenderUtils {
 
         FeatureSource<?, ?> featureSource = layer.getFeatureSource();
         FeatureType schema = featureSource.getSchema();
-        List<LiteFeatureTypeStyle> styleList =
-                getFeatureStyles(layer, screenSize, mapScale, schema);
+        List<LiteFeatureTypeStyle> styleList = getFeatureStyles(layer, screenSize, mapScale, schema);
 
         // if there aren't any styles to render, we don't need to get any data....
         if (styleList.isEmpty()) {
@@ -95,9 +93,8 @@ public class VectorMapRenderUtils {
 
         Query styleQuery;
         try {
-            styleQuery =
-                    VectorMapRenderUtils.getStyleQuery(
-                            featureSource, styleList, queryArea, screenSize, geometryDescriptor);
+            styleQuery = VectorMapRenderUtils.getStyleQuery(
+                    featureSource, styleList, queryArea, screenSize, geometryDescriptor);
         } catch (IllegalFilterException | FactoryException e) {
             throw new RuntimeException(e);
         }
@@ -111,22 +108,16 @@ public class VectorMapRenderUtils {
         return query;
     }
 
-    public static double getMapScale(
-            WMSMapContent mapContent, final ReferencedEnvelope renderingArea) {
+    public static double getMapScale(WMSMapContent mapContent, final ReferencedEnvelope renderingArea) {
         return RendererUtilities.calculateOGCScale(renderingArea, mapContent.getMapWidth(), null);
     }
 
-    public static int getComputedBuffer(
-            final int requestBufferScreen, List<LiteFeatureTypeStyle> styleList) {
+    public static int getComputedBuffer(final int requestBufferScreen, List<LiteFeatureTypeStyle> styleList) {
         final int bufferScreen;
         if (requestBufferScreen <= 0) {
             MetaBufferEstimator bufferEstimator = new MetaBufferEstimator();
             styleList.stream()
-                    .flatMap(
-                            fts ->
-                                    Stream.concat(
-                                            Arrays.stream(fts.elseRules),
-                                            Arrays.stream(fts.ruleList)))
+                    .flatMap(fts -> Stream.concat(Arrays.stream(fts.elseRules), Arrays.stream(fts.ruleList)))
                     .forEach(bufferEstimator::visit);
             bufferScreen = bufferEstimator.getBuffer();
         } else {
@@ -136,8 +127,7 @@ public class VectorMapRenderUtils {
     }
 
     public static List<LiteFeatureTypeStyle> getFeatureStyles(
-            Layer layer, final Rectangle screenSize, final double mapScale, FeatureType schema)
-            throws IOException {
+            Layer layer, final Rectangle screenSize, final double mapScale, FeatureType schema) throws IOException {
         Style style = layer.getStyle();
         List<FeatureTypeStyle> featureStyles = style.featureTypeStyles();
         List<LiteFeatureTypeStyle> styleList =
@@ -145,27 +135,21 @@ public class VectorMapRenderUtils {
         return styleList;
     }
 
-    protected static double[] getPixelSize(
-            final ReferencedEnvelope renderingArea, final Rectangle screenSize) {
+    protected static double[] getPixelSize(final ReferencedEnvelope renderingArea, final Rectangle screenSize) {
         double[] pixelSize;
         try {
-            pixelSize =
-                    Decimator.computeGeneralizationDistances(
-                            ProjectiveTransform.create(
-                                            RendererUtilities.worldToScreenTransform(
-                                                    renderingArea, screenSize))
-                                    .inverse(),
-                            screenSize,
-                            1.0);
+            pixelSize = Decimator.computeGeneralizationDistances(
+                    ProjectiveTransform.create(RendererUtilities.worldToScreenTransform(renderingArea, screenSize))
+                            .inverse(),
+                    screenSize,
+                    1.0);
         } catch (TransformException ex) {
             if (LOGGER.isLoggable(Level.WARNING)) {
                 LOGGER.log(Level.WARNING, "Error while computing pixel size", ex);
             }
-            pixelSize =
-                    new double[] {
-                        renderingArea.getWidth() / screenSize.getWidth(),
-                        renderingArea.getHeight() / screenSize.getHeight()
-                    };
+            pixelSize = new double[] {
+                renderingArea.getWidth() / screenSize.getWidth(), renderingArea.getHeight() / screenSize.getHeight()
+            };
         }
         return pixelSize;
     }
@@ -183,16 +167,12 @@ public class VectorMapRenderUtils {
         query.setProperties(Query.ALL_PROPERTIES);
 
         String geomName = geometryAttribute.getLocalName();
-        Filter filter =
-                reprojectSpatialFilter(
-                        queryArea.getCoordinateReferenceSystem(),
-                        schema,
-                        FF.bbox(FF.property(geomName), queryArea));
+        Filter filter = reprojectSpatialFilter(
+                queryArea.getCoordinateReferenceSystem(), schema, FF.bbox(FF.property(geomName), queryArea));
 
         query.setFilter(filter);
 
-        LiteFeatureTypeStyle[] styles =
-                styleList.toArray(new LiteFeatureTypeStyle[styleList.size()]);
+        LiteFeatureTypeStyle[] styles = styleList.toArray(new LiteFeatureTypeStyle[styleList.size()]);
 
         try {
             processRuleForQuery(styles, query);
@@ -249,8 +229,7 @@ public class VectorMapRenderUtils {
      *     transform if the the two crs are equal
      * @throws FactoryException If no transform is available to the destCRS
      */
-    public static MathTransform buildTransform(
-            CoordinateReferenceSystem sourceCRS, CoordinateReferenceSystem destCRS)
+    public static MathTransform buildTransform(CoordinateReferenceSystem sourceCRS, CoordinateReferenceSystem destCRS)
             throws FactoryException {
         Preconditions.checkNotNull(sourceCRS, "sourceCRS");
         Preconditions.checkNotNull(destCRS, "destCRS");
@@ -259,18 +238,14 @@ public class VectorMapRenderUtils {
         if (sourceCRS.getCoordinateSystem().getDimension() >= 3) {
             // We are going to transform over to DefaultGeographic.WGS84 on the fly
             // so we will set up our math transform to take it from there
-            MathTransform toWgs84_3d =
-                    CRS.findMathTransform(sourceCRS, DefaultGeographicCRS.WGS84_3D);
-            MathTransform toWgs84_2d =
-                    CRS.findMathTransform(
-                            DefaultGeographicCRS.WGS84_3D, DefaultGeographicCRS.WGS84);
+            MathTransform toWgs84_3d = CRS.findMathTransform(sourceCRS, DefaultGeographicCRS.WGS84_3D);
+            MathTransform toWgs84_2d = CRS.findMathTransform(DefaultGeographicCRS.WGS84_3D, DefaultGeographicCRS.WGS84);
             transform = ConcatenatedTransform.create(toWgs84_3d, toWgs84_2d);
             sourceCRS = DefaultGeographicCRS.WGS84;
         }
 
         // the basic crs transformation, if any
-        MathTransform2D sourceToTarget =
-                (MathTransform2D) CRS.findMathTransform(sourceCRS, destCRS, true);
+        MathTransform2D sourceToTarget = (MathTransform2D) CRS.findMathTransform(sourceCRS, destCRS, true);
 
         if (transform == null) {
             return sourceToTarget;
@@ -341,10 +316,7 @@ public class VectorMapRenderUtils {
             query.setFilter(ruleFiltersCombined);
         } catch (Exception e) {
             if (LOGGER.isLoggable(Level.WARNING)) {
-                LOGGER.log(
-                        Level.SEVERE,
-                        "Could not send rules to datastore due to: " + e.getMessage(),
-                        e);
+                LOGGER.log(Level.SEVERE, "Could not send rules to datastore due to: " + e.getMessage(), e);
             }
         }
     }
@@ -376,9 +348,7 @@ public class VectorMapRenderUtils {
                 // we can optimize this one and draw directly on the graphics, assuming
                 // there is no composition
                 Graphics2D graphics = null;
-                lfts =
-                        new LiteFeatureTypeStyle(
-                                layer, graphics, ruleList, elseRuleList, fts.getTransformation());
+                lfts = new LiteFeatureTypeStyle(layer, graphics, ruleList, elseRuleList, fts.getTransformation());
 
                 result.add(lfts);
             }
@@ -386,8 +356,7 @@ public class VectorMapRenderUtils {
         return result;
     }
 
-    private static List<Rule>[] splitRules(
-            final FeatureTypeStyle fts, final double scaleDenominator) {
+    private static List<Rule>[] splitRules(final FeatureTypeStyle fts, final double scaleDenominator) {
 
         List<Rule> ruleList = new ArrayList<>();
         List<Rule> elseRuleList = new ArrayList<>();

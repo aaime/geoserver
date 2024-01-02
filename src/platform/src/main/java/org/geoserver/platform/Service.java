@@ -62,8 +62,7 @@ public final class Service {
      * @param version The version of the service.
      * @param operations The list of operations the service provides
      */
-    public Service(
-            String id, String namespace, Object service, Version version, List<String> operations) {
+    public Service(String id, String namespace, Object service, Version version, List<String> operations) {
         this.id = id;
         this.service = service;
         this.version = version;

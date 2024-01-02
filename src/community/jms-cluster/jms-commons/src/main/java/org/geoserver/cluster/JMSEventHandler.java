@@ -26,8 +26,7 @@ import org.geotools.util.logging.Logging;
 public abstract class JMSEventHandler<S extends Serializable, O> {
     private static final long serialVersionUID = 8208466391619901813L;
 
-    protected static final java.util.logging.Logger LOGGER =
-            Logging.getLogger(JMSEventHandler.class);
+    protected static final java.util.logging.Logger LOGGER = Logging.getLogger(JMSEventHandler.class);
 
     private final Class<JMSEventHandlerSPI<S, O>> generatorClass;
 

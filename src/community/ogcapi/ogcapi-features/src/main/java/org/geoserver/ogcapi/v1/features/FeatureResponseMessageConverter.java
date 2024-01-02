@@ -27,8 +27,7 @@ import org.springframework.stereotype.Component;
  * the OGC Features API implementation.
  */
 @Component
-public class FeatureResponseMessageConverter
-        extends MessageConverterResponseAdapter<FeaturesResponse> {
+public class FeatureResponseMessageConverter extends MessageConverterResponseAdapter<FeaturesResponse> {
 
     static final Logger LOGGER = Logging.getLogger(FeatureResponseMessageConverter.class);
     private static final Version V2 = new Version("2.0");
@@ -41,10 +40,7 @@ public class FeatureResponseMessageConverter
 
     @Override
     protected void writeResponse(
-            FeaturesResponse value,
-            HttpOutputMessage httpOutputMessage,
-            Operation operation,
-            Response response)
+            FeaturesResponse value, HttpOutputMessage httpOutputMessage, Operation operation, Response response)
             throws IOException {
         setHeaders(value.getResponse(), operation, response, httpOutputMessage);
         response.write(value.getResponse(), httpOutputMessage.getBody(), operation);
@@ -53,14 +49,11 @@ public class FeatureResponseMessageConverter
     @Override
     protected Operation getOperation(FeaturesResponse result, Request dr, MediaType mediaType) {
         Operation op = dr.getOperation();
-        return new Operation(
-                "GetFeature", op.getService(), op.getMethod(), new Object[] {result.getRequest()});
+        return new Operation("GetFeature", op.getService(), op.getMethod(), new Object[] {result.getRequest()});
     }
 
     @Override
     protected Predicate<Response> getResponseFilterPredicate() {
-        return r ->
-                r instanceof WFSGetFeatureOutputFormat
-                        && ((WFSGetFeatureOutputFormat) r).canHandle(V2);
+        return r -> r instanceof WFSGetFeatureOutputFormat && ((WFSGetFeatureOutputFormat) r).canHandle(V2);
     }
 }

@@ -95,12 +95,10 @@ public final class IntegrationTest {
     @Before
     public void resetInstances() {
         // disable JMS before equalizing the instances configuration and catalog
-        Arrays.stream(INSTANCES)
-                .forEach(
-                        instance -> {
-                            instance.disableJmsMaster();
-                            instance.disableJmsSlave();
-                        });
+        Arrays.stream(INSTANCES).forEach(instance -> {
+            instance.disableJmsMaster();
+            instance.disableJmsSlave();
+        });
         // equalize the configuration and the catalog
         equalizeInstances(INSTANCES);
         // reset JMS configuration and events count
@@ -333,8 +331,7 @@ public final class IntegrationTest {
         // going through wkt as otherwise the equality between in memory and deserialized will fail
         CoordinateReferenceSystem crs = CRS.decode("EPSG:4326", true);
         String wkt = crs.toWKT();
-        ReferencedEnvelope envelope =
-                new ReferencedEnvelope(-1.0, 1.0, -2.0, 2.0, CRS.parseWKT(wkt));
+        ReferencedEnvelope envelope = new ReferencedEnvelope(-1.0, 1.0, -2.0, 2.0, CRS.parseWKT(wkt));
         AttributionInfo attribution = new AttributionInfoImpl();
         attribution.setTitle("attribution-Title");
         attribution.setHref("attribution-Href");
@@ -420,10 +417,8 @@ public final class IntegrationTest {
         coverage.setAdvertised(false);
         coverage.setNativeCoverageName("coverage-NativeCoverageName");
         coverage.setProjectionPolicy(ProjectionPolicy.FORCE_DECLARED);
-        coverage.setGrid(
-                new GridGeometry2D(
-                        new GeneralGridEnvelope(new int[] {0, 0}, new int[] {100, 100}),
-                        new ReferencedEnvelope(envelope)));
+        coverage.setGrid(new GridGeometry2D(
+                new GeneralGridEnvelope(new int[] {0, 0}, new int[] {100, 100}), new ReferencedEnvelope(envelope)));
         catalog.add(coverage);
         // add style info and style file
         copyStyle(instance, "/test_style.sld", "test_style.sld");
@@ -495,8 +490,7 @@ public final class IntegrationTest {
         // change feature type
         FeatureTypeInfo featureType = catalog.getFeatureTypeByName("featureType-Name");
         featureType.setDescription("featureType-Description-modified");
-        featureType.setNativeBoundingBox(
-                new ReferencedEnvelope(-180, -90, 180, 90, DefaultGeographicCRS.WGS84));
+        featureType.setNativeBoundingBox(new ReferencedEnvelope(-180, -90, 180, 90, DefaultGeographicCRS.WGS84));
         GrowableInternationalString title = new GrowableInternationalString("This is a test");
         title.add(Locale.ITALIAN, "Questo è un test");
         featureType.setInternationalTitle(title);
@@ -569,8 +563,7 @@ public final class IntegrationTest {
 
     /** Helper method that copies a style file to the provided GeoServer instance. */
     private void copyStyle(GeoServerInstance instance, String resource, String fileName) {
-        Resource styleResource =
-                instance.getDataDirectory().get("styles" + File.separator + fileName);
+        Resource styleResource = instance.getDataDirectory().get("styles" + File.separator + fileName);
         try (OutputStream output = styleResource.out();
                 InputStream input = this.getClass().getResourceAsStream(resource)) {
             IOUtils.copy(input, output);

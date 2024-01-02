@@ -28,8 +28,7 @@ public class FlatteningFeatureCollection extends DecoratingSimpleFeatureCollecti
 
     private SimpleFeatureType flattenedType;
 
-    private FlatteningFeatureCollection(
-            SimpleFeatureCollection delegate, SimpleFeatureType flattenedType) {
+    private FlatteningFeatureCollection(SimpleFeatureCollection delegate, SimpleFeatureType flattenedType) {
         super(delegate);
         this.flattenedType = flattenedType;
     }
@@ -72,9 +71,7 @@ public class FlatteningFeatureCollection extends DecoratingSimpleFeatureCollecti
      * @param attrAlias An alias for adding as a prefix to the simple attribute names
      */
     private static void scanAttributeDescriptors(
-            List<AttributeDescriptor> attributeDescriptors,
-            SimpleFeatureType featureType,
-            String attrAlias) {
+            List<AttributeDescriptor> attributeDescriptors, SimpleFeatureType featureType, String attrAlias) {
         List<AttributeDescriptor> descriptors = featureType.getAttributeDescriptors();
         for (AttributeDescriptor ad : descriptors) {
             SimpleFeatureType joinedSchema =
@@ -110,8 +107,7 @@ public class FlatteningFeatureCollection extends DecoratingSimpleFeatureCollecti
 
         private SimpleFeatureBuilder builder;
 
-        public FlatteningFeatureIterator(
-                SimpleFeatureIterator delegate, SimpleFeatureType flattenedType) {
+        public FlatteningFeatureIterator(SimpleFeatureIterator delegate, SimpleFeatureType flattenedType) {
             this.delegate = delegate;
             this.builder = new SimpleFeatureBuilder(flattenedType);
         }

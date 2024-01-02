@@ -40,8 +40,8 @@ public class GeoServerSession extends WebSession {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null
                 && auth.getAuthorities().size() == 1
-                && "ROLE_ANONYMOUS".equals(auth.getAuthorities().iterator().next().getAuthority()))
-            return null;
+                && "ROLE_ANONYMOUS"
+                        .equals(auth.getAuthorities().iterator().next().getAuthority())) return null;
 
         return auth;
     }
@@ -66,9 +66,7 @@ public class GeoServerSession extends WebSession {
      */
     public boolean isAdmin() {
         Authentication auth = getAuthentication();
-        if (auth == null
-                || !auth.isAuthenticated()
-                || auth instanceof AnonymousAuthenticationToken) {
+        if (auth == null || !auth.isAuthenticated() || auth instanceof AnonymousAuthenticationToken) {
             return false;
         } else {
             GeoServerSecurityManager securityManager =

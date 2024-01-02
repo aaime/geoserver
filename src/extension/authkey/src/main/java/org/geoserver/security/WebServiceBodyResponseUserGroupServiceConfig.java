@@ -20,8 +20,7 @@ public class WebServiceBodyResponseUserGroupServiceConfig extends BaseSecurityNa
 
     public WebServiceBodyResponseUserGroupServiceConfig() {}
 
-    public WebServiceBodyResponseUserGroupServiceConfig(
-            WebServiceBodyResponseUserGroupServiceConfig other) {
+    public WebServiceBodyResponseUserGroupServiceConfig(WebServiceBodyResponseUserGroupServiceConfig other) {
         super(other);
     }
 

@@ -29,8 +29,7 @@ public class ToggleSwitch implements ApplicationContextAware {
         this.toggleType = toggleType;
     }
 
-    public ToggleSwitch(
-            final ApplicationContext ctx, final Boolean status, final ToggleType toggleType) {
+    public ToggleSwitch(final ApplicationContext ctx, final Boolean status, final ToggleType toggleType) {
         super();
         this.ctx = ctx;
         this.status = status;

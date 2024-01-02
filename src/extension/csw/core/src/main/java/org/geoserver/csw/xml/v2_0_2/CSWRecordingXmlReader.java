@@ -27,10 +27,7 @@ public class CSWRecordingXmlReader extends CSWXmlReader implements DispatcherCal
     public static final ThreadLocal<String> RECORDED_REQUEST = new ThreadLocal<>();
 
     public CSWRecordingXmlReader(
-            String element,
-            String version,
-            CSWConfiguration configuration,
-            EntityResolverProvider resolverProvider) {
+            String element, String version, CSWConfiguration configuration, EntityResolverProvider resolverProvider) {
         super(element, version, configuration, resolverProvider);
     }
 
@@ -62,8 +59,7 @@ public class CSWRecordingXmlReader extends CSWXmlReader implements DispatcherCal
     }
 
     @Override
-    public Response responseDispatched(
-            Request request, Operation operation, Object result, Response response) {
+    public Response responseDispatched(Request request, Operation operation, Object result, Response response) {
         return response;
     }
 

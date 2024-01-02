@@ -26,8 +26,7 @@ import org.geoserver.util.IOUtils;
  *
  * @author Andrea Aime - GeoSolutions
  */
-public abstract class AbstractCommandLinePreTransform extends AbstractCommandLineTransform
-        implements PreTransform {
+public abstract class AbstractCommandLinePreTransform extends AbstractCommandLineTransform implements PreTransform {
 
     public AbstractCommandLinePreTransform(List<String> options) {
         super(options);
@@ -114,8 +113,7 @@ public abstract class AbstractCommandLinePreTransform extends AbstractCommandLin
                 return false;
             }
         } catch (Exception e) {
-            LOGGER.log(
-                    Level.SEVERE, "Failure to locate executable for class " + this.getClass(), e);
+            LOGGER.log(Level.SEVERE, "Failure to locate executable for class " + this.getClass(), e);
             return false;
         }
 
@@ -210,7 +208,6 @@ public abstract class AbstractCommandLinePreTransform extends AbstractCommandLin
             }
         }
         throw new IOException(
-                "Could not locate executable (or could locate, but does not have execution rights): "
-                        + name);
+                "Could not locate executable (or could locate, but does not have execution rights): " + name);
     }
 }

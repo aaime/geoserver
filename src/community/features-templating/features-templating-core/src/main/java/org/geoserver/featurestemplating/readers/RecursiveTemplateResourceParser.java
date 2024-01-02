@@ -30,8 +30,7 @@ public class RecursiveTemplateResourceParser {
     protected static final int MAX_RECURSION_DEPTH =
             Integer.parseInt(System.getProperty("GEOSERVER_FT_MAX_DEPTH", "50"));
 
-    public RecursiveTemplateResourceParser(
-            Resource resource, RecursiveTemplateResourceParser parent) {
+    public RecursiveTemplateResourceParser(Resource resource, RecursiveTemplateResourceParser parent) {
         this.resource = resource;
         validateResource(resource);
         this.parent = parent;
@@ -100,10 +99,7 @@ public class RecursiveTemplateResourceParser {
         int depth = getDepth();
         if (depth > MAX_RECURSION_DEPTH)
             throw new RuntimeException(
-                    "Went beyond maximum expansion depth ("
-                            + depth
-                            + "), chain is: "
-                            + getExpansionChain());
+                    "Went beyond maximum expansion depth (" + depth + "), chain is: " + getExpansionChain());
     }
 
     private void addFileWatcher(Resource resource) {

@@ -23,8 +23,7 @@ import org.junit.Test;
 public abstract class SecuredResourceInfoTest<D extends ResourceInfo, S extends ResourceInfo>
         extends GeoServerSystemTestSupport {
 
-    protected final WrapperPolicy policy =
-            WrapperPolicy.readOnlyHide(new AccessLimits(CatalogMode.HIDE));
+    protected final WrapperPolicy policy = WrapperPolicy.readOnlyHide(new AccessLimits(CatalogMode.HIDE));
 
     /**
      * Creates an instance of a non-secure wrapped ResourceInfo.
@@ -92,12 +91,11 @@ public abstract class SecuredResourceInfoTest<D extends ResourceInfo, S extends 
         // If the info is secured, and the copy causes nested Secure wrappings of the data or its
         // attributes, this will
         // eventually throw a StackOverflowError.
-        final Runnable runnable =
-                () -> {
-                    for (int i = 0; i < getStackOverflowCount(); ++i) {
-                        target.setStore(source.getStore());
-                    }
-                };
+        final Runnable runnable = () -> {
+            for (int i = 0; i < getStackOverflowCount(); ++i) {
+                target.setStore(source.getStore());
+            }
+        };
         // use a very small stack size so the stack overflow happens quickly if it's going to
         // happen.
         // this may not fail on all platforms if set/get is broken however, as some platforms may
@@ -111,9 +109,7 @@ public abstract class SecuredResourceInfoTest<D extends ResourceInfo, S extends 
         final D delegate = createDelegate();
         // secure it
         Object secure = SecuredObjects.secure(delegate, policy);
-        assertTrue(
-                "Unable to secure ResourceInfo",
-                getSecuredDecoratorClass().isAssignableFrom(secure.getClass()));
+        assertTrue("Unable to secure ResourceInfo", getSecuredDecoratorClass().isAssignableFrom(secure.getClass()));
     }
 
     @Test
@@ -151,11 +147,10 @@ public abstract class SecuredResourceInfoTest<D extends ResourceInfo, S extends 
         Thread roundTripThread = getRoundTripThread(secured, secured);
         // catch Errors
         final StringWriter sw = new StringWriter();
-        roundTripThread.setUncaughtExceptionHandler(
-                (t, e) -> {
-                    // print the stack to the StringWriter
-                    e.printStackTrace(new PrintWriter(sw, true));
-                });
+        roundTripThread.setUncaughtExceptionHandler((t, e) -> {
+            // print the stack to the StringWriter
+            e.printStackTrace(new PrintWriter(sw, true));
+        });
         // start the thread and wait for it to finish
         roundTripThread.start();
         roundTripThread.join();

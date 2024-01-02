@@ -54,10 +54,9 @@ public class GeoserverWKTOperationFactory extends CoordinateOperationFactoryUsin
                     LOGGER.log(Level.SEVERE, "Had troubles converting file name to URL");
                 }
             } else {
-                LOGGER.info(
-                        definition.path()
-                                + " was not found, using the default set of "
-                                + "coordinate operation overrides (normally empty)");
+                LOGGER.info(definition.path()
+                        + " was not found, using the default set of "
+                        + "coordinate operation overrides (normally empty)");
             }
         }
         return GeoserverOverridingWKTFactory.class.getResource(FILENAME);

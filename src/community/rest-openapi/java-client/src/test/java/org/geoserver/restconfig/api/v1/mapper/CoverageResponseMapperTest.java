@@ -28,20 +28,17 @@ public class CoverageResponseMapperTest extends SerializationTest {
 
     public @Test void testMapCoverageResponseMapperToCoverageInfo() throws IOException {
 
-        final CoverageInfo expected =
-                super.decode("CoverageInfo.json", CoverageInfo.class, CoverageInfo.class);
+        final CoverageInfo expected = super.decode("CoverageInfo.json", CoverageInfo.class, CoverageInfo.class);
 
         final CoverageResponseWrapper responseWrapper =
-                super.decode(
-                        "CoverageResponse.json", CoverageInfo.class, CoverageResponseWrapper.class);
+                super.decode("CoverageResponse.json", CoverageInfo.class, CoverageResponseWrapper.class);
         final CoverageResponse response = responseWrapper.getCoverage();
         CoverageInfo mapped = mapper.map(response);
 
         assertEquals(expected.getAbstract(), mapped.getAbstract());
         assertEquals(expected.getAdvertised(), mapped.getAdvertised());
         assertEquals(expected.getAlias(), mapped.getAlias());
-        assertEquals(
-                expected.getDefaultInterpolationMethod(), mapped.getDefaultInterpolationMethod());
+        assertEquals(expected.getDefaultInterpolationMethod(), mapped.getDefaultInterpolationMethod());
 
         // TODO
         // assertEquals(expected.getDataLinks(), mapped.getDataLinks());
@@ -80,11 +77,10 @@ public class CoverageResponseMapperTest extends SerializationTest {
 
     public @Test void testMapCoverageResponseMapperToCoverageInfo_Infinity() throws IOException {
 
-        final CoverageResponseWrapper responseWrapper =
-                super.decode(
-                        "CoverageResponse_GridSampleDimension_Infinity.json",
-                        CoverageInfo.class,
-                        CoverageResponseWrapper.class);
+        final CoverageResponseWrapper responseWrapper = super.decode(
+                "CoverageResponse_GridSampleDimension_Infinity.json",
+                CoverageInfo.class,
+                CoverageResponseWrapper.class);
         final CoverageResponse response = responseWrapper.getCoverage();
 
         CoverageInfo mapped = mapper.map(response);
@@ -107,13 +103,11 @@ public class CoverageResponseMapperTest extends SerializationTest {
      *
      * @throws IOException
      */
-    public @Test void testMapCoverageResponseMapperToCoverageInfo_NativeCoverageNameAsParameter()
-            throws IOException {
-        CoverageResponseWrapper crw =
-                super.decode(
-                        "CoverageResponse_NativeCoverageNameAsParameter.json",
-                        CoverageInfo.class,
-                        CoverageResponseWrapper.class);
+    public @Test void testMapCoverageResponseMapperToCoverageInfo_NativeCoverageNameAsParameter() throws IOException {
+        CoverageResponseWrapper crw = super.decode(
+                "CoverageResponse_NativeCoverageNameAsParameter.json",
+                CoverageInfo.class,
+                CoverageResponseWrapper.class);
         assertNotNull(crw);
         CoverageResponse response = crw.getCoverage();
         assertNotNull(response);

@@ -47,8 +47,7 @@ class DGGSGeometryFilterParser {
         this.dggs = dggs;
     }
 
-    public DGGSGeometryFilterParser(
-            FilterFactory ff, DGGSInstance dggs, Class<? extends Geometry> geometryType) {
+    public DGGSGeometryFilterParser(FilterFactory ff, DGGSInstance dggs, Class<? extends Geometry> geometryType) {
         this.ff = ff;
         this.dggs = dggs;
         this.geometryType = geometryType;
@@ -77,9 +76,7 @@ class DGGSGeometryFilterParser {
 
             if (!geometryType.isInstance(geometry)) {
                 throw new IllegalArgumentException(
-                        "The geom parameter accepts only "
-                                + geometryType.getSimpleName()
-                                + " specifications");
+                        "The geom parameter accepts only " + geometryType.getSimpleName() + " specifications");
             }
             this.filter = ff.intersects(ff.property(""), ff.literal(geometry));
         }
@@ -106,11 +103,9 @@ class DGGSGeometryFilterParser {
             Iterator<Zone> zoneIterator =
                     Arrays.stream(identifiers).map(id -> dggs.getZone(id)).iterator();
             this.filter = DGGSFilterTransformer.getFilterFrom(dggs, zoneIterator, resolution);
-            this.geometry =
-                    CascadedPolygonUnion.union(
-                            Arrays.stream(identifiers)
-                                    .map(id -> dggs.getZone(id).getBoundary())
-                                    .collect(Collectors.toList()));
+            this.geometry = CascadedPolygonUnion.union(Arrays.stream(identifiers)
+                    .map(id -> dggs.getZone(id).getBoundary())
+                    .collect(Collectors.toList()));
         }
     }
 

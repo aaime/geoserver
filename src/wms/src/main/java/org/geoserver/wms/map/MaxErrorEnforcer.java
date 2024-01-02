@@ -34,21 +34,20 @@ public class MaxErrorEnforcer {
         this.errors = 0;
 
         if (maxErrors > 0) {
-            renderer.addRenderListener(
-                    new RenderListener() {
+            renderer.addRenderListener(new RenderListener() {
 
-                        @Override
-                        public void featureRenderer(SimpleFeature feature) {}
+                @Override
+                public void featureRenderer(SimpleFeature feature) {}
 
-                        @Override
-                        public void errorOccurred(Exception e) {
-                            errors++;
-                            lastException = e;
-                            if (errors > MaxErrorEnforcer.this.maxErrors) {
-                                MaxErrorEnforcer.this.renderer.stopRendering();
-                            }
-                        }
-                    });
+                @Override
+                public void errorOccurred(Exception e) {
+                    errors++;
+                    lastException = e;
+                    if (errors > MaxErrorEnforcer.this.maxErrors) {
+                        MaxErrorEnforcer.this.renderer.stopRendering();
+                    }
+                }
+            });
         }
     }
 

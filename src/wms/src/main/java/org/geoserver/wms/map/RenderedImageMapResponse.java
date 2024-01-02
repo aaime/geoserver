@@ -83,8 +83,7 @@ public abstract class RenderedImageMapResponse extends AbstractMapResponse {
      * @param image The image to be formatted.
      * @param outStream The stream to write to.
      */
-    public abstract void formatImageOutputStream(
-            RenderedImage image, OutputStream outStream, WMSMapContent mapContent)
+    public abstract void formatImageOutputStream(RenderedImage image, OutputStream outStream, WMSMapContent mapContent)
             throws ServiceException, IOException;
 
     /**
@@ -95,8 +94,7 @@ public abstract class RenderedImageMapResponse extends AbstractMapResponse {
      * @see #formatImageOutputStream(RenderedImage, OutputStream, WMSMapContent)
      */
     @Override
-    public final void write(
-            final Object value, final OutputStream output, final Operation operation)
+    public final void write(final Object value, final OutputStream output, final Operation operation)
             throws IOException, ServiceException {
 
         Assert.isInstanceOf(RenderedImageMap.class, value);
@@ -142,14 +140,10 @@ public abstract class RenderedImageMapResponse extends AbstractMapResponse {
             boolean supportsTranslucency) {
         // check to see if we have to see a translucent or bitmask quantizer
         GetMapRequest request = mapContent.getRequest();
-        QuantizeMethod method =
-                (QuantizeMethod) request.getFormatOptions().get(PaletteManager.QUANTIZER);
-        boolean useBitmaskQuantizer =
-                method == QuantizeMethod.Octree
-                        || !supportsTranslucency
-                        || (method == null
-                                && image.getColorModel().getTransparency()
-                                        != Transparency.TRANSLUCENT);
+        QuantizeMethod method = (QuantizeMethod) request.getFormatOptions().get(PaletteManager.QUANTIZER);
+        boolean useBitmaskQuantizer = method == QuantizeMethod.Octree
+                || !supportsTranslucency
+                || (method == null && image.getColorModel().getTransparency() != Transparency.TRANSLUCENT);
 
         // format: split on ';' to handle subtypes like 'image/gif;subtype=animated'
         final String format = request.getFormat().split(";")[0];
@@ -167,11 +161,10 @@ public abstract class RenderedImageMapResponse extends AbstractMapResponse {
             if (!(image.getColorModel() instanceof IndexColorModel)
                     && (mapContent.getPalette() != null || palettedFormatCheck.apply(format))) {
                 // try to force a RGBA setup
-                image =
-                        new ImageWorker(image)
-                                .rescaleToBytes()
-                                .forceComponentColorModel()
-                                .getRenderedImage();
+                image = new ImageWorker(image)
+                        .rescaleToBytes()
+                        .forceComponentColorModel()
+                        .getRenderedImage();
                 ColorIndexer indexer = null;
 
                 // user provided palette?
@@ -203,20 +196,13 @@ public abstract class RenderedImageMapResponse extends AbstractMapResponse {
      * @param supportsTranslucency If false the code will always apply the bitmask transformer
      */
     protected RenderedImage applyPalette(
-            RenderedImage image,
-            WMSMapContent mapContent,
-            String palettedFormatName,
-            boolean supportsTranslucency) {
+            RenderedImage image, WMSMapContent mapContent, String palettedFormatName, boolean supportsTranslucency) {
         return applyPalette(
-                image,
-                mapContent,
-                format -> (palettedFormatName.equalsIgnoreCase(format)),
-                supportsTranslucency);
+                image, mapContent, format -> (palettedFormatName.equalsIgnoreCase(format)), supportsTranslucency);
     }
 
     /** @param originalImage */
-    protected RenderedImage forceIndexed8Bitmask(
-            RenderedImage originalImage, InverseColorMapOp paletteInverter) {
+    protected RenderedImage forceIndexed8Bitmask(RenderedImage originalImage, InverseColorMapOp paletteInverter) {
         return ImageUtils.forceIndexed8Bitmask(originalImage, paletteInverter);
     }
 

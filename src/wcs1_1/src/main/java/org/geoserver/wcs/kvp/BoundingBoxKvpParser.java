@@ -88,8 +88,7 @@ public class BoundingBoxKvpParser extends KvpParser {
                                 "BoundingBox");
                 }
             } catch (Exception e) {
-                throw new WcsException(
-                        "Could not recognize crs " + crsName, InvalidParameterValue, "BoundingBox");
+                throw new WcsException("Could not recognize crs " + crsName, InvalidParameterValue, "BoundingBox");
             }
         }
 

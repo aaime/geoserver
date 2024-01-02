@@ -51,8 +51,7 @@ public class DGGSFeatureCollection implements SimpleFeatureCollection {
     private final DGGSInstance dggs;
     private final SimpleFeatureCollection delegate;
 
-    public DGGSFeatureCollection(
-            SimpleFeatureCollection delegate, SimpleFeatureType schema, DGGSInstance dggs) {
+    public DGGSFeatureCollection(SimpleFeatureCollection delegate, SimpleFeatureType schema, DGGSInstance dggs) {
         this.delegate = delegate;
         this.schema = schema;
         this.dggs = dggs;
@@ -161,9 +160,7 @@ public class DGGSFeatureCollection implements SimpleFeatureCollection {
         if (array.length < size) {
             @SuppressWarnings("unchecked")
             O[] grown =
-                    (O[])
-                            java.lang.reflect.Array.newInstance(
-                                    array.getClass().getComponentType(), size);
+                    (O[]) java.lang.reflect.Array.newInstance(array.getClass().getComponentType(), size);
             array = grown;
         }
         try (FeatureIterator<SimpleFeature> it = features()) {

@@ -19,8 +19,7 @@ import org.geoserver.security.impl.ReadOnlyUGService;
  */
 public class ReadOnlyUserGroupServicePanel extends MemoryUserGroupServicePanel {
 
-    public ReadOnlyUserGroupServicePanel(
-            String id, IModel<MemoryUserGroupServiceConfigImpl> model) {
+    public ReadOnlyUserGroupServicePanel(String id, IModel<MemoryUserGroupServiceConfigImpl> model) {
         super(id, model);
     }
 }

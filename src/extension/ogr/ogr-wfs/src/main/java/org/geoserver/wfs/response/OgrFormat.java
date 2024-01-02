@@ -48,14 +48,7 @@ public class OgrFormat extends Format {
             boolean singleFile,
             String mimeType,
             String... options) {
-        this(
-                toolFormat,
-                formatName,
-                fileExtension,
-                singleFile,
-                mimeType,
-                OutputType.BINARY,
-                options);
+        this(toolFormat, formatName, fileExtension, singleFile, mimeType, OutputType.BINARY, options);
     }
 
     /** The -f parameter */

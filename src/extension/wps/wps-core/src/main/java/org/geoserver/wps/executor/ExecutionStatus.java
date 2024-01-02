@@ -48,8 +48,7 @@ public class ExecutionStatus implements Serializable, Comparable<ExecutionStatus
         try {
             InetAddress candidateAddress = null;
             // Iterate all NICs (network interface cards)...
-            for (Enumeration interfaces = NetworkInterface.getNetworkInterfaces();
-                    interfaces.hasMoreElements(); ) {
+            for (Enumeration interfaces = NetworkInterface.getNetworkInterfaces(); interfaces.hasMoreElements(); ) {
                 NetworkInterface ni = (NetworkInterface) interfaces.nextElement();
                 if (ni.getName() != null && ni.getName().startsWith("vmnet")) {
                     // skipping vmware interfaces
@@ -74,13 +73,11 @@ public class ExecutionStatus implements Serializable, Comparable<ExecutionStatus
             // Fall back to whatever localhost provides
             InetAddress jdkSuppliedAddress = InetAddress.getLocalHost();
             if (jdkSuppliedAddress == null) {
-                throw new UnknownHostException(
-                        "The JDK InetAddress.getLocalHost() method unexpectedly returned null.");
+                throw new UnknownHostException("The JDK InetAddress.getLocalHost() method unexpectedly returned null.");
             }
             return jdkSuppliedAddress;
         } catch (Exception e) {
-            UnknownHostException unknownHostException =
-                    new UnknownHostException("Failed to determine LAN address");
+            UnknownHostException unknownHostException = new UnknownHostException("Failed to determine LAN address");
             unknownHostException.initCause(e);
             throw unknownHostException;
         }
@@ -363,9 +360,7 @@ public class ExecutionStatus implements Serializable, Comparable<ExecutionStatus
         result = prime * result + ((executionId == null) ? 0 : executionId.hashCode());
         result = prime * result + ((lastUpdated == null) ? 0 : lastUpdated.hashCode());
         result = prime * result + ((expirationDate == null) ? 0 : expirationDate.hashCode());
-        result =
-                prime * result
-                        + ((estimatedCompletion == null) ? 0 : estimatedCompletion.hashCode());
+        result = prime * result + ((estimatedCompletion == null) ? 0 : estimatedCompletion.hashCode());
         result = prime * result + ((nextPoll == null) ? 0 : nextPoll.hashCode());
         result = prime * result + ((nodeId == null) ? 0 : nodeId.hashCode());
         result = prime * result + ((phase == null) ? 0 : phase.hashCode());

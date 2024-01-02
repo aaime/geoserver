@@ -40,8 +40,7 @@ public class GetLegendGraphic {
         final GetLegendGraphicOutputFormat format = wms.getLegendGraphicOutputFormat(outputFormat);
         if (format == null) {
             throw new ServiceException(
-                    "There is no support for creating legends in " + outputFormat + " format",
-                    "InvalidFormat");
+                    "There is no support for creating legends in " + outputFormat + " format", "InvalidFormat");
         }
         Object legend = format.produceLegendGraphic(request);
         return legend;

@@ -38,35 +38,26 @@ public class AggregatesCache implements GeoServerLifecycleHandler {
     }
 
     private void initCache() {
-        long duration =
-                service.getAggregatesCacheTTL() == null ? 0 : service.getAggregatesCacheTTL();
-        TimeUnit unit =
-                service.getAggregatesCacheTTLUnit() == null
-                        ? TimeUnit.HOURS
-                        : TimeUnit.valueOf(service.getAggregatesCacheTTLUnit().toUpperCase());
+        long duration = service.getAggregatesCacheTTL() == null ? 0 : service.getAggregatesCacheTTL();
+        TimeUnit unit = service.getAggregatesCacheTTLUnit() == null
+                ? TimeUnit.HOURS
+                : TimeUnit.valueOf(service.getAggregatesCacheTTLUnit().toUpperCase());
 
-        aggregates =
-                CacheBuilder.newBuilder()
-                        .expireAfterWrite(duration, unit)
-                        .build(
-                                new CacheLoader<AggregateCacheKey, Object>() {
-                                    @Override
-                                    public Object load(AggregateCacheKey key) throws Exception {
-                                        String property = key.getProperty();
-                                        String aggregate = key.getAggregate();
-                                        String collectionIdentifier = key.getCollectionIdentifier();
-                                        OpenSearchAccess openSearchAccess =
-                                                accessProvider.getOpenSearchAccess();
-                                        FeatureSource productSource =
-                                                openSearchAccess.getProductSource();
-                                        AggregateStats aggregateStats =
-                                                AggregateFactory.getAggregateStats(
-                                                        AggregateFactory.AggregateType.fromString(
-                                                                aggregate));
-                                        return aggregateStats.getStat(
-                                                productSource, collectionIdentifier, property);
-                                    }
-                                });
+        aggregates = CacheBuilder.newBuilder()
+                .expireAfterWrite(duration, unit)
+                .build(new CacheLoader<AggregateCacheKey, Object>() {
+                    @Override
+                    public Object load(AggregateCacheKey key) throws Exception {
+                        String property = key.getProperty();
+                        String aggregate = key.getAggregate();
+                        String collectionIdentifier = key.getCollectionIdentifier();
+                        OpenSearchAccess openSearchAccess = accessProvider.getOpenSearchAccess();
+                        FeatureSource productSource = openSearchAccess.getProductSource();
+                        AggregateStats aggregateStats = AggregateFactory.getAggregateStats(
+                                AggregateFactory.AggregateType.fromString(aggregate));
+                        return aggregateStats.getStat(productSource, collectionIdentifier, property);
+                    }
+                });
     }
 
     /**

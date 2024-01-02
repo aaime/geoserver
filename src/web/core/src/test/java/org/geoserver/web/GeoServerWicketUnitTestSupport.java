@@ -64,8 +64,7 @@ public class GeoServerWicketUnitTestSupport {
             ResourceSettings resourceSettings = getResourceSettings();
             resourceSettings.setUseMinifiedResources(false);
             resourceSettings.setResourceStreamLocator(new GeoServerResourceStreamLocator());
-            List<IStringResourceLoader> stringResourceLoaders =
-                    resourceSettings.getStringResourceLoaders();
+            List<IStringResourceLoader> stringResourceLoaders = resourceSettings.getStringResourceLoaders();
             stringResourceLoaders.add(0, new GeoServerStringResourceLoader());
             stringResourceLoaders.add(0, new ClassStringResourceLoader(GeoServerApplication.class));
         }

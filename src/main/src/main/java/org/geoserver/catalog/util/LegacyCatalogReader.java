@@ -92,13 +92,10 @@ public class LegacyCatalogReader {
 
             String id = ReaderUtils.getAttribute(dataStoreElement, "id", true);
             dataStore.put("id", id);
-            dataStore.put(
-                    "namespace", ReaderUtils.getAttribute(dataStoreElement, "namespace", false));
+            dataStore.put("namespace", ReaderUtils.getAttribute(dataStoreElement, "namespace", false));
             dataStore.put(
                     "enabled",
-                    Boolean.valueOf(
-                            ReaderUtils.getBooleanAttribute(
-                                    dataStoreElement, "enabled", false, true)));
+                    Boolean.valueOf(ReaderUtils.getBooleanAttribute(dataStoreElement, "enabled", false, true)));
             try {
                 Map<String, String> params = dataStoreParams(dataStoreElement);
                 dataStore.put("connectionParams", params);
@@ -149,16 +146,12 @@ public class LegacyCatalogReader {
             format.put("id", ReaderUtils.getAttribute(formatElement, "id", true));
             format.put("namespace", ReaderUtils.getAttribute(formatElement, "namespace", false));
             format.put(
-                    "enabled",
-                    Boolean.valueOf(
-                            ReaderUtils.getBooleanAttribute(
-                                    formatElement, "enabled", false, true)));
+                    "enabled", Boolean.valueOf(ReaderUtils.getBooleanAttribute(formatElement, "enabled", false, true)));
 
             format.put("type", ReaderUtils.getChildText(formatElement, "type", true));
             format.put("url", ReaderUtils.getChildText(formatElement, "url", false));
             format.put("title", ReaderUtils.getChildText(formatElement, "title", false));
-            format.put(
-                    "description", ReaderUtils.getChildText(formatElement, "description", false));
+            format.put("description", ReaderUtils.getChildText(formatElement, "description", false));
 
             formats.add(format);
         }
@@ -214,10 +207,8 @@ public class LegacyCatalogReader {
                 // get namespace information from the XML node
                 String prefix = namespaceElement.getAttribute("prefix");
                 String uri = namespaceElement.getAttribute("uri");
-                boolean isDefault =
-                        namespaceElement.getAttribute("default").equalsIgnoreCase("true");
-                boolean isIsolated =
-                        namespaceElement.getAttribute("isolated").equalsIgnoreCase("true");
+                boolean isDefault = namespaceElement.getAttribute("default").equalsIgnoreCase("true");
+                boolean isIsolated = namespaceElement.getAttribute("isolated").equalsIgnoreCase("true");
                 // let's see if we need to return this namespace
                 if ((!readIsolated && isIsolated) || (readIsolated && !isIsolated)) {
                     // not interest in this namespace, move to the next one
@@ -267,8 +258,7 @@ public class LegacyCatalogReader {
      * @throws Exception If problem parsing any parameters.
      */
     protected Map<String, String> dataStoreParams(Element dataStoreElement) throws Exception {
-        Element paramsElement =
-                ReaderUtils.getChildElement(dataStoreElement, "connectionParams", true);
+        Element paramsElement = ReaderUtils.getChildElement(dataStoreElement, "connectionParams", true);
         NodeList paramList = paramsElement.getElementsByTagName("parameter");
 
         Map<String, String> params = new HashMap<>();

@@ -36,8 +36,7 @@ class ReferenceConverter implements Converter {
     }
 
     @Override
-    public void marshal(
-            Object source, HierarchicalStreamWriter writer, MarshallingContext context) {
+    public void marshal(Object source, HierarchicalStreamWriter writer, MarshallingContext context) {
         // could be a proxy, unwrap it
         source = CatalogImpl.unwrap(source);
 

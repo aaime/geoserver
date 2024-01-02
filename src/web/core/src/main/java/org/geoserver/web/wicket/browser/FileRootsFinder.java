@@ -145,15 +145,10 @@ public class FileRootsFinder implements Serializable {
         GeoServerResourceLoader loader = getLoader();
         Resource resource = loader.get(ddSplitter.base);
         File dataDirectoryRoot = loader.get("/").dir();
-        Stream<String> result =
-                resource.list().stream()
-                        .filter(r -> r.name().toLowerCase().contains(ddSplitter.name))
-                        .filter(
-                                r ->
-                                        fileFilter == null
-                                                || fileFilter.accept(
-                                                        new File(dataDirectoryRoot, r.path())))
-                        .map(r -> ddSplitter.buildPath(r.name()));
+        Stream<String> result = resource.list().stream()
+                .filter(r -> r.name().toLowerCase().contains(ddSplitter.name))
+                .filter(r -> fileFilter == null || fileFilter.accept(new File(dataDirectoryRoot, r.path())))
+                .map(r -> ddSplitter.buildPath(r.name()));
 
         // check all the roots
         PathSplitter fsSplitter = new PathSplitter(input, false);
@@ -170,17 +165,11 @@ public class FileRootsFinder implements Serializable {
 
             File searchBase = new File(root, pathInRoot);
             String[] names =
-                    searchBase.list(
-                            (dir, fileName) -> fileName.toLowerCase().contains(fsSplitter.name));
+                    searchBase.list((dir, fileName) -> fileName.toLowerCase().contains(fsSplitter.name));
             if (names != null) {
-                Stream<String> rootPaths =
-                        Arrays.stream(names)
-                                .filter(
-                                        name ->
-                                                fileFilter == null
-                                                        || fileFilter.accept(
-                                                                new File(fsSplitter.base, name)))
-                                .map(fileName -> fsSplitter.buildPath(fileName));
+                Stream<String> rootPaths = Arrays.stream(names)
+                        .filter(name -> fileFilter == null || fileFilter.accept(new File(fsSplitter.base, name)))
+                        .map(fileName -> fsSplitter.buildPath(fileName));
                 result = Stream.concat(result, rootPaths);
             }
         }

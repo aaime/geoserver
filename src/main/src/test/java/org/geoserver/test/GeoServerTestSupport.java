@@ -55,11 +55,8 @@ public abstract class GeoServerTestSupport extends GeoServerAbstractTestSupport 
      * @param template The name of the template.
      * @param body The content of the template.
      */
-    protected void setupTemplate(QName featureTypeName, String template, String body)
-            throws IOException {
+    protected void setupTemplate(QName featureTypeName, String template, String body) throws IOException {
 
-        getTestData()
-                .copyToFeatureTypeDirectory(
-                        new ByteArrayInputStream(body.getBytes()), featureTypeName, template);
+        getTestData().copyToFeatureTypeDirectory(new ByteArrayInputStream(body.getBytes()), featureTypeName, template);
     }
 }

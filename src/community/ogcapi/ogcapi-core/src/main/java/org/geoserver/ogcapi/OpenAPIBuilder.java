@@ -39,12 +39,10 @@ public class OpenAPIBuilder<T extends ServiceInfo> {
     private final String defaultTitle;
     private final APIService serviceAnnotation;
 
-    public OpenAPIBuilder(
-            Class<?> clazz, String location, String defaultTitle, Class serviceClass) {
+    public OpenAPIBuilder(Class<?> clazz, String location, String defaultTitle, Class serviceClass) {
         try (InputStream is = clazz.getResourceAsStream(location)) {
             if (is == null) {
-                throw new RuntimeException(
-                        "Could not find API definition at " + location + " from class " + clazz);
+                throw new RuntimeException("Could not find API definition at " + location + " from class " + clazz);
             }
             apiSpecification = IOUtils.toString(is);
         } catch (IOException e) {
@@ -86,35 +84,30 @@ public class OpenAPIBuilder<T extends ServiceInfo> {
 
     public void addServers(OpenAPI api) {
         // the servers
-        String wfsUrl =
-                ResponseUtils.buildURL(
-                        APIRequestInfo.get().getBaseURL(),
-                        this.serviceAnnotation.landingPage(),
-                        null,
-                        URLMangler.URLType.SERVICE);
+        String wfsUrl = ResponseUtils.buildURL(
+                APIRequestInfo.get().getBaseURL(),
+                this.serviceAnnotation.landingPage(),
+                null,
+                URLMangler.URLType.SERVICE);
         api.servers(Arrays.asList(new Server().description("This server").url(wfsUrl)));
     }
 
     public void addAPIInfo(T service, OpenAPI api) {
         // build "info"
-        ContactInfo contactInfo = service.getGeoServer().getGlobal().getSettings().getContact();
-        Contact contact =
-                new Contact()
-                        .email(contactInfo.getContactEmail())
-                        .name(
-                                Stream.of(
-                                                contactInfo.getContactPerson(),
-                                                contactInfo.getContactOrganization())
-                                        .filter(s -> s != null)
-                                        .collect(Collectors.joining(" - ")))
-                        .url(contactInfo.getOnlineResource());
+        ContactInfo contactInfo =
+                service.getGeoServer().getGlobal().getSettings().getContact();
+        Contact contact = new Contact()
+                .email(contactInfo.getContactEmail())
+                .name(Stream.of(contactInfo.getContactPerson(), contactInfo.getContactOrganization())
+                        .filter(s -> s != null)
+                        .collect(Collectors.joining(" - ")))
+                .url(contactInfo.getOnlineResource());
         String title = service.getTitle() == null ? defaultTitle : service.getTitle();
-        Info info =
-                new Info()
-                        .contact(contact)
-                        .title(title)
-                        .description(service.getAbstract())
-                        .version(this.serviceAnnotation.version());
+        Info info = new Info()
+                .contact(contact)
+                .title(title)
+                .description(service.getAbstract())
+                .version(this.serviceAnnotation.version());
         api.info(info);
     }
 
@@ -124,10 +117,9 @@ public class OpenAPIBuilder<T extends ServiceInfo> {
         ApiResponse okResponse = get.getResponses().get("200");
         Content content = new Content();
         okResponse.setContent(content);
-        List<String> formats =
-                APIRequestInfo.get().getProducibleMediaTypes(binding, true).stream()
-                        .map(mt -> mt.toString())
-                        .collect(Collectors.toList());
+        List<String> formats = APIRequestInfo.get().getProducibleMediaTypes(binding, true).stream()
+                .map(mt -> mt.toString())
+                .collect(Collectors.toList());
         for (String format : formats) {
             MediaType mediaType = new MediaType();
             if (format.contains("yaml") && content.get("application/json") != null) {

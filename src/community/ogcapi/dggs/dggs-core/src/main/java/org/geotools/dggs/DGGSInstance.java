@@ -39,8 +39,7 @@ import org.locationtech.jts.geom.Polygon;
 // the non hierarchical structure of the H3 ids gets lots of the blame here (
 public interface DGGSInstance extends AutoCloseable {
 
-    static final ReferencedEnvelope WORLD =
-            new ReferencedEnvelope(-180, 180, -90, 90, DefaultGeographicCRS.WGS84);
+    static final ReferencedEnvelope WORLD = new ReferencedEnvelope(-180, 180, -90, 90, DefaultGeographicCRS.WGS84);
 
     public String getIdentifier();
 

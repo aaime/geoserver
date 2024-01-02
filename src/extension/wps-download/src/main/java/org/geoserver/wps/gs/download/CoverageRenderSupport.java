@@ -180,23 +180,21 @@ class CoverageRenderSupport {
                 || transparencyType != Transparency.OPAQUE
                 || iw.getNoData() != null
                 || roiCandidate instanceof ROI) {
-            image =
-                    applyBackgroundTransparency(
-                            mapRasterArea,
-                            image,
-                            mapRasterArea,
-                            layout,
-                            bgValues,
-                            alphaChannels,
-                            transparencyType,
-                            iw,
-                            roiCandidate,
-                            noDataTransparencyApplied);
+            image = applyBackgroundTransparency(
+                    mapRasterArea,
+                    image,
+                    mapRasterArea,
+                    layout,
+                    bgValues,
+                    alphaChannels,
+                    transparencyType,
+                    iw,
+                    roiCandidate,
+                    noDataTransparencyApplied);
         } else {
             // Check if we need to crop a subset of the produced image, else return it right away
             if (imageBounds.contains(mapRasterArea)
-                    && !imageBounds.equals(
-                            mapRasterArea)) { // the produced image does not need a final mosaicking
+                    && !imageBounds.equals(mapRasterArea)) { // the produced image does not need a final mosaicking
                 // operation but a crop!
                 iw.setBackground(bgValues);
                 iw.crop(0, 0, mapWidth, mapHeight);
@@ -214,15 +212,12 @@ class CoverageRenderSupport {
 
     private RenderedImage addAlphaChannel(RenderedImage image) {
         final ImageLayout tempLayout = new ImageLayout(image);
-        tempLayout
-                .unsetValid(ImageLayout.COLOR_MODEL_MASK)
-                .unsetValid(ImageLayout.SAMPLE_MODEL_MASK);
-        RenderedImage alpha =
-                ConstantDescriptor.create(
-                        Float.valueOf(image.getWidth()),
-                        Float.valueOf(image.getHeight()),
-                        new Byte[] {Byte.valueOf((byte) 255)},
-                        new RenderingHints(JAI.KEY_IMAGE_LAYOUT, tempLayout));
+        tempLayout.unsetValid(ImageLayout.COLOR_MODEL_MASK).unsetValid(ImageLayout.SAMPLE_MODEL_MASK);
+        RenderedImage alpha = ConstantDescriptor.create(
+                Float.valueOf(image.getWidth()),
+                Float.valueOf(image.getHeight()),
+                new Byte[] {Byte.valueOf((byte) 255)},
+                new RenderingHints(JAI.KEY_IMAGE_LAYOUT, tempLayout));
 
         // Using an ImageWorker
         ImageWorker iw = new ImageWorker(image);
@@ -305,9 +300,7 @@ class CoverageRenderSupport {
                 // memory boundness concerns
                 if (LOGGER.isLoggable(Level.FINE)) {
                     LOGGER.log(
-                            Level.FINE,
-                            "Failed to intersect image ROI with target bounds, returning empty result",
-                            e);
+                            Level.FINE, "Failed to intersect image ROI with target bounds, returning empty result", e);
                 }
                 return null;
             }
@@ -317,12 +310,11 @@ class CoverageRenderSupport {
         ROI[] rois = (!preProcessedWithTransparency) ? new ROI[] {roi} : null;
 
         // build the transparency thresholds
-        double[][] thresholds =
-                (!preProcessedWithTransparency)
-                        ? new double[][] {
-                            {ColorUtilities.getThreshold(image.getSampleModel().getDataType())}
-                        }
-                        : null;
+        double[][] thresholds = (!preProcessedWithTransparency)
+                ? new double[][] {
+                    {ColorUtilities.getThreshold(image.getSampleModel().getDataType())}
+                }
+                : null;
         // apply the mosaic
         iw.setRenderingHint(JAI.KEY_IMAGE_LAYOUT, layout);
         iw.setBackground(bgValues);

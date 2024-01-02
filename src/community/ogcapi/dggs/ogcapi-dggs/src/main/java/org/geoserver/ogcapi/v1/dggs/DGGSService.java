@@ -78,11 +78,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /** Implementation of OGC API - DGGS */
-@APIService(
-        service = "DGGS",
-        version = "1.0.1",
-        landingPage = "ogc/dggs/v1",
-        serviceClass = DGGSInfo.class)
+@APIService(service = "DGGS", version = "1.0.1", landingPage = "ogc/dggs/v1", serviceClass = DGGSInfo.class)
 @RequestMapping(path = APIDispatcher.ROOT_PATH + "/dggs/v1")
 public class DGGSService {
 
@@ -137,11 +133,7 @@ public class DGGSService {
     @GetMapping(
             path = {"openapi", "openapi.json", "openapi.yaml"},
             name = "getApi",
-            produces = {
-                OPEN_API_MEDIA_TYPE_VALUE,
-                APPLICATION_YAML_VALUE,
-                MediaType.TEXT_XML_VALUE
-            })
+            produces = {OPEN_API_MEDIA_TYPE_VALUE, APPLICATION_YAML_VALUE, MediaType.TEXT_XML_VALUE})
     @ResponseBody
     @HTMLResponseBody(templateName = "api.ftl", fileName = "api.html")
     public OpenAPI api() throws IOException {
@@ -158,8 +150,7 @@ public class DGGSService {
     @GetMapping(path = "collections/{collectionId}", name = "describeCollection")
     @ResponseBody
     @HTMLResponseBody(templateName = "collection.ftl", fileName = "collection.html")
-    public CollectionDocument collection(@PathVariable(name = "collectionId") String collectionId)
-            throws IOException {
+    public CollectionDocument collection(@PathVariable(name = "collectionId") String collectionId) throws IOException {
         FeatureTypeInfo ft = getFeatureType(collectionId);
         CollectionDocument collection = new CollectionDocument(gs, ft);
 
@@ -174,9 +165,7 @@ public class DGGSService {
         FeatureTypeInfo featureType = getCatalog().getFeatureTypeByName(collectionId);
         if (featureType == null) {
             throw new ServiceException(
-                    "Unknown collection " + collectionId,
-                    ServiceException.INVALID_PARAMETER_VALUE,
-                    "collectionId");
+                    "Unknown collection " + collectionId, ServiceException.INVALID_PARAMETER_VALUE, "collectionId");
         }
         if (!isDGGSType(featureType)) {
             throw new ServiceException(
@@ -208,25 +197,18 @@ public class DGGSService {
     @DefaultContentType(OGCAPIMediaTypes.GEOJSON_VALUE)
     public FeaturesResponse zones(
             @PathVariable(name = "collectionId") String collectionId,
-            @RequestParam(name = "startIndex", required = false, defaultValue = "0")
-                    BigInteger startIndex,
+            @RequestParam(name = "startIndex", required = false, defaultValue = "0") BigInteger startIndex,
             @RequestParam(name = "limit", required = false) BigInteger limit,
-            @RequestParam(name = "resolution", required = false, defaultValue = "0")
-                    Integer resolution,
+            @RequestParam(name = "resolution", required = false, defaultValue = "0") Integer resolution,
             @RequestParam(name = "datetime", required = false) DateTimeList datetime,
             @RequestParam(name = "bbox", required = false) String bbox,
             @RequestParam(name = "geom", required = false) String wkt,
             @RequestParam(name = "zones", required = false) String zones,
             @RequestParam(name = "properties", required = false) String properties,
-            @RequestParam(
-                            name = "f",
-                            required = false,
-                            defaultValue = OGCAPIMediaTypes.GEOJSON_VALUE)
-                    String format)
+            @RequestParam(name = "f", required = false, defaultValue = OGCAPIMediaTypes.GEOJSON_VALUE) String format)
             throws Exception {
         // handle possible geometry filters
-        DGGSGeometryFilterParser geometryParser =
-                new DGGSGeometryFilterParser(FF, getDGGSInstance(collectionId));
+        DGGSGeometryFilterParser geometryParser = new DGGSGeometryFilterParser(FF, getDGGSInstance(collectionId));
         geometryParser.setBBOX(bbox);
         geometryParser.setGeometry(wkt);
         geometryParser.setZoneIds(zones, resolution);
@@ -242,13 +224,9 @@ public class DGGSService {
                 request -> {
                     // add the resolution hint
                     if (resolution != null) {
-                        request.setViewParams(
-                                Collections.singletonList(
-                                        Collections.singletonMap(
-                                                DGGSStore.VP_RESOLUTION,
-                                                String.valueOf(resolution))));
-                        Filter resolutionFilter =
-                                FF.equals(FF.property(RESOLUTION), FF.literal(resolution));
+                        request.setViewParams(Collections.singletonList(
+                                Collections.singletonMap(DGGSStore.VP_RESOLUTION, String.valueOf(resolution))));
+                        Filter resolutionFilter = FF.equals(FF.property(RESOLUTION), FF.literal(resolution));
                         mixFilter(request, resolutionFilter);
 
                         Filter geometryFilter = geometryParser.getFilter();
@@ -257,10 +235,7 @@ public class DGGSService {
                         }
                     }
                 },
-                collectionName ->
-                        "ogc/dggs/collections/"
-                                + ResponseUtils.urlEncode(collectionName)
-                                + "/zones");
+                collectionName -> "ogc/dggs/collections/" + ResponseUtils.urlEncode(collectionName) + "/zones");
     }
 
     void mixFilter(GetFeatureRequest request, Filter mix) {
@@ -273,8 +248,7 @@ public class DGGSService {
         }
     }
 
-    private void customizeByFormat(Query query, FeatureTypeInfo ft, String format)
-            throws IOException {
+    private void customizeByFormat(Query query, FeatureTypeInfo ft, String format) throws IOException {
         if (DGGSJSONMessageConverter.DGGS_JSON_MIME.equals(format)
                 && query.getPropertyNames().isEmpty()) {
             // TODO: add support for complex features
@@ -295,16 +269,11 @@ public class DGGSService {
             @PathVariable(name = "collectionId") String collectionId,
             @RequestParam(name = "zone_id") String zoneId,
             @RequestParam(name = "properties", required = false) String properties,
-            @RequestParam(name = "startIndex", required = false, defaultValue = "0")
-                    BigInteger startIndex,
+            @RequestParam(name = "startIndex", required = false, defaultValue = "0") BigInteger startIndex,
             @RequestParam(name = "limit", required = false) BigInteger limit,
             @RequestParam(name = "datetime", required = false) DateTimeList datetime,
             @RequestParam(name = "distance", required = false, defaultValue = "1") int distance,
-            @RequestParam(
-                            name = "f",
-                            required = false,
-                            defaultValue = OGCAPIMediaTypes.GEOJSON_VALUE)
-                    String format)
+            @RequestParam(name = "f", required = false, defaultValue = OGCAPIMediaTypes.GEOJSON_VALUE) String format)
             throws Exception {
         if (distance <= 0)
             throw new APIException(
@@ -318,14 +287,9 @@ public class DGGSService {
                     "Neighboring distance exceeds maximum value: " + maxNeighborDistance,
                     HttpStatus.BAD_REQUEST);
         }
-        PropertyIsEqualTo neighborFilter =
-                FF.equals(
-                        FF.function(
-                                "neighbor",
-                                FF.property("zoneId"),
-                                FF.literal(zoneId),
-                                FF.literal(distance)),
-                        FF.literal(true));
+        PropertyIsEqualTo neighborFilter = FF.equals(
+                FF.function("neighbor", FF.property("zoneId"), FF.literal(zoneId), FF.literal(distance)),
+                FF.literal(true));
         return runGetFeature(
                 collectionId,
                 datetime,
@@ -336,10 +300,7 @@ public class DGGSService {
                 request -> {
                     mixFilter(request, neighborFilter);
                 },
-                collectionName ->
-                        "ogc/dggs/collections/"
-                                + ResponseUtils.urlEncode(collectionName)
-                                + "/neighbors");
+                collectionName -> "ogc/dggs/collections/" + ResponseUtils.urlEncode(collectionName) + "/neighbors");
     }
 
     @GetMapping(path = "collections/{collectionId}/zone", name = "getZone")
@@ -351,29 +312,22 @@ public class DGGSService {
             @RequestParam(name = "zone_id") String zoneId,
             @RequestParam(name = "datetime", required = false) DateTimeList datetime,
             @RequestParam(name = "properties", required = false) String properties,
-            @RequestParam(
-                            name = "f",
-                            required = false,
-                            defaultValue = OGCAPIMediaTypes.GEOJSON_VALUE)
-                    String format)
+            @RequestParam(name = "f", required = false, defaultValue = OGCAPIMediaTypes.GEOJSON_VALUE) String format)
             throws Exception {
-        FeaturesResponse response =
-                runGetFeature(
-                        collectionId,
-                        datetime,
-                        properties,
-                        null,
-                        null,
-                        format,
-                        request -> {
-                            mixFilter(
-                                    request, FF.equals(FF.property("zoneId"), FF.literal(zoneId)));
-                        },
-                        collectionName ->
-                                "ogc/dggs/collections/"
-                                        + ResponseUtils.urlEncode(collectionName)
-                                        + "/zones/"
-                                        + ResponseUtils.urlEncode(zoneId));
+        FeaturesResponse response = runGetFeature(
+                collectionId,
+                datetime,
+                properties,
+                null,
+                null,
+                format,
+                request -> {
+                    mixFilter(request, FF.equals(FF.property("zoneId"), FF.literal(zoneId)));
+                },
+                collectionName -> "ogc/dggs/collections/"
+                        + ResponseUtils.urlEncode(collectionName)
+                        + "/zones/"
+                        + ResponseUtils.urlEncode(zoneId));
 
         response.addLink(getParentsLink(collectionId, zoneId));
         response.addLink(getChildrenLink(collectionId, zoneId));
@@ -387,14 +341,11 @@ public class DGGSService {
         params.put("f", "text/html");
         params.put("zone_id", zoneId);
         reflectDatetime(params);
-        String url =
-                buildURL(
-                        APIRequestInfo.get().getBaseURL(),
-                        "ogc/dggs/collections/"
-                                + ResponseUtils.urlEncode(collectionId)
-                                + "/parents",
-                        params,
-                        URLMangler.URLType.SERVICE);
+        String url = buildURL(
+                APIRequestInfo.get().getBaseURL(),
+                "ogc/dggs/collections/" + ResponseUtils.urlEncode(collectionId) + "/parents",
+                params,
+                URLMangler.URLType.SERVICE);
         Link link = new Link(url, "parents", "text/html", "Zone parents");
         link.setClassification("parents");
         return link;
@@ -416,14 +367,11 @@ public class DGGSService {
         params.put(
                 "resolution",
                 String.valueOf(getDGGSInstance(collectionId).getZone(zoneId).getResolution() + 1));
-        String url =
-                buildURL(
-                        APIRequestInfo.get().getBaseURL(),
-                        "ogc/dggs/collections/"
-                                + ResponseUtils.urlEncode(collectionId)
-                                + "/children",
-                        params,
-                        URLMangler.URLType.SERVICE);
+        String url = buildURL(
+                APIRequestInfo.get().getBaseURL(),
+                "ogc/dggs/collections/" + ResponseUtils.urlEncode(collectionId) + "/children",
+                params,
+                URLMangler.URLType.SERVICE);
         Link link = new Link(url, "children", "text/html", "Zone immediate children");
         link.setClassification("children");
         return link;
@@ -435,14 +383,11 @@ public class DGGSService {
         params.put("zone_id", zoneId);
         params.put("distance", "1");
         reflectDatetime(params);
-        String url =
-                buildURL(
-                        APIRequestInfo.get().getBaseURL(),
-                        "ogc/dggs/collections/"
-                                + ResponseUtils.urlEncode(collectionId)
-                                + "/neighbors",
-                        params,
-                        URLMangler.URLType.SERVICE);
+        String url = buildURL(
+                APIRequestInfo.get().getBaseURL(),
+                "ogc/dggs/collections/" + ResponseUtils.urlEncode(collectionId) + "/neighbors",
+                params,
+                URLMangler.URLType.SERVICE);
         Link link = new Link(url, "neighbors", "text/html", "Zone immediate neighbors");
         link.setClassification("neighbors");
         return link;
@@ -461,25 +406,15 @@ public class DGGSService {
             @PathVariable(name = "collectionId") String collectionId,
             @RequestParam(name = "zone_id") String zoneId,
             @RequestParam(name = "properties", required = false) String properties,
-            @RequestParam(name = "startIndex", required = false, defaultValue = "0")
-                    BigInteger startIndex,
+            @RequestParam(name = "startIndex", required = false, defaultValue = "0") BigInteger startIndex,
             @RequestParam(name = "limit", required = false) BigInteger limit,
             @RequestParam(name = "resolution", required = false) Integer resolution,
             @RequestParam(name = "datetime", required = false) DateTimeList datetime,
-            @RequestParam(
-                            name = "f",
-                            required = false,
-                            defaultValue = OGCAPIMediaTypes.GEOJSON_VALUE)
-                    String format)
+            @RequestParam(name = "f", required = false, defaultValue = OGCAPIMediaTypes.GEOJSON_VALUE) String format)
             throws Exception {
-        PropertyIsEqualTo childFilter =
-                FF.equals(
-                        FF.function(
-                                "children",
-                                FF.property("zoneId"),
-                                FF.literal(zoneId),
-                                FF.literal(resolution)),
-                        FF.literal(true));
+        PropertyIsEqualTo childFilter = FF.equals(
+                FF.function("children", FF.property("zoneId"), FF.literal(zoneId), FF.literal(resolution)),
+                FF.literal(true));
         return runGetFeature(
                 collectionId,
                 datetime,
@@ -490,10 +425,7 @@ public class DGGSService {
                 request -> {
                     mixFilter(request, childFilter);
                 },
-                collectionName ->
-                        "ogc/dggs/collections/"
-                                + ResponseUtils.urlEncode(collectionName)
-                                + "/children");
+                collectionName -> "ogc/dggs/collections/" + ResponseUtils.urlEncode(collectionName) + "/children");
     }
 
     @GetMapping(path = "collections/{collectionId}/parents", name = "getParents")
@@ -504,19 +436,12 @@ public class DGGSService {
             @RequestParam(name = "zone_id") String zoneId,
             @RequestParam(name = "datetime", required = false) DateTimeList datetime,
             @RequestParam(name = "properties", required = false) String properties,
-            @RequestParam(name = "startIndex", required = false, defaultValue = "0")
-                    BigInteger startIndex,
+            @RequestParam(name = "startIndex", required = false, defaultValue = "0") BigInteger startIndex,
             @RequestParam(name = "limit", required = false) BigInteger limit,
-            @RequestParam(
-                            name = "f",
-                            required = false,
-                            defaultValue = OGCAPIMediaTypes.GEOJSON_VALUE)
-                    String format)
+            @RequestParam(name = "f", required = false, defaultValue = OGCAPIMediaTypes.GEOJSON_VALUE) String format)
             throws Exception {
         PropertyIsEqualTo parentFilter =
-                FF.equals(
-                        FF.function("parents", FF.property("zoneId"), FF.literal(zoneId)),
-                        FF.literal(true));
+                FF.equals(FF.function("parents", FF.property("zoneId"), FF.literal(zoneId)), FF.literal(true));
         // another filter to help implementation that cannot optimize out the above call
         return runGetFeature(
                 collectionId,
@@ -528,10 +453,7 @@ public class DGGSService {
                 request -> {
                     mixFilter(request, parentFilter);
                 },
-                collectionName ->
-                        "ogc/dggs/collections/"
-                                + ResponseUtils.urlEncode(collectionName)
-                                + "/parents");
+                collectionName -> "ogc/dggs/collections/" + ResponseUtils.urlEncode(collectionName) + "/parents");
     }
 
     public FeaturesResponse runGetFeature(
@@ -546,8 +468,7 @@ public class DGGSService {
             throws IOException {
         // build the request in a way core WFS machinery can understand it
         FeatureTypeInfo ft = getFeatureType(collectionId);
-        GetFeatureRequest request =
-                GetFeatureRequest.adapt(Wfs20Factory.eINSTANCE.createGetFeatureType());
+        GetFeatureRequest request = GetFeatureRequest.adapt(Wfs20Factory.eINSTANCE.createGetFeatureType());
         Query query = request.createQuery();
         query.setTypeNames(Arrays.asList(new QName(ft.getNamespace().getURI(), ft.getName())));
         if (properties != null) {
@@ -563,13 +484,12 @@ public class DGGSService {
         requestCustomizer.accept(request);
 
         // run it
-        FeaturesGetFeature gf =
-                new FeaturesGetFeature(gs.getService(WFSInfo.class), getCatalog()) {
-                    @Override
-                    protected String getItemsPath(String collectionName) {
-                        return pathBuilder.apply(collectionName);
-                    }
-                };
+        FeaturesGetFeature gf = new FeaturesGetFeature(gs.getService(WFSInfo.class), getCatalog()) {
+            @Override
+            protected String getItemsPath(String collectionName) {
+                return pathBuilder.apply(collectionName);
+            }
+        };
         gf.setFilterFactory(FF);
         FeatureCollectionResponse response = gf.run(request);
 
@@ -578,8 +498,7 @@ public class DGGSService {
         return new FeaturesResponse(request.getAdaptee(), response);
     }
 
-    protected Filter buildDateTimeFilter(FeatureTypeInfo ft, DateTimeList dateTimeList)
-            throws IOException {
+    protected Filter buildDateTimeFilter(FeatureTypeInfo ft, DateTimeList dateTimeList) throws IOException {
         DimensionInfo time = ft.getMetadata().get(ResourceInfo.TIME, DimensionInfo.class);
         if (time == null) return Filter.INCLUDE;
         if (dateTimeList == null || dateTimeList.isEmpty()) {
@@ -605,11 +524,7 @@ public class DGGSService {
             @RequestParam(name = "resolution") int resolution,
             @RequestParam(name = "properties", required = false) String properties,
             @RequestParam(name = "datetime", required = false) DateTimeList datetime,
-            @RequestParam(
-                            name = "f",
-                            required = false,
-                            defaultValue = OGCAPIMediaTypes.GEOJSON_VALUE)
-                    String format)
+            @RequestParam(name = "f", required = false, defaultValue = OGCAPIMediaTypes.GEOJSON_VALUE) String format)
             throws Exception {
         Point point = getPoint(pointSpec);
         @SuppressWarnings("PMD.CloseResource") // managed by the store
@@ -617,24 +532,20 @@ public class DGGSService {
         Zone zone = dggs.point(point, resolution);
         String zoneId = zone.getId();
         // we have the zoneId, now to and access the data for it
-        FeaturesResponse response =
-                runGetFeature(
-                        collectionId,
-                        datetime,
-                        properties,
-                        null,
-                        null,
-                        format,
-                        request -> {
-                            mixFilter(
-                                    request,
-                                    FF.equals(FF.property("zoneId"), FF.literal(zone.getId())));
-                        },
-                        collectionName ->
-                                "ogc/dggs/collections/"
-                                        + ResponseUtils.urlEncode(collectionName)
-                                        + "/zones/"
-                                        + ResponseUtils.urlEncode(zoneId));
+        FeaturesResponse response = runGetFeature(
+                collectionId,
+                datetime,
+                properties,
+                null,
+                null,
+                format,
+                request -> {
+                    mixFilter(request, FF.equals(FF.property("zoneId"), FF.literal(zone.getId())));
+                },
+                collectionName -> "ogc/dggs/collections/"
+                        + ResponseUtils.urlEncode(collectionName)
+                        + "/zones/"
+                        + ResponseUtils.urlEncode(zoneId));
 
         response.addLink(getParentsLink(collectionId, zoneId));
         response.addLink(getChildrenLink(collectionId, zoneId));
@@ -651,46 +562,36 @@ public class DGGSService {
             @RequestParam(name = "polygon") String polygonWKT,
             @RequestParam(name = "resolution") int resolution,
             @RequestParam(name = "properties", required = false) String properties,
-            @RequestParam(name = "startIndex", required = false, defaultValue = "0")
-                    BigInteger startIndex,
+            @RequestParam(name = "startIndex", required = false, defaultValue = "0") BigInteger startIndex,
             @RequestParam(name = "limit", required = false) BigInteger limit,
             @RequestParam(name = "compact", required = true, defaultValue = "true") boolean compact,
             @RequestParam(name = "datetime", required = false) DateTimeList datetime,
-            @RequestParam(
-                            name = "f",
-                            required = false,
-                            defaultValue = OGCAPIMediaTypes.GEOJSON_VALUE)
-                    String format)
+            @RequestParam(name = "f", required = false, defaultValue = OGCAPIMediaTypes.GEOJSON_VALUE) String format)
             throws Exception {
         Polygon polygon = getPolygon(polygonWKT);
         // Filter resolutionFilter = FF.lessOrEqual(FF.property(RESOLUTION),
         // FF.literal(resolution));
-        PropertyIsEqualTo polygonFilter =
-                FF.equals(
-                        FF.function(
-                                "dggsPolygon",
-                                FF.property("zoneId"),
-                                FF.literal(polygon),
-                                FF.literal(resolution),
-                                FF.literal(compact)),
-                        FF.literal("true"));
+        PropertyIsEqualTo polygonFilter = FF.equals(
+                FF.function(
+                        "dggsPolygon",
+                        FF.property("zoneId"),
+                        FF.literal(polygon),
+                        FF.literal(resolution),
+                        FF.literal(compact)),
+                FF.literal("true"));
         // we have the zoneId, now to and access the data for it
-        FeaturesResponse response =
-                runGetFeature(
-                        collectionId,
-                        datetime,
-                        properties,
-                        startIndex,
-                        limit,
-                        format,
-                        request -> {
-                            Query query = request.getQueries().get(0);
-                            query.setFilter(polygonFilter);
-                        },
-                        collectionName ->
-                                "ogc/dggs/collections/"
-                                        + ResponseUtils.urlEncode(collectionName)
-                                        + "/polygon/");
+        FeaturesResponse response = runGetFeature(
+                collectionId,
+                datetime,
+                properties,
+                startIndex,
+                limit,
+                format,
+                request -> {
+                    Query query = request.getQueries().get(0);
+                    query.setFilter(polygonFilter);
+                },
+                collectionName -> "ogc/dggs/collections/" + ResponseUtils.urlEncode(collectionName) + "/polygon/");
 
         return response;
     }

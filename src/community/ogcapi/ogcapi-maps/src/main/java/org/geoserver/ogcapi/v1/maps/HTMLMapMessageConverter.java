@@ -39,11 +39,8 @@ public class HTMLMapMessageConverter extends AbstractHTMLMessageConverter<HTMLMa
     /**
      * Set of parameters that we can ignore, since they are not part of the OpenLayers WMS request
      */
-    private static final Set<String> IGNORED_PARAMETERS =
-            new HashSet<>(
-                    Arrays.asList(
-                            "REQUEST", "TILED", "BBOX", "SERVICE", "VERSION", "FORMAT", "WIDTH",
-                            "HEIGHT", "SRS"));
+    private static final Set<String> IGNORED_PARAMETERS = new HashSet<>(
+            Arrays.asList("REQUEST", "TILED", "BBOX", "SERVICE", "VERSION", "FORMAT", "WIDTH", "HEIGHT", "SRS"));
 
     public HTMLMapMessageConverter(FreemarkerTemplateSupport templateSupport, GeoServer geoServer) {
         super(HTMLMap.class, WMSInfo.class, templateSupport, geoServer);
@@ -69,9 +66,8 @@ public class HTMLMapMessageConverter extends AbstractHTMLMessageConverter<HTMLMa
                     new OutputStreamWriter(outputMessage.getBody(), defaultCharset),
                     defaultCharset);
         } else {
-            LOGGER.warning(
-                    "Either the default character set, output message or body was null, so the "
-                            + "htmlmap.ftl template could not be processed.");
+            LOGGER.warning("Either the default character set, output message or body was null, so the "
+                    + "htmlmap.ftl template could not be processed.");
         }
     }
 

@@ -42,8 +42,7 @@ public class MIMETypeMapper implements ApplicationContextAware {
 
     private static final String NO_MIME_TYPE = "NoMimeType";
 
-    public static final String DEFAULT_FORMAT =
-            GeoTIFFCoverageResponseDelegate.GEOTIFF_CONTENT_TYPE;
+    public static final String DEFAULT_FORMAT = GeoTIFFCoverageResponseDelegate.GEOTIFF_CONTENT_TYPE;
 
     private Logger LOGGER = Logging.getLogger(MIMETypeMapper.class);
 
@@ -119,8 +118,7 @@ public class MIMETypeMapper implements ApplicationContextAware {
      *
      * @author Andrea Aime - GeoSolutions
      */
-    public class MimeTypeCacheClearingListener extends CatalogVisitorAdapter
-            implements CatalogListener {
+    public class MimeTypeCacheClearingListener extends CatalogVisitorAdapter implements CatalogListener {
 
         @Override
         public void handleAddEvent(CatalogAddEvent event) {}

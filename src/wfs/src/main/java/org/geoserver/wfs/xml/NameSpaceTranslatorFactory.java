@@ -86,17 +86,12 @@ public class NameSpaceTranslatorFactory {
                 return;
             }
 
-            Constructor<?> nstConstructor =
-                    nstClass.getConstructor(
-                            new Class[] {
-                                String.class,
-                            });
-            NameSpaceTranslator nst =
-                    (NameSpaceTranslator)
-                            nstConstructor.newInstance(
-                                    new Object[] {
-                                        prefix,
-                                    });
+            Constructor<?> nstConstructor = nstClass.getConstructor(new Class[] {
+                String.class,
+            });
+            NameSpaceTranslator nst = (NameSpaceTranslator) nstConstructor.newInstance(new Object[] {
+                prefix,
+            });
             namespaceTranslatorInstances.put(prefix, nst);
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "", e);
@@ -126,8 +121,7 @@ public class NameSpaceTranslatorFactory {
      */
     public void registerNameSpaceTranslator(
             String namespace, Class<? extends NameSpaceTranslator> nameSpaceTranslator) {
-        if ((nameSpaceTranslator != null)
-                && NameSpaceTranslator.class.isAssignableFrom(nameSpaceTranslator)) {
+        if ((nameSpaceTranslator != null) && NameSpaceTranslator.class.isAssignableFrom(nameSpaceTranslator)) {
             namespaceTranslators.put(namespace, nameSpaceTranslator);
         }
     }

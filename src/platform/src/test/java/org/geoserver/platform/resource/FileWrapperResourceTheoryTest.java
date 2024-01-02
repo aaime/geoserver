@@ -22,13 +22,12 @@ import org.junit.rules.TemporaryFolder;
  */
 public class FileWrapperResourceTheoryTest extends ResourceTheoryTest {
 
-    @Rule public TemporaryFolder folder = new TemporaryFolder();
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
 
     @DataPoints
     public static String[] getTestPaths() {
-        return new String[] {
-            "FileA", "FileB", "DirC", "DirE", "DirC/FileD", "UndefF", "DirC/UndefF", "DirE/UndefF"
-        };
+        return new String[] {"FileA", "FileB", "DirC", "DirE", "DirC/FileD", "UndefF", "DirC/UndefF", "DirE/UndefF"};
     }
 
     /**

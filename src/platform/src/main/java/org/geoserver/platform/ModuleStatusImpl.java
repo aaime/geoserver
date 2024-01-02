@@ -181,13 +181,7 @@ public class ModuleStatusImpl implements ModuleStatus, Serializable {
 
     @Override
     public String toString() {
-        return "ModuleStatusImpl [module="
-                + module
-                + ", component="
-                + component
-                + ", version="
-                + version
-                + "]";
+        return "ModuleStatusImpl [module=" + module + ", component=" + component + ", version=" + version + "]";
     }
 
     /**
@@ -206,9 +200,8 @@ public class ModuleStatusImpl implements ModuleStatus, Serializable {
         synchronized (MAVEN_VERSIONS) {
             if (MAVEN_VERSIONS.isEmpty()) {
                 try {
-                    Resource[] resources =
-                            new PathMatchingResourcePatternResolver()
-                                    .getResources("classpath*:META-INF/maven/*/*/pom.properties");
+                    Resource[] resources = new PathMatchingResourcePatternResolver()
+                            .getResources("classpath*:META-INF/maven/*/*/pom.properties");
                     for (Resource resource : resources) {
                         try (InputStream in = resource.getInputStream()) {
                             Properties properties = new Properties();
@@ -218,10 +211,7 @@ public class ModuleStatusImpl implements ModuleStatus, Serializable {
                             String version = properties.getProperty("version");
                             MAVEN_VERSIONS.put(artifactId, version);
                         } catch (IOException e) {
-                            LOGGER.log(
-                                    Level.FINE,
-                                    "Error reading pom.properties: " + resource.getFilename(),
-                                    e);
+                            LOGGER.log(Level.FINE, "Error reading pom.properties: " + resource.getFilename(), e);
                         }
                     }
                 } catch (IOException e) {

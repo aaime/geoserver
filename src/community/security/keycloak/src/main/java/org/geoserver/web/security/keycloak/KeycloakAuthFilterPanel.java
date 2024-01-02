@@ -19,8 +19,7 @@ import org.geotools.util.logging.Logging;
  * server will generally provide correctly-formatted JSON to copy-paste into this box. No cause to
  * over-complicate the UI.
  */
-public class KeycloakAuthFilterPanel
-        extends PreAuthenticatedUserNameFilterPanel<GeoServerKeycloakFilterConfig> {
+public class KeycloakAuthFilterPanel extends PreAuthenticatedUserNameFilterPanel<GeoServerKeycloakFilterConfig> {
 
     private static final Logger LOG = Logging.getLogger(KeycloakAuthFilterPanel.class);
 

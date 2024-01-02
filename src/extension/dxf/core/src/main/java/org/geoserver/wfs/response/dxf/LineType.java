@@ -95,10 +95,9 @@ public class LineType {
             // analyze each part and build a LineTypeItem
             while (m.find()) {
                 String piece = m.group(0);
-                int type =
-                        piece.startsWith("-")
-                                ? LineTypeItem.DASH
-                                : (piece.startsWith("*") ? LineTypeItem.DOT : LineTypeItem.EMPTY);
+                int type = piece.startsWith("-")
+                        ? LineTypeItem.DASH
+                        : (piece.startsWith("*") ? LineTypeItem.DOT : LineTypeItem.EMPTY);
                 LineTypeItem item = new LineTypeItem(type, piece.length() * baseLen);
                 items.add(item);
             }

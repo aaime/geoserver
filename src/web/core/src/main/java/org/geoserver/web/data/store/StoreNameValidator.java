@@ -94,9 +94,8 @@ public class StoreNameValidator implements IFormValidator {
 
         if (name == null) {
             if (required) {
-                nameComponent.error(
-                        new ValidationError("StoreNameValidator.storeNameRequired")
-                                .addKey("StoreNameValidator.storeNameRequired"));
+                nameComponent.error(new ValidationError("StoreNameValidator.storeNameRequired")
+                        .addKey("StoreNameValidator.storeNameRequired"));
             }
             return;
         }
@@ -107,11 +106,10 @@ public class StoreNameValidator implements IFormValidator {
         if (existing != null) {
             final String existingId = existing.getId();
             if (!existingId.equals(edittingStoreId)) {
-                IValidationError error =
-                        new ValidationError("StoreNameValidator.storeExistsInWorkspace")
-                                .addKey("StoreNameValidator.storeExistsInWorkspace")
-                                .setVariable("workspace", workspace.getName())
-                                .setVariable("storeName", name);
+                IValidationError error = new ValidationError("StoreNameValidator.storeExistsInWorkspace")
+                        .addKey("StoreNameValidator.storeExistsInWorkspace")
+                        .setVariable("workspace", workspace.getName())
+                        .setVariable("storeName", name);
                 nameComponent.error(error);
             }
         }

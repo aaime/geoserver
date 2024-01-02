@@ -145,8 +145,7 @@ public class ModificationProxy implements WrappingProxy, Serializable {
 
             // in case this is a live indirection, resolve it. Typically this means
             // the reference is dangling, and we are going to avoid a wrapper around null
-            if (result instanceof Proxy
-                    && Proxy.getInvocationHandler(result) instanceof ResolvingProxy) {
+            if (result instanceof Proxy && Proxy.getInvocationHandler(result) instanceof ResolvingProxy) {
                 ResolvingProxy rp = ProxyUtils.handler(result, ResolvingProxy.class);
                 // try to resolve, and return null if the reference is dangling
                 final Catalog catalog = (Catalog) GeoServerExtensions.bean("catalog");
@@ -227,8 +226,7 @@ public class ModificationProxy implements WrappingProxy, Serializable {
                                 // case 2, just call the setter with the new object
                                 s.invoke(proxyObject, v);
                             } else {
-                                throw new IllegalStateException(
-                                        "New info object set, but no setter for it.");
+                                throw new IllegalStateException("New info object set, but no setter for it.");
                             }
                         } else {
                             // call the setter
@@ -518,9 +516,7 @@ public class ModificationProxy implements WrappingProxy, Serializable {
 
             return clone;
         } catch (Exception e) {
-            throw new RuntimeException(
-                    "Unexpected failure while cloning collection of class " + oldCollectionClass,
-                    e);
+            throw new RuntimeException("Unexpected failure while cloning collection of class " + oldCollectionClass, e);
         }
     }
 
@@ -529,14 +525,12 @@ public class ModificationProxy implements WrappingProxy, Serializable {
         Catalog catalog = (Catalog) GeoServerExtensions.bean("catalog");
         FilterFactory ff = CommonFactoryFinder.getFilterFactory();
         Class<? extends CatalogInfo> iface = getCatalogInfoInterface(ci.getClass());
-        CatalogInfo replacement =
-                catalog.get(iface, ff.equal(ff.property("id"), ff.literal(id), true));
+        CatalogInfo replacement = catalog.get(iface, ff.equal(ff.property("id"), ff.literal(id), true));
         return replacement;
     }
 
     /** Gathers the most specific CatalogInfo sub-interface from the specified class object */
-    private Class<? extends CatalogInfo> getCatalogInfoInterface(
-            Class<? extends CatalogInfo> clazz) {
+    private Class<? extends CatalogInfo> getCatalogInfoInterface(Class<? extends CatalogInfo> clazz) {
         Class<? extends CatalogInfo> result = CatalogInfo.class;
         for (Class<?> c : clazz.getInterfaces()) {
             if (result.isAssignableFrom(c)) {
@@ -633,6 +627,7 @@ public class ModificationProxy implements WrappingProxy, Serializable {
         @Override
         protected <U> U unwrapProxy(U proxy, java.lang.Class<U> proxyInterface) {
             return ModificationProxy.unwrap(proxy);
-        };
+        }
+        ;
     }
 }

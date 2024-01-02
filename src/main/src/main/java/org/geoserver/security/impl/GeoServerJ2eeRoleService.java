@@ -49,8 +49,7 @@ import org.xml.sax.XMLReader;
  *
  * @author Christian
  */
-public class GeoServerJ2eeRoleService extends AbstractGeoServerSecurityService
-        implements GeoServerRoleService {
+public class GeoServerJ2eeRoleService extends AbstractGeoServerSecurityService implements GeoServerRoleService {
 
     public class WebXMLContentHandler implements ContentHandler {
 
@@ -99,8 +98,7 @@ public class GeoServerJ2eeRoleService extends AbstractGeoServerSecurityService
         }
 
         @Override
-        public void startElement(String uri, String localName, String qName, Attributes attrs)
-                throws SAXException {
+        public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
             if (SECURITY_ROLE_REF.equals(localName)) {
                 inSecRoleRef = true;
             }
@@ -144,7 +142,8 @@ public class GeoServerJ2eeRoleService extends AbstractGeoServerSecurityService
         public List<String> getInSecRoleRoles() {
             return inSecRoleRoles;
         }
-    };
+    }
+    ;
 
     protected static Logger LOGGER = Logging.getLogger("org.geoserver.security");
 
@@ -269,8 +268,7 @@ public class GeoServerJ2eeRoleService extends AbstractGeoServerSecurityService
 
             xmlReader.setContentHandler(handler);
             // suppress validation
-            xmlReader.setEntityResolver(
-                    (publicId, systemId) -> new InputSource(new StringReader("")));
+            xmlReader.setEntityResolver((publicId, systemId) -> new InputSource(new StringReader("")));
             xmlReader.parse(inputSource);
         } catch (Exception e) {
             throw new IOException(e);
@@ -372,8 +370,7 @@ public class GeoServerJ2eeRoleService extends AbstractGeoServerSecurityService
      */
     @Override
     public Properties personalizeRoleParams(
-            String roleName, Properties roleParams, String userName, Properties userProps)
-            throws IOException {
+            String roleName, Properties roleParams, String userName, Properties userProps) throws IOException {
         return null;
     }
 

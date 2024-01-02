@@ -57,10 +57,8 @@ public class MapLayerInfoTest {
     /** check is caching disabled remote layer, overridden caching */
     @Test
     public void isCachingDisabledRemoteWFSLayer() {
-        MapLayerInfo info =
-                new MapLayerInfo(
-                        getLayerInfo(PublishedType.REMOTE),
-                        getEnabledCacheMetadata(MAX_AGE_VALUE, Boolean.TRUE));
+        MapLayerInfo info = new MapLayerInfo(
+                getLayerInfo(PublishedType.REMOTE), getEnabledCacheMetadata(MAX_AGE_VALUE, Boolean.TRUE));
 
         assertFalse(info.isCachingEnabled());
     }
@@ -95,10 +93,8 @@ public class MapLayerInfoTest {
     /** Check if caching enabled, overriden caching, no layer caching */
     @Test
     public void isCachingEnabledWithOverrideMetadata() {
-        MapLayerInfo info =
-                new MapLayerInfo(
-                        getLayerInfo(PublishedType.VECTOR),
-                        getEnabledCacheMetadata(MAX_AGE_VALUE, Boolean.TRUE));
+        MapLayerInfo info = new MapLayerInfo(
+                getLayerInfo(PublishedType.VECTOR), getEnabledCacheMetadata(MAX_AGE_VALUE, Boolean.TRUE));
 
         assertTrue(info.isCachingEnabled());
     }
@@ -109,8 +105,7 @@ public class MapLayerInfoTest {
         LayerInfo layerInfo = getLayerInfo(PublishedType.VECTOR);
         ResourceInfoImpl resource = (ResourceInfoImpl) layerInfo.getResource();
         resource.setMetadata(getEnabledCacheMetadata(MAX_AGE_VALUE, Boolean.TRUE));
-        MapLayerInfo info =
-                new MapLayerInfo(layerInfo, getEnabledCacheMetadata(MAX_AGE_VALUE, Boolean.TRUE));
+        MapLayerInfo info = new MapLayerInfo(layerInfo, getEnabledCacheMetadata(MAX_AGE_VALUE, Boolean.TRUE));
 
         assertTrue(info.isCachingEnabled());
     }
@@ -136,10 +131,8 @@ public class MapLayerInfoTest {
     /** Max age is taken from overridden, override caching, no layer caching. */
     @Test
     public void getCacheMaxAgeLayerInfoOverridden() {
-        MapLayerInfo info =
-                new MapLayerInfo(
-                        getLayerInfo(PublishedType.VECTOR),
-                        getEnabledCacheMetadata(MAX_AGE_VALUE, Boolean.TRUE));
+        MapLayerInfo info = new MapLayerInfo(
+                getLayerInfo(PublishedType.VECTOR), getEnabledCacheMetadata(MAX_AGE_VALUE, Boolean.TRUE));
 
         assertEquals(MAX_AGE_VALUE, info.getCacheMaxAge());
     }
@@ -149,10 +142,8 @@ public class MapLayerInfoTest {
      */
     @Test
     public void getCacheMaxAgeLayerInfoBothDefined() {
-        MapLayerInfo info =
-                new MapLayerInfo(
-                        getLayerInfo(PublishedType.VECTOR),
-                        getEnabledCacheMetadata(MAX_AGE_VALUE, Boolean.TRUE));
+        MapLayerInfo info = new MapLayerInfo(
+                getLayerInfo(PublishedType.VECTOR), getEnabledCacheMetadata(MAX_AGE_VALUE, Boolean.TRUE));
         ResourceInfoImpl resource = (ResourceInfoImpl) info.getResource();
         resource.setMetadata(getEnabledCacheMetadata(MAX_AGE_VALUE - 1, Boolean.TRUE));
 
@@ -162,10 +153,8 @@ public class MapLayerInfoTest {
     /** Max age is taken from layer, override caching, layer caching Overridden with lower value. */
     @Test
     public void getCacheMaxAgeLayerInfoBothDefinedOverridenLower() {
-        MapLayerInfo info =
-                new MapLayerInfo(
-                        getLayerInfo(PublishedType.VECTOR),
-                        getEnabledCacheMetadata(MAX_AGE_VALUE, Boolean.TRUE));
+        MapLayerInfo info = new MapLayerInfo(
+                getLayerInfo(PublishedType.VECTOR), getEnabledCacheMetadata(MAX_AGE_VALUE, Boolean.TRUE));
         ResourceInfoImpl resource = (ResourceInfoImpl) info.getResource();
         resource.setMetadata(getEnabledCacheMetadata(MAX_AGE_VALUE + 1, Boolean.TRUE));
 
@@ -178,10 +167,8 @@ public class MapLayerInfoTest {
      */
     @Test
     public void getCacheMaxAgeGroupDisabledButDefined() {
-        MapLayerInfo info =
-                new MapLayerInfo(
-                        getLayerInfo(PublishedType.VECTOR),
-                        getEnabledCacheMetadata(MAX_AGE_VALUE, Boolean.FALSE));
+        MapLayerInfo info = new MapLayerInfo(
+                getLayerInfo(PublishedType.VECTOR), getEnabledCacheMetadata(MAX_AGE_VALUE, Boolean.FALSE));
         ResourceInfoImpl resource = (ResourceInfoImpl) info.getResource();
         resource.setMetadata(getEnabledCacheMetadata(MAX_AGE_VALUE + 1, Boolean.TRUE));
 

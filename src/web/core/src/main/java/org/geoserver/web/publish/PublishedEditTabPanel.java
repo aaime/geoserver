@@ -52,10 +52,9 @@ public class PublishedEditTabPanel<T extends PublishedInfo> extends Panel {
     }
 
     public PublishedEditTabPanel<T> setInputEnabled(final boolean enabled) {
-        visitChildren(
-                (component, visit) -> {
-                    component.setEnabled(enabled);
-                });
+        visitChildren((component, visit) -> {
+            component.setEnabled(enabled);
+        });
         return this;
     }
 

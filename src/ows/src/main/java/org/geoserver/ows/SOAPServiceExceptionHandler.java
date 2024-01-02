@@ -32,14 +32,11 @@ public class SOAPServiceExceptionHandler extends ServiceExceptionHandler {
 
         try {
             // write out the Fault header
-            StringBuilder sb =
-                    new StringBuilder("<soap:Fault xmlns:soap='")
-                            .append(request.getSOAPNamespace())
-                            .append("'>");
+            StringBuilder sb = new StringBuilder("<soap:Fault xmlns:soap='")
+                    .append(request.getSOAPNamespace())
+                    .append("'>");
             if (exception.getCode() != null) {
-                sb.append("<soap:faultcode>")
-                        .append(exception.getCode())
-                        .append("</soap:faultcode>");
+                sb.append("<soap:faultcode>").append(exception.getCode()).append("</soap:faultcode>");
             }
             sb.append("<soap:faultstring>")
                     .append(exception.getLocalizedMessage())

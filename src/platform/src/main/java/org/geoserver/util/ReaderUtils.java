@@ -45,8 +45,7 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class ReaderUtils {
     /** Used internally to create log information to detect errors. */
-    private static final Logger LOGGER =
-            org.geotools.util.logging.Logging.getLogger("org.vfny.geoserver.global");
+    private static final Logger LOGGER = org.geotools.util.logging.Logging.getLogger("org.vfny.geoserver.global");
 
     /**
      * ReaderUtils constructor.
@@ -97,8 +96,7 @@ public class ReaderUtils {
      */
     public static File checkFile(File file, boolean isDir) throws FileNotFoundException {
         if (!file.exists()) {
-            throw new FileNotFoundException(
-                    (isDir ? "Folder" : "File") + " does not exist: " + file);
+            throw new FileNotFoundException((isDir ? "Folder" : "File") + " does not exist: " + file);
         }
 
         if (isDir && !file.isDirectory()) {
@@ -148,8 +146,7 @@ public class ReaderUtils {
      * @return The child element found, null if not found.
      * @throws Exception When a child element is required and not found.
      */
-    public static Element[] getChildElements(Element root, String name, boolean mandatory)
-            throws Exception {
+    public static Element[] getChildElements(Element root, String name, boolean mandatory) throws Exception {
         final List<Element> elements = new ArrayList<>();
         Node child = root.getFirstChild();
         while (child != null) {
@@ -163,8 +160,7 @@ public class ReaderUtils {
         }
 
         if (mandatory && (elements.isEmpty())) {
-            throw new Exception(
-                    root.getNodeName() + " does not contains a child element named " + name);
+            throw new Exception(root.getNodeName() + " does not contains a child element named " + name);
         }
 
         return elements.toArray(new Element[0]);
@@ -182,8 +178,7 @@ public class ReaderUtils {
      * @return The child element found, null if not found.
      * @throws Exception When a child element is required and not found.
      */
-    public static Element getChildElement(Element root, String name, boolean mandatory)
-            throws Exception {
+    public static Element getChildElement(Element root, String name, boolean mandatory) throws Exception {
         Node child = root.getFirstChild();
 
         while (child != null) {
@@ -197,8 +192,7 @@ public class ReaderUtils {
         }
 
         if (mandatory && (child == null)) {
-            throw new Exception(
-                    root.getNodeName() + " does not contains a child element named " + name);
+            throw new Exception(root.getNodeName() + " does not contains a child element named " + name);
         }
 
         return null;
@@ -239,8 +233,8 @@ public class ReaderUtils {
      * @return The int value if the attribute was found, the default otherwise.
      * @throws Exception When a attribute element is required and not found.
      */
-    public static int getIntAttribute(
-            Element elem, String attName, boolean mandatory, int defaultValue) throws Exception {
+    public static int getIntAttribute(Element elem, String attName, boolean mandatory, int defaultValue)
+            throws Exception {
         String attValue = getAttribute(elem, attName, mandatory);
 
         if (!mandatory && (attValue == null)) {
@@ -251,13 +245,12 @@ public class ReaderUtils {
             return Integer.parseInt(attValue);
         } catch (Exception ex) {
             if (mandatory) {
-                throw new Exception(
-                        attName
-                                + " attribute of element "
-                                + elem.getNodeName()
-                                + " must be an integer, but it's '"
-                                + attValue
-                                + "'");
+                throw new Exception(attName
+                        + " attribute of element "
+                        + elem.getNodeName()
+                        + " must be an integer, but it's '"
+                        + attValue
+                        + "'");
             } else {
                 return defaultValue;
             }
@@ -277,8 +270,7 @@ public class ReaderUtils {
      * @return The value if the attribute was found, the null otherwise.
      * @throws Exception When a child attribute is required and not found.
      */
-    public static String getAttribute(Element elem, String attName, boolean mandatory)
-            throws Exception {
+    public static String getAttribute(Element elem, String attName, boolean mandatory) throws Exception {
         if (elem == null) {
             if (mandatory) {
                 throw new NullPointerException();
@@ -298,13 +290,9 @@ public class ReaderUtils {
         if (mandatory) {
             if (att == null) {
                 throw new Exception(
-                        "element "
-                                + elem.getNodeName()
-                                + " does not contains an attribute named "
-                                + attName);
+                        "element " + elem.getNodeName() + " does not contains an attribute named " + attName);
             } else if ("".equals(value)) {
-                throw new Exception(
-                        "attribute " + attName + "in element " + elem.getNodeName() + " is empty");
+                throw new Exception("attribute " + attName + "in element " + elem.getNodeName() + " is empty");
             }
         }
 
@@ -325,8 +313,7 @@ public class ReaderUtils {
      * @return The value if the attribute was found, the false otherwise.
      * @throws Exception When a child attribute is required and not found.
      */
-    public static boolean getBooleanAttribute(
-            Element elem, String attName, boolean mandatory, boolean defaultValue)
+    public static boolean getBooleanAttribute(Element elem, String attName, boolean mandatory, boolean defaultValue)
             throws Exception {
         String value = getAttribute(elem, attName, mandatory);
 
@@ -367,8 +354,7 @@ public class ReaderUtils {
      * @return The value if the child was found, the null otherwise.
      * @throws Exception When a child attribute is required and not found.
      */
-    public static String getChildText(Element root, String childName, boolean mandatory)
-            throws Exception {
+    public static String getChildText(Element root, String childName, boolean mandatory) throws Exception {
         Element elem = getChildElement(root, childName, mandatory);
 
         if (elem != null) {
@@ -415,7 +401,8 @@ public class ReaderUtils {
         String value = null;
 
         if (LOGGER.isLoggable(Level.FINER)) {
-            LOGGER.finer(new StringBuffer("getting element text for ").append(elem).toString());
+            LOGGER.finer(
+                    new StringBuffer("getting element text for ").append(elem).toString());
         }
 
         if (elem != null) {
@@ -524,8 +511,7 @@ public class ReaderUtils {
      * @return The double value if the attribute was found, the NaN otherwise.
      * @throws Exception When a attribute element is required and not found.
      */
-    public static double getDoubleAttribute(Element elem, String attName, boolean mandatory)
-            throws Exception {
+    public static double getDoubleAttribute(Element elem, String attName, boolean mandatory) throws Exception {
         String value = getAttribute(elem, attName, mandatory);
 
         if ((value == null) || ("".equals(value))) {
@@ -538,13 +524,12 @@ public class ReaderUtils {
             try {
                 d = Double.parseDouble(value);
             } catch (NumberFormatException ex) {
-                throw new ConfigurationException(
-                        "Illegal attribute value for "
-                                + attName
-                                + " in element "
-                                + elem.getNodeName()
-                                + ". Expected double, but was "
-                                + value);
+                throw new ConfigurationException("Illegal attribute value for "
+                        + attName
+                        + " in element "
+                        + elem.getNodeName()
+                        + ". Expected double, but was "
+                        + value);
             }
         }
 
@@ -562,17 +547,13 @@ public class ReaderUtils {
      * @throws RuntimeException If reader failed to parse properly.
      */
     public static void validate(
-            Document xml,
-            DefaultHandler errorHandler,
-            String targetNamespace,
-            String schemaLocation) {
+            Document xml, DefaultHandler errorHandler, String targetNamespace, String schemaLocation) {
         try {
             Transformer tx = TransformerFactory.newInstance().newTransformer();
             ByteArrayOutputStream output = new ByteArrayOutputStream();
             tx.transform(new DOMSource(xml), new StreamResult(output));
 
-            try (InputStreamReader reader =
-                    new InputStreamReader(new ByteArrayInputStream(output.toByteArray()))) {
+            try (InputStreamReader reader = new InputStreamReader(new ByteArrayInputStream(output.toByteArray()))) {
                 validate(reader, errorHandler, targetNamespace, schemaLocation);
             }
         } catch (Exception e) {
@@ -591,10 +572,7 @@ public class ReaderUtils {
      * @throws RuntimeException If reader failed to parse properly.
      */
     public static void validate(
-            Reader xml,
-            DefaultHandler errorHandler,
-            String targetNamespace,
-            String schemaLocation) {
+            Reader xml, DefaultHandler errorHandler, String targetNamespace, String schemaLocation) {
         InputSource in = new InputSource(xml);
 
         try {
@@ -606,8 +584,7 @@ public class ReaderUtils {
             sf.setValidating(true);
             SAXParser parser = sf.newSAXParser();
             parser.setProperty(
-                    "http://java.sun.com/xml/jaxp/properties/schemaLanguage",
-                    "http://www.w3.org/2001/XMLSchema");
+                    "http://java.sun.com/xml/jaxp/properties/schemaLanguage", "http://www.w3.org/2001/XMLSchema");
 
             //            SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
             //               parser.setProperty("http://xml.org/sax/features/validation",
@@ -620,8 +597,7 @@ public class ReaderUtils {
             //                    Boolean.TRUE);
 
             if (schemaLocation != null) {
-                parser.setProperty(
-                        "http://java.sun.com/xml/jaxp/properties/schemaSource", schemaLocation);
+                parser.setProperty("http://java.sun.com/xml/jaxp/properties/schemaSource", schemaLocation);
                 //                        if ( targetNamespace != null ) {
                 //
                 // parser.setProperty("http://apache.org/xml/properties/schema/external-schemaLocation",

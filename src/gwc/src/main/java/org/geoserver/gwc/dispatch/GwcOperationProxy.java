@@ -22,10 +22,7 @@ public class GwcOperationProxy {
 
     private Map<String, String> responseHeaders;
 
-    public GwcOperationProxy(
-            final String contentType,
-            final Map<String, String> headers,
-            final byte[] responseContent)
+    public GwcOperationProxy(final String contentType, final Map<String, String> headers, final byte[] responseContent)
             throws Exception {
         this.contentType = contentType;
         this.responseContent = responseContent;

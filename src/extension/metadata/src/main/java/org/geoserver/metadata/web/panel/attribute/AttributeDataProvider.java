@@ -28,15 +28,14 @@ public class AttributeDataProvider extends GeoServerDataProvider<AttributeConfig
 
     public static Property<AttributeConfiguration> NAME = new BeanProperty<>("name", "label");
 
-    public static Property<AttributeConfiguration> VALUE =
-            new AbstractProperty<AttributeConfiguration>("value") {
-                private static final long serialVersionUID = -1889227419206718295L;
+    public static Property<AttributeConfiguration> VALUE = new AbstractProperty<AttributeConfiguration>("value") {
+        private static final long serialVersionUID = -1889227419206718295L;
 
-                @Override
-                public Object getPropertyValue(AttributeConfiguration item) {
-                    return null;
-                }
-            };
+        @Override
+        public Object getPropertyValue(AttributeConfiguration item) {
+            return null;
+        }
+    };
 
     private List<AttributeConfiguration> items = new ArrayList<>();
 
@@ -48,9 +47,7 @@ public class AttributeDataProvider extends GeoServerDataProvider<AttributeConfig
         this.rInfo = rInfo;
         this.tab = tab;
         ConfigurationService metadataConfigurationService =
-                GeoServerApplication.get()
-                        .getApplicationContext()
-                        .getBean(ConfigurationService.class);
+                GeoServerApplication.get().getApplicationContext().getBean(ConfigurationService.class);
         load(metadataConfigurationService.getMetadataConfiguration());
     }
 
@@ -58,9 +55,7 @@ public class AttributeDataProvider extends GeoServerDataProvider<AttributeConfig
     public AttributeDataProvider(String typename, ResourceInfo rInfo) {
         this.rInfo = rInfo;
         ConfigurationService metadataConfigurationService =
-                GeoServerApplication.get()
-                        .getApplicationContext()
-                        .getBean(ConfigurationService.class);
+                GeoServerApplication.get().getApplicationContext().getBean(ConfigurationService.class);
         AttributeCollection typeConfiguration =
                 metadataConfigurationService.getMetadataConfiguration().findType(typename);
         if (typeConfiguration != null) {

@@ -109,9 +109,7 @@ public class GetRecords {
             int numberOfRecordsMatched = 0;
             int[] counts = new int[queries.size()];
             for (int i = 0; i < queries.size(); i++) {
-                counts[i] =
-                        store.getRecordsCount(
-                                queries.get(i).query, Transaction.AUTO_COMMIT, queries.get(i).rd);
+                counts[i] = store.getRecordsCount(queries.get(i).query, Transaction.AUTO_COMMIT, queries.get(i).rd);
                 numberOfRecordsMatched += counts[i];
             }
 
@@ -177,23 +175,21 @@ public class GetRecords {
                 numberOfRecordsReturned = 0;
             }
 
-            CSWRecordsResult result =
-                    new CSWRecordsResult(
-                            elementSet,
-                            request.getOutputSchema(),
-                            numberOfRecordsMatched,
-                            numberOfRecordsReturned,
-                            nextRecord,
-                            timestamp,
-                            records);
+            CSWRecordsResult result = new CSWRecordsResult(
+                    elementSet,
+                    request.getOutputSchema(),
+                    numberOfRecordsMatched,
+                    numberOfRecordsReturned,
+                    nextRecord,
+                    timestamp,
+                    records);
             return result;
         } catch (IOException e) {
             throw new ServiceException("Request failed due to: " + e.getMessage(), e);
         }
     }
 
-    private List<WrappedQuery> toGtQueries(
-            List<RecordDescriptor> outputRds, QueryType query, GetRecordsType request)
+    private List<WrappedQuery> toGtQueries(List<RecordDescriptor> outputRds, QueryType query, GetRecordsType request)
             throws IOException {
         // prepare to build the queries
         Filter filter = query.getConstraint() != null ? query.getConstraint().getFilter() : null;
@@ -310,8 +306,7 @@ public class GetRecords {
             }
         }
 
-        throw new ServiceException(
-                "Unknown type: " + typeName, ServiceException.INVALID_PARAMETER_VALUE, "typeNames");
+        throw new ServiceException("Unknown type: " + typeName, ServiceException.INVALID_PARAMETER_VALUE, "typeNames");
     }
 
     /**

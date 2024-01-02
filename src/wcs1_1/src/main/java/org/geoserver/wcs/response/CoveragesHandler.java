@@ -25,15 +25,12 @@ public class CoveragesHandler implements DataContentHandler {
 
     @Override
     public Object getContent(DataSource source) throws IOException {
-        throw new UnsupportedOperationException(
-                "This handler is not able to work on the parsing side");
+        throw new UnsupportedOperationException("This handler is not able to work on the parsing side");
     }
 
     @Override
-    public Object getTransferData(DataFlavor flavor, DataSource source)
-            throws UnsupportedFlavorException, IOException {
-        throw new UnsupportedOperationException(
-                "This handler is not able to work on the parsing side");
+    public Object getTransferData(DataFlavor flavor, DataSource source) throws UnsupportedFlavorException, IOException {
+        throw new UnsupportedOperationException("This handler is not able to work on the parsing side");
     }
 
     @Override

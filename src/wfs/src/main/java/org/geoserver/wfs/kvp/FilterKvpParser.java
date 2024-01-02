@@ -129,16 +129,11 @@ public abstract class FilterKvpParser extends KvpParser {
             adapter.parse(requestSource);
             LOGGER.fine("just parsed: " + requestSource);
         } catch (SAXException e) {
-            throw new ServiceException(
-                    e,
-                    "XML getFeature request SAX parsing error",
-                    XmlRequestReader.class.getName());
+            throw new ServiceException(e, "XML getFeature request SAX parsing error", XmlRequestReader.class.getName());
         } catch (IOException e) {
-            throw new ServiceException(
-                    e, "XML get feature request input error", XmlRequestReader.class.getName());
+            throw new ServiceException(e, "XML get feature request input error", XmlRequestReader.class.getName());
         } catch (ParserConfigurationException e) {
-            throw new ServiceException(
-                    e, "Some sort of issue creating parser", XmlRequestReader.class.getName());
+            throw new ServiceException(e, "Some sort of issue creating parser", XmlRequestReader.class.getName());
         }
 
         LOGGER.fine("passing filter: " + contentHandler.getFilter());

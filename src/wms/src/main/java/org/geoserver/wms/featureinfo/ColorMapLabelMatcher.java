@@ -22,15 +22,13 @@ class ColorMapLabelMatcher {
     String labelInclusion;
     Integer channel;
 
-    ColorMapLabelMatcher(
-            String attributeName, ColorMap colorMap, String labelInclusion, Integer channel) {
+    ColorMapLabelMatcher(String attributeName, ColorMap colorMap, String labelInclusion, Integer channel) {
 
         String labelInclusionUpper = labelInclusion.toUpperCase();
         if (!LabelInFeatureInfoMode.getAsStringList().contains(labelInclusionUpper))
-            throw new RuntimeException(
-                    "Unsupported labelInFeatureInfo VendorOption value "
-                            + labelInclusion
-                            + ". It should be one of add, replace, none");
+            throw new RuntimeException("Unsupported labelInFeatureInfo VendorOption value "
+                    + labelInclusion
+                    + ". It should be one of add, replace, none");
 
         this.attributeName = attributeName;
         this.colorMap = colorMap;
@@ -131,17 +129,15 @@ class ColorMapLabelMatcher {
     }
 
     static int getLabelAttributeNameCount(List<ColorMapLabelMatcher> colorMapLabelMatchers) {
-        return (int)
-                colorMapLabelMatchers.stream().filter(l -> l.getAttributeName() == "Label").count();
+        return (int) colorMapLabelMatchers.stream()
+                .filter(l -> l.getAttributeName() == "Label")
+                .count();
     }
 
     static boolean isLabelReplacingValue(List<ColorMapLabelMatcher> colorMapLabelMatchers) {
         return !colorMapLabelMatchers.isEmpty()
                 && colorMapLabelMatchers.stream()
-                        .allMatch(
-                                l ->
-                                        l.getLabelInclusion()
-                                                .equals(LabelInFeatureInfoMode.REPLACE.name()));
+                        .allMatch(l -> l.getLabelInclusion().equals(LabelInFeatureInfoMode.REPLACE.name()));
     }
 
     enum LabelInFeatureInfoMode {
@@ -150,9 +146,7 @@ class ColorMapLabelMatcher {
         NONE;
 
         static List<String> getAsStringList() {
-            return Stream.of(LabelInFeatureInfoMode.values())
-                    .map(v -> v.name())
-                    .collect(Collectors.toList());
+            return Stream.of(LabelInFeatureInfoMode.values()).map(v -> v.name()).collect(Collectors.toList());
         }
     }
 }

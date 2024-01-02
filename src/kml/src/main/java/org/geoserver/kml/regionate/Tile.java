@@ -92,16 +92,8 @@ public class Tile {
     /** Builds the best matching tile for the specified envelope */
     public Tile(ReferencedEnvelope wgs84Envelope) {
         z = Math.round(Math.log(MAX_TILE_WIDTH / wgs84Envelope.getWidth()) / Math.log(2));
-        x =
-                Math.round(
-                        ((wgs84Envelope.getMinimum(0) - WORLD_BOUNDS.getMinimum(0))
-                                        / MAX_TILE_WIDTH)
-                                * Math.pow(2, z));
-        y =
-                Math.round(
-                        ((wgs84Envelope.getMinimum(1) - WORLD_BOUNDS.getMinimum(1))
-                                        / MAX_TILE_WIDTH)
-                                * Math.pow(2, z));
+        x = Math.round(((wgs84Envelope.getMinimum(0) - WORLD_BOUNDS.getMinimum(0)) / MAX_TILE_WIDTH) * Math.pow(2, z));
+        y = Math.round(((wgs84Envelope.getMinimum(1) - WORLD_BOUNDS.getMinimum(1)) / MAX_TILE_WIDTH) * Math.pow(2, z));
         envelope = envelope(x, y, z);
     }
 

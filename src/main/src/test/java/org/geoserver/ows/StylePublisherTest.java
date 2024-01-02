@@ -45,23 +45,19 @@ public class StylePublisherTest extends GeoServerSystemTestSupport {
         GeoServerResourceLoader resourceLoader = getResourceLoader();
 
         // add style - global
-        resourceLoader.copyFromClassPath(
-                "org/geoserver/ows/smileyface.png", "styles/smileyface.png");
+        resourceLoader.copyFromClassPath("org/geoserver/ows/smileyface.png", "styles/smileyface.png");
         paths.add(new String[] {"styles", "smileyface.png"});
 
         // add style - global in subdirectory
-        resourceLoader.copyFromClassPath(
-                "org/geoserver/ows/smileyface.png", "styles/icons/smileyface.png");
+        resourceLoader.copyFromClassPath("org/geoserver/ows/smileyface.png", "styles/icons/smileyface.png");
         paths.add(new String[] {"styles", "icons", "smileyface.png"});
 
         // add style - workspaced
-        resourceLoader.copyFromClassPath(
-                "org/geoserver/ows/house.svg", "workspaces/cite/styles/house.svg");
+        resourceLoader.copyFromClassPath("org/geoserver/ows/house.svg", "workspaces/cite/styles/house.svg");
         paths.add(new String[] {"styles", "cite", "house.svg"});
 
         // add style - workspaced in subdirectory
-        resourceLoader.copyFromClassPath(
-                "org/geoserver/ows/house.svg", "workspaces/cite/styles/icons/house.svg");
+        resourceLoader.copyFromClassPath("org/geoserver/ows/house.svg", "workspaces/cite/styles/icons/house.svg");
         paths.add(new String[] {"styles", "cite", "icons", "house.svg"});
 
         // add style - workspaced style with global image
@@ -72,12 +68,10 @@ public class StylePublisherTest extends GeoServerSystemTestSupport {
 
         // testing over-riding global image with workspaced image
         resourceLoader.copyFromClassPath("org/geoserver/ows/smileyface.png", "styles/override.png");
-        resourceLoader.copyFromClassPath(
-                "org/geoserver/ows/grass_fill.png", "workspaces/cite/styles/override.png");
+        resourceLoader.copyFromClassPath("org/geoserver/ows/grass_fill.png", "workspaces/cite/styles/override.png");
 
         // testing over-riding global image with workspaced image in subdirectory
-        resourceLoader.copyFromClassPath(
-                "org/geoserver/ows/smileyface.png", "styles/icons/override.png");
+        resourceLoader.copyFromClassPath("org/geoserver/ows/smileyface.png", "styles/icons/override.png");
         resourceLoader.copyFromClassPath(
                 "org/geoserver/ows/grass_fill.png", "workspaces/cite/styles/icons/override.png");
 
@@ -121,9 +115,7 @@ public class StylePublisherTest extends GeoServerSystemTestSupport {
         String[] path = {"styles/test.bar"};
         MockHttpServletResponse response = request(path, null);
         assertEquals(200, response.getStatus());
-        assertThat(
-                response.getHeader("Content-Type"),
-                startsWith(MediaType.APPLICATION_OCTET_STREAM_VALUE));
+        assertThat(response.getHeader("Content-Type"), startsWith(MediaType.APPLICATION_OCTET_STREAM_VALUE));
     }
 
     @Test
@@ -135,30 +127,25 @@ public class StylePublisherTest extends GeoServerSystemTestSupport {
         MockHttpServletResponse response1 = request(path, null);
         assertEquals(200, response1.getStatus());
         assertThat(response1.getHeader("Content-Type"), startsWith(MediaType.TEXT_XML_VALUE));
-        assertEquals(
-                "attachment; filename=\"test.foo\"", response1.getHeader("Content-Disposition"));
+        assertEquals("attachment; filename=\"test.foo\"", response1.getHeader("Content-Disposition"));
 
         context.addMimeType("foo", MediaType.APPLICATION_XML);
         MockHttpServletResponse response2 = request(path, null);
         assertEquals(200, response2.getStatus());
-        assertThat(
-                response2.getHeader("Content-Type"), startsWith(MediaType.APPLICATION_XML_VALUE));
-        assertEquals(
-                "attachment; filename=\"test.foo\"", response2.getHeader("Content-Disposition"));
+        assertThat(response2.getHeader("Content-Type"), startsWith(MediaType.APPLICATION_XML_VALUE));
+        assertEquals("attachment; filename=\"test.foo\"", response2.getHeader("Content-Disposition"));
 
         context.addMimeType("foo", MediaType.TEXT_HTML);
         MockHttpServletResponse response3 = request(path, null);
         assertEquals(200, response3.getStatus());
         assertThat(response3.getHeader("Content-Type"), startsWith(MediaType.TEXT_HTML_VALUE));
-        assertEquals(
-                "attachment; filename=\"test.foo\"", response3.getHeader("Content-Disposition"));
+        assertEquals("attachment; filename=\"test.foo\"", response3.getHeader("Content-Disposition"));
 
         context.addMimeType("foo", MediaType.valueOf("image/svg+xml"));
         MockHttpServletResponse response4 = request(path, null);
         assertEquals(200, response4.getStatus());
         assertThat(response4.getHeader("Content-Type"), startsWith("image/svg+xml"));
-        assertEquals(
-                "attachment; filename=\"test.foo\"", response4.getHeader("Content-Disposition"));
+        assertEquals("attachment; filename=\"test.foo\"", response4.getHeader("Content-Disposition"));
     }
 
     @Test
@@ -168,11 +155,9 @@ public class StylePublisherTest extends GeoServerSystemTestSupport {
             assertEquals(Arrays.toString(path), 200, response.getStatus());
 
             assertArrayEquals(
-                    IOUtils.toByteArray(
-                            this.getClass()
-                                    .getClassLoader()
-                                    .getResourceAsStream(
-                                            "org/geoserver/ows/" + path[path.length - 1])),
+                    IOUtils.toByteArray(this.getClass()
+                            .getClassLoader()
+                            .getResourceAsStream("org/geoserver/ows/" + path[path.length - 1])),
                     response.getContentAsByteArray());
         }
     }
@@ -185,9 +170,7 @@ public class StylePublisherTest extends GeoServerSystemTestSupport {
 
         assertArrayEquals(
                 IOUtils.toByteArray(
-                        this.getClass()
-                                .getClassLoader()
-                                .getResourceAsStream("org/geoserver/ows/smileyface.png")),
+                        this.getClass().getClassLoader().getResourceAsStream("org/geoserver/ows/smileyface.png")),
                 response.getContentAsByteArray());
 
         path = new String[] {"styles", "cite", "override.png"};
@@ -196,9 +179,7 @@ public class StylePublisherTest extends GeoServerSystemTestSupport {
 
         assertArrayEquals(
                 IOUtils.toByteArray(
-                        this.getClass()
-                                .getClassLoader()
-                                .getResourceAsStream("org/geoserver/ows/grass_fill.png")),
+                        this.getClass().getClassLoader().getResourceAsStream("org/geoserver/ows/grass_fill.png")),
                 response.getContentAsByteArray());
 
         path = new String[] {"styles", "icons", "override.png"};
@@ -207,9 +188,7 @@ public class StylePublisherTest extends GeoServerSystemTestSupport {
 
         assertArrayEquals(
                 IOUtils.toByteArray(
-                        this.getClass()
-                                .getClassLoader()
-                                .getResourceAsStream("org/geoserver/ows/smileyface.png")),
+                        this.getClass().getClassLoader().getResourceAsStream("org/geoserver/ows/smileyface.png")),
                 response.getContentAsByteArray());
 
         path = new String[] {"styles", "cite", "icons", "override.png"};
@@ -218,9 +197,7 @@ public class StylePublisherTest extends GeoServerSystemTestSupport {
 
         assertArrayEquals(
                 IOUtils.toByteArray(
-                        this.getClass()
-                                .getClassLoader()
-                                .getResourceAsStream("org/geoserver/ows/grass_fill.png")),
+                        this.getClass().getClassLoader().getResourceAsStream("org/geoserver/ows/grass_fill.png")),
                 response.getContentAsByteArray());
     }
 
@@ -242,11 +219,9 @@ public class StylePublisherTest extends GeoServerSystemTestSupport {
             response = request(path, AbstractURLPublisher.lastModified(timeStamp));
             assertEquals(200, response.getStatus());
             assertArrayEquals(
-                    IOUtils.toByteArray(
-                            this.getClass()
-                                    .getClassLoader()
-                                    .getResourceAsStream(
-                                            "org/geoserver/ows/" + path[path.length - 1])),
+                    IOUtils.toByteArray(this.getClass()
+                            .getClassLoader()
+                            .getResourceAsStream("org/geoserver/ows/" + path[path.length - 1])),
                     response.getContentAsByteArray());
         }
     }

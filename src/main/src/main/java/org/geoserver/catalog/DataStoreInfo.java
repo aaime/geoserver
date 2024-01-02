@@ -29,8 +29,7 @@ public interface DataStoreInfo extends StoreInfo {
      * @return The datastore.
      * @throws IOException Any I/O problems.
      */
-    DataAccess<? extends FeatureType, ? extends Feature> getDataStore(ProgressListener listener)
-            throws IOException;
+    DataAccess<? extends FeatureType, ? extends Feature> getDataStore(ProgressListener listener) throws IOException;
 
     /**
      * DataStoreInfo equality is based on the following properties:

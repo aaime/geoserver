@@ -47,7 +47,8 @@ public class EWKTPPIO extends CDataPPIO {
             throw new IllegalArgumentException("Input should contain geometry");
         }
         CoordinateReferenceSystem geomCRS = null;
-        if (wktContents.length == 2 && SRID_REGEX.matcher(wktContents[0].toUpperCase()).matches()) {
+        if (wktContents.length == 2
+                && SRID_REGEX.matcher(wktContents[0].toUpperCase()).matches()) {
             String sridString = wktContents[0].split("=")[1];
             geomCRS = CRS.decode("EPSG:" + sridString, true);
         }

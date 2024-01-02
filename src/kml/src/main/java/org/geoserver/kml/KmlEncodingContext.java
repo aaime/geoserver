@@ -123,16 +123,14 @@ public class KmlEncodingContext {
         this.superOverlayEnabled = computeSuperOverlayEnabled();
         this.extendedDataEnabled = computeExtendedDataEnabled();
         this.kmScore = computeKmScore();
-        this.networkLinksFormat =
-                KMLMapOutputFormat.NL_KML_MIME_TYPE.equals(request.getFormat())
-                        || KMZMapOutputFormat.NL_KMZ_MIME_TYPE.equals(request.getFormat());
+        this.networkLinksFormat = KMLMapOutputFormat.NL_KML_MIME_TYPE.equals(request.getFormat())
+                || KMZMapOutputFormat.NL_KMZ_MIME_TYPE.equals(request.getFormat());
         this.kmz = kmz;
         this.service = wms.getServiceInfo();
         this.liveIcons = true;
         this.iconStyles = new HashMap<>();
 
-        Boolean autofit =
-                Converters.convert(request.getFormatOptions().get("autofit"), Boolean.class);
+        Boolean autofit = Converters.convert(request.getFormatOptions().get("autofit"), Boolean.class);
         if (autofit != null && Converters.convert(autofit, Boolean.class)) {
             double width = mapContent.getMapWidth();
             double height = mapContent.getMapHeight();
@@ -165,8 +163,7 @@ public class KmlEncodingContext {
     /** Force the output to be in WGS84 */
     private WMSMapContent fixViewport(WMSMapContent mc) {
         MapViewport viewport = mc.getViewport();
-        if (!CRS.equalsIgnoreMetadata(
-                viewport.getCoordinateReferenceSystem(), DefaultGeographicCRS.WGS84)) {
+        if (!CRS.equalsIgnoreMetadata(viewport.getCoordinateReferenceSystem(), DefaultGeographicCRS.WGS84)) {
             viewport.setCoordinateReferenceSystem(DefaultGeographicCRS.WGS84);
             GetMapRequest req = mc.getRequest();
             req.setSRS("EPSG:4326");
@@ -252,8 +249,7 @@ public class KmlEncodingContext {
 
     /** Returns the {@link KmlDecorator} objects for the specified Feature class */
     public List<KmlDecorator> getDecoratorsForClass(Class<? extends Feature> clazz) {
-        List<KmlDecoratorFactory> factories =
-                GeoServerExtensions.extensions(KmlDecoratorFactory.class);
+        List<KmlDecoratorFactory> factories = GeoServerExtensions.extensions(KmlDecoratorFactory.class);
         List<KmlDecorator> result = new ArrayList<>();
         for (KmlDecoratorFactory factory : factories) {
             KmlDecorator decorator = factory.getDecorator(clazz, this);
@@ -374,8 +370,7 @@ public class KmlEncodingContext {
     public void addKmzGroundOverlay(String imagePath, Layer layer) {
         if (!kmz) {
             throw new IllegalStateException(
-                    "Cannot add ground "
-                            + "overlay layers, the output is not supposed to be a KMZ");
+                    "Cannot add ground " + "overlay layers, the output is not supposed to be a KMZ");
         }
         this.kmzGroundOverlays.put(imagePath, layer);
     }
@@ -524,18 +519,14 @@ public class KmlEncodingContext {
                 }
             }
 
-            if (!CRS.equalsIgnoreMetadata(
-                    re.getCoordinateReferenceSystem(), DefaultGeographicCRS.WGS84)) {
+            if (!CRS.equalsIgnoreMetadata(re.getCoordinateReferenceSystem(), DefaultGeographicCRS.WGS84)) {
                 return re.transform(DefaultGeographicCRS.WGS84, true);
             } else {
                 return re;
             }
         } catch (Exception e) {
             throw new ServiceException(
-                    "Requested bounding box "
-                            + request.getBbox()
-                            + " could not be tranformed to WGS84",
-                    e);
+                    "Requested bounding box " + request.getBbox() + " could not be tranformed to WGS84", e);
         }
     }
 }

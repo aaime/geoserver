@@ -43,18 +43,14 @@ public class GeometryRegionatingStrategy extends ExternalSortRegionatingStrategy
             attribute = MapLayerInfo.getRegionateAttribute(featureType);
         }
         if (attribute == null || ft.getDescriptor(attribute) == null) {
-            LOGGER.log(
-                    Level.FINER, "No attribute specified, falling " + "back on geometry attribute");
+            LOGGER.log(Level.FINER, "No attribute specified, falling " + "back on geometry attribute");
             attribute = ft.getGeometryDescriptor().getLocalName();
         } else {
             // Make sure the attribute is actually there
             AttributeType attributeType = ft.getType(attribute);
             if (attributeType == null) {
                 throw new ServiceException(
-                        "Could not find regionating attribute "
-                                + attribute
-                                + " in layer "
-                                + featureType.getName());
+                        "Could not find regionating attribute " + attribute + " in layer " + featureType.getName());
             }
         }
 

@@ -97,9 +97,8 @@ public class GetMapDefaults {
         for (int i = 0; useNativeBounds && i < layers.size(); i++) {
             if (layers.get(i) != null) {
                 String layerSRS = layers.get(i).getSRS();
-                useNativeBounds =
-                        reqSRS.equalsIgnoreCase(layerSRS)
-                                && layers.get(i).getResource().getNativeBoundingBox() != null;
+                useNativeBounds = reqSRS.equalsIgnoreCase(layerSRS)
+                        && layers.get(i).getResource().getNativeBoundingBox() != null;
             } else {
                 useNativeBounds = false;
             }
@@ -129,12 +128,10 @@ public class GetMapDefaults {
                         ReferencedEnvelope nativeBbox = layerInfo.getBoundingBox();
                         if (nativeBbox == null) {
                             try {
-                                CoordinateReferenceSystem nativeCrs =
-                                        layerInfo.getCoordinateReferenceSystem();
+                                CoordinateReferenceSystem nativeCrs = layerInfo.getCoordinateReferenceSystem();
                                 nativeBbox = curbbox.transform(nativeCrs, true);
                             } catch (Exception e) {
-                                throw new ServiceException(
-                                        "Best effort native bbox computation failed", e);
+                                throw new ServiceException("Best effort native bbox computation failed", e);
                             }
                         }
                         curbbox = nativeBbox;

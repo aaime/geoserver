@@ -328,9 +328,7 @@ public class CoverageView implements Serializable {
 
     public EnvelopeCompositionType getEnvelopeCompositionType() {
         // for backwards compatibility
-        return envelopeCompositionType == null
-                ? EnvelopeCompositionType.INTERSECTION
-                : envelopeCompositionType;
+        return envelopeCompositionType == null ? EnvelopeCompositionType.INTERSECTION : envelopeCompositionType;
     }
 
     public void setEnvelopeCompositionType(EnvelopeCompositionType envelopeCompositionType) {
@@ -364,8 +362,7 @@ public class CoverageView implements Serializable {
 
     /** Create a {@link CoverageInfo} */
     private CoverageInfo buildCoverageInfo(
-            CatalogBuilder builder, CoverageStoreInfo storeInfo, CoverageInfo cinfo, String name)
-            throws Exception {
+            CatalogBuilder builder, CoverageStoreInfo storeInfo, CoverageInfo cinfo, String name) throws Exception {
         Catalog catalog = storeInfo.getCatalog();
 
         // Get a reader from the pool for this Sample CoverageInfo
@@ -376,15 +373,14 @@ public class CoverageView implements Serializable {
         cinfo.setNativeCoverageName(name);
 
         GridCoverage2DReader reader =
-                (GridCoverage2DReader)
-                        catalog.getResourcePool().getGridCoverageReader(cinfo, name, null);
+                (GridCoverage2DReader) catalog.getResourcePool().getGridCoverageReader(cinfo, name, null);
         builder.setStore(storeInfo);
         return builder.buildCoverage(reader, name, null);
     }
 
     /** Create a new {@link CoverageInfo} for this {@link CoverageView} */
-    public CoverageInfo createCoverageInfo(
-            String name, CoverageStoreInfo storeInfo, CatalogBuilder builder) throws Exception {
+    public CoverageInfo createCoverageInfo(String name, CoverageStoreInfo storeInfo, CatalogBuilder builder)
+            throws Exception {
         Catalog catalog = storeInfo.getCatalog();
 
         CoverageInfo coverageInfo = catalog.getFactory().createCoverage();
@@ -401,10 +397,7 @@ public class CoverageView implements Serializable {
      * its metadata
      */
     public void updateCoverageInfo(
-            String name,
-            CoverageStoreInfo storeInfo,
-            CatalogBuilder builder,
-            CoverageInfo coverageInfo)
+            String name, CoverageStoreInfo storeInfo, CatalogBuilder builder, CoverageInfo coverageInfo)
             throws Exception {
         Utilities.ensureNonNull("coverageInfo", coverageInfo);
 
@@ -443,14 +436,9 @@ public class CoverageView implements Serializable {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((coverageBands == null) ? 0 : coverageBands.hashCode());
-        result =
-                prime * result
-                        + ((envelopeCompositionType == null)
-                                ? 0
-                                : envelopeCompositionType.hashCode());
+        result = prime * result + ((envelopeCompositionType == null) ? 0 : envelopeCompositionType.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result =
-                prime * result + ((selectedResolution == null) ? 0 : selectedResolution.hashCode());
+        result = prime * result + ((selectedResolution == null) ? 0 : selectedResolution.hashCode());
         result = prime * result + selectedResolutionIndex;
         return result;
     }

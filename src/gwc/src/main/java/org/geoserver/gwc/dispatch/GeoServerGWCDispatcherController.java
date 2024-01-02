@@ -24,8 +24,7 @@ public class GeoServerGWCDispatcherController extends GeoWebCacheDispatcherContr
     // Let the GeoServer dispatcher handle "/service/**"
     @Override
     @RequestMapping(path = {"", "/home", "/demo/**", "/proxy/**"})
-    public void handleRestApiRequest(HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+    public void handleRestApiRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
         super.handleRestApiRequest(request, response);
     }
 }

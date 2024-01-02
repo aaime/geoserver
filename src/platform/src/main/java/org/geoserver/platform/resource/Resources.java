@@ -249,11 +249,9 @@ public class Resources {
     public static File createNewDirectory(Resource resource) throws IOException {
         switch (resource.getType()) {
             case DIRECTORY:
-                throw new IOException(
-                        "New directory " + resource.path() + " already exists as DIRECTORY");
+                throw new IOException("New directory " + resource.path() + " already exists as DIRECTORY");
             case RESOURCE:
-                throw new IOException(
-                        "New directory " + resource.path() + " already exists as RESOURCE");
+                throw new IOException("New directory " + resource.path() + " already exists as RESOURCE");
             case UNDEFINED:
                 return resource.dir(); // will create directory as needed
             default:
@@ -274,11 +272,9 @@ public class Resources {
     public static File createNewFile(Resource resource) throws IOException {
         switch (resource.getType()) {
             case DIRECTORY:
-                throw new IOException(
-                        "New file " + resource.path() + " already exists as DIRECTORY");
+                throw new IOException("New file " + resource.path() + " already exists as DIRECTORY");
             case RESOURCE:
-                throw new IOException(
-                        "New file " + resource.path() + " already exists as RESOURCE");
+                throw new IOException("New file " + resource.path() + " already exists as RESOURCE");
             case UNDEFINED:
                 return resource.file(); // will create directory as needed
             default:
@@ -354,8 +350,7 @@ public class Resources {
      * @param filename file name of the new resource
      * @throws IOException If data could not be copied into indicated location
      */
-    public static void copy(InputStream data, Resource directory, String filename)
-            throws IOException {
+    public static void copy(InputStream data, Resource directory, String filename) throws IOException {
         copy(data, directory.get(filename));
     }
 
@@ -457,7 +452,8 @@ public class Resources {
 
         public static final DirectoryFilter INSTANCE = new DirectoryFilter();
 
-        private DirectoryFilter() {};
+        private DirectoryFilter() {}
+        ;
 
         @Override
         public boolean accept(Resource obj) {
@@ -469,7 +465,8 @@ public class Resources {
 
         public static final AnyFilter INSTANCE = new AnyFilter();
 
-        private AnyFilter() {};
+        private AnyFilter() {}
+        ;
 
         @Override
         public boolean accept(Resource obj) {
@@ -485,8 +482,7 @@ public class Resources {
      * @return resource
      */
     public static Resource fromPath(String path) {
-        return ((GeoServerResourceLoader) GeoServerExtensions.bean("resourceLoader"))
-                .fromPath(path);
+        return ((GeoServerResourceLoader) GeoServerExtensions.bean("resourceLoader")).fromPath(path);
     }
 
     /**
@@ -517,8 +513,7 @@ public class Resources {
      * @return resouce with randomly generated name
      * @throws IOException
      */
-    public static Resource createRandom(String prefix, String suffix, Resource dir)
-            throws IOException {
+    public static Resource createRandom(String prefix, String suffix, Resource dir) throws IOException {
         // Use only the file name from the supplied prefix
         prefix = (new File(prefix)).getName();
 
@@ -750,8 +745,7 @@ public class Resources {
         private transient Resource delegate;
         private String path;
 
-        private void readObject(ObjectInputStream stream)
-                throws IOException, ClassNotFoundException {
+        private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
             stream.defaultReadObject();
             delegate = Resources.fromPath(path);
         }
@@ -813,9 +807,7 @@ public class Resources {
 
         @Override
         public Resource parent() {
-            return delegate.parent() == null
-                    ? null
-                    : new SerializableResourceWrapper(delegate.parent());
+            return delegate.parent() == null ? null : new SerializableResourceWrapper(delegate.parent());
         }
 
         @Override
@@ -881,8 +873,7 @@ public class Resources {
      * @return New UNDEFINED resource suitable for use with rename
      * @throws IOException If unique resource cannot be produced
      */
-    public static Resource uniqueResource(Resource resource, String newName, String extension)
-            throws IOException {
+    public static Resource uniqueResource(Resource resource, String newName, String extension) throws IOException {
         Resource target = resource.parent().get(newName + "." + extension);
 
         int i = 0;
@@ -890,17 +881,16 @@ public class Resources {
             target = resource.parent().get(newName + i + "." + extension);
         }
         if (i > MAX_RENAME_ATTEMPTS) {
-            throw new IOException(
-                    "All target files between "
-                            + newName
-                            + "1."
-                            + extension
-                            + " and "
-                            + newName
-                            + MAX_RENAME_ATTEMPTS
-                            + "."
-                            + extension
-                            + " are in use already, giving up");
+            throw new IOException("All target files between "
+                    + newName
+                    + "1."
+                    + extension
+                    + " and "
+                    + newName
+                    + MAX_RENAME_ATTEMPTS
+                    + "."
+                    + extension
+                    + " are in use already, giving up");
         }
         return target;
     }

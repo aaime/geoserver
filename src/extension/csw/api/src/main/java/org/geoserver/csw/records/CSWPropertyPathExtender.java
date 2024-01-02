@@ -24,8 +24,7 @@ public class CSWPropertyPathExtender {
 
     QNameResolver resolver = new QNameResolver();
 
-    PropertyName extendProperty(
-            PropertyName expression, FilterFactory filterFactory, NamespaceSupport nss) {
+    PropertyName extendProperty(PropertyName expression, FilterFactory filterFactory, NamespaceSupport nss) {
         String path = expression.getPropertyName();
         if (nss != null) {
             QName name = resolver.parseQName(path, nss);

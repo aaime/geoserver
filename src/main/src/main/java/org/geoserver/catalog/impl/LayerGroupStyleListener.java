@@ -51,8 +51,7 @@ public class LayerGroupStyleListener implements CatalogListener {
 
             // uses contains instead of equals predicate because the result of the PropertyName
             // is a List of List and would cause the filter to fail the test.
-            Filter stylesContainsGroup =
-                    Predicates.contains("layerGroupStyles.layers.id", groupInfo.getId());
+            Filter stylesContainsGroup = Predicates.contains("layerGroupStyles.layers.id", groupInfo.getId());
 
             Filter or = Predicates.or(containsGroup, stylesContainsGroup);
             try (CloseableIterator<LayerGroupInfo> it = catalog.list(LayerGroupInfo.class, or)) {
@@ -60,19 +59,10 @@ public class LayerGroupStyleListener implements CatalogListener {
                     LayerGroupInfo toUpdate = it.next();
                     // eventually update style names in the default LayerGroup configuration
                     updateStyleName(
-                            toUpdate.getLayers(),
-                            toUpdate.getStyles(),
-                            groupInfo,
-                            oldStyleName,
-                            oldAndNew.getRight());
+                            toUpdate.getLayers(), toUpdate.getStyles(), groupInfo, oldStyleName, oldAndNew.getRight());
                     for (LayerGroupStyle s : toUpdate.getLayerGroupStyles()) {
                         // eventually update style names in the LayerGroup styles
-                        updateStyleName(
-                                s.getLayers(),
-                                s.getStyles(),
-                                groupInfo,
-                                oldStyleName,
-                                oldAndNew.getRight());
+                        updateStyleName(s.getLayers(), s.getStyles(), groupInfo, oldStyleName, oldAndNew.getRight());
                     }
                     catalog.save(toUpdate);
                 }

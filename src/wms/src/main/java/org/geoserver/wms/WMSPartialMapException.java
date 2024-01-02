@@ -58,8 +58,7 @@ public class WMSPartialMapException extends ServiceException {
      * @param locator The application specific locator for the exception.
      * @param map WebMap associated with the WMS request that threw the exception
      */
-    public WMSPartialMapException(
-            String message, Throwable cause, String code, String locator, WebMap map) {
+    public WMSPartialMapException(String message, Throwable cause, String code, String locator, WebMap map) {
         super(message, cause, code, locator);
         this.map = map;
     }

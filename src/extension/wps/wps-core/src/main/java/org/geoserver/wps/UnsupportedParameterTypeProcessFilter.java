@@ -27,8 +27,7 @@ import org.springframework.context.ApplicationContextAware;
  *
  * @author Andrea Aime - GeoSolutions
  */
-public class UnsupportedParameterTypeProcessFilter extends ProcessSelector
-        implements ApplicationContextAware {
+public class UnsupportedParameterTypeProcessFilter extends ProcessSelector implements ApplicationContextAware {
 
     static final Logger LOGGER = Logging.getLogger(UnsupportedParameterTypeProcessFilter.class);
 

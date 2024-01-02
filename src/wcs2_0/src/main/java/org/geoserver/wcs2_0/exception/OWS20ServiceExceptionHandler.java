@@ -104,16 +104,10 @@ public class OWS20ServiceExceptionHandler extends ServiceExceptionHandler {
             String code = exception.getCode();
             OWSExceptionCode exCode = OWS20Exception.OWSExceptionCode.getByCode(code);
             if (exCode != null) {
-                ows2ex =
-                        new OWS20Exception(
-                                exception.getMessage(), exception, exCode, exception.getLocator());
+                ows2ex = new OWS20Exception(exception.getMessage(), exception, exCode, exception.getLocator());
             } else {
-                ows2ex =
-                        new OWS20Exception(
-                                exception.getMessage(),
-                                exception,
-                                OWSExceptionCode.NoApplicableCode,
-                                exception.getLocator());
+                ows2ex = new OWS20Exception(
+                        exception.getMessage(), exception, OWSExceptionCode.NoApplicableCode, exception.getLocator());
             }
         }
 
@@ -155,10 +149,7 @@ public class OWS20ServiceExceptionHandler extends ServiceExceptionHandler {
             // throw new RuntimeException(ex);
             // Hmm, not much we can do here.  I guess log the fact that we couldn't write out the
             // exception and be done with it...
-            LOGGER.log(
-                    Level.INFO,
-                    "Problem writing exception information back to calling client:",
-                    ex);
+            LOGGER.log(Level.INFO, "Problem writing exception information back to calling client:", ex);
         } finally {
             try {
                 response.getOutputStream().flush();
@@ -194,7 +185,8 @@ public class OWS20ServiceExceptionHandler extends ServiceExceptionHandler {
         // add the message
         StringBuffer sb = new StringBuffer();
         OwsUtils.dumpExceptionMessages(exception, sb, true);
-        if (exception.getExceptionText() != null && !exception.getExceptionText().isEmpty()) {
+        if (exception.getExceptionText() != null
+                && !exception.getExceptionText().isEmpty()) {
             sb.append("\n");
             sb.append(exception.getExceptionText()); // check this
         }

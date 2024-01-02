@@ -148,8 +148,7 @@ public abstract class AbstractDXFWriter implements DXFWriter {
 
     /** Performs the actual writing. Override it in the actual implementation class. */
     @Override
-    public abstract void write(List<SimpleFeatureCollection> featureList, String version)
-            throws IOException;
+    public abstract void write(List<SimpleFeatureCollection> featureList, String version) throws IOException;
 
     /** Extracts and cache the global ReferenceEnvelope for the given feature list. */
     protected ReferencedEnvelope getEnvelope(List<SimpleFeatureCollection> featureList) {
@@ -205,8 +204,7 @@ public abstract class AbstractDXFWriter implements DXFWriter {
      * it's easier to load them from files.
      */
     protected void loadFromResource(String resource) throws IOException {
-        try (InputStream tpl =
-                this.getClass().getClassLoader().getResourceAsStream(resource + ".dxf")) {
+        try (InputStream tpl = this.getClass().getClassLoader().getResourceAsStream(resource + ".dxf")) {
             if (tpl != null) {
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(tpl))) {
                     String line = null;
@@ -314,8 +312,7 @@ public abstract class AbstractDXFWriter implements DXFWriter {
      * the given layer and has an owner handle. The geometry is assigned a line type and color, if
      * specified.
      */
-    protected void writeGeometryStart(
-            String geometryName, String layer, String ownerHandle, int lineType, int color)
+    protected void writeGeometryStart(String geometryName, String layer, String ownerHandle, int lineType, int color)
             throws IOException {
         writeGroup(0, geometryName);
         writeHandle("Geometry");
@@ -330,8 +327,7 @@ public abstract class AbstractDXFWriter implements DXFWriter {
      * Writes a geometry start, for the given geometry name (line, etc.). The geometry belongs to
      * the given layer and has an owner handle. The geometry is assigned layer line type and color.
      */
-    protected void writeGeometryStart(String geometryName, String layer, String ownerHandle)
-            throws IOException {
+    protected void writeGeometryStart(String geometryName, String layer, String ownerHandle) throws IOException {
         writeGeometryStart(geometryName, layer, ownerHandle, -1, -1);
     }
 

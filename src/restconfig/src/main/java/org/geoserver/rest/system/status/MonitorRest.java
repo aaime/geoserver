@@ -44,15 +44,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path = RestBaseController.ROOT_PATH + "/about/system-status")
 public class MonitorRest extends RestBaseController {
 
-    @Autowired SystemInfoCollector systemInfoCollector;
+    @Autowired
+    SystemInfoCollector systemInfoCollector;
 
     @GetMapping(
             value = "",
-            produces = {
-                MediaType.APPLICATION_JSON_VALUE,
-                MediaType.APPLICATION_XML_VALUE,
-                MediaType.TEXT_HTML_VALUE
-            })
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, MediaType.TEXT_HTML_VALUE})
     @ResponseStatus(HttpStatus.OK)
     public RestWrapper<Metrics> getData(HttpServletRequest request, HttpServletResponse response) {
         Metrics si = systemInfoCollector.retrieveAllSystemInfo();
@@ -84,8 +81,7 @@ public class MonitorRest extends RestBaseController {
         }
 
         @Override
-        public void marshal(
-                Object source, HierarchicalStreamWriter writer, MarshallingContext context) {
+        public void marshal(Object source, HierarchicalStreamWriter writer, MarshallingContext context) {
             Object value = ((MetricValue.ValueHolder) source).getValue();
             writer.setValue(value != null ? value.toString() : "");
         }

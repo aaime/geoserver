@@ -34,8 +34,7 @@ import org.geotools.api.feature.type.Name;
 public interface FeatureTypeCallback {
 
     /** Checks if this initializer can handle the specified resource handle */
-    boolean canHandle(
-            FeatureTypeInfo info, DataAccess<? extends FeatureType, ? extends Feature> dataAccess);
+    boolean canHandle(FeatureTypeInfo info, DataAccess<? extends FeatureType, ? extends Feature> dataAccess);
 
     /**
      * Initializes the specified feature type in the specified data access. If temporaryName is
@@ -45,14 +44,11 @@ public interface FeatureTypeCallback {
      * @return true if the initialization used the temporary name, false otherwise
      */
     boolean initialize(
-            FeatureTypeInfo info,
-            DataAccess<? extends FeatureType, ? extends Feature> dataAccess,
-            Name temporaryName)
+            FeatureTypeInfo info, DataAccess<? extends FeatureType, ? extends Feature> dataAccess, Name temporaryName)
             throws IOException;
 
     /** Prepares for the feature type to be flushed */
-    void flush(
-            FeatureTypeInfo info, DataAccess<? extends FeatureType, ? extends Feature> dataAccess)
+    void flush(FeatureTypeInfo info, DataAccess<? extends FeatureType, ? extends Feature> dataAccess)
             throws IOException;
 
     /**
@@ -61,8 +57,6 @@ public interface FeatureTypeCallback {
      * should use it for cleanup purposes
      */
     void dispose(
-            FeatureTypeInfo info,
-            DataAccess<? extends FeatureType, ? extends Feature> dataAccess,
-            Name temporaryName)
+            FeatureTypeInfo info, DataAccess<? extends FeatureType, ? extends Feature> dataAccess, Name temporaryName)
             throws IOException;
 }

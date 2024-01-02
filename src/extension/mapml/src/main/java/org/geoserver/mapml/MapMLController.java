@@ -57,23 +57,20 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin
 public class MapMLController {
 
-    @Autowired GeoServer geoServer;
-    @Autowired WMS wms;
+    @Autowired
+    GeoServer geoServer;
+
+    @Autowired
+    WMS wms;
 
     public static final HashMap<String, TiledCRS> previewTcrsMap = new HashMap<>();
 
-    private static final Bounds DISPLAY_BOUNDS_PHONE_PORTRAIT =
-            new Bounds(new Point(0, 0), new Point(300, 812));
-    private static final Bounds DISPLAY_BOUNDS_PHONE_LANDSCAPE =
-            new Bounds(new Point(0, 0), new Point(812, 300));
-    private static final Bounds DISPLAY_BOUNDS_TABLET_PORTRAIT =
-            new Bounds(new Point(0, 0), new Point(760, 1024));
-    private static final Bounds DISPLAY_BOUNDS_TABLET_LANDSCAPE =
-            new Bounds(new Point(0, 0), new Point(1024, 760));
-    private static final Bounds DISPLAY_BOUNDS_DESKTOP_PORTRAIT =
-            new Bounds(new Point(0, 0), new Point(1024, 768));
-    private static final Bounds DISPLAY_BOUNDS_DESKTOP_LANDSCAPE =
-            new Bounds(new Point(0, 0), new Point(768, 1024));
+    private static final Bounds DISPLAY_BOUNDS_PHONE_PORTRAIT = new Bounds(new Point(0, 0), new Point(300, 812));
+    private static final Bounds DISPLAY_BOUNDS_PHONE_LANDSCAPE = new Bounds(new Point(0, 0), new Point(812, 300));
+    private static final Bounds DISPLAY_BOUNDS_TABLET_PORTRAIT = new Bounds(new Point(0, 0), new Point(760, 1024));
+    private static final Bounds DISPLAY_BOUNDS_TABLET_LANDSCAPE = new Bounds(new Point(0, 0), new Point(1024, 760));
+    private static final Bounds DISPLAY_BOUNDS_DESKTOP_PORTRAIT = new Bounds(new Point(0, 0), new Point(1024, 768));
+    private static final Bounds DISPLAY_BOUNDS_DESKTOP_LANDSCAPE = new Bounds(new Point(0, 0), new Point(768, 1024));
     private static final HashMap<String, List<Bounds>> DISPLAYS = new HashMap<>();
 
     static {
@@ -129,8 +126,7 @@ public class MapMLController {
         LayerGroupInfo layerGroupInfo = null;
         boolean isLayerGroup = (layerInfo == null);
         String layerLabel = "Layer";
-        String styleName =
-                geoServer.getCatalog().getStyleByName(style.orElse("")) != null ? style.get() : "";
+        String styleName = geoServer.getCatalog().getStyleByName(style.orElse("")) != null ? style.get() : "";
         if (isLayerGroup) {
             layerGroupInfo = geoServer.getCatalog().getLayerGroupByName(layer);
             if (layerGroupInfo == null) {
@@ -161,15 +157,12 @@ public class MapMLController {
         final ReferencedEnvelope bbbox;
         int zoom = 0;
         try {
-            ReferencedEnvelope lb =
-                    isLayerGroup
-                            ? layerGroupInfo.getBounds()
-                            : layerInfo.getResource().boundingBox();
+            ReferencedEnvelope lb = isLayerGroup
+                    ? layerGroupInfo.getBounds()
+                    : layerInfo.getResource().boundingBox();
             bbbox = lb.transform(previewTcrsMap.get(projType.value()).getCRS(), true);
-            final Bounds pb =
-                    new Bounds(
-                            new Point(bbbox.getMinX(), bbbox.getMinY()),
-                            new Point(bbbox.getMaxX(), bbbox.getMaxY()));
+            final Bounds pb = new Bounds(
+                    new Point(bbbox.getMinX(), bbbox.getMinY()), new Point(bbbox.getMaxX(), bbbox.getMaxY()));
             // allowing for the data to be displayed at 1024x768 pixels, figure out
             // the zoom level at which the projected bounds fits into 1024x768
             // in both dimensions
@@ -182,11 +175,7 @@ public class MapMLController {
         }
         String base = ResponseUtils.baseURL(request);
         String viewerPath =
-                ResponseUtils.buildURL(
-                        base,
-                        "/mapml/viewer/widget/mapml-viewer.js",
-                        null,
-                        URLMangler.URLType.RESOURCE);
+                ResponseUtils.buildURL(base, "/mapml/viewer/widget/mapml-viewer.js", null, URLMangler.URLType.RESOURCE);
         StringBuilder sb = new StringBuilder();
         sb.append("<!DOCTYPE html>\n")
                 .append("<html>\n")
@@ -273,8 +262,7 @@ public class MapMLController {
             @RequestParam("format") Optional<String> format)
             throws NoSuchAuthorityCodeException, TransformException, FactoryException, IOException {
         MapMLDocumentBuilder mb =
-                new MapMLDocumentBuilder(
-                        this, request, response, layer, proj, style, transparent, format);
+                new MapMLDocumentBuilder(this, request, response, layer, proj, style, transparent, format);
         return mb.getMapMLDocument();
     }
     /**

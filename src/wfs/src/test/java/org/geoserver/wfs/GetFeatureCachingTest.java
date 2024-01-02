@@ -23,7 +23,6 @@ public class GetFeatureCachingTest extends GetFeatureTest {
 
     @AfterClass
     public static void disableCaching() {
-        FeatureSizeFeatureCollection.setFeatureCacheLimit(
-                FeatureSizeFeatureCollection.DEFAULT_CACHE_SIZE);
+        FeatureSizeFeatureCollection.setFeatureCacheLimit(FeatureSizeFeatureCollection.DEFAULT_CACHE_SIZE);
     }
 }

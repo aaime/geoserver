@@ -114,10 +114,7 @@ public abstract class StyleHandler {
      *     </code>.
      */
     public abstract StyledLayerDescriptor parse(
-            Object input,
-            Version version,
-            ResourceLocator resourceLocator,
-            EntityResolver entityResolver)
+            Object input, Version version, ResourceLocator resourceLocator, EntityResolver entityResolver)
             throws IOException;
 
     /**
@@ -132,8 +129,7 @@ public abstract class StyleHandler {
      * @param pretty Flag controlling whether or not the style should be encoded in pretty form.
      * @param output The stream to write the encoded style to.
      */
-    public abstract void encode(
-            StyledLayerDescriptor sld, Version version, boolean pretty, OutputStream output)
+    public abstract void encode(StyledLayerDescriptor sld, Version version, boolean pretty, OutputStream output)
             throws IOException;
 
     /**
@@ -148,8 +144,8 @@ public abstract class StyleHandler {
      *     </code>.
      * @return Any validation errors, or empty list if the style is valid.
      */
-    public abstract List<Exception> validate(
-            Object input, Version version, EntityResolver entityResolver) throws IOException;
+    public abstract List<Exception> validate(Object input, Version version, EntityResolver entityResolver)
+            throws IOException;
 
     /** Returns the format mime type for the specified version. */
     public abstract String mimeType(Version version);

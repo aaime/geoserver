@@ -71,8 +71,7 @@ import org.geotools.util.factory.Hints.ConfigurationMetadataKey;
  */
 public class GeoServerFeatureSource implements SimpleFeatureSource {
     /** Shared package logger */
-    private static final Logger LOGGER =
-            org.geotools.util.logging.Logging.getLogger("org.vfny.geoserver.global");
+    private static final Logger LOGGER = org.geotools.util.logging.Logging.getLogger("org.vfny.geoserver.global");
 
     /** FeatureSource being served up */
     protected SimpleFeatureSource source;
@@ -124,15 +123,7 @@ public class GeoServerFeatureSource implements SimpleFeatureSource {
             int srsHandling,
             Double linearizationTolerance,
             MetadataMap metadata) {
-        this(
-                source,
-                new Settings(
-                        schema,
-                        definitionQuery,
-                        declaredCRS,
-                        srsHandling,
-                        linearizationTolerance,
-                        metadata));
+        this(source, new Settings(schema, definitionQuery, declaredCRS, srsHandling, linearizationTolerance, metadata));
     }
 
     /**
@@ -141,8 +132,7 @@ public class GeoServerFeatureSource implements SimpleFeatureSource {
      * @param source GeoTools2 FeatureSource
      * @param settings Settings for this source
      */
-    GeoServerFeatureSource(
-            FeatureSource<SimpleFeatureType, SimpleFeature> source, Settings settings) {
+    GeoServerFeatureSource(FeatureSource<SimpleFeatureType, SimpleFeature> source, Settings settings) {
         this.source = DataUtilities.simple(source);
         this.schema = settings.schema;
         this.definitionQuery = settings.definitionQuery;
@@ -183,8 +173,7 @@ public class GeoServerFeatureSource implements SimpleFeatureSource {
             return new GeoServerFeatureLocking(
                     (FeatureLocking<SimpleFeatureType, SimpleFeature>) featureSource, settings);
         } else if (featureSource instanceof FeatureStore) {
-            return new GeoServerFeatureStore(
-                    (FeatureStore<SimpleFeatureType, SimpleFeature>) featureSource, settings);
+            return new GeoServerFeatureStore((FeatureStore<SimpleFeatureType, SimpleFeature>) featureSource, settings);
         }
 
         return new GeoServerFeatureSource(featureSource, settings);
@@ -227,8 +216,7 @@ public class GeoServerFeatureSource implements SimpleFeatureSource {
             return defQuery;
         } catch (Exception ex) {
             throw new DataSourceException(
-                    "Could not restrict the query to the definition criteria: " + ex.getMessage(),
-                    ex);
+                    "Could not restrict the query to the definition criteria: " + ex.getMessage(), ex);
         }
     }
 
@@ -271,10 +259,7 @@ public class GeoServerFeatureSource implements SimpleFeatureSource {
                 if (schema.getDescriptor(queriedAtt) != null) {
                     allowedAtts.add(queriedAtt);
                 } else {
-                    LOGGER.info(
-                            "queried a not allowed property: "
-                                    + queriedAtt
-                                    + ". Ommitting it from query");
+                    LOGGER.info("queried a not allowed property: " + queriedAtt + ". Ommitting it from query");
                 }
             }
 
@@ -374,8 +359,7 @@ public class GeoServerFeatureSource implements SimpleFeatureSource {
                 // we should not let the datastore handle it: we need to sort first, then
                 // page on it
                 offset = query.getStartIndex();
-                maxFeatures =
-                        query.getMaxFeatures() == Integer.MAX_VALUE ? null : query.getMaxFeatures();
+                maxFeatures = query.getMaxFeatures() == Integer.MAX_VALUE ? null : query.getMaxFeatures();
 
                 query.setStartIndex(null);
                 query.setMaxFeatures(Query.DEFAULT_MAX);
@@ -389,8 +373,7 @@ public class GeoServerFeatureSource implements SimpleFeatureSource {
         if (query.getStartIndex() != null) {
             if (!source.getQueryCapabilities().isOffsetSupported()) {
                 offset = query.getStartIndex();
-                maxFeatures =
-                        query.getMaxFeatures() == Integer.MAX_VALUE ? null : query.getMaxFeatures();
+                maxFeatures = query.getMaxFeatures() == Integer.MAX_VALUE ? null : query.getMaxFeatures();
 
                 query.setStartIndex(null);
                 query.setMaxFeatures(Query.DEFAULT_MAX);
@@ -425,11 +408,8 @@ public class GeoServerFeatureSource implements SimpleFeatureSource {
 
             // apply limit offset if necessary
             if (offset != null || maxFeatures != null) {
-                fc =
-                        new MaxSimpleFeatureCollection(
-                                fc,
-                                offset == null ? 0 : offset,
-                                maxFeatures == null ? Integer.MAX_VALUE : maxFeatures);
+                fc = new MaxSimpleFeatureCollection(
+                        fc, offset == null ? 0 : offset, maxFeatures == null ? Integer.MAX_VALUE : maxFeatures);
             }
 
             // apply reprojection
@@ -454,8 +434,7 @@ public class GeoServerFeatureSource implements SimpleFeatureSource {
             // that case we completely ignore the native one)
             CoordinateReferenceSystem nativeCRS = geom.getCoordinateReferenceSystem();
 
-            if (srsHandling == ProjectionPolicy.NONE
-                    && metadata.get(FeatureTypeInfo.OTHER_SRS) != null) {
+            if (srsHandling == ProjectionPolicy.NONE && metadata.get(FeatureTypeInfo.OTHER_SRS) != null) {
                 // a feature type with multiple native srs (cascaded feature from WFS-NG or
                 // WMSStore)
                 // and policy is set to keep native
@@ -479,8 +458,7 @@ public class GeoServerFeatureSource implements SimpleFeatureSource {
 
             // and then we reproject all geometries so that the datastore receives
             // them in the native projection system (or the forced one, in case of force)
-            ReprojectingFilterVisitor reprojectingVisitor =
-                    new ReprojectingFilterVisitor(ff, nativeFeatureType);
+            ReprojectingFilterVisitor reprojectingVisitor = new ReprojectingFilterVisitor(ff, nativeFeatureType);
             Filter reprojectedFilter = (Filter) defaultedFilter.accept(reprojectingVisitor, null);
 
             Query reprojectedQuery = new Query(query);
@@ -498,8 +476,7 @@ public class GeoServerFeatureSource implements SimpleFeatureSource {
      */
     protected SimpleFeatureCollection applyProjectionPolicies(
             CoordinateReferenceSystem targetCRS, SimpleFeatureCollection fc)
-            throws IOException, SchemaException, TransformException, OperationNotFoundException,
-                    FactoryException {
+            throws IOException, SchemaException, TransformException, OperationNotFoundException, FactoryException {
         if (fc.getSchema().getGeometryDescriptor() == null) {
             // reprojection and crs forcing do not make sense, bail out
             return fc;
@@ -512,8 +489,7 @@ public class GeoServerFeatureSource implements SimpleFeatureSource {
                 fc = new ForceCoordinateSystemFeatureResults(fc, declaredCRS);
                 nativeCRS = declaredCRS;
             }
-        } else if (srsHandling == ProjectionPolicy.FORCE_DECLARED
-                && !nativeCRS.equals(declaredCRS)) {
+        } else if (srsHandling == ProjectionPolicy.FORCE_DECLARED && !nativeCRS.equals(declaredCRS)) {
             fc = new ForceCoordinateSystemFeatureResults(fc, declaredCRS);
             nativeCRS = declaredCRS;
         } else if (srsHandling == ProjectionPolicy.REPROJECT_TO_DECLARED
@@ -581,8 +557,7 @@ public class GeoServerFeatureSource implements SimpleFeatureSource {
         if (newQuery.getCoordinateSystemReproject() != null) {
             newQuery.setCoordinateSystemReproject(null);
         }
-        if (newQuery.getCoordinateSystem() != null
-                && metadata.get(FeatureTypeInfo.OTHER_SRS) == null) {
+        if (newQuery.getCoordinateSystem() != null && metadata.get(FeatureTypeInfo.OTHER_SRS) == null) {
             newQuery.setCoordinateSystem(null);
         }
         return newQuery;

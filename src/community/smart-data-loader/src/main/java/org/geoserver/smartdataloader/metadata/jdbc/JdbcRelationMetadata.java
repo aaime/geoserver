@@ -21,8 +21,7 @@ public class JdbcRelationMetadata extends RelationMetadata implements JdbcConnec
     protected String name;
     private final JdbcForeignKeyColumnMetadata jfkc;
 
-    public JdbcRelationMetadata(
-            String name, DomainRelationType type, JdbcForeignKeyColumnMetadata fkColumn) {
+    public JdbcRelationMetadata(String name, DomainRelationType type, JdbcForeignKeyColumnMetadata fkColumn) {
         super(type, fkColumn, fkColumn.getRelatedColumn());
         this.name = name;
         this.jfkc = fkColumn;

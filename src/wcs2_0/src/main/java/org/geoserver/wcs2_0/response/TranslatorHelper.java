@@ -52,10 +52,7 @@ class TranslatorHelper {
         try {
             for (int i = 0; i < schemaLocations.length - 1; i += 2) {
                 schemaLocation.append(" ");
-                schemaLocation
-                        .append(schemaLocations[i])
-                        .append(" ")
-                        .append(schemaLocations[i + 1]);
+                schemaLocation.append(schemaLocations[i]).append(" ").append(schemaLocations[i + 1]);
             }
         } catch (ArrayIndexOutOfBoundsException e) {
             throw new ServiceException(

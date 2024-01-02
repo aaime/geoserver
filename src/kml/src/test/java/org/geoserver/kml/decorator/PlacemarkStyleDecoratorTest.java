@@ -29,11 +29,9 @@ public class PlacemarkStyleDecoratorTest extends org.geoserver.wms.icons.IconTes
      */
     @Test
     public void testYSLDTextSymbolizerEncoding() {
-        TextSymbolizer text =
-                text("text", "NAME", font("Arial Black", null, "bold", 8), fill(Color.white, null));
+        TextSymbolizer text = text("text", "NAME", font("Arial Black", null, "bold", 8), fill(Color.white, null));
 
-        PlacemarkStyleDecoratorFactory.PlacemarkStyleDecorator decorator =
-                new PlacemarkStyleDecorator();
+        PlacemarkStyleDecoratorFactory.PlacemarkStyleDecorator decorator = new PlacemarkStyleDecorator();
 
         KmlEncodingContext context = new FakeKmlEncodingContext(featureType);
         SimpleFeatureCollection collection = DataUtilities.collection(fieldIs1);

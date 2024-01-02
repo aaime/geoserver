@@ -16,12 +16,7 @@ public class RegularAxis extends Axis {
     private final Object upperBound;
     private final String uomLabel;
 
-    public RegularAxis(
-            String axisLabel,
-            Object lowerBound,
-            Object upperBound,
-            double resolution,
-            String uomLabel) {
+    public RegularAxis(String axisLabel, Object lowerBound, Object upperBound, double resolution, String uomLabel) {
         super("RegularAxisType", axisLabel);
         this.lowerBound = lowerBound;
         this.upperBound = upperBound;

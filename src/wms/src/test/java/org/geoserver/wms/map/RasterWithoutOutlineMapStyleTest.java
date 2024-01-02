@@ -19,11 +19,10 @@ import org.junit.Test;
  */
 public class RasterWithoutOutlineMapStyleTest extends WMSDimensionsTestSupport {
 
-    private static final String BASE_URL =
-            "wms?service=WMS&version=1.1.0"
-                    + "&request=GetMap"
-                    + "&bbox=-2.237,38.562,16.593,46.558&width=200&height=80"
-                    + "&srs=EPSG:4326&format=image/png";
+    private static final String BASE_URL = "wms?service=WMS&version=1.1.0"
+            + "&request=GetMap"
+            + "&bbox=-2.237,38.562,16.593,46.558&width=200&height=80"
+            + "&srs=EPSG:4326&format=image/png";
     private static final String MIME = "image/png";
 
     @Override
@@ -32,14 +31,12 @@ public class RasterWithoutOutlineMapStyleTest extends WMSDimensionsTestSupport {
 
         Catalog catalog = getCatalog();
 
-        testData.addStyle(
-                "raster_without_outline", "../raster_without_outline.sld", getClass(), catalog);
+        testData.addStyle("raster_without_outline", "../raster_without_outline.sld", getClass(), catalog);
     }
 
     @Test
     public void testNoOutline() throws Exception {
-        BufferedImage image =
-                getAsImage(BASE_URL + "&layers=watertemp&styles=raster_without_outline", MIME);
+        BufferedImage image = getAsImage(BASE_URL + "&layers=watertemp&styles=raster_without_outline", MIME);
 
         // no black outline, so we expect white pixels
         assertPixel(image, 60, 20, new Color(255, 255, 255));
@@ -47,11 +44,9 @@ public class RasterWithoutOutlineMapStyleTest extends WMSDimensionsTestSupport {
         // yellow raster
         assertPixel(image, 100, 40, new Color(255, 165, 0));
 
-        image =
-                getAsImage(
-                        BASE_URL
-                                + "&layers=watertemp,TimeElevation&styles=raster_without_outline,raster_without_outline",
-                        MIME);
+        image = getAsImage(
+                BASE_URL + "&layers=watertemp,TimeElevation&styles=raster_without_outline,raster_without_outline",
+                MIME);
 
         //  black vector feature
         assertPixel(image, 24, 40, new Color(0, 0, 0));

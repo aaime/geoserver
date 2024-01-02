@@ -103,8 +103,7 @@ public class BindingLdapAuthoritiesPopulator implements LdapAuthoritiesPopulator
         if (groupSearchBase == null) {
             logger.info("groupSearchBase is null. No group search will be performed.");
         } else if (groupSearchBase.length() == 0) {
-            logger.info(
-                    "groupSearchBase is empty. Searches will be performed from the context source base");
+            logger.info("groupSearchBase is empty. Searches will be performed from the context source base");
         }
     }
 
@@ -118,8 +117,7 @@ public class BindingLdapAuthoritiesPopulator implements LdapAuthoritiesPopulator
      * @param user the context representing the user who's roles are required
      * @return the extra roles which will be merged with those returned by the group search
      */
-    protected Set<GrantedAuthority> getAdditionalRoles(
-            DirContext ctx, DirContextOperations user, String username) {
+    protected Set<GrantedAuthority> getAdditionalRoles(DirContext ctx, DirContextOperations user, String username) {
         return null;
     }
 
@@ -159,20 +157,18 @@ public class BindingLdapAuthoritiesPopulator implements LdapAuthoritiesPopulator
         if (password != null) {
             // authenticate and execute role extraction in the authenticated
             // context
-            Consumer<Consumer<DirContext>> ctxConsumer =
-                    (ctxFunc) -> {
-                        ldapTemplate.authenticate(
-                                LdapUtils.emptyLdapName(),
-                                userDn,
-                                password,
-                                (ctx, ldapEntryIdentification) -> ctxFunc.accept(ctx));
-                    };
+            Consumer<Consumer<DirContext>> ctxConsumer = (ctxFunc) -> {
+                ldapTemplate.authenticate(
+                        LdapUtils.emptyLdapName(),
+                        userDn,
+                        password,
+                        (ctx, ldapEntryIdentification) -> ctxFunc.accept(ctx));
+            };
             ldapTemplate.authenticate(
                     LdapUtils.emptyLdapName(),
                     userDn,
                     password,
-                    (ctx, ldapEntryIdentification) ->
-                            getAllRoles(user, userDn, result, username, ctxConsumer));
+                    (ctx, ldapEntryIdentification) -> getAllRoles(user, userDn, result, username, ctxConsumer));
         } else {
             getAllRoles(user, userDn, result, username, (func) -> func.accept(null));
         }
@@ -189,44 +185,35 @@ public class BindingLdapAuthoritiesPopulator implements LdapAuthoritiesPopulator
         Set<GrantedAuthority> authorities = new HashSet<>();
 
         if (logger.isLoggable(Level.FINE)) {
-            logger.fine(
-                    "Searching for roles for user '"
-                            + username
-                            + "', DN = "
-                            + "'"
-                            + userDn
-                            + "', with filter "
-                            + groupSearchFilter
-                            + " in search base '"
-                            + getGroupSearchBase()
-                            + "'");
+            logger.fine("Searching for roles for user '"
+                    + username
+                    + "', DN = "
+                    + "'"
+                    + userDn
+                    + "', with filter "
+                    + groupSearchFilter
+                    + " in search base '"
+                    + getGroupSearchBase()
+                    + "'");
         }
         final List<Pair<String, String>> userRolesNameDn = new ArrayList<>();
-        ctxConsumer.accept(
-                (ctx) -> {
-                    SpringSecurityLdapTemplate authTemplate =
-                            LDAPUtils.getLdapTemplateInContext(ctx, ldapTemplate);
+        ctxConsumer.accept((ctx) -> {
+            SpringSecurityLdapTemplate authTemplate = LDAPUtils.getLdapTemplateInContext(ctx, ldapTemplate);
 
-                    // Get ldap groups in form of Pair<String,String> -> Pair<name,dn>
-                    String formattedFilter =
-                            MessageFormat.format(groupSearchFilter, userDn, username);
-                    // search requires an escaped string
-                    formattedFilter = LDAPUtils.escapeSearchString(formattedFilter);
-                    userRolesNameDn.addAll(
-                            authTemplate.search(
-                                    getGroupSearchBase(),
-                                    formattedFilter,
-                                    new AbstractContextMapper<Pair<String, String>>() {
-                                        @Override
-                                        protected Pair<String, String> doMapFromContext(
-                                                DirContextOperations ctx) {
-                                            String name =
-                                                    ctx.getStringAttribute(groupRoleAttribute);
-                                            String dn = ctx.getNameInNamespace();
-                                            return Pair.of(name, dn);
-                                        }
-                                    }));
-                });
+            // Get ldap groups in form of Pair<String,String> -> Pair<name,dn>
+            String formattedFilter = MessageFormat.format(groupSearchFilter, userDn, username);
+            // search requires an escaped string
+            formattedFilter = LDAPUtils.escapeSearchString(formattedFilter);
+            userRolesNameDn.addAll(authTemplate.search(
+                    getGroupSearchBase(), formattedFilter, new AbstractContextMapper<Pair<String, String>>() {
+                        @Override
+                        protected Pair<String, String> doMapFromContext(DirContextOperations ctx) {
+                            String name = ctx.getStringAttribute(groupRoleAttribute);
+                            String dn = ctx.getNameInNamespace();
+                            return Pair.of(name, dn);
+                        }
+                    }));
+        });
 
         if (logger.isLoggable(Level.FINE)) {
             logger.fine("Roles from search: " + userRolesNameDn);
@@ -242,11 +229,7 @@ public class BindingLdapAuthoritiesPopulator implements LdapAuthoritiesPopulator
             // search nested LDAP groups if nested parents is enabled
             if (useNestedParentGroups)
                 searchNestedGroupMembershipRoles(
-                        ctxConsumer,
-                        dn,
-                        roleNameDn.getLeft(),
-                        authorities,
-                        maxGroupSearchLevel - 1);
+                        ctxConsumer, dn, roleNameDn.getLeft(), authorities, maxGroupSearchLevel - 1);
         }
         return authorities;
     }
@@ -260,44 +243,35 @@ public class BindingLdapAuthoritiesPopulator implements LdapAuthoritiesPopulator
             int depth) {
 
         if (logger.isLoggable(Level.FINE)) {
-            logger.fine(
-                    "Searching for roles for nested group '"
-                            + groupName
-                            + "', DN = "
-                            + "'"
-                            + groupDn
-                            + "', with filter "
-                            + nestedGroupSearchFilter
-                            + " in search base '"
-                            + getGroupSearchBase()
-                            + "'");
+            logger.fine("Searching for roles for nested group '"
+                    + groupName
+                    + "', DN = "
+                    + "'"
+                    + groupDn
+                    + "', with filter "
+                    + nestedGroupSearchFilter
+                    + " in search base '"
+                    + getGroupSearchBase()
+                    + "'");
         }
 
         final List<Pair<String, String>> groupRolesNameDn = new ArrayList<>();
-        ctxConsumer.accept(
-                (ctx) -> {
-                    SpringSecurityLdapTemplate authTemplate =
-                            LDAPUtils.getLdapTemplateInContext(ctx, ldapTemplate);
-                    // Get ldap groups in form of Pair<String,String> -> Pair<name,dn>
-                    String formattedFilter =
-                            MessageFormat.format(nestedGroupSearchFilter, groupDn, groupName);
-                    // search requires an escaped string
-                    formattedFilter = LDAPUtils.escapeSearchString(formattedFilter);
-                    groupRolesNameDn.addAll(
-                            authTemplate.search(
-                                    getGroupSearchBase(),
-                                    formattedFilter,
-                                    new AbstractContextMapper<Pair<String, String>>() {
-                                        @Override
-                                        protected Pair<String, String> doMapFromContext(
-                                                DirContextOperations ctx) {
-                                            String name =
-                                                    ctx.getStringAttribute(groupRoleAttribute);
-                                            String dn = ctx.getNameInNamespace();
-                                            return Pair.of(name, dn);
-                                        }
-                                    }));
-                });
+        ctxConsumer.accept((ctx) -> {
+            SpringSecurityLdapTemplate authTemplate = LDAPUtils.getLdapTemplateInContext(ctx, ldapTemplate);
+            // Get ldap groups in form of Pair<String,String> -> Pair<name,dn>
+            String formattedFilter = MessageFormat.format(nestedGroupSearchFilter, groupDn, groupName);
+            // search requires an escaped string
+            formattedFilter = LDAPUtils.escapeSearchString(formattedFilter);
+            groupRolesNameDn.addAll(authTemplate.search(
+                    getGroupSearchBase(), formattedFilter, new AbstractContextMapper<Pair<String, String>>() {
+                        @Override
+                        protected Pair<String, String> doMapFromContext(DirContextOperations ctx) {
+                            String name = ctx.getStringAttribute(groupRoleAttribute);
+                            String dn = ctx.getNameInNamespace();
+                            return Pair.of(name, dn);
+                        }
+                    }));
+        });
 
         if (logger.isLoggable(Level.FINE)) {
             logger.fine("Roles from search: " + groupRolesNameDn);
@@ -309,14 +283,12 @@ public class BindingLdapAuthoritiesPopulator implements LdapAuthoritiesPopulator
             if (convertToUpperCase) {
                 role = role.toUpperCase();
             }
-            boolean addedSuccesfuly =
-                    authorities.add(new SimpleGrantedAuthority(rolePrefix + role));
+            boolean addedSuccesfuly = authorities.add(new SimpleGrantedAuthority(rolePrefix + role));
             // search nested Ldap groups,
             // only if role was added successfully for avoiding circular references
             // if maxGroupSearchLevel == -1 -> no depth limit
             if ((maxGroupSearchLevel == -1 || depth > 0) && addedSuccesfuly)
-                searchNestedGroupMembershipRoles(
-                        ctxConsumer, dn, roleNameDn.getLeft(), authorities, depth - 1);
+                searchNestedGroupMembershipRoles(ctxConsumer, dn, roleNameDn.getLeft(), authorities, depth - 1);
         }
     }
 
@@ -346,8 +318,7 @@ public class BindingLdapAuthoritiesPopulator implements LdapAuthoritiesPopulator
      *     <tt>groupSearchBase</tt>.
      */
     public void setSearchSubtree(boolean searchSubtree) {
-        int searchScope =
-                searchSubtree ? SearchControls.SUBTREE_SCOPE : SearchControls.ONELEVEL_SCOPE;
+        int searchScope = searchSubtree ? SearchControls.SUBTREE_SCOPE : SearchControls.ONELEVEL_SCOPE;
         searchControls.setSearchScope(searchScope);
     }
 
@@ -370,10 +341,9 @@ public class BindingLdapAuthoritiesPopulator implements LdapAuthoritiesPopulator
         Set<GrantedAuthority> roles = getGroupMembershipRoles(ctxConsumer, userDn, userName);
 
         final Set<GrantedAuthority> extraRoles = new HashSet<>();
-        ctxConsumer.accept(
-                (ctx) -> {
-                    extraRoles.addAll(getAdditionalRoles(ctx, user, userName));
-                });
+        ctxConsumer.accept((ctx) -> {
+            extraRoles.addAll(getAdditionalRoles(ctx, user, userName));
+        });
 
         if (extraRoles != null) {
             roles.addAll(extraRoles);

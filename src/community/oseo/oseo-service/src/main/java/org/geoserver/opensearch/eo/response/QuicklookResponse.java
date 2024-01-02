@@ -30,8 +30,7 @@ public class QuicklookResponse extends Response {
     }
 
     @Override
-    public void write(Object value, OutputStream output, Operation operation)
-            throws IOException, ServiceException {
+    public void write(Object value, OutputStream output, Operation operation) throws IOException, ServiceException {
         QuicklookResults results = (QuicklookResults) value;
         IOUtils.write(results.getPayload(), output);
     }

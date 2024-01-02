@@ -65,8 +65,7 @@ public class EMFKvpRequestReader extends KvpRequestReader {
     }
 
     @Override
-    public Object read(Object request, Map<String, Object> kvp, Map<String, Object> rawKvp)
-            throws Exception {
+    public Object read(Object request, Map<String, Object> kvp, Map<String, Object> rawKvp) throws Exception {
         // use emf reflection
         EObject eObject = (EObject) request;
 

@@ -41,8 +41,7 @@ public class UserPropertyAuthenticationKeyMapper extends AbstractAuthenticationK
     public GeoServerUser getUser(String key) throws IOException {
         checkProperties();
 
-        SortedSet<GeoServerUser> set =
-                getUserGroupService().getUsersHavingPropertyValue(getUserPropertyName(), key);
+        SortedSet<GeoServerUser> set = getUserGroupService().getUsersHavingPropertyValue(getUserPropertyName(), key);
         if (set.isEmpty()) return null;
 
         if (set.size() > 1) {
@@ -52,20 +51,12 @@ public class UserPropertyAuthenticationKeyMapper extends AbstractAuthenticationK
             }
             buff.setLength(buff.length() - 1);
             throw new IOException(
-                    "More than one user have auth key: "
-                            + key
-                            + ". Problematic users :"
-                            + buff.toString());
+                    "More than one user have auth key: " + key + ". Problematic users :" + buff.toString());
         }
 
         GeoServerUser user = set.first();
         if (user.isEnabled() == false) {
-            LOGGER.info(
-                    "Found user "
-                            + user.getUsername()
-                            + " for key "
-                            + key
-                            + ", but this user is disabled");
+            LOGGER.info("Found user " + user.getUsername() + " for key " + key + ", but this user is disabled");
             return null;
         }
         return (GeoServerUser) getUserGroupService().loadUserByUsername(user.getUsername());

@@ -51,21 +51,11 @@ public final class LayersNamesAliasingTest extends AbstractAppSchemaTestSupport 
     @Before
     public void beforeTest() {
         // instantiate WFS 1.1 xpath engine
-        WFS11_XPATH_ENGINE =
-                StationsMockData.buildXpathEngine(
-                        getBaseNamespaces(),
-                        "wfs",
-                        "http://www.opengis.net/wfs",
-                        "gml",
-                        "http://www.opengis.net/gml");
+        WFS11_XPATH_ENGINE = StationsMockData.buildXpathEngine(
+                getBaseNamespaces(), "wfs", "http://www.opengis.net/wfs", "gml", "http://www.opengis.net/gml");
         // instantiate WFS 2.0 xpath engine
-        WFS20_XPATH_ENGINE =
-                StationsMockData.buildXpathEngine(
-                        getBaseNamespaces(),
-                        "wfs",
-                        "http://www.opengis.net/wfs/2.0",
-                        "gml",
-                        "http://www.opengis.net/gml/3.2");
+        WFS20_XPATH_ENGINE = StationsMockData.buildXpathEngine(
+                getBaseNamespaces(), "wfs", "http://www.opengis.net/wfs/2.0", "gml", "http://www.opengis.net/gml/3.2");
     }
 
     @Override
@@ -74,8 +64,7 @@ public final class LayersNamesAliasingTest extends AbstractAppSchemaTestSupport 
         return new AliasStationsMockData() {
             @Override
             protected Optional<String> extraStationFeatures() {
-                String features =
-                        "\nst.2=st.2|station2|32154895|station2@stations.org|POINT(-1.0E-7 1.0E-7)";
+                String features = "\nst.2=st.2|station2|32154895|station2@stations.org|POINT(-1.0E-7 1.0E-7)";
                 return Optional.of(features);
             }
 
@@ -115,39 +104,22 @@ public final class LayersNamesAliasingTest extends AbstractAppSchemaTestSupport 
     @Test
     public void testAliasedNameWfsGetFeature11() throws Exception {
         Document document =
-                getAsDOM(
-                        "ows?service=wfs&request=GetFeature&version=1.1.0"
-                                + "&typenames=st_gml31:lyr_Station_gml31");
+                getAsDOM("ows?service=wfs&request=GetFeature&version=1.1.0" + "&typenames=st_gml31:lyr_Station_gml31");
         // requested with lyr_Station_gml31, must returns Station:
-        checkCount(
-                WFS11_XPATH_ENGINE,
-                document,
-                2,
-                "//wfs:FeatureCollection/gml:featureMember/st_gml31:Station_gml31");
+        checkCount(WFS11_XPATH_ENGINE, document, 2, "//wfs:FeatureCollection/gml:featureMember/st_gml31:Station_gml31");
     }
 
     @Test
     public void testAliasedNameWfsGetFeature20() throws Exception {
-        Document document =
-                getAsDOM(
-                        "wfs?request=GetFeature&version=2.0.0"
-                                + "&typeNames=st_gml32:lyr_Station_gml32");
-        checkCount(
-                WFS20_XPATH_ENGINE,
-                document,
-                2,
-                "//wfs:FeatureCollection/wfs:member/st_gml32:Station_gml32");
+        Document document = getAsDOM("wfs?request=GetFeature&version=2.0.0" + "&typeNames=st_gml32:lyr_Station_gml32");
+        checkCount(WFS20_XPATH_ENGINE, document, 2, "//wfs:FeatureCollection/wfs:member/st_gml32:Station_gml32");
     }
 
     @Test
     public void testAliasedNameWfsGetFeaturePost11() throws Exception {
         String xmlQuery = resourceToString("wfs110query.xml");
         Document document = postAsDOM("wfs", xmlQuery);
-        checkCount(
-                WFS11_XPATH_ENGINE,
-                document,
-                1,
-                "//wfs:FeatureCollection/gml:featureMember/st_gml31:Station_gml31");
+        checkCount(WFS11_XPATH_ENGINE, document, 1, "//wfs:FeatureCollection/gml:featureMember/st_gml31:Station_gml31");
     }
 
     @Test
@@ -155,57 +127,33 @@ public final class LayersNamesAliasingTest extends AbstractAppSchemaTestSupport 
         // load wfs 2.0.0 query body at wfs200query.xml
         String xmlQuery = resourceToString("wfs200query.xml");
         Document document = postAsDOM("wfs", xmlQuery);
-        checkCount(
-                WFS20_XPATH_ENGINE,
-                document,
-                1,
-                "//wfs:FeatureCollection/wfs:member/st_gml32:Station_gml32");
+        checkCount(WFS20_XPATH_ENGINE, document, 1, "//wfs:FeatureCollection/wfs:member/st_gml32:Station_gml32");
     }
 
     @Test
     public void testLocalWorkspaceNoPrefixWfsGetFeature11() throws Exception {
-        Document document =
-                getAsDOM(
-                        "st_gml31/wfs?request=GetFeature&version=1.1.0&typename=lyr_Station_gml31");
-        checkCount(
-                WFS11_XPATH_ENGINE,
-                document,
-                2,
-                "//wfs:FeatureCollection/gml:featureMember/st_gml31:Station_gml31");
+        Document document = getAsDOM("st_gml31/wfs?request=GetFeature&version=1.1.0&typename=lyr_Station_gml31");
+        checkCount(WFS11_XPATH_ENGINE, document, 2, "//wfs:FeatureCollection/gml:featureMember/st_gml31:Station_gml31");
     }
 
     @Test
     public void testLocalWorkspaceNoPrefixWfsGetFeature20() throws Exception {
-        Document document =
-                getAsDOM(
-                        "st_gml32/wfs?request=GetFeature&version=2.0.0&typeNames=lyr_Station_gml32");
-        checkCount(
-                WFS20_XPATH_ENGINE,
-                document,
-                2,
-                "//wfs:FeatureCollection/wfs:member/st_gml32:Station_gml32");
+        Document document = getAsDOM("st_gml32/wfs?request=GetFeature&version=2.0.0&typeNames=lyr_Station_gml32");
+        checkCount(WFS20_XPATH_ENGINE, document, 2, "//wfs:FeatureCollection/wfs:member/st_gml32:Station_gml32");
     }
 
     @Test
     public void testLocalWorkspaceNoPrefixWfsGetFeaturePost11() throws Exception {
         String xmlQuery = resourceToString("wfs110queryNoPrefix.xml");
         Document document = postAsDOM("st_gml31/wfs", xmlQuery);
-        checkCount(
-                WFS11_XPATH_ENGINE,
-                document,
-                1,
-                "//wfs:FeatureCollection/gml:featureMember/st_gml31:Station_gml31");
+        checkCount(WFS11_XPATH_ENGINE, document, 1, "//wfs:FeatureCollection/gml:featureMember/st_gml31:Station_gml31");
     }
 
     @Test
     public void testLocalWorkspaceNoPrefixWfsGetFeaturePost20() throws Exception {
         String xmlQuery = resourceToString("wfs200queryNoPrefix.xml");
         Document document = postAsDOM("st_gml32/wfs", xmlQuery);
-        checkCount(
-                WFS20_XPATH_ENGINE,
-                document,
-                1,
-                "//wfs:FeatureCollection/wfs:member/st_gml32:Station_gml32");
+        checkCount(WFS20_XPATH_ENGINE, document, 1, "//wfs:FeatureCollection/wfs:member/st_gml32:Station_gml32");
     }
 
     /**
@@ -215,14 +163,9 @@ public final class LayersNamesAliasingTest extends AbstractAppSchemaTestSupport 
     @Test
     public void testDefaultCqlNameWfsGetFeature11() throws Exception {
         try {
-            setCqlFilter(
-                    "st_gml31",
-                    "lyr_Station_gml31",
-                    "st_gml31:Station_gml31.st_gml31:name='station2'");
-            Document document =
-                    getAsDOM(
-                            "ows?service=wfs&request=GetFeature&version=1.1.0"
-                                    + "&typenames=st_gml31:lyr_Station_gml31");
+            setCqlFilter("st_gml31", "lyr_Station_gml31", "st_gml31:Station_gml31.st_gml31:name='station2'");
+            Document document = getAsDOM(
+                    "ows?service=wfs&request=GetFeature&version=1.1.0" + "&typenames=st_gml31:lyr_Station_gml31");
             // requested with lyr_Station_gml31, must returns Station:
             checkCount(
                     WFS11_XPATH_ENGINE,
@@ -246,19 +189,10 @@ public final class LayersNamesAliasingTest extends AbstractAppSchemaTestSupport 
     @Test
     public void testDefaultCqlWfsGetFeature20() throws Exception {
         try {
-            setCqlFilter(
-                    "st_gml32",
-                    "lyr_Station_gml32",
-                    "st_gml32:Station_gml32.st_gml32:name='station2'");
+            setCqlFilter("st_gml32", "lyr_Station_gml32", "st_gml32:Station_gml32.st_gml32:name='station2'");
             Document document =
-                    getAsDOM(
-                            "wfs?request=GetFeature&version=2.0.0"
-                                    + "&typeNames=st_gml32:lyr_Station_gml32");
-            checkCount(
-                    WFS20_XPATH_ENGINE,
-                    document,
-                    1,
-                    "//wfs:FeatureCollection/wfs:member/st_gml32:Station_gml32");
+                    getAsDOM("wfs?request=GetFeature&version=2.0.0" + "&typeNames=st_gml32:lyr_Station_gml32");
+            checkCount(WFS20_XPATH_ENGINE, document, 1, "//wfs:FeatureCollection/wfs:member/st_gml32:Station_gml32");
             checkCount(
                     WFS20_XPATH_ENGINE,
                     document,
@@ -271,9 +205,7 @@ public final class LayersNamesAliasingTest extends AbstractAppSchemaTestSupport 
 
     private String resourceToString(String filename) throws IOException {
         return IOUtils.toString(
-                getClass()
-                        .getClassLoader()
-                        .getResourceAsStream("test-data/stations/layerNamesTest/" + filename),
+                getClass().getClassLoader().getResourceAsStream("test-data/stations/layerNamesTest/" + filename),
                 StandardCharsets.UTF_8);
     }
 
@@ -281,11 +213,11 @@ public final class LayersNamesAliasingTest extends AbstractAppSchemaTestSupport 
      * Helper method that checks if the provided XPath expression evaluated against the provided XML
      * document yields the expected number of matches.
      */
-    private void checkCount(
-            XpathEngine xpathEngine, Document document, int expectedCount, String xpath) {
+    private void checkCount(XpathEngine xpathEngine, Document document, int expectedCount, String xpath) {
         try {
             // evaluate the xpath and compare the number of nodes found
-            assertEquals(expectedCount, xpathEngine.getMatchingNodes(xpath, document).getLength());
+            assertEquals(
+                    expectedCount, xpathEngine.getMatchingNodes(xpath, document).getLength());
         } catch (Exception exception) {
             throw new RuntimeException("Error evaluating xpath.", exception);
         }

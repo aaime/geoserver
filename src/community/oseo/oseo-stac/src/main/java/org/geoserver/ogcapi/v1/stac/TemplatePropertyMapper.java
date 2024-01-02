@@ -51,8 +51,7 @@ class TemplatePropertyMapper {
         return SimplifyingFilterVisitor.simplify(result);
     }
 
-    private Filter mapPropertiesInternal(List<String> collectionIds, Filter filter)
-            throws IOException {
+    private Filter mapPropertiesInternal(List<String> collectionIds, Filter filter) throws IOException {
         // do we have custom templates, and if so, for which collections?
         Set<String> customTemplateCollections = templates.getCustomItemTemplates();
         if (customTemplateCollections.isEmpty()) {
@@ -110,16 +109,13 @@ class TemplatePropertyMapper {
      * Grab the builder for each collection (might be different) and back-map collectionFilters on
      * it
      */
-    private Map<Filter, List<String>> mapFilters(List<String> collectionIds, Filter result)
-            throws IOException {
+    private Map<Filter, List<String>> mapFilters(List<String> collectionIds, Filter result) throws IOException {
         Map<RootBuilder, Filter> filtersCache = new LinkedHashMap<>();
         Map<Filter, List<String>> collectionFilters = new LinkedHashMap<>();
         for (String collectionId : collectionIds) {
             RootBuilder template = templates.getItemTemplate(collectionId);
-            Filter filter =
-                    filtersCache.computeIfAbsent(template, t -> mapFilter(result, t, collectionId));
-            List<String> filterCollections =
-                    collectionFilters.computeIfAbsent(filter, c -> new ArrayList<>());
+            Filter filter = filtersCache.computeIfAbsent(template, t -> mapFilter(result, t, collectionId));
+            List<String> filterCollections = collectionFilters.computeIfAbsent(filter, c -> new ArrayList<>());
             filterCollections.add(collectionId);
         }
         return collectionFilters;
@@ -127,23 +123,20 @@ class TemplatePropertyMapper {
 
     private Filter mapFilter(Filter source, RootBuilder t, String collectionId) {
         try {
-            STACQueryablesBuilder builder =
-                    new STACQueryablesBuilder(
-                            null,
-                            t,
-                            sampleFeatures.getSchema(),
-                            sampleFeatures.getSample(collectionId),
-                            collectionsCache.getCollection(collectionId),
-                            oseoInfo);
+            STACQueryablesBuilder builder = new STACQueryablesBuilder(
+                    null,
+                    t,
+                    sampleFeatures.getSchema(),
+                    sampleFeatures.getSample(collectionId),
+                    collectionsCache.getCollection(collectionId),
+                    oseoInfo);
             Map<String, Expression> expressions = builder.getExpressionMap();
             Set<String> queryables = builder.getQueryables().getProperties().keySet();
             Set<String> notIncluded = new HashSet<>();
             STACPathVisitor visitor = new STACPathVisitor(expressions, queryables, notIncluded);
             Filter out = (Filter) source.accept(visitor, null);
             if (!notIncluded.isEmpty()) {
-                LOGGER.fine(
-                        "Filter includes attribute not found in queryables configuration: "
-                                + notIncluded);
+                LOGGER.fine("Filter includes attribute not found in queryables configuration: " + notIncluded);
             }
             return out;
         } catch (IOException e) {

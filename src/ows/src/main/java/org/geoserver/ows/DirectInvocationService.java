@@ -38,6 +38,5 @@ public interface DirectInvocationService {
      *     one of the service provided operations under any other circumstances, specific to the
      *     operation being executed
      */
-    Object invokeDirect(String operationName, Object[] parameters)
-            throws IllegalArgumentException, Exception;
+    Object invokeDirect(String operationName, Object[] parameters) throws IllegalArgumentException, Exception;
 }

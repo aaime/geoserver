@@ -77,14 +77,7 @@ public class Format {
             boolean singleFile,
             String mimeType,
             String... options) {
-        this(
-                toolFormat,
-                formatName,
-                fileExtension,
-                singleFile,
-                mimeType,
-                OutputType.BINARY,
-                options);
+        this(toolFormat, formatName, fileExtension, singleFile, mimeType, OutputType.BINARY, options);
     }
 
     /** @return the toolFormat */

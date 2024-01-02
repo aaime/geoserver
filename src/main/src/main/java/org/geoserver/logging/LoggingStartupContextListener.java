@@ -60,8 +60,7 @@ public class LoggingStartupContextListener implements ServletContextListener {
         }
 
         String updateBuiltInLoggingProfiles =
-                GeoServerExtensions.getProperty(
-                        LoggingUtils.UPDATE_BUILT_IN_LOGGING_PROFILES, context);
+                GeoServerExtensions.getProperty(LoggingUtils.UPDATE_BUILT_IN_LOGGING_PROFILES, context);
 
         LoggingUtils.updateBuiltInLoggingProfiles = Boolean.valueOf(updateBuiltInLoggingProfiles);
 
@@ -72,11 +71,9 @@ public class LoggingStartupContextListener implements ServletContextListener {
             LoggingInfo loginfo = getLogging(loader);
 
             if (loginfo != null) {
-                final String location =
-                        LoggingUtils.getLogFileLocation(loginfo.getLocation(), context);
+                final String location = LoggingUtils.getLogFileLocation(loginfo.getLocation(), context);
 
-                LoggingUtils.initLogging(
-                        loader, loginfo.getLevel(), !loginfo.isStdOutLogging(), false, location);
+                LoggingUtils.initLogging(loader, loginfo.getLevel(), !loginfo.isStdOutLogging(), false, location);
             } else {
                 // check for old style data directory
                 File f = loader.find("services.xml");
@@ -84,8 +81,7 @@ public class LoggingStartupContextListener implements ServletContextListener {
                     LegacyLoggingImporter loggingImporter = new LegacyLoggingImporter();
                     loggingImporter.imprt(baseDir);
 
-                    final String location =
-                            LoggingUtils.getLogFileLocation(loggingImporter.getLogFile(), context);
+                    final String location = LoggingUtils.getLogFileLocation(loggingImporter.getLogFile(), context);
 
                     LoggingUtils.initLogging(
                             loader,

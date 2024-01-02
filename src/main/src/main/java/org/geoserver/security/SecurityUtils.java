@@ -30,8 +30,7 @@ public class SecurityUtils {
      * @return true if the exception is caused by Spring Security
      */
     public static boolean isSecurityException(Throwable t) {
-        return t != null
-                && t.getClass().getPackage().getName().startsWith("org.springframework.security");
+        return t != null && t.getClass().getPackage().getName().startsWith("org.springframework.security");
     }
 
     /**
@@ -120,10 +119,9 @@ public class SecurityUtils {
             VectorAccessLimits val = (VectorAccessLimits) policy.getLimits();
             return val.getWriteQuery();
         } else {
-            throw new IllegalArgumentException(
-                    "SecureFeatureStore has been fed "
-                            + "with unexpected AccessLimits class "
-                            + policy.getLimits().getClass());
+            throw new IllegalArgumentException("SecureFeatureStore has been fed "
+                    + "with unexpected AccessLimits class "
+                    + policy.getLimits().getClass());
         }
     }
 
@@ -151,8 +149,7 @@ public class SecurityUtils {
         for (int j = 0; j < times; j++) {
             int source = j % 2;
             int target = (j + 1) % 2;
-            for (int i = 0; i < working[source].length; i++)
-                working[target][perm[i]] = working[source][i];
+            for (int i = 0; i < working[source].length; i++) working[target][perm[i]] = working[source][i];
         }
         char[] result = working[1].clone();
         Arrays.fill(working[0], '0');

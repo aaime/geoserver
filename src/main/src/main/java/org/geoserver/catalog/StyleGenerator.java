@@ -77,8 +77,7 @@ public class StyleGenerator {
      *     style name
      * @return The StyleInfo referencing the generated style
      */
-    public StyleInfo createStyle(StyleHandler handler, FeatureTypeInfo featureType)
-            throws IOException {
+    public StyleInfo createStyle(StyleHandler handler, FeatureTypeInfo featureType) throws IOException {
         return createStyle(handler, featureType, featureType.getFeatureType());
     }
 
@@ -92,8 +91,7 @@ public class StyleGenerator {
      *     missing content
      * @return The StyleInfo referencing the generated style
      */
-    public StyleInfo createStyle(
-            StyleHandler handler, FeatureTypeInfo featureType, FeatureType nativeFeatureType)
+    public StyleInfo createStyle(StyleHandler handler, FeatureTypeInfo featureType, FeatureType nativeFeatureType)
             throws IOException {
 
         // geometryless, style it randomly
@@ -102,14 +100,11 @@ public class StyleGenerator {
 
         Class<?> gtype = gd.getType().getBinding();
         StyleType st;
-        if (LineString.class.isAssignableFrom(gtype)
-                || MultiLineString.class.isAssignableFrom(gtype)) {
+        if (LineString.class.isAssignableFrom(gtype) || MultiLineString.class.isAssignableFrom(gtype)) {
             st = StyleType.LINE;
-        } else if (Polygon.class.isAssignableFrom(gtype)
-                || MultiPolygon.class.isAssignableFrom(gtype)) {
+        } else if (Polygon.class.isAssignableFrom(gtype) || MultiPolygon.class.isAssignableFrom(gtype)) {
             st = StyleType.POLYGON;
-        } else if (Point.class.isAssignableFrom(gtype)
-                || MultiPoint.class.isAssignableFrom(gtype)) {
+        } else if (Point.class.isAssignableFrom(gtype) || MultiPoint.class.isAssignableFrom(gtype)) {
             st = StyleType.POINT;
         } else {
             st = StyleType.GENERIC;
@@ -138,8 +133,7 @@ public class StyleGenerator {
      * @param layerName The name of the style/layer; used in comments.
      * @return The generated style, as a String.
      */
-    public String generateStyle(StyleHandler handler, StyleType styleType, String layerName)
-            throws IOException {
+    public String generateStyle(StyleHandler handler, StyleType styleType, String layerName) throws IOException {
         Entry color = ramp.next();
         try {
             return handler.getStyle(styleType, color.color, color.name, layerName);
@@ -147,8 +141,7 @@ public class StyleGenerator {
             // Handler does not support loading from template; load SLD template and convert
             try {
                 SLDHandler sldHandler = new SLDHandler();
-                String sldTemplate =
-                        sldHandler.getStyle(styleType, color.color, color.name, layerName);
+                String sldTemplate = sldHandler.getStyle(styleType, color.color, color.name, layerName);
 
                 StyledLayerDescriptor sld = sldHandler.parse(sldTemplate, null, null, null);
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -156,7 +149,8 @@ public class StyleGenerator {
                 return out.toString();
             } catch (UnsupportedOperationException e1) {
                 String message = "Error generating style";
-                boolean directMessage = e.getMessage() != null && !"".equals(e.getMessage().trim());
+                boolean directMessage =
+                        e.getMessage() != null && !"".equals(e.getMessage().trim());
                 if (directMessage) {
                     message += " - Direct generation failed with error: " + e.getMessage();
                 }
@@ -175,13 +169,10 @@ public class StyleGenerator {
 
     /** Generates a unique style name for the specified resource. */
     public String generateUniqueStyleName(ResourceInfo resource) {
-        return workspace != null
-                ? findUniqueStyleName(resource, workspace)
-                : findUniqueStyleName(resource);
+        return workspace != null ? findUniqueStyleName(resource, workspace) : findUniqueStyleName(resource);
     }
 
-    StyleInfo doCreateStyle(StyleHandler handler, StyleType styleType, ResourceInfo resource)
-            throws IOException {
+    StyleInfo doCreateStyle(StyleHandler handler, StyleType styleType, ResourceInfo resource) throws IOException {
         // find a new style name
         String styleName = generateUniqueStyleName(resource);
 

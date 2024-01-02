@@ -23,12 +23,7 @@ public class S3InfoPanel extends StoreEditPanel {
         setDefaultModel(model);
         IModel paramsModel = new PropertyModel(model, "connectionParameters");
         TextParamPanel urlPanel =
-                new TextParamPanel(
-                        "url",
-                        new PropertyModel(model, "URL"),
-                        new ResourceModel("url", "URL"),
-                        true,
-                        null);
+                new TextParamPanel("url", new PropertyModel(model, "URL"), new ResourceModel("url", "URL"), true, null);
         add(urlPanel);
     }
 }

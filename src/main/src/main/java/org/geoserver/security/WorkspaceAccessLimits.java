@@ -28,12 +28,10 @@ public class WorkspaceAccessLimits extends AccessLimits {
 
     private static boolean isAuthenticatedAsAdmin() {
 
-        return GeoServerExtensions.bean(GeoServerSecurityManager.class)
-                .checkAuthenticationForAdminRole();
+        return GeoServerExtensions.bean(GeoServerSecurityManager.class).checkAuthenticationForAdminRole();
     }
 
-    public WorkspaceAccessLimits(
-            CatalogMode mode, boolean readable, boolean writable, boolean adminable) {
+    public WorkspaceAccessLimits(CatalogMode mode, boolean readable, boolean writable, boolean adminable) {
         super(mode);
         this.readable = readable;
         this.writable = writable;

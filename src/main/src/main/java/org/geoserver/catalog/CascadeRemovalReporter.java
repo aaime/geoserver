@@ -74,9 +74,7 @@ public class CascadeRemovalReporter implements CatalogVisitor {
     public <T> List<T> getObjects(Class<T> catalogClass, ModificationType... modifications) {
         List<T> result = new ArrayList<>();
         List<ModificationType> mods =
-                (modifications == null || modifications.length == 0)
-                        ? null
-                        : Arrays.asList(modifications);
+                (modifications == null || modifications.length == 0) ? null : Arrays.asList(modifications);
         for (CatalogInfo ci : objects.keySet()) {
             if (catalogClass == null || catalogClass.isAssignableFrom(ci.getClass())) {
                 if (mods == null || mods.contains(objects.get(ci))) {
@@ -205,8 +203,7 @@ public class CascadeRemovalReporter implements CatalogVisitor {
         // scan the layer groups and find those that do use the
         // current layer
         Filter groupContainsLayer = Predicates.equal("layers", layer, MatchAction.ANY);
-        try (CloseableIterator<LayerGroupInfo> it =
-                catalog.list(LayerGroupInfo.class, groupContainsLayer)) {
+        try (CloseableIterator<LayerGroupInfo> it = catalog.list(LayerGroupInfo.class, groupContainsLayer)) {
             while (it.hasNext()) {
                 LayerGroupInfo group = it.next();
                 // mark the layer as one that will be removed
@@ -240,15 +237,13 @@ public class CascadeRemovalReporter implements CatalogVisitor {
             while (it.hasNext()) {
                 LayerInfo li = it.next();
                 if (style.equals(li.getDefaultStyle())) add(li, ModificationType.STYLE_RESET);
-                else if (li.getStyles().contains(style))
-                    add(li, ModificationType.EXTRA_STYLE_REMOVED);
+                else if (li.getStyles().contains(style)) add(li, ModificationType.EXTRA_STYLE_REMOVED);
             }
         }
         // groups can also refer to style, reset each reference to the
         // associated layer default style
         Filter groupAssociated = Predicates.or(Predicates.equal("rootLayerStyle", style), anyStyle);
-        try (CloseableIterator<LayerGroupInfo> it =
-                catalog.list(LayerGroupInfo.class, groupAssociated)) {
+        try (CloseableIterator<LayerGroupInfo> it = catalog.list(LayerGroupInfo.class, groupAssociated)) {
             while (it.hasNext()) {
                 LayerGroupInfo group = it.next();
                 if (style.equals(group.getRootLayerStyle())) {
@@ -268,8 +263,7 @@ public class CascadeRemovalReporter implements CatalogVisitor {
     @Override
     public void visit(LayerGroupInfo layerGroupToRemove) {
         Filter associatedTo = Predicates.equal("layers", layerGroupToRemove, MatchAction.ANY);
-        try (CloseableIterator<LayerGroupInfo> it =
-                catalog.list(LayerGroupInfo.class, associatedTo)) {
+        try (CloseableIterator<LayerGroupInfo> it = catalog.list(LayerGroupInfo.class, associatedTo)) {
             while (it.hasNext()) {
                 LayerGroupInfo group = it.next();
                 if (group.getLayers().contains(layerGroupToRemove)) {

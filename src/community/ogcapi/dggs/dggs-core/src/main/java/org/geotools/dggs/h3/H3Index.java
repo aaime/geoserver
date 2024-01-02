@@ -39,10 +39,7 @@ class H3Index {
         int resolution = getResolution();
         if (resolution > 14) throw new IllegalArgumentException("This H3 cell has no children");
         // switch the resolution up
-        long childId =
-                (id & (8l << (64 - 8)))
-                        | (((long) targetResolution) << (64 - 12))
-                        | (id & 0xFFFFFFFFFFFFFL);
+        long childId = (id & (8l << (64 - 8))) | (((long) targetResolution) << (64 - 12)) | (id & 0xFFFFFFFFFFFFFL);
         //        long mask = ((long) 0xFFFFE) << (64 - 20);
         //        childId &= mask;
         //        return childId;
@@ -60,10 +57,7 @@ class H3Index {
         int resolution = getResolution();
         if (resolution > 14) throw new IllegalArgumentException("This H3 cell has no children");
         // switch the resolution up
-        long childId =
-                (id & (8l << (64 - 8)))
-                        | (((long) targetResolution) << (64 - 12))
-                        | (id & 0xFFFFFFFFFFFFFL);
+        long childId = (id & (8l << (64 - 8))) | (((long) targetResolution) << (64 - 12)) | (id & 0xFFFFFFFFFFFFFL);
         return childId;
     }
 

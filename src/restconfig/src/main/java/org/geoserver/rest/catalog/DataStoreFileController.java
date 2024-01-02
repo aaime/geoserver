@@ -74,9 +74,7 @@ import org.vfny.geoserver.util.DataStoreUtils;
 @RestController
 @ControllerAdvice
 @RequestMapping(
-        path =
-                RestBaseController.ROOT_PATH
-                        + "/workspaces/{workspaceName}/datastores/{storeName}/{method}.{format}")
+        path = RestBaseController.ROOT_PATH + "/workspaces/{workspaceName}/datastores/{storeName}/{method}.{format}")
 public class DataStoreFileController extends AbstractStoreUploadController {
 
     @Autowired
@@ -89,19 +87,15 @@ public class DataStoreFileController extends AbstractStoreUploadController {
     protected static final HashMap<String, String> formatToDataStoreFactory = new HashMap<>();
 
     static {
-        formatToDataStoreFactory.put(
-                "shp", "org.geotools.data.shapefile.ShapefileDataStoreFactory");
-        formatToDataStoreFactory.put(
-                "properties", "org.geotools.data.property.PropertyDataStoreFactory");
+        formatToDataStoreFactory.put("shp", "org.geotools.data.shapefile.ShapefileDataStoreFactory");
+        formatToDataStoreFactory.put("properties", "org.geotools.data.property.PropertyDataStoreFactory");
         formatToDataStoreFactory.put("h2", "org.geotools.data.h2.H2DataStoreFactory");
-        formatToDataStoreFactory.put(
-                "appschema", "org.geotools.data.complex.AppSchemaDataAccessFactory");
+        formatToDataStoreFactory.put("appschema", "org.geotools.data.complex.AppSchemaDataAccessFactory");
         formatToDataStoreFactory.put("gpkg", "org.geotools.geopkg.GeoPkgDataStoreFactory");
         formatToDataStoreFactory.put("mbtiles", "org.geotools.mbtiles.MBTilesDataStoreFactory");
     }
 
-    protected static final Map<String, Map<String, Serializable>> dataStoreFactoryToDefaultParams =
-            new HashMap<>();
+    protected static final Map<String, Map<String, Serializable>> dataStoreFactoryToDefaultParams = new HashMap<>();
 
     static {
         Map<String, Serializable> map = new HashMap<>();
@@ -120,15 +114,13 @@ public class DataStoreFileController extends AbstractStoreUploadController {
                 return (DataAccessFactory) factoryClass.getDeclaredConstructor().newInstance();
             } catch (Exception e) {
                 throw new RestException(
-                        "Datastore format unavailable: " + factoryClassName,
-                        HttpStatus.INTERNAL_SERVER_ERROR);
+                        "Datastore format unavailable: " + factoryClassName, HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
 
         // if not, let's see if we have a file data store factory that knows about the extension
         String extension = "." + format;
-        for (DataAccessFactory dataAccessFactory :
-                DataStoreUtils.getAvailableDataStoreFactories()) {
+        for (DataAccessFactory dataAccessFactory : DataStoreUtils.getAvailableDataStoreFactories()) {
             if (dataAccessFactory instanceof FileDataStoreFactorySpi) {
                 FileDataStoreFactorySpi factory = (FileDataStoreFactorySpi) dataAccessFactory;
                 for (String handledExtension : factory.getFileExtensions()) {
@@ -163,8 +155,8 @@ public class DataStoreFileController extends AbstractStoreUploadController {
     }
 
     @GetMapping
-    public ResponseEntity dataStoresGet(
-            @PathVariable String workspaceName, @PathVariable String storeName) throws IOException {
+    public ResponseEntity dataStoresGet(@PathVariable String workspaceName, @PathVariable String storeName)
+            throws IOException {
 
         // find the directory from teh datastore connection parameters
         DataStoreInfo info = catalog.getDataStoreByName(workspaceName, storeName);
@@ -201,9 +193,7 @@ public class DataStoreFileController extends AbstractStoreUploadController {
             }
         } catch (Exception e) {
             throw new RestException(
-                    "Failed to lookup source directory for store " + storeName,
-                    HttpStatus.NOT_FOUND,
-                    e);
+                    "Failed to lookup source directory for store " + storeName, HttpStatus.NOT_FOUND, e);
         }
 
         if (directory == null || !directory.exists() || !directory.isDirectory()) {
@@ -211,8 +201,7 @@ public class DataStoreFileController extends AbstractStoreUploadController {
         }
 
         try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                BufferedOutputStream bufferedOutputStream =
-                        new BufferedOutputStream(byteArrayOutputStream);
+                BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(byteArrayOutputStream);
                 ZipOutputStream zipOutputStream = new ZipOutputStream(bufferedOutputStream)) {
             // packing files
             File[] files = directory.listFiles();
@@ -232,11 +221,9 @@ public class DataStoreFileController extends AbstractStoreUploadController {
             zipOutputStream.flush();
 
             HttpHeaders responseHeaders = new HttpHeaders();
-            responseHeaders.add(
-                    "content-disposition", "attachment; filename=" + info.getName() + ".zip");
+            responseHeaders.add("content-disposition", "attachment; filename=" + info.getName() + ".zip");
             responseHeaders.add("Content-Type", "application/zip");
-            return new ResponseEntity<>(
-                    byteArrayOutputStream.toByteArray(), responseHeaders, HttpStatus.OK);
+            return new ResponseEntity<>(byteArrayOutputStream.toByteArray(), responseHeaders, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -261,8 +248,7 @@ public class DataStoreFileController extends AbstractStoreUploadController {
 
         // doFileUpload returns a List of File but in the case of a Put operation the list contains
         // only a value
-        List<Resource> files =
-                doFileUpload(method, workspaceName, storeName, filename, format, request);
+        List<Resource> files = doFileUpload(method, workspaceName, storeName, filename, format, request);
         final Resource uploadedFile = files.get(0);
 
         DataAccessFactory factory = lookupDataStoreFactory(format);
@@ -308,8 +294,7 @@ public class DataStoreFileController extends AbstractStoreUploadController {
                 targetFactory = lookupDataStoreFactory(targetDataStoreFormat);
                 if (targetFactory == null) {
                     throw new RestException(
-                            "Unable to create data store of type " + targetDataStoreFormat,
-                            HttpStatus.BAD_REQUEST);
+                            "Unable to create data store of type " + targetDataStoreFormat, HttpStatus.BAD_REQUEST);
                 }
 
                 autoCreateParameters(info, namespace, targetFactory);
@@ -325,8 +310,7 @@ public class DataStoreFileController extends AbstractStoreUploadController {
             // look up the target data store factory
             targetDataStoreFormat = lookupDataStoreFactoryFormat(info.getType());
             if (targetDataStoreFormat == null) {
-                throw new RuntimeException(
-                        "Unable to locate data store factory of type " + info.getType());
+                throw new RuntimeException("Unable to locate data store factory of type " + info.getType());
             }
 
             if (targetDataStoreFormat.equals(sourceDataStoreFormat)) {
@@ -383,11 +367,10 @@ public class DataStoreFileController extends AbstractStoreUploadController {
                     try {
                         targetDataStore.getSchema(featureTypeName);
                     } catch (Exception e) {
-                        LOGGER.info(
-                                featureTypeName
-                                        + " does not exist in data store "
-                                        + storeName
-                                        + ". Attempting to create it");
+                        LOGGER.info(featureTypeName
+                                + " does not exist in data store "
+                                + storeName
+                                + ". Attempting to create it");
 
                         // schema does not exist, create it by first creating an instance
                         // of the source datastore and copying over its schema
@@ -395,8 +378,7 @@ public class DataStoreFileController extends AbstractStoreUploadController {
                         sourceDataStore.getSchema(featureTypeName);
                     }
 
-                    SimpleFeatureSource featureSource =
-                            targetDataStore.getFeatureSource(featureTypeName);
+                    SimpleFeatureSource featureSource = targetDataStore.getFeatureSource(featureTypeName);
                     if (!(featureSource instanceof FeatureStore)) {
                         LOGGER.warning(featureTypeName + " is not writable, skipping");
                         continue;
@@ -416,16 +398,14 @@ public class DataStoreFileController extends AbstractStoreUploadController {
                         }
 
                         LOGGER.fine("Adding features to " + featureTypeName);
-                        SimpleFeatureCollection features =
-                                sourceDataStore.getFeatureSource(featureTypeName).getFeatures();
+                        SimpleFeatureCollection features = sourceDataStore
+                                .getFeatureSource(featureTypeName)
+                                .getFeatures();
                         featureStore.addFeatures(features);
 
                         tx.commit();
                     } catch (Exception e) {
-                        LOGGER.log(
-                                Level.SEVERE,
-                                "Failed to import data, rolling back the transaction",
-                                e);
+                        LOGGER.log(Level.SEVERE, "Failed to import data, rolling back the transaction", e);
                         tx.rollback();
                     } finally {
                         tx.close();
@@ -478,11 +458,9 @@ public class DataStoreFileController extends AbstractStoreUploadController {
                     // already
                     // there try to rename it
                     if (catalog.getFeatureTypeByName(namespace, ftinfo.getName()) != null) {
-                        LOGGER.warning(
-                                String.format(
-                                        "Feature type %s already exists in namespace %s, "
-                                                + "attempting to rename",
-                                        ftinfo.getName(), namespace.getPrefix()));
+                        LOGGER.warning(String.format(
+                                "Feature type %s already exists in namespace %s, " + "attempting to rename",
+                                ftinfo.getName(), namespace.getPrefix()));
                         int x = 1;
                         String originalName = ftinfo.getName();
                         do {
@@ -564,8 +542,7 @@ public class DataStoreFileController extends AbstractStoreUploadController {
             throws IOException {
         Resource directory = null;
 
-        boolean postRequest =
-                request != null && HttpMethod.POST.name().equalsIgnoreCase(request.getMethod());
+        boolean postRequest = request != null && HttpMethod.POST.name().equalsIgnoreCase(request.getMethod());
 
         // Prepare the directory only in case this is not an external upload
         if (method.isInline()) {
@@ -577,32 +554,27 @@ public class DataStoreFileController extends AbstractStoreUploadController {
                 directory = createFinalRoot(workspaceName, storeName, postRequest);
             }
         }
-        return handleFileUpload(
-                storeName, workspaceName, filename, method, format, directory, request);
+        return handleFileUpload(storeName, workspaceName, filename, method, format, directory, request);
     }
 
-    private Resource createFinalRoot(String workspaceName, String storeName, boolean isPost)
-            throws IOException {
+    private Resource createFinalRoot(String workspaceName, String storeName, boolean isPost) throws IOException {
         // Check if the Request is a POST request, in order to search for an existing coverage
         Resource directory = null;
         if (isPost && storeName != null) {
             // Check if the coverage already exists
             CoverageStoreInfo coverage = catalog.getCoverageStoreByName(storeName);
             if (coverage != null) {
-                if (workspaceName == null
-                        || coverage.getWorkspace().getName().equalsIgnoreCase(workspaceName)) {
+                if (workspaceName == null || coverage.getWorkspace().getName().equalsIgnoreCase(workspaceName)) {
                     // If the coverage exists then the associated directory is defined by its URL
-                    directory =
-                            Resources.fromPath(
-                                    URLs.urlToFile(new URL(coverage.getURL())).getPath(),
-                                    catalog.getResourceLoader().get(""));
+                    directory = Resources.fromPath(
+                            URLs.urlToFile(new URL(coverage.getURL())).getPath(),
+                            catalog.getResourceLoader().get(""));
                 }
             }
         }
         // If the directory has not been found then it is created directly
         if (directory == null) {
-            directory =
-                    catalog.getResourceLoader().get(Paths.path("data", workspaceName, storeName));
+            directory = catalog.getResourceLoader().get(Paths.path("data", workspaceName, storeName));
         }
 
         // Selection of the original ROOT directory path
@@ -610,8 +582,7 @@ public class DataStoreFileController extends AbstractStoreUploadController {
         // StoreParams to use for the mapping.
         Map<String, String> storeParams = new HashMap<>();
         // Listing of the available pathMappers
-        List<RESTUploadPathMapper> mappers =
-                GeoServerExtensions.extensions(RESTUploadPathMapper.class);
+        List<RESTUploadPathMapper> mappers = GeoServerExtensions.extensions(RESTUploadPathMapper.class);
         // Mapping of the root directory
         for (RESTUploadPathMapper mapper : mappers) {
             mapper.mapStorePath(root, workspaceName, storeName, storeParams);
@@ -633,10 +604,7 @@ public class DataStoreFileController extends AbstractStoreUploadController {
     }
 
     void updateParameters(
-            DataStoreInfo info,
-            NamespaceInfo namespace,
-            DataAccessFactory factory,
-            Resource uploadedFile) {
+            DataStoreInfo info, NamespaceInfo namespace, DataAccessFactory factory, Resource uploadedFile) {
         Map<String, Serializable> connectionParameters = info.getConnectionParameters();
         updateParameters(connectionParameters, factory, uploadedFile);
 
@@ -644,16 +612,12 @@ public class DataStoreFileController extends AbstractStoreUploadController {
         // ensure the parameters are valid
         if (!factory.canProcess(connectionParameters)) {
             // TODO: log the parameters at the debug level
-            throw new RestException(
-                    "Unable to configure datastore, bad parameters.",
-                    HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new RestException("Unable to configure datastore, bad parameters.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     void updateParameters(
-            Map<String, Serializable> connectionParameters,
-            DataAccessFactory factory,
-            Resource uploadedFile) {
+            Map<String, Serializable> connectionParameters, DataAccessFactory factory, Resource uploadedFile) {
         File f = Resources.find(uploadedFile);
         for (DataAccessFactory.Param p : factory.getParametersInfo()) {
             // the nasty url / file hack
@@ -701,17 +665,13 @@ public class DataStoreFileController extends AbstractStoreUploadController {
             if (f.isDirectory()) {
                 // if the user uploaded a ZIP file we need to get the database file inside
                 Optional<Resource> found =
-                        Resources.list(
-                                        uploadedFile,
-                                        resource -> resource.name().endsWith("data.db"))
-                                .stream()
+                        Resources.list(uploadedFile, resource -> resource.name().endsWith("data.db")).stream()
                                 .findFirst();
                 if (!found.isPresent()) {
                     // ouch no database file found just throw an exception
                     throw new RestException(
                             String.format(
-                                    "H2 database file could not be found in directory '%s'.",
-                                    f.getAbsolutePath()),
+                                    "H2 database file could not be found in directory '%s'.", f.getAbsolutePath()),
                             HttpStatus.INTERNAL_SERVER_ERROR);
                 }
                 // we found the database file get the absolute path
@@ -729,13 +689,11 @@ public class DataStoreFileController extends AbstractStoreUploadController {
         }
     }
 
-    void autoCreateParameters(
-            DataStoreInfo info, NamespaceInfo namespace, DataAccessFactory factory) {
+    void autoCreateParameters(DataStoreInfo info, NamespaceInfo namespace, DataAccessFactory factory) {
         Map<String, Serializable> defaultParams =
                 dataStoreFactoryToDefaultParams.get(factory.getClass().getCanonicalName());
         if (defaultParams == null) {
-            throw new RuntimeException(
-                    "Unable to auto create parameters for " + factory.getDisplayName());
+            throw new RuntimeException("Unable to auto create parameters for " + factory.getDisplayName());
         }
 
         Map<String, Serializable> params = new HashMap<>(defaultParams);
@@ -745,8 +703,7 @@ public class DataStoreFileController extends AbstractStoreUploadController {
         for (Map.Entry<String, Serializable> e : params.entrySet()) {
             if (e.getValue() instanceof String) {
                 String string = (String) e.getValue();
-                string =
-                        string.replace("@NAME@", info.getName()).replace("@DATA_DIR@", dataDirRoot);
+                string = string.replace("@NAME@", info.getName()).replace("@DATA_DIR@", dataDirRoot);
                 e.setValue(string);
             }
         }
@@ -757,14 +714,12 @@ public class DataStoreFileController extends AbstractStoreUploadController {
     }
 
     private boolean sameTypeAndUrl(Map sourceParams, Map targetParams) {
-        boolean sameType =
-                sourceParams.get("dbtype") != null
-                        && targetParams.get("dbtype") != null
-                        && sourceParams.get("dbtype").equals(targetParams.get("dbtype"));
-        boolean sameUrl =
-                sourceParams.get("url") != null
-                        && targetParams.get("url") != null
-                        && sourceParams.get("url").equals(targetParams.get("url"));
+        boolean sameType = sourceParams.get("dbtype") != null
+                && targetParams.get("dbtype") != null
+                && sourceParams.get("dbtype").equals(targetParams.get("dbtype"));
+        boolean sameUrl = sourceParams.get("url") != null
+                && targetParams.get("url") != null
+                && sourceParams.get("url").equals(targetParams.get("url"));
 
         return sameType && sameUrl;
     }

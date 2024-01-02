@@ -38,17 +38,14 @@ import org.geoserver.platform.ServiceException;
  *
  * <p>See the package documentation for more insights on how these all fit together.
  */
-public class GwcServiceDispatcherCallback extends AbstractDispatcherCallback
-        implements DispatcherCallback {
+public class GwcServiceDispatcherCallback extends AbstractDispatcherCallback implements DispatcherCallback {
 
     // contains the current gwc operation
     public static final ThreadLocal<String> GWC_OPERATION = new ThreadLocal<>();
     public static final ThreadLocal<String> GWC_ORIGINAL_BASEURL = new ThreadLocal<>();
 
-    private static final Pattern GWC_WS_VIRTUAL_SERVICE_PATTERN =
-            Pattern.compile("([^/]+)/gwc/service.*");
-    private static final Pattern GWC_LAYER_VIRTUAL_SERVICE_PATTERN =
-            Pattern.compile("([^/]+)/([^/]+)/gwc/service.*");
+    private static final Pattern GWC_WS_VIRTUAL_SERVICE_PATTERN = Pattern.compile("([^/]+)/gwc/service.*");
+    private static final Pattern GWC_LAYER_VIRTUAL_SERVICE_PATTERN = Pattern.compile("([^/]+)/([^/]+)/gwc/service.*");
 
     static final String buildRestPattern(int numPathElements) {
         return ".*/service/wmts/rest" + Strings.repeat("/([^/]+)", numPathElements);
@@ -83,12 +80,11 @@ public class GwcServiceDispatcherCallback extends AbstractDispatcherCallback
         // REQUEST parameter by matching their paths)
         String requestName = (String) request.getKvp().get("REQUEST");
         final String pathInfo = request.getHttpRequest().getPathInfo();
-        if (requestName == null
-                && pathInfo != null
-                && pathInfo.contains("gwc/service/wmts/rest/")) {
+        if (requestName == null && pathInfo != null && pathInfo.contains("gwc/service/wmts/rest/")) {
             if (pathInfo.endsWith("WMTSCapabilities.xml")) {
                 requestName = "GetCapabilities";
-            } else if (TILE_1.matcher(pathInfo).matches() || TILE_2.matcher(pathInfo).matches()) {
+            } else if (TILE_1.matcher(pathInfo).matches()
+                    || TILE_2.matcher(pathInfo).matches()) {
                 requestName = "GetTile";
             } else if (FEATUREINFO_1.matcher(pathInfo).matches()
                     || FEATUREINFO_2.matcher(pathInfo).matches()) {
@@ -124,16 +120,11 @@ public class GwcServiceDispatcherCallback extends AbstractDispatcherCallback
             String localPublishedName = localPublished != null ? localPublished.getName() : null;
             // we need to setup a proper context path (gwc doesn't expect the workspace to be part
             // of the URL)
-            request.setHttpRequest(
-                    new VirtualServiceRequest(
-                            request.getHttpRequest(),
-                            localWorkspace.getName(),
-                            localPublishedName,
-                            layerName));
+            request.setHttpRequest(new VirtualServiceRequest(
+                    request.getHttpRequest(), localWorkspace.getName(), localPublishedName, layerName));
         } else if (localPublished != null) {
             request.setHttpRequest(
-                    new VirtualServiceRequest(
-                            request.getHttpRequest(), localPublished.getName(), null, null));
+                    new VirtualServiceRequest(request.getHttpRequest(), localPublished.getName(), null, null));
         }
 
         request.setKvp(kvp);
@@ -164,8 +155,7 @@ public class GwcServiceDispatcherCallback extends AbstractDispatcherCallback
             // this is a laye specific virtual service, let's see if we have a valid workspace
             if (LocalPublished.get() == null) {
                 // the workspace name has to be valid
-                throw new ServiceException(
-                        "No such layer or layer group '" + matcher.group(2) + "'");
+                throw new ServiceException("No such layer or layer group '" + matcher.group(2) + "'");
             }
             // the local workspace is set so we have a valid workspace
             return true;
@@ -188,10 +178,7 @@ public class GwcServiceDispatcherCallback extends AbstractDispatcherCallback
         private final Map<String, String[]> parameters;
 
         public VirtualServiceRequest(
-                HttpServletRequest request,
-                String localWorkspaceName,
-                String localPublishedName,
-                String layerName) {
+                HttpServletRequest request, String localWorkspaceName, String localPublishedName, String layerName) {
             super(request);
             this.localWorkspaceName = localWorkspaceName;
             this.localPublishedName = localPublishedName;

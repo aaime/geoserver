@@ -54,48 +54,47 @@ public class OpenSearchParameters {
 
     public static final String TIME_PREFIX = "time";
 
-    public static final Parameter<?> TIME_END =
-            new ParameterBuilder("timeEnd", Date.class).prefix(TIME_PREFIX).name("end").build();
+    public static final Parameter<?> TIME_END = new ParameterBuilder("timeEnd", Date.class)
+            .prefix(TIME_PREFIX)
+            .name("end")
+            .build();
 
-    public static final Parameter<?> TIME_START =
-            new ParameterBuilder("timeStart", Date.class).prefix(TIME_PREFIX).name("start").build();
+    public static final Parameter<?> TIME_START = new ParameterBuilder("timeStart", Date.class)
+            .prefix(TIME_PREFIX)
+            .name("start")
+            .build();
 
-    public static final Parameter<?> TIME_RELATION =
-            new ParameterBuilder("timeRelation", DateRelation.class)
-                    .prefix(TIME_PREFIX)
-                    .name("relation")
-                    .build();
+    public static final Parameter<?> TIME_RELATION = new ParameterBuilder("timeRelation", DateRelation.class)
+            .prefix(TIME_PREFIX)
+            .name("relation")
+            .build();
 
     public static final String GEO_PREFIX = "geo";
 
-    public static final Parameter<?> GEO_RADIUS =
-            new ParameterBuilder("radius", Double.class)
-                    .prefix(GEO_PREFIX)
-                    .minimumInclusive(0)
-                    .build();
+    public static final Parameter<?> GEO_RADIUS = new ParameterBuilder("radius", Double.class)
+            .prefix(GEO_PREFIX)
+            .minimumInclusive(0)
+            .build();
 
-    public static final Parameter<?> GEO_RELATION =
-            new ParameterBuilder("geoRelation", DateRelation.class)
-                    .prefix(GEO_PREFIX)
-                    .name("relation")
-                    .build();
+    public static final Parameter<?> GEO_RELATION = new ParameterBuilder("geoRelation", DateRelation.class)
+            .prefix(GEO_PREFIX)
+            .name("relation")
+            .build();
 
     public static final Parameter<?> GEO_GEOMETRY =
             new ParameterBuilder("geometry", Geometry.class).prefix(GEO_PREFIX).build();
 
-    public static final Parameter<?> GEO_LON =
-            new ParameterBuilder("lon", Double.class)
-                    .prefix(GEO_PREFIX)
-                    .minimumInclusive(-180)
-                    .maximumInclusive(180)
-                    .build();
+    public static final Parameter<?> GEO_LON = new ParameterBuilder("lon", Double.class)
+            .prefix(GEO_PREFIX)
+            .minimumInclusive(-180)
+            .maximumInclusive(180)
+            .build();
 
-    public static final Parameter<?> GEO_LAT =
-            new ParameterBuilder("lat", Double.class)
-                    .prefix(GEO_PREFIX)
-                    .minimumInclusive(-90)
-                    .maximumInclusive(90)
-                    .build();
+    public static final Parameter<?> GEO_LAT = new ParameterBuilder("lat", Double.class)
+            .prefix(GEO_PREFIX)
+            .minimumInclusive(-90)
+            .maximumInclusive(90)
+            .build();
 
     public static final Parameter<?> GEO_NAME =
             new ParameterBuilder("name", String.class).prefix(GEO_PREFIX).build();
@@ -193,8 +192,7 @@ public class OpenSearchParameters {
      *
      * @param oseo Reference to the service configuration
      */
-    public static String getQualifiedParamName(
-            OSEOInfo oseo, Parameter p, boolean qualifyOpenSearchNative) {
+    public static String getQualifiedParamName(OSEOInfo oseo, Parameter p, boolean qualifyOpenSearchNative) {
         String name = getParameterName(p);
 
         String prefix = getParameterPrefix(p);
@@ -238,8 +236,7 @@ public class OpenSearchParameters {
      * @param oseo Reference to the service configuration
      * @param ff The filter factory used to build the filters
      */
-    public static PropertyName getFilterPropertyFor(
-            OSEOInfo oseo, FilterFactory ff, Parameter<?> parameter) {
+    public static PropertyName getFilterPropertyFor(OSEOInfo oseo, FilterFactory ff, Parameter<?> parameter) {
         String prefix = getParameterPrefix(parameter);
         String namespace = null;
 

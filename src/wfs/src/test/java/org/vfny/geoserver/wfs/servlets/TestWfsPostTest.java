@@ -41,10 +41,8 @@ public class TestWfsPostTest {
         servlet.service(request, response);
         // System.out.println(response.getContentAsString());
         // check xml chars have been escaped
-        assertTrue(
-                response.getContentAsString()
-                        .contains(
-                                "java.net.MalformedURLException: no protocol: vjoce&lt;&gt;:garbage"));
+        assertTrue(response.getContentAsString()
+                .contains("java.net.MalformedURLException: no protocol: vjoce&lt;&gt;:garbage"));
     }
 
     @Test
@@ -210,10 +208,8 @@ public class TestWfsPostTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
         servlet.service(request, response);
         // checking that request is disallowed
-        assertTrue(
-                response.getContentAsString()
-                        .contains(
-                                "Invalid url requested, the demo requests should be hitting: http://geoserver.org"));
+        assertTrue(response.getContentAsString()
+                .contains("Invalid url requested, the demo requests should be hitting: http://geoserver.org"));
     }
 
     @Test
@@ -224,8 +220,7 @@ public class TestWfsPostTest {
         request.setMethod("GET");
 
         try {
-            servlet.validateURL(
-                    request, "http://localhost:1234/internalApp", "http://geoserver.org/geoserver");
+            servlet.validateURL(request, "http://localhost:1234/internalApp", "http://geoserver.org/geoserver");
             fail("Requests should be limited by proxyBaseURL");
         } catch (IllegalArgumentException expected) {
             assertTrue(
@@ -246,13 +241,12 @@ public class TestWfsPostTest {
         GeoServer gs = new GeoServerImpl();
         gs.setGlobal(info);
 
-        TestWfsPost servlet =
-                new TestWfsPost() {
-                    @Override
-                    protected GeoServer getGeoServer() {
-                        return gs;
-                    }
-                };
+        TestWfsPost servlet = new TestWfsPost() {
+            @Override
+            protected GeoServer getGeoServer() {
+                return gs;
+            }
+        };
         assertEquals("https://foo.com/geoserver", servlet.getProxyBaseURL());
     }
 
@@ -264,8 +258,7 @@ public class TestWfsPostTest {
         request.setServerPort(8080);
         request.setContextPath("/geoserver");
         request.setServletPath("/TestWfsPost");
-        request.setRequestURI(
-                ResponseUtils.stripQueryString(ResponseUtils.appendPath("/geoserver/TestWfsPost")));
+        request.setRequestURI(ResponseUtils.stripQueryString(ResponseUtils.appendPath("/geoserver/TestWfsPost")));
         request.setRemoteAddr("127.0.0.1");
         return request;
     }
@@ -274,19 +267,17 @@ public class TestWfsPostTest {
         return buildMockServlet(null);
     }
 
-    protected static TestWfsPost buildMockServlet(final String proxyBaseUrl)
-            throws ServletException {
+    protected static TestWfsPost buildMockServlet(final String proxyBaseUrl) throws ServletException {
         TestWfsPost testWfsPost;
         if (proxyBaseUrl == null) {
             testWfsPost = new TestWfsPost();
         } else {
-            testWfsPost =
-                    new TestWfsPost() {
-                        @Override
-                        String getProxyBaseURL() {
-                            return proxyBaseUrl;
-                        }
-                    };
+            testWfsPost = new TestWfsPost() {
+                @Override
+                String getProxyBaseURL() {
+                    return proxyBaseUrl;
+                }
+            };
         }
         MockServletContext servletContext = new MockServletContext();
         servletContext.setContextPath("/geoserver");

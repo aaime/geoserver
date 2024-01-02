@@ -32,9 +32,7 @@ public class Projection {
         try {
             this.crs = CRS.decode(code);
             this.baseCRS =
-                    CRS.getProjectedCRS(crs) != null
-                            ? CRS.getProjectedCRS(crs).getBaseCRS()
-                            : this.crs;
+                    CRS.getProjectedCRS(crs) != null ? CRS.getProjectedCRS(crs).getBaseCRS() : this.crs;
             this.toProjected = CRS.findMathTransform(this.baseCRS, crs);
             this.toLatLng = this.toProjected.inverse();
         } catch (FactoryException | NoninvertibleTransformException ex) {

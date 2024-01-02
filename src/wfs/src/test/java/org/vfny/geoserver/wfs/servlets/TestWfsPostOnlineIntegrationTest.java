@@ -26,32 +26,29 @@ import org.springframework.mock.web.MockHttpServletResponse;
  */
 public class TestWfsPostOnlineIntegrationTest {
 
-    public static final String WFS_REQUEST =
-            "<wfs:GetFeature service=\"WFS\" version=\"1.1.0\"\n"
-                    + "  xmlns:ne=\"http://www.naturalearthdata.com\"\n"
-                    + "  xmlns:wfs=\"http://www.opengis.net/wfs\"\n"
-                    + "  xmlns:ogc=\"http://www.opengis.net/ogc\"\n"
-                    + "  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
-                    + "  xsi:schemaLocation=\"http://www.opengis.net/wfs\n"
-                    + "                      http://schemas.opengis.net/wfs/1.1.0/wfs.xsd\">\n"
-                    + "  <wfs:Query typeName=\"states\">\n"
-                    + "    <ogc:Filter>\n"
-                    + "       <ogc:FeatureId fid=\"states.3\"/>\n"
-                    + "    </ogc:Filter>\n"
-                    + "    </wfs:Query>\n"
-                    + "</wfs:GetFeature>";
+    public static final String WFS_REQUEST = "<wfs:GetFeature service=\"WFS\" version=\"1.1.0\"\n"
+            + "  xmlns:ne=\"http://www.naturalearthdata.com\"\n"
+            + "  xmlns:wfs=\"http://www.opengis.net/wfs\"\n"
+            + "  xmlns:ogc=\"http://www.opengis.net/ogc\"\n"
+            + "  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
+            + "  xsi:schemaLocation=\"http://www.opengis.net/wfs\n"
+            + "                      http://schemas.opengis.net/wfs/1.1.0/wfs.xsd\">\n"
+            + "  <wfs:Query typeName=\"states\">\n"
+            + "    <ogc:Filter>\n"
+            + "       <ogc:FeatureId fid=\"states.3\"/>\n"
+            + "    </ogc:Filter>\n"
+            + "    </wfs:Query>\n"
+            + "</wfs:GetFeature>";
 
     protected MockHttpServletResponse doWfsPost() throws ServletException, IOException {
         return doWfsPost(null, null);
     }
 
-    protected MockHttpServletResponse doWfsPost(String username, String password)
-            throws ServletException, IOException {
+    protected MockHttpServletResponse doWfsPost(String username, String password) throws ServletException, IOException {
         return doWfsPost(username, password, false);
     }
 
-    protected MockHttpServletResponse doWfsPost(
-            String username, String password, boolean useHttpBasicAuth)
+    protected MockHttpServletResponse doWfsPost(String username, String password, boolean useHttpBasicAuth)
             throws ServletException, IOException {
         TestWfsPost servlet = TestWfsPostTest.buildMockServlet();
         MockHttpServletRequest request = TestWfsPostTest.buildMockRequest();

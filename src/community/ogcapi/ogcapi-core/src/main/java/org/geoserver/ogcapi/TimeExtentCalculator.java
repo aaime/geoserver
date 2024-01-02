@@ -56,10 +56,8 @@ public class TimeExtentCalculator {
         return null;
     }
 
-    private static DateRange getTimeExtent(FeatureTypeInfo ft, DimensionInfo time)
-            throws IOException {
-        FeatureSource<? extends FeatureType, ? extends Feature> fs =
-                ft.getFeatureSource(null, null);
+    private static DateRange getTimeExtent(FeatureTypeInfo ft, DimensionInfo time) throws IOException {
+        FeatureSource<? extends FeatureType, ? extends Feature> fs = ft.getFeatureSource(null, null);
         FeatureCollection<? extends FeatureType, ? extends Feature> collection = fs.getFeatures();
 
         final MinVisitor min = new MinVisitor(time.getAttribute());
@@ -81,8 +79,7 @@ public class TimeExtentCalculator {
 
     private static DateRange getTimeExtent(CoverageInfo ci) throws IOException {
         ReaderDimensionsAccessor accessor =
-                new ReaderDimensionsAccessor(
-                        (GridCoverage2DReader) ci.getGridCoverageReader(null, null));
+                new ReaderDimensionsAccessor((GridCoverage2DReader) ci.getGridCoverageReader(null, null));
         Date minTime = accessor.getMinTime();
         Date maxTime = accessor.getMaxTime();
 

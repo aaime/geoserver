@@ -27,8 +27,7 @@ public class PropertySelectionWrapper extends TemplateBuilderWrapper {
     private String fullKey;
 
     public PropertySelectionWrapper(
-            AbstractTemplateBuilder templateBuilder,
-            PropertySelectionHandler propertySelectionHandler) {
+            AbstractTemplateBuilder templateBuilder, PropertySelectionHandler propertySelectionHandler) {
         super(templateBuilder);
         this.strategy = propertySelectionHandler;
     }
@@ -51,7 +50,8 @@ public class PropertySelectionWrapper extends TemplateBuilderWrapper {
         // the property selection visitor should have set it.
         if (fullKey != null) {
             String result = fullKey;
-            if (key != null && !fullKey.endsWith(key)) result = result.concat(".").concat(key);
+            if (key != null && !fullKey.endsWith(key))
+                result = result.concat(".").concat(key);
             return result;
         }
 

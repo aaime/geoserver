@@ -104,9 +104,8 @@ public class DescribeFeatureType {
         if (names.isEmpty()) {
             // if there are no specific requested types then get all the ones that
             // are enabled
-            final boolean skipMisconfigured =
-                    ResourceErrorHandling.SKIP_MISCONFIGURED_LAYERS.equals(
-                            getWFS().getGeoServer().getGlobal().getResourceErrorHandling());
+            final boolean skipMisconfigured = ResourceErrorHandling.SKIP_MISCONFIGURED_LAYERS.equals(
+                    getWFS().getGeoServer().getGlobal().getResourceErrorHandling());
 
             for (FeatureTypeInfo ftInfo : new ArrayList<>(catalog.getFeatureTypes())) {
                 if (ftInfo.enabled()) {
@@ -148,9 +147,8 @@ public class DescribeFeatureType {
                     // not found
                     String msg = "Could not find type: " + name;
                     if (citeConformance) {
-                        msg +=
-                                ". \nStrict WFS protocol conformance is being applied.\n"
-                                        + "Make sure the type name is correctly qualified";
+                        msg += ". \nStrict WFS protocol conformance is being applied.\n"
+                                + "Make sure the type name is correctly qualified";
                     }
                     throw new WFSException(request, msg, ServiceException.INVALID_PARAMETER_VALUE);
                 }

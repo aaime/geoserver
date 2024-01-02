@@ -41,8 +41,7 @@ public class ComplexToSimpleOutputHandler {
 
     private final QName layerName;
 
-    public ComplexToSimpleOutputHandler(
-            Request request, FeatureCollectionResponse result, Catalog catalog) {
+    public ComplexToSimpleOutputHandler(Request request, FeatureCollectionResponse result, Catalog catalog) {
         this.result = requireNonNull(result);
         this.catalog = requireNonNull(catalog);
         this.layerName = requireNonNull(ComplexToSimpleOutputCommons.getLayerName(request));
@@ -55,9 +54,8 @@ public class ComplexToSimpleOutputHandler {
         Map<String, String> rulesMap = getRulesMap();
         // get the feature collection
         @SuppressWarnings("unchecked")
-        ComplexToSimpleFeatureCollection collection =
-                new ComplexToSimpleFeatureCollection(
-                        rulesMap, result.getFeature().get(0), buildNamespaceSupport(catalog));
+        ComplexToSimpleFeatureCollection collection = new ComplexToSimpleFeatureCollection(
+                rulesMap, result.getFeature().get(0), buildNamespaceSupport(catalog));
         // return the correct type based on the input collection response type
         if (result instanceof FeatureCollectionResponse.WFS20) {
             return new ComplexToSimpleFeatureCollectionResponse20(result, collection);
@@ -73,8 +71,7 @@ public class ComplexToSimpleOutputHandler {
         Name name = new NameImpl(layerName);
         LayerInfo layerInfo = catalog.getLayerByName(name);
         MetadataMap metadataMap = layerInfo.getMetadata();
-        Map<String, String> map =
-                metadataMap.get(ComplexToSimpleOutputCommons.RULES_METADATAMAP_KEY, Map.class);
+        Map<String, String> map = metadataMap.get(ComplexToSimpleOutputCommons.RULES_METADATAMAP_KEY, Map.class);
         if (map == null) {
             LOGGER.fine(() -> "Rules map not found on layer: " + layerInfo);
             return Collections.emptyMap();
@@ -111,11 +108,7 @@ public class ComplexToSimpleOutputHandler {
 
     private List<Pair<String, String>> getSupportedNamespaces(FeatureTypeInfo featureTypeInfo) {
         try {
-            Object object =
-                    featureTypeInfo
-                            .getFeatureType()
-                            .getUserData()
-                            .get(Types.DECLARED_NAMESPACES_MAP);
+            Object object = featureTypeInfo.getFeatureType().getUserData().get(Types.DECLARED_NAMESPACES_MAP);
             if (object instanceof Map) return Collections.emptyList();
             @SuppressWarnings("unchecked")
             Map<String, String> nsMap = (Map<String, String>) object;

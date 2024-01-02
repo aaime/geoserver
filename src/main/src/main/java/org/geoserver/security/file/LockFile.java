@@ -29,8 +29,7 @@ public class LockFile {
     protected long lockFileLastModified;
     protected Resource lockFileTarget, lockFile;
 
-    static Logger LOGGER =
-            org.geotools.util.logging.Logging.getLogger("org.geoserver.security.xml");
+    static Logger LOGGER = org.geotools.util.logging.Logging.getLogger("org.geoserver.security.xml");
 
     public LockFile(Resource file) throws IOException {
         lockFileTarget = file;
@@ -102,8 +101,7 @@ public class LockFile {
                 hostname = InetAddress.getLocalHost().getHostName();
                 InetAddress[] addrs = InetAddress.getAllByName(hostname);
                 for (InetAddress addr : addrs) {
-                    if (!addr.isLoopbackAddress() && addr.isSiteLocalAddress())
-                        ip = addr.getHostAddress();
+                    if (!addr.isLoopbackAddress() && addr.isSiteLocalAddress()) ip = addr.getHostAddress();
                 }
             } catch (UnknownHostException ex) {
             }

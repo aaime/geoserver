@@ -45,8 +45,7 @@ public class CollectionsDocument extends AbstractDocument {
     @JacksonXmlProperty(localName = "Collection")
     public Iterator<CollectionDocument> getCollections() {
         @SuppressWarnings("PMD.CloseResource") // wrapped and returned
-        CloseableIterator<PublishedInfo> publisheds =
-                geoServer.getCatalog().list(PublishedInfo.class, Filter.INCLUDE);
+        CloseableIterator<PublishedInfo> publisheds = geoServer.getCatalog().list(PublishedInfo.class, Filter.INCLUDE);
         return new Iterator<CollectionDocument>() {
 
             CollectionDocument next;
@@ -64,10 +63,8 @@ public class CollectionsDocument extends AbstractDocument {
                 } else {
                     try {
                         PublishedInfo published = publisheds.next();
-                        CollectionDocument collection =
-                                new CollectionDocument(geoServer, published);
-                        for (Consumer<CollectionDocument> collectionDecorator :
-                                collectionDecorators) {
+                        CollectionDocument collection = new CollectionDocument(geoServer, published);
+                        for (Consumer<CollectionDocument> collectionDecorator : collectionDecorators) {
                             collectionDecorator.accept(collection);
                         }
 
@@ -75,8 +72,7 @@ public class CollectionsDocument extends AbstractDocument {
                         return true;
                     } catch (Exception e) {
                         publisheds.close();
-                        throw new ServiceException(
-                                "Failed to iterate over the published info in the catalog", e);
+                        throw new ServiceException("Failed to iterate over the published info in the catalog", e);
                     }
                 }
             }

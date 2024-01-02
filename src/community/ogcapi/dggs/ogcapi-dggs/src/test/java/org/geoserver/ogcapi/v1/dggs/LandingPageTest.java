@@ -91,9 +91,7 @@ public class LandingPageTest extends OGCApiTestSupport {
         String yaml = getAsString("ogc/dggs/v1?f=application/x-yaml");
         DocumentContext json = convertYamlToJsonPath(yaml);
         assertJSONList(
-                json,
-                "links[?(@.type == 'application/x-yaml' && @.href =~ /.*ogc\\/dggs\\/v1\\/\\?.*/)].rel",
-                "self");
+                json, "links[?(@.type == 'application/x-yaml' && @.href =~ /.*ogc\\/dggs\\/v1\\/\\?.*/)].rel", "self");
         assertJSONList(
                 json,
                 "links[?(@.type != 'application/x-yaml' && @.href =~ /.*ogc\\/dggs\\/v1\\/\\?.*/)].rel",
@@ -136,9 +134,7 @@ public class LandingPageTest extends OGCApiTestSupport {
         assertEquals(12, (int) json.read("links.length()", Integer.class));
         // check landing page links
         assertJSONList(
-                json,
-                "links[?(@.type == 'application/json' && @.href =~ /.*ogc\\/dggs\\/v1\\/\\?.*/)].rel",
-                "self");
+                json, "links[?(@.type == 'application/json' && @.href =~ /.*ogc\\/dggs\\/v1\\/\\?.*/)].rel", "self");
         assertJSONList(
                 json,
                 "links[?(@.type != 'application/json' && @.href =~ /.*ogc\\/dggs\\/v1\\/\\?.*/)].rel",
@@ -158,11 +154,7 @@ public class LandingPageTest extends OGCApiTestSupport {
         // check API with right API mime type
         assertEquals(
                 "http://localhost:8080/geoserver/ogc/dggs/v1/openapi?f=application%2Fvnd.oai.openapi%2Bjson%3Bversion%3D3.0",
-                readSingle(
-                        json,
-                        "links[?(@.type=='"
-                                + OpenAPIMessageConverter.OPEN_API_MEDIA_TYPE_VALUE
-                                + "')].href"));
+                readSingle(json, "links[?(@.type=='" + OpenAPIMessageConverter.OPEN_API_MEDIA_TYPE_VALUE + "')].href"));
         // check conformance links
         assertJSONList(
                 json,

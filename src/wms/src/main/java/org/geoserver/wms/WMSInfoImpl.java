@@ -227,8 +227,7 @@ public class WMSInfoImpl extends ServiceInfoImpl implements WMSInfo {
     }
 
     @Override
-    public void setGetFeatureInfoMimeTypeCheckingEnabled(
-            boolean getFeatureInfoMimeTypeCheckingEnabled) {
+    public void setGetFeatureInfoMimeTypeCheckingEnabled(boolean getFeatureInfoMimeTypeCheckingEnabled) {
         this.getFeatureInfoMimeTypeCheckingEnabled = getFeatureInfoMimeTypeCheckingEnabled;
     }
 
@@ -254,8 +253,7 @@ public class WMSInfoImpl extends ServiceInfoImpl implements WMSInfo {
 
     @Override
     public String getRootLayerAbstract() {
-        return InternationalStringUtils.getOrDefault(
-                rootLayerAbstract, internationalRootLayerAbstract);
+        return InternationalStringUtils.getOrDefault(rootLayerAbstract, internationalRootLayerAbstract);
     }
 
     @Override
@@ -312,9 +310,7 @@ public class WMSInfoImpl extends ServiceInfoImpl implements WMSInfo {
 
     @Override
     public int getRemoteStyleMaxRequestTime() {
-        return remoteStyleMaxRequestTime != null
-                ? remoteStyleMaxRequestTime
-                : DEFAULT_REMOTE_STYLE_MAX_REQUEST_TIME;
+        return remoteStyleMaxRequestTime != null ? remoteStyleMaxRequestTime : DEFAULT_REMOTE_STYLE_MAX_REQUEST_TIME;
     }
 
     @Override

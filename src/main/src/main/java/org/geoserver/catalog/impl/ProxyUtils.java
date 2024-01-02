@@ -22,8 +22,7 @@ import org.springframework.util.ClassUtils;
 public class ProxyUtils {
 
     /** Avoids the cost of looking up over and over the same proxy class */
-    static final Map<ProxyClassConstructorKey, Constructor> PROXY_CLASS_CACHE =
-            new ConcurrentHashMap<>();
+    static final Map<ProxyClassConstructorKey, Constructor> PROXY_CLASS_CACHE = new ConcurrentHashMap<>();
 
     static final class ProxyClassConstructorKey {
         Class<?> c1;
@@ -83,8 +82,7 @@ public class ProxyUtils {
     public static <T> T createProxy(T proxyObject, Class<? extends T> clazz, InvocationHandler h) {
         try {
             // proxy all interfaces implemented by the source object
-            List<Class<?>> proxyInterfaces =
-                    new ArrayList<>(ClassUtils.getAllInterfacesAsSet(proxyObject));
+            List<Class<?>> proxyInterfaces = new ArrayList<>(ClassUtils.getAllInterfacesAsSet(proxyObject));
 
             // ensure that the specified class is included
             boolean add = true;
@@ -102,12 +100,8 @@ public class ProxyUtils {
             }
 
             @SuppressWarnings("unchecked")
-            T instance =
-                    (T)
-                            Proxy.newProxyInstance(
-                                    clazz.getClassLoader(),
-                                    proxyInterfaces.toArray(new Class[proxyInterfaces.size()]),
-                                    h);
+            T instance = (T) Proxy.newProxyInstance(
+                    clazz.getClassLoader(), proxyInterfaces.toArray(new Class[proxyInterfaces.size()]), h);
             return instance;
         } catch (Exception e) {
             throw new RuntimeException(e);

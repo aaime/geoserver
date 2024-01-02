@@ -56,8 +56,7 @@ public class LoggingUtils {
      * <p>Use {@code -DUPDATE_BUILT_IN_LOGGING_PROFILES=true} to allow GeoServer to update built-in
      * logging profiles during startup.
      */
-    public static final String UPDATE_BUILT_IN_LOGGING_PROFILES =
-            "UPDATE_BUILT_IN_LOGGING_PROFILES";
+    public static final String UPDATE_BUILT_IN_LOGGING_PROFILES = "UPDATE_BUILT_IN_LOGGING_PROFILES";
 
     /** Logging profile update policy established by {@link LoggingStartupContextListener}. */
     static boolean updateBuiltInLoggingProfiles = false;
@@ -138,11 +137,7 @@ public class LoggingUtils {
             throws FileNotFoundException, IOException, ConfigurationException {
         if (!relinquishLog4jControl) {
             LoggingUtilsDelegate.configureGeoServerLogging(
-                    loader,
-                    configResource,
-                    suppressStdOutLogging,
-                    suppressFileLogging,
-                    logFileName);
+                    loader, configResource, suppressStdOutLogging, suppressFileLogging, logFileName);
         }
     }
 
@@ -171,11 +166,7 @@ public class LoggingUtils {
             throws Exception {
         if (!relinquishLog4jControl) {
             LoggingUtilsDelegate.initLogging(
-                    resourceLoader,
-                    configFileName,
-                    suppressStdOutLogging,
-                    suppressFileLogging,
-                    logFileName);
+                    resourceLoader, configFileName, suppressStdOutLogging, suppressFileLogging, logFileName);
         }
     }
 
@@ -190,8 +181,7 @@ public class LoggingUtils {
      * @param resourceLoader GeoServer resource access
      * @param logConfigFile Logging profile matching a built-in template on the classpath
      */
-    public static void checkBuiltInLoggingConfiguration(
-            GeoServerResourceLoader resourceLoader, String logConfigFile) {
+    public static void checkBuiltInLoggingConfiguration(GeoServerResourceLoader resourceLoader, String logConfigFile) {
         if (!relinquishLog4jControl) {
             LoggingUtilsDelegate.checkBuiltInLoggingConfiguration(resourceLoader, logConfigFile);
         }
@@ -215,11 +205,9 @@ public class LoggingUtils {
         // accept a servlet context directly in the case of startup where the application context
         // is not yet available, in other cases (like a logging change) we can fall back on the
         // app context and derive the servlet context from that
-        String location =
-                context != null
-                        ? GeoServerExtensions.getProperty(
-                                LoggingUtils.GEOSERVER_LOG_LOCATION, context)
-                        : GeoServerExtensions.getProperty(LoggingUtils.GEOSERVER_LOG_LOCATION);
+        String location = context != null
+                ? GeoServerExtensions.getProperty(LoggingUtils.GEOSERVER_LOG_LOCATION, context)
+                : GeoServerExtensions.getProperty(LoggingUtils.GEOSERVER_LOG_LOCATION);
         if (location == null) {
             return baseLocation;
         } else {

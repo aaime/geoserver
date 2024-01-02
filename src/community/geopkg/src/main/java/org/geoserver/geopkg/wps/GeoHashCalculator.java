@@ -51,8 +51,7 @@ class GeoHashCalculator {
 
         Point centroid = geom.getCentroid();
         int precision = getPrecision(geom);
-        return GeoHash.geoHashStringWithCharacterPrecision(
-                centroid.getY(), centroid.getX(), precision);
+        return GeoHash.geoHashStringWithCharacterPrecision(centroid.getY(), centroid.getX(), precision);
     }
 
     /**

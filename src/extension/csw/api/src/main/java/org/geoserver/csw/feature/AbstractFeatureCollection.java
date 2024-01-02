@@ -290,8 +290,7 @@ public abstract class AbstractFeatureCollection<T extends FeatureType, F extends
 
     @Override
     public void accepts(
-            org.geotools.api.feature.FeatureVisitor visitor,
-            org.geotools.api.util.ProgressListener progress) {
+            org.geotools.api.feature.FeatureVisitor visitor, org.geotools.api.util.ProgressListener progress) {
         Iterator<F> iterator = null;
         if (progress == null) progress = new NullProgressListener();
         try {

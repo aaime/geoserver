@@ -26,9 +26,7 @@ class DynamicCryptoMapper implements IRequestMapperDelegate {
     private GeoServerSecurityManager securityManager;
 
     public DynamicCryptoMapper(
-            IRequestMapper plainMapper,
-            GeoServerSecurityManager securityManager,
-            GeoServerApplication application) {
+            IRequestMapper plainMapper, GeoServerSecurityManager securityManager, GeoServerApplication application) {
         this.securityManager = securityManager;
         this.plainMapper = plainMapper;
         this.securityManager = securityManager;

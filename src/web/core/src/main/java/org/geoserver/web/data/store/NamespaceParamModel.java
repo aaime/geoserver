@@ -27,8 +27,7 @@ public class NamespaceParamModel implements IModel<NamespaceInfo> {
     @Override
     public NamespaceInfo getObject() {
         String nsUri = (String) delegate.getObject();
-        NamespaceInfo namespaceInfo =
-                GeoServerApplication.get().getCatalog().getNamespaceByURI(nsUri);
+        NamespaceInfo namespaceInfo = GeoServerApplication.get().getCatalog().getNamespaceByURI(nsUri);
         return namespaceInfo;
     }
 

@@ -38,10 +38,7 @@ public class DSFinderRepository extends org.geotools.data.gen.DSFinderRepository
     @Override
     protected URL getURLForLocation(String location) throws IOException {
         GeoServerResourceLoader loader = GeoServerExtensions.bean(GeoServerResourceLoader.class);
-        File f =
-                Resources.find(
-                        Resources.fromURL(Files.asResource(loader.getBaseDirectory()), location),
-                        true);
+        File f = Resources.find(Resources.fromURL(Files.asResource(loader.getBaseDirectory()), location), true);
         URL url = null;
         if (f.exists()) {
             url = f.toURI().toURL();
@@ -55,8 +52,7 @@ public class DSFinderRepository extends org.geotools.data.gen.DSFinderRepository
     @Override
     public DataStore dataStore(Name name) {
         Catalog catalog = (Catalog) GeoServerExtensions.bean("catalog");
-        DataStoreInfo info =
-                catalog.getDataStoreByName(name.getNamespaceURI(), name.getLocalPart());
+        DataStoreInfo info = catalog.getDataStoreByName(name.getNamespaceURI(), name.getLocalPart());
         if (info != null) {
             try {
                 return (DataStore) info.getDataStore(null);
@@ -64,8 +60,7 @@ public class DSFinderRepository extends org.geotools.data.gen.DSFinderRepository
                 throw new RuntimeException(ex);
             }
         }
-        Logging.getLogger(this.getClass().getName())
-                .info("Not in Geoserver catalog: " + name.toString());
+        Logging.getLogger(this.getClass().getName()).info("Not in Geoserver catalog: " + name.toString());
         return super.dataStore(name);
     }
 }

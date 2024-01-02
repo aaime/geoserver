@@ -28,7 +28,8 @@ public class ReadOnlyGeoServerLoader extends DefaultGeoServerLoader {
 
     private boolean enabled = false;
 
-    @Autowired public JMSConfiguration config;
+    @Autowired
+    public JMSConfiguration config;
 
     public ReadOnlyGeoServerLoader(final GeoServerResourceLoader resourceLoader) {
         super(resourceLoader);
@@ -50,8 +51,7 @@ public class ReadOnlyGeoServerLoader extends DefaultGeoServerLoader {
     }
 
     @Override
-    protected synchronized void loadGeoServer(final GeoServer geoServer, XStreamPersister xp)
-            throws Exception {
+    protected synchronized void loadGeoServer(final GeoServer geoServer, XStreamPersister xp) throws Exception {
         if (enabled) {
             readConfiguration(geoServer, xp);
         } else {
@@ -91,8 +91,7 @@ public class ReadOnlyGeoServerLoader extends DefaultGeoServerLoader {
                 geoserver.addListener(listener);
             }
             if (configPersister == null) {
-                configPersister =
-                        new GeoServerConfigPersister(resourceLoader, xpf.createXMLPersister());
+                configPersister = new GeoServerConfigPersister(resourceLoader, xpf.createXMLPersister());
                 // attach back the persister
                 geoserver.addListener(configPersister);
             }

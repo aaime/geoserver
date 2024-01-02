@@ -28,25 +28,24 @@ public class Filter_2_0_0_KvpParserTest {
      * @param encodedLiteral percent-encoded filter literal
      * @param matchCase value of {@code matchCase} filter attribute or {@code null} if none
      */
-    private static void parsePropertyIsLike(
-            String expectedLiteral, String encodedLiteral, Boolean matchCase) throws Exception {
-        String encodedXml =
-                "%3Cfes:Filter" //
-                        + "%20xmlns:fes=%22http://www.opengis.net/fes/2.0%22%3E" //
-                        + "%3Cfes:PropertyIsLike" //
-                        + "%20wildCard=%22*%22" //
-                        + "%20singleChar=%22%25%22" //
-                        + "%20escapeChar=%22!%22" //
-                        + (matchCase == null ? "" : "%20matchCase=%22" + matchCase + "%22") //
-                        + "%3E" //
-                        + "%3Cfes:ValueReference%3E" //
-                        + "topp:STATE_NAME" //
-                        + "%3C/fes:ValueReference%3E" //
-                        + "%3Cfes:Literal%3E" //
-                        + encodedLiteral //
-                        + "%3C/fes:Literal%3E%" //
-                        + "3C/fes:PropertyIsLike%3E" //
-                        + "%3C/fes:Filter%3E";
+    private static void parsePropertyIsLike(String expectedLiteral, String encodedLiteral, Boolean matchCase)
+            throws Exception {
+        String encodedXml = "%3Cfes:Filter" //
+                + "%20xmlns:fes=%22http://www.opengis.net/fes/2.0%22%3E" //
+                + "%3Cfes:PropertyIsLike" //
+                + "%20wildCard=%22*%22" //
+                + "%20singleChar=%22%25%22" //
+                + "%20escapeChar=%22!%22" //
+                + (matchCase == null ? "" : "%20matchCase=%22" + matchCase + "%22") //
+                + "%3E" //
+                + "%3Cfes:ValueReference%3E" //
+                + "topp:STATE_NAME" //
+                + "%3C/fes:ValueReference%3E" //
+                + "%3Cfes:Literal%3E" //
+                + encodedLiteral //
+                + "%3C/fes:Literal%3E%" //
+                + "3C/fes:PropertyIsLike%3E" //
+                + "%3C/fes:Filter%3E";
         String xml = URLDecoder.decode(encodedXml, "UTF-8");
         @SuppressWarnings("unchecked")
         List<Filter> filters = (List<Filter>) new Filter_2_0_0_KvpParser(null).parse(xml);
@@ -56,9 +55,7 @@ public class Filter_2_0_0_KvpParserTest {
         Assert.assertEquals("%", propertyIsLike.getSingleChar());
         Assert.assertEquals("!", propertyIsLike.getEscape());
         Assert.assertEquals(matchCase == null ? true : matchCase, propertyIsLike.isMatchingCase());
-        Assert.assertEquals(
-                "topp:STATE_NAME",
-                ((PropertyName) propertyIsLike.getExpression()).getPropertyName());
+        Assert.assertEquals("topp:STATE_NAME", ((PropertyName) propertyIsLike.getExpression()).getPropertyName());
         Assert.assertEquals(expectedLiteral, propertyIsLike.getLiteral());
     }
 

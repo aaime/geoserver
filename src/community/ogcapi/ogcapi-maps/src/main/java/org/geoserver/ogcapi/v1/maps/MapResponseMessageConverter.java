@@ -37,10 +37,7 @@ public class MapResponseMessageConverter extends MessageConverterResponseAdapter
 
     @Override
     protected void writeResponse(
-            WebMap value,
-            HttpOutputMessage httpOutputMessage,
-            Operation operation,
-            Response response)
+            WebMap value, HttpOutputMessage httpOutputMessage, Operation operation, Response response)
             throws IOException {
         response.write(value, httpOutputMessage.getBody(), operation);
     }
@@ -48,11 +45,9 @@ public class MapResponseMessageConverter extends MessageConverterResponseAdapter
     @Override
     protected Operation getOperation(WebMap result, Request dr, MediaType mediaType) {
         Operation original = dr.getOperation();
-        return new Operation(
-                original.getId(),
-                original.getService(),
-                original.getMethod(),
-                new Object[] {result.getMapContent().getRequest()});
+        return new Operation(original.getId(), original.getService(), original.getMethod(), new Object[] {
+            result.getMapContent().getRequest()
+        });
     }
 
     @Override

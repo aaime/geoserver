@@ -21,12 +21,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class UnknownFieldsSerializer extends JsonSerializer {
 
-    private static final DateFormat DATE_FORMAT =
-            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
     @Override
-    public void serialize(Object value, JsonGenerator gen, SerializerProvider serializers)
-            throws IOException {
+    public void serialize(Object value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
         if (value instanceof Map) {
             for (Map.Entry<String, Object> entry : ((Map<String, Object>) value).entrySet()) {
                 String key = entry.getKey();

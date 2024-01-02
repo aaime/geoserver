@@ -61,20 +61,16 @@ public class PurgeRestoreTest extends BackupRestoreTestSupport {
 
         waitRestoreFinish(restoreExecution);
 
-        List<LayerInfo> citeLayers =
-                catalog.getLayers().stream()
-                        .filter(li -> li.prefixedName().startsWith("cite:"))
-                        .collect(Collectors.toList());
+        List<LayerInfo> citeLayers = catalog.getLayers().stream()
+                .filter(li -> li.prefixedName().startsWith("cite:"))
+                .collect(Collectors.toList());
         assertEquals(1, citeLayers.size());
     }
 
     private void waitRestoreFinish(RestoreExecutionAdapter restoreExecution)
-            throws InterruptedException, NoSuchJobExecutionException,
-                    JobExecutionNotRunningException {
+            throws InterruptedException, NoSuchJobExecutionException, JobExecutionNotRunningException {
         int cnt = 0;
-        while (cnt < 100
-                && (restoreExecution.getStatus() != BatchStatus.COMPLETED
-                        || !restoreExecution.isRunning())) {
+        while (cnt < 100 && (restoreExecution.getStatus() != BatchStatus.COMPLETED || !restoreExecution.isRunning())) {
             Thread.sleep(100);
             cnt++;
 

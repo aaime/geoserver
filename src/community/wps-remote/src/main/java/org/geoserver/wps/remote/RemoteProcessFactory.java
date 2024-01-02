@@ -40,8 +40,7 @@ public class RemoteProcessFactory implements ProcessFactory, RemoteProcessFactor
      * Associates the generic sets of inputs and outputs declared by the remote service to the
      * {@link RemoteProcess} instance
      */
-    private Map<Name, RemoteServiceDescriptor> descriptors =
-            new ConcurrentHashMap<Name, RemoteServiceDescriptor>();
+    private Map<Name, RemoteServiceDescriptor> descriptors = new ConcurrentHashMap<Name, RemoteServiceDescriptor>();
 
     /**
      * The list of currently running {@link RemoteProcess} instances; each of them is identified by
@@ -121,16 +120,13 @@ public class RemoteProcessFactory implements ProcessFactory, RemoteProcessFactor
         synchronized (remoteInstances) {
             if (checkName(name)) {
                 try {
-                    RemoteProcess process =
-                            new RemoteProcess(
-                                    name, remoteClient, descriptors.get(name).getMetadata());
+                    RemoteProcess process = new RemoteProcess(
+                            name, remoteClient, descriptors.get(name).getMetadata());
                     remoteInstances.put(name, process);
                     return process;
                 } catch (Exception e) {
                     throw new RuntimeException(
-                            "Error occurred cloning the prototype "
-                                    + "algorithm... this should not happen",
-                            e);
+                            "Error occurred cloning the prototype " + "algorithm... this should not happen", e);
                 }
             }
             return null;

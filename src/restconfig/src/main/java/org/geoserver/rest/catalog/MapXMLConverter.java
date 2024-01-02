@@ -160,7 +160,8 @@ public class MapXMLConverter extends BaseMessageConverter<Map<?, ?>> {
         if (object instanceof Map) {
             Map<?, ?> map = (Map<?, ?>) object;
             for (Map.Entry<?, ?> entry : map.entrySet()) {
-                Element newElem = elem.getOwnerDocument().createElement(entry.getKey().toString());
+                Element newElem =
+                        elem.getOwnerDocument().createElement(entry.getKey().toString());
                 insert(newElem, entry.getValue());
                 elem.appendChild(newElem);
             }

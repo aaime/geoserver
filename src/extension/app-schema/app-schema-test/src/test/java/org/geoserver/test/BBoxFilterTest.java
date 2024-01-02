@@ -29,11 +29,9 @@ import org.w3c.dom.Document;
  * @author Derrick Wong, Curtin University of Technology
  */
 public class BBoxFilterTest extends AbstractAppSchemaTestSupport {
-    private final String WFS_GET_FEATURE =
-            "wfs?request=GetFeature&version=1.1.0&typename=ex:geomContainer";
+    private final String WFS_GET_FEATURE = "wfs?request=GetFeature&version=1.1.0&typename=ex:geomContainer";
 
-    private final String WFS_GET_FEATURE_LOG =
-            "WFS GetFeature&typename=ex:geomContainerresponse:\n";
+    private final String WFS_GET_FEATURE_LOG = "WFS GetFeature&typename=ex:geomContainerresponse:\n";
 
     private final String LONGLAT = "&BBOX=130,-29,134,-24";
 
@@ -161,27 +159,26 @@ public class BBoxFilterTest extends AbstractAppSchemaTestSupport {
     @Test
     public void testQueryBboxLatLongPost() {
 
-        String xml =
-                "<wfs:GetFeature service=\"WFS\" version=\"1.1.0\" " //
-                        + "xmlns:ogc=\"http://www.opengis.net/ogc\" " //
-                        + "xmlns:wfs=\"http://www.opengis.net/wfs\" " //
-                        + "xmlns:gml=\"http://www.opengis.net/gml\" " //
-                        + "xmlns:ex=\"http://example.com\" " //
-                        + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " //
-                        + "xsi:schemaLocation=\"" //
-                        + "http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd \">" //
-                        + "<wfs:Query typeName=\"ex:geomContainer\">" //
-                        + "    <ogc:Filter>" //
-                        + "        <ogc:BBOX>" //
-                        + "            <ogc:PropertyName>ex:geom</ogc:PropertyName>" //
-                        + "            <gml:Envelope srsName=\"urn:x-ogc:def:crs:EPSG:4326\">" //
-                        + "                  <gml:lowerCorner>-29 130</gml:lowerCorner>" //
-                        + "                  <gml:upperCorner>-24 134</gml:upperCorner>" //
-                        + "            </gml:Envelope>" //
-                        + "        </ogc:BBOX>" //
-                        + "    </ogc:Filter>" //
-                        + "</wfs:Query>" //
-                        + "</wfs:GetFeature>"; //
+        String xml = "<wfs:GetFeature service=\"WFS\" version=\"1.1.0\" " //
+                + "xmlns:ogc=\"http://www.opengis.net/ogc\" " //
+                + "xmlns:wfs=\"http://www.opengis.net/wfs\" " //
+                + "xmlns:gml=\"http://www.opengis.net/gml\" " //
+                + "xmlns:ex=\"http://example.com\" " //
+                + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " //
+                + "xsi:schemaLocation=\"" //
+                + "http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd \">" //
+                + "<wfs:Query typeName=\"ex:geomContainer\">" //
+                + "    <ogc:Filter>" //
+                + "        <ogc:BBOX>" //
+                + "            <ogc:PropertyName>ex:geom</ogc:PropertyName>" //
+                + "            <gml:Envelope srsName=\"urn:x-ogc:def:crs:EPSG:4326\">" //
+                + "                  <gml:lowerCorner>-29 130</gml:lowerCorner>" //
+                + "                  <gml:upperCorner>-24 134</gml:upperCorner>" //
+                + "            </gml:Envelope>" //
+                + "        </ogc:BBOX>" //
+                + "    </ogc:Filter>" //
+                + "</wfs:Query>" //
+                + "</wfs:GetFeature>"; //
         validate(xml);
         Document doc = postAsDOM("wfs", xml);
         LOGGER.info(WFS_GET_FEATURE_LOG + " with POST filter " + prettyString(doc));
@@ -198,8 +195,7 @@ public class BBoxFilterTest extends AbstractAppSchemaTestSupport {
      */
     @Test
     public void testQueryBboxLatLongSrs4283()
-            throws NoSuchAuthorityCodeException, FactoryException, MismatchedDimensionException,
-                    TransformException {
+            throws NoSuchAuthorityCodeException, FactoryException, MismatchedDimensionException, TransformException {
         if (isGeopkgTest()) return;
 
         Document doc = getAsDOM(WFS_GET_FEATURE + LATLONG + "&srsName=urn:x-ogc:def:crs:EPSG:4283");
@@ -209,34 +205,18 @@ public class BBoxFilterTest extends AbstractAppSchemaTestSupport {
         CoordinateReferenceSystem targetCRS = CRS.decode(EPSG_4283);
         MathTransform transform = CRS.findMathTransform(sourceCRS, targetCRS);
         GeometryFactory factory = new GeometryFactory();
-        Point targetPoint =
-                (Point)
-                        JTS.transform(
-                                factory.createPoint(new Coordinate(132.61, -26.98)), transform);
+        Point targetPoint = (Point) JTS.transform(factory.createPoint(new Coordinate(132.61, -26.98)), transform);
         CoordinateFormatter format = new CoordinateFormatter(8);
         String targetPointCoord1 =
-                format.format(targetPoint.getCoordinate().x)
-                        + " "
-                        + format.format(targetPoint.getCoordinate().y);
-        targetPoint =
-                (Point)
-                        JTS.transform(
-                                factory.createPoint(new Coordinate(132.71, -26.46)), transform);
+                format.format(targetPoint.getCoordinate().x) + " " + format.format(targetPoint.getCoordinate().y);
+        targetPoint = (Point) JTS.transform(factory.createPoint(new Coordinate(132.71, -26.46)), transform);
         String targetPointCoord2 =
-                format.format(targetPoint.getCoordinate().x)
-                        + " "
-                        + format.format(targetPoint.getCoordinate().y);
+                format.format(targetPoint.getCoordinate().x) + " " + format.format(targetPoint.getCoordinate().y);
 
         assertXpathEvaluatesTo(
-                "urn:x-ogc:def:crs:EPSG:4283",
-                "//ex:geomContainer[@gml:id='1']/ex:geom/gml:Point/@srsName",
-                doc);
-        assertXpathEvaluatesTo(
-                "2", "//ex:geomContainer[@gml:id='1']/ex:geom/gml:Point/@srsDimension", doc);
-        assertXpathEvaluatesTo(
-                targetPointCoord1,
-                "//ex:geomContainer[@gml:id='1']/ex:geom/gml:Point/gml:pos",
-                doc);
+                "urn:x-ogc:def:crs:EPSG:4283", "//ex:geomContainer[@gml:id='1']/ex:geom/gml:Point/@srsName", doc);
+        assertXpathEvaluatesTo("2", "//ex:geomContainer[@gml:id='1']/ex:geom/gml:Point/@srsDimension", doc);
+        assertXpathEvaluatesTo(targetPointCoord1, "//ex:geomContainer[@gml:id='1']/ex:geom/gml:Point/gml:pos", doc);
         assertXpathEvaluatesTo(
                 "urn:x-ogc:def:crs:EPSG:4283",
                 "//ex:geomContainer[@gml:id='1']/ex:nestedFeature/ex:nestedGeom[@gml:id='nested.1']/ex:geom/gml:Point/@srsName",
@@ -251,15 +231,9 @@ public class BBoxFilterTest extends AbstractAppSchemaTestSupport {
                 doc);
 
         assertXpathEvaluatesTo(
-                "urn:x-ogc:def:crs:EPSG:4283",
-                "//ex:geomContainer[@gml:id='2']/ex:geom/gml:Point/@srsName",
-                doc);
-        assertXpathEvaluatesTo(
-                "2", "//ex:geomContainer[@gml:id='2']/ex:geom/gml:Point/@srsDimension", doc);
-        assertXpathEvaluatesTo(
-                targetPointCoord2,
-                "//ex:geomContainer[@gml:id='2']/ex:geom/gml:Point/gml:pos",
-                doc);
+                "urn:x-ogc:def:crs:EPSG:4283", "//ex:geomContainer[@gml:id='2']/ex:geom/gml:Point/@srsName", doc);
+        assertXpathEvaluatesTo("2", "//ex:geomContainer[@gml:id='2']/ex:geom/gml:Point/@srsDimension", doc);
+        assertXpathEvaluatesTo(targetPointCoord2, "//ex:geomContainer[@gml:id='2']/ex:geom/gml:Point/gml:pos", doc);
         assertXpathEvaluatesTo(
                 "urn:x-ogc:def:crs:EPSG:4283",
                 "//ex:geomContainer[@gml:id='2']/ex:nestedFeature/ex:nestedGeom[@gml:id='nested.2']/ex:geom/gml:Point/@srsName",
@@ -275,8 +249,7 @@ public class BBoxFilterTest extends AbstractAppSchemaTestSupport {
     }
 
     private void assertNumberMatched(Document doc, Integer numberMatched) {
-        assertXpathEvaluatesTo(
-                numberMatched.toString(), "/wfs:FeatureCollection/@numberOfFeatures", doc);
+        assertXpathEvaluatesTo(numberMatched.toString(), "/wfs:FeatureCollection/@numberOfFeatures", doc);
         assertXpathCount(numberMatched, "//ex:geomContainer", doc);
     }
 }

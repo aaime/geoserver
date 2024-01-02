@@ -48,9 +48,8 @@ public class OpenIdFilterConfigTest {
         OpenIdConnectFilterConfig filterConfig = getFilterConfig();
         filterConfig.setPostLogoutRedirectUri("http://localhost:8080/post-redirect");
         String logouturl = filterConfig.buildEndSessionUrl("aToken").toString();
-        assertTrue(
-                logouturl.contains(
-                        "?id_token_hint=aToken&post_logout_redirect_uri=http://localhost:8080/post-redirect"));
+        assertTrue(logouturl.contains(
+                "?id_token_hint=aToken&post_logout_redirect_uri=http://localhost:8080/post-redirect"));
     }
 
     @Test
@@ -58,8 +57,6 @@ public class OpenIdFilterConfigTest {
         OpenIdConnectFilterConfig filterConfig = getFilterConfig();
         filterConfig.setPostLogoutRedirectUri("http://localhost:8080/post-redirect");
         String logouturl = filterConfig.buildEndSessionUrl(null).toString();
-        assertTrue(
-                logouturl.contains(
-                        "?post_logout_redirect_uri=http://localhost:8080/post-redirect"));
+        assertTrue(logouturl.contains("?post_logout_redirect_uri=http://localhost:8080/post-redirect"));
     }
 }

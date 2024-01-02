@@ -41,8 +41,7 @@ public class GeoserverOverridingWKTFactory extends FactoryUsingWKT {
     protected URL getDefinitionsURL() {
         String cust_proj_file = System.getProperty(SYSTEM_DEFAULT_USER_PROJ_FILE);
         if (cust_proj_file == null) {
-            GeoServerResourceLoader loader =
-                    GeoServerExtensions.bean(GeoServerResourceLoader.class);
+            GeoServerResourceLoader loader = GeoServerExtensions.bean(GeoServerResourceLoader.class);
             if (loader != null) { // Not available for SystemTestData
                 Resource custom_proj = loader.get("user_projections/epsg_overrides.properties");
                 if (custom_proj.getType() == Type.RESOURCE) {
@@ -59,8 +58,7 @@ public class GeoserverOverridingWKTFactory extends FactoryUsingWKT {
                 if (url != null) {
                     return url;
                 } else {
-                    LOGGER.log(
-                            Level.SEVERE, "Had troubles converting " + cust_proj_file + " to URL");
+                    LOGGER.log(Level.SEVERE, "Had troubles converting " + cust_proj_file + " to URL");
                 }
             }
         }

@@ -72,8 +72,7 @@ public class ServiceDescription implements Serializable, Comparable<ServiceDescr
      * @param title Service title
      * @param description Service description
      */
-    public ServiceDescription(
-            String serviceType, InternationalString title, InternationalString description) {
+    public ServiceDescription(String serviceType, InternationalString title, InternationalString description) {
         this(serviceType, title, description, true, false, null, null);
     }
 
@@ -86,10 +85,7 @@ public class ServiceDescription implements Serializable, Comparable<ServiceDescr
      * @param workspace Workspace prefix, or {@code null} for global service
      */
     public ServiceDescription(
-            String serviceType,
-            InternationalString title,
-            InternationalString description,
-            String workspace) {
+            String serviceType, InternationalString title, InternationalString description, String workspace) {
         this(serviceType, title, description, true, false, workspace, null);
     }
 

@@ -46,8 +46,7 @@ public class GeoServerLoaderProxy
     }
 
     @Override
-    public Object postProcessAfterInitialization(Object bean, String beanName)
-            throws BeansException {
+    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         if (loader != null) {
             return loader.postProcessAfterInitialization(bean, beanName);
         }
@@ -55,8 +54,7 @@ public class GeoServerLoaderProxy
     }
 
     @Override
-    public Object postProcessBeforeInitialization(Object bean, String beanName)
-            throws BeansException {
+    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
         if (loader != null) {
             return loader.postProcessBeforeInitialization(bean, beanName);
         }

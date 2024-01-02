@@ -31,8 +31,7 @@ public class GeoServerDigestPasswordEncoder extends AbstractGeoserverPasswordEnc
     @Override
     protected PasswordEncoder createStringEncoder() {
         PasswordEncoder encoder = new JasyptPasswordEncoderWrapper();
-        ((JasyptPasswordEncoderWrapper) encoder)
-                .setPasswordEncryptor(new StrongPasswordEncryptor());
+        ((JasyptPasswordEncoderWrapper) encoder).setPasswordEncryptor(new StrongPasswordEncryptor());
         ((JasyptPasswordEncoderWrapper) encoder).setPrefix(getPrefix());
         return encoder;
     }

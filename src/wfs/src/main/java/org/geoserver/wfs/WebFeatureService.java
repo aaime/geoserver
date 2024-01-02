@@ -64,8 +64,7 @@ public interface WebFeatureService {
      * @return A feature collection type instance.
      * @throws WFSException Any service exceptions.
      */
-    FeatureCollectionResponse getFeatureWithLock(GetFeatureWithLockType request)
-            throws WFSException;
+    FeatureCollectionResponse getFeatureWithLock(GetFeatureWithLockType request) throws WFSException;
 
     /**
      * WFS LockFeatureType operation.

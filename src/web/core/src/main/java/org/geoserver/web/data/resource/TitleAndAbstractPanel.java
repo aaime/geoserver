@@ -34,16 +34,7 @@ public class TitleAndAbstractPanel extends Panel {
             String titleLabelProperty,
             String abstractLabelProperty,
             MarkupContainer labelProvider) {
-        this(
-                id,
-                model,
-                null,
-                null,
-                null,
-                null,
-                titleLabelProperty,
-                abstractLabelProperty,
-                labelProvider);
+        this(id, model, null, null, null, null, titleLabelProperty, abstractLabelProperty, labelProvider);
     }
 
     /**
@@ -93,19 +84,12 @@ public class TitleAndAbstractPanel extends Panel {
         titleProperty = titleProperty != null ? titleProperty : "title";
         abstractProperty = abstractProperty != null ? abstractProperty : "abstract";
         internationalTitleProperty =
-                internationalTitleProperty != null
-                        ? internationalTitleProperty
-                        : "internationalTitle";
+                internationalTitleProperty != null ? internationalTitleProperty : "internationalTitle";
         internationalAbstractProperty =
-                internationalAbstractProperty != null
-                        ? internationalAbstractProperty
-                        : "internationalAbstract";
-        titleLabelContainer.add(
-                new Label(
-                        "titleLabel", new StringResourceModel(titleLabelProperty, labelProvider)));
+                internationalAbstractProperty != null ? internationalAbstractProperty : "internationalAbstract";
+        titleLabelContainer.add(new Label("titleLabel", new StringResourceModel(titleLabelProperty, labelProvider)));
         add(titleLabelContainer);
-        TextField<String> title =
-                new TextField<>("title", new PropertyModel<>(model, titleProperty));
+        TextField<String> title = new TextField<>("title", new PropertyModel<>(model, titleProperty));
         add(title);
         InternationalStringPanel<TextField<String>> internationalStringPanelTitle =
                 new InternationalStringPanel<TextField<String>>(
@@ -122,12 +106,9 @@ public class TitleAndAbstractPanel extends Panel {
 
         WebMarkupContainer abstractLabelContainer = new WebMarkupContainer("abstractLabel");
         abstractLabelContainer.add(
-                new Label(
-                        "abstractLabel",
-                        new StringResourceModel(abstractLabelProperty, labelProvider)));
+                new Label("abstractLabel", new StringResourceModel(abstractLabelProperty, labelProvider)));
         add(abstractLabelContainer);
-        TextArea<String> area =
-                new TextArea<>("abstract", new PropertyModel<>(model, abstractProperty));
+        TextArea<String> area = new TextArea<>("abstract", new PropertyModel<>(model, abstractProperty));
         add(area);
         InternationalStringPanel<TextArea<String>> internationalStringPanelAbstract =
                 new InternationalStringPanel<TextArea<String>>(

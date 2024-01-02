@@ -31,8 +31,7 @@ public class OpenLayers3MapOutputFormat extends AbstractOpenLayersMapOutputForma
     public static final String MIME_TYPE = "text/html; subtype=openlayers3";
 
     /** The formats accepted in a GetMap request for this producer and stated in getcaps */
-    private static final Set<String> OUTPUT_FORMATS =
-            new HashSet<>(Arrays.asList(OL3_FORMAT, MIME_TYPE));
+    private static final Set<String> OUTPUT_FORMATS = new HashSet<>(Arrays.asList(OL3_FORMAT, MIME_TYPE));
 
     public OpenLayers3MapOutputFormat(WMS wms) {
         super(wms);

@@ -39,9 +39,7 @@ public class GeoServerCasAuthenticationEntryPoint implements AuthenticationEntry
 
     @Override
     public void commence(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            AuthenticationException authException)
+            HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
             throws IOException, ServletException {
 
         // check for http parameter

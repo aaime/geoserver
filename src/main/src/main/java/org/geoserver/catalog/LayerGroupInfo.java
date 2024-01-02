@@ -339,31 +339,28 @@ public interface LayerGroupInfo extends PublishedInfo {
         result = prime * result + ((lg.getBounds() == null) ? 0 : lg.getBounds().hashCode());
         result = prime * result + ((lg.getId() == null) ? 0 : lg.getId().hashCode());
         result = prime * result + ((lg.getLayers() == null) ? 0 : lg.getLayers().hashCode());
-        result = prime * result + ((lg.getMetadata() == null) ? 0 : lg.getMetadata().hashCode());
+        result = prime * result
+                + ((lg.getMetadata() == null) ? 0 : lg.getMetadata().hashCode());
         result = prime * result + ((lg.getName() == null) ? 0 : lg.getName().hashCode());
         result = prime * result + ((lg.getMode() == null) ? 0 : lg.getMode().hashCode());
         result = prime * result + ((lg.getTitle() == null) ? 0 : lg.getTitle().hashCode());
-        result = prime * result + ((lg.getAbstract() == null) ? 0 : lg.getAbstract().hashCode());
-        result = prime * result + ((lg.getWorkspace() == null) ? 0 : lg.getWorkspace().hashCode());
+        result = prime * result
+                + ((lg.getAbstract() == null) ? 0 : lg.getAbstract().hashCode());
+        result = prime * result
+                + ((lg.getWorkspace() == null) ? 0 : lg.getWorkspace().hashCode());
         result = prime * result + ((lg.getStyles() == null) ? 0 : lg.getStyles().hashCode());
-        result = prime * result + ((lg.getRootLayer() == null) ? 0 : lg.getRootLayer().hashCode());
-        result =
-                prime * result
-                        + ((lg.getRootLayerStyle() == null)
-                                ? 0
-                                : lg.getRootLayerStyle().hashCode());
-        result =
-                prime * result
-                        + ((lg.getAuthorityURLs() == null) ? 0 : lg.getAuthorityURLs().hashCode());
-        result =
-                prime * result
-                        + ((lg.getIdentifiers() == null) ? 0 : lg.getIdentifiers().hashCode());
-        result =
-                prime * result
-                        + ((lg.getAttribution() == null) ? 0 : lg.getAttribution().hashCode());
-        result =
-                prime * result
-                        + ((lg.getMetadataLinks() == null) ? 0 : lg.getMetadataLinks().hashCode());
+        result = prime * result
+                + ((lg.getRootLayer() == null) ? 0 : lg.getRootLayer().hashCode());
+        result = prime * result
+                + ((lg.getRootLayerStyle() == null) ? 0 : lg.getRootLayerStyle().hashCode());
+        result = prime * result
+                + ((lg.getAuthorityURLs() == null) ? 0 : lg.getAuthorityURLs().hashCode());
+        result = prime * result
+                + ((lg.getIdentifiers() == null) ? 0 : lg.getIdentifiers().hashCode());
+        result = prime * result
+                + ((lg.getAttribution() == null) ? 0 : lg.getAttribution().hashCode());
+        result = prime * result
+                + ((lg.getMetadataLinks() == null) ? 0 : lg.getMetadataLinks().hashCode());
         result = prime * result + Boolean.hashCode(lg.isQueryDisabled());
         return result;
     }

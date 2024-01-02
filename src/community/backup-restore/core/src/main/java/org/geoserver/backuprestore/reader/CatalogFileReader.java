@@ -125,8 +125,7 @@ public class CatalogFileReader<T> extends CatalogReader<T> {
     public void setFragmentRootElementNames(String[] fragmentRootElementNames) {
         this.fragmentRootElementNames = new ArrayList<QName>();
         for (String fragmentRootElementName : fragmentRootElementNames) {
-            this.fragmentRootElementNames.add(
-                    parseFragmentRootElementName(fragmentRootElementName));
+            this.fragmentRootElementNames.add(parseFragmentRootElementName(fragmentRootElementName));
         }
     }
 
@@ -177,8 +176,7 @@ public class CatalogFileReader<T> extends CatalogReader<T> {
             }
         } catch (XMLStreamException e) {
             return logValidationExceptions(
-                    (T) null,
-                    new NonTransientResourceException("Error while reading from event reader", e));
+                    (T) null, new NonTransientResourceException("Error while reading from event reader", e));
         }
     }
 
@@ -207,16 +205,14 @@ public class CatalogFileReader<T> extends CatalogReader<T> {
             noInput = true;
             if (!resource.exists()) {
                 if (strict) {
-                    throw new IllegalStateException(
-                            "Input resource must exist (reader is in 'strict' mode)");
+                    throw new IllegalStateException("Input resource must exist (reader is in 'strict' mode)");
                 }
                 logger.warning("Input resource does not exist " + resource.getDescription());
                 return;
             }
             if (!resource.isReadable()) {
                 if (strict) {
-                    throw new IllegalStateException(
-                            "Input resource must be readable (reader is in 'strict' mode)");
+                    throw new IllegalStateException("Input resource must be readable (reader is in 'strict' mode)");
                 }
                 logger.warning("Input resource is not readable " + resource.getDescription());
                 return;
@@ -260,8 +256,7 @@ public class CatalogFileReader<T> extends CatalogReader<T> {
                     } catch (IOException e) {
                         logValidationExceptions(
                                 (ValidationResult) null,
-                                new UnexpectedInputException(
-                                        "Could not write data.  The file may be corrupt.", e));
+                                new UnexpectedInputException("Could not write data.  The file may be corrupt.", e));
                     }
                 } finally {
                     fragmentReader.markFragmentProcessed();
@@ -319,8 +314,7 @@ public class CatalogFileReader<T> extends CatalogReader<T> {
     private QName readToStartFragment() throws XMLStreamException {
         while (true) {
             XMLEvent nextEvent = eventReader.nextEvent();
-            if (nextEvent.isStartElement()
-                    && isFragmentRootElementName(((StartElement) nextEvent).getName())) {
+            if (nextEvent.isStartElement() && isFragmentRootElementName(((StartElement) nextEvent).getName())) {
                 return ((StartElement) nextEvent).getName();
             }
         }
@@ -333,8 +327,7 @@ public class CatalogFileReader<T> extends CatalogReader<T> {
     private void readToEndFragment(QName fragmentRootElementName) throws XMLStreamException {
         while (true) {
             XMLEvent nextEvent = eventReader.nextEvent();
-            if (nextEvent.isEndElement()
-                    && fragmentRootElementName.equals(((EndElement) nextEvent).getName())) {
+            if (nextEvent.isEndElement() && fragmentRootElementName.equals(((EndElement) nextEvent).getName())) {
                 return;
             }
         }
@@ -344,9 +337,7 @@ public class CatalogFileReader<T> extends CatalogReader<T> {
         for (QName fragmentRootElementName : fragmentRootElementNames) {
             if (fragmentRootElementName.getLocalPart().equals(name.getLocalPart())) {
                 if (!StringUtils.hasText(fragmentRootElementName.getNamespaceURI())
-                        || fragmentRootElementName
-                                .getNamespaceURI()
-                                .equals(name.getNamespaceURI())) {
+                        || fragmentRootElementName.getNamespaceURI().equals(name.getNamespaceURI())) {
                     return true;
                 }
             }

@@ -62,9 +62,7 @@ public class LandingPageTest extends MapsTestSupport {
         // System.out.println(yaml);
         DocumentContext json = convertYamlToJsonPath(yaml);
         assertJSONList(
-                json,
-                "links[?(@.type == 'application/x-yaml' && @.href =~ /.*ogc\\/maps\\/v1\\/\\?.*/)].rel",
-                "self");
+                json, "links[?(@.type == 'application/x-yaml' && @.href =~ /.*ogc\\/maps\\/v1\\/\\?.*/)].rel", "self");
         assertJSONList(
                 json,
                 "links[?(@.type != 'application/x-yaml' && @.href =~ /.*ogc\\/maps\\/v1\\/\\?.*/)].rel",
@@ -89,9 +87,7 @@ public class LandingPageTest extends MapsTestSupport {
         assertEquals(12, (int) json.read("links.length()", Integer.class));
         // check landing page links
         assertJSONList(
-                json,
-                "links[?(@.type == 'application/json' && @.href =~ /.*ogc\\/maps\\/v1\\/\\?.*/)].rel",
-                "self");
+                json, "links[?(@.type == 'application/json' && @.href =~ /.*ogc\\/maps\\/v1\\/\\?.*/)].rel", "self");
         assertJSONList(
                 json,
                 "links[?(@.type != 'application/json' && @.href =~ /.*ogc\\/maps\\/v1\\/\\?.*/)].rel",

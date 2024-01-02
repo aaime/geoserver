@@ -39,8 +39,7 @@ public class CoverageResourceListener extends ProcessListenerAdapter {
 
     Map<String, ResourceStatus> resourceStates = new ConcurrentHashMap<>();
 
-    public CoverageResourceListener(
-            WPSResourceManager resourceManager, CoverageCleanerCallback cleaner) {
+    public CoverageResourceListener(WPSResourceManager resourceManager, CoverageCleanerCallback cleaner) {
         this.resourceManager = resourceManager;
         this.cleaner = cleaner;
     }
@@ -69,9 +68,7 @@ public class CoverageResourceListener extends ProcessListenerAdapter {
         if ((inputs != null) && (inputsChecked.size() < inputs.size())) {
             for (Entry<String, Object> entry : inputs.entrySet()) {
                 Object input = entry.getValue();
-                if ((input != null)
-                        && inputsChecked.add(entry.getKey())
-                        && (input instanceof GridCoverage)) {
+                if ((input != null) && inputsChecked.add(entry.getKey()) && (input instanceof GridCoverage)) {
                     resourceManager.addResource(new GridCoverageResource((GridCoverage) input));
                 }
             }
@@ -82,9 +79,7 @@ public class CoverageResourceListener extends ProcessListenerAdapter {
         if ((outputs != null) && (outputsChecked.size() < outputs.size())) {
             for (Entry<String, Object> entry : outputs.entrySet()) {
                 Object output = entry.getValue();
-                if ((output != null)
-                        && outputsChecked.add(entry.getKey())
-                        && (output instanceof GridCoverage)) {
+                if ((output != null) && outputsChecked.add(entry.getKey()) && (output instanceof GridCoverage)) {
                     resourceManager.addResource(new GridCoverageResource((GridCoverage) output));
                 }
             }

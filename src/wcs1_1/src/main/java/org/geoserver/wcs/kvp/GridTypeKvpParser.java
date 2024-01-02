@@ -32,16 +32,10 @@ public class GridTypeKvpParser extends KvpParser {
         }
 
         if (type == null)
-            throw new WcsException(
-                    "Could not understand grid type '" + value + "'",
-                    InvalidParameterValue,
-                    "GridType");
+            throw new WcsException("Could not understand grid type '" + value + "'", InvalidParameterValue, "GridType");
 
         if (type == GridType.GT2dGridIn3dCrs)
-            throw new WcsException(
-                    "GeoServer does not support type " + type.name(),
-                    InvalidParameterValue,
-                    "GridType");
+            throw new WcsException("GeoServer does not support type " + type.name(), InvalidParameterValue, "GridType");
 
         return type.getXmlConstant();
     }

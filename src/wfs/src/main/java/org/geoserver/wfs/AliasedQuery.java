@@ -89,8 +89,7 @@ class AliasedQuery extends Query {
             Expression geometry2 = visitBinaryChild(filter.getExpression2(), extraData, 1);
             double distance = filter.getDistance();
             String units = filter.getDistanceUnits();
-            return getFactory(extraData)
-                    .beyond(geometry1, geometry2, distance, units, filter.getMatchAction());
+            return getFactory(extraData).beyond(geometry1, geometry2, distance, units, filter.getMatchAction());
         }
 
         @Override
@@ -120,8 +119,7 @@ class AliasedQuery extends Query {
             Expression geometry2 = visitBinaryChild(filter.getExpression2(), extraData, 1);
             double distance = filter.getDistance();
             String units = filter.getDistanceUnits();
-            return getFactory(extraData)
-                    .dwithin(geometry1, geometry2, distance, units, filter.getMatchAction());
+            return getFactory(extraData).dwithin(geometry1, geometry2, distance, units, filter.getMatchAction());
         }
 
         @Override
@@ -189,32 +187,28 @@ class AliasedQuery extends Query {
         public Object visit(PropertyIsGreaterThan filter, Object extraData) {
             Expression expr1 = visitBinaryChild(filter.getExpression1(), extraData, 0);
             Expression expr2 = visitBinaryChild(filter.getExpression2(), extraData, 1);
-            return getFactory(extraData)
-                    .greater(expr1, expr2, filter.isMatchingCase(), filter.getMatchAction());
+            return getFactory(extraData).greater(expr1, expr2, filter.isMatchingCase(), filter.getMatchAction());
         }
 
         @Override
         public Object visit(PropertyIsGreaterThanOrEqualTo filter, Object extraData) {
             Expression expr1 = visitBinaryChild(filter.getExpression1(), extraData, 0);
             Expression expr2 = visitBinaryChild(filter.getExpression2(), extraData, 1);
-            return getFactory(extraData)
-                    .greaterOrEqual(expr1, expr2, filter.isMatchingCase(), filter.getMatchAction());
+            return getFactory(extraData).greaterOrEqual(expr1, expr2, filter.isMatchingCase(), filter.getMatchAction());
         }
 
         @Override
         public Object visit(PropertyIsLessThan filter, Object extraData) {
             Expression expr1 = visitBinaryChild(filter.getExpression1(), extraData, 0);
             Expression expr2 = visitBinaryChild(filter.getExpression2(), extraData, 1);
-            return getFactory(extraData)
-                    .less(expr1, expr2, filter.isMatchingCase(), filter.getMatchAction());
+            return getFactory(extraData).less(expr1, expr2, filter.isMatchingCase(), filter.getMatchAction());
         }
 
         @Override
         public Object visit(PropertyIsLessThanOrEqualTo filter, Object extraData) {
             Expression expr1 = visitBinaryChild(filter.getExpression1(), extraData, 0);
             Expression expr2 = visitBinaryChild(filter.getExpression2(), extraData, 1);
-            return getFactory(extraData)
-                    .lessOrEqual(expr1, expr2, filter.isMatchingCase(), filter.getMatchAction());
+            return getFactory(extraData).lessOrEqual(expr1, expr2, filter.isMatchingCase(), filter.getMatchAction());
         }
     }
 
@@ -282,8 +276,7 @@ class AliasedQuery extends Query {
         this.aliases = aliases;
         if (originalAliases != null && !originalAliases.isEmpty()) {
             Map<String, String> renameMap = buildRenameMap(originalAliases, aliases);
-            this.filter =
-                    (Filter) query.getFilter().accept(new AliasRenameVisitor(renameMap), null);
+            this.filter = (Filter) query.getFilter().accept(new AliasRenameVisitor(renameMap), null);
             if (query.getPropertyNames() != null) {
                 this.propertyNames = new ArrayList<>();
                 for (String name : query.getPropertyNames()) {
@@ -294,8 +287,7 @@ class AliasedQuery extends Query {
             // CITE tests hack, was is a self join query with no aliases?
             List<QName> typeNames = query.getTypeNames();
             if (typeNames.size() == 2 && new HashSet<>(typeNames).size() == 1) {
-                this.filter =
-                        (Filter) query.getFilter().accept(new SelfJoinRenameVisitor(aliases), null);
+                this.filter = (Filter) query.getFilter().accept(new SelfJoinRenameVisitor(aliases), null);
             } else {
                 this.filter = query.getFilter();
             }
@@ -303,8 +295,7 @@ class AliasedQuery extends Query {
         }
     }
 
-    private Map<String, String> buildRenameMap(
-            List<String> originalAliases, List<String> newAliases) {
+    private Map<String, String> buildRenameMap(List<String> originalAliases, List<String> newAliases) {
         Map<String, String> map = new HashMap<>();
         for (int i = 0; i < originalAliases.size(); i++) {
             String a1 = originalAliases.get(i);

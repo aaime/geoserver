@@ -24,17 +24,15 @@ public class AcceptableRange {
      * @param dataType The target data type (e.g. {@link Date}
      * @return An {@link AcceptableRange} object, or null if the spec was null or empty
      */
-    public static AcceptableRange getAcceptableRange(String spec, Class<?> dataType)
-            throws ParseException {
+    public static AcceptableRange getAcceptableRange(String spec, Class<?> dataType) throws ParseException {
         if (spec == null || spec.trim().isEmpty()) {
             return null;
         }
 
         String[] split = spec.split("/");
         if (split.length > 2) {
-            throw new IllegalArgumentException(
-                    "Invalid acceptable range specification, must be either a single "
-                            + "value, or two values split by a forward slash");
+            throw new IllegalArgumentException("Invalid acceptable range specification, must be either a single "
+                    + "value, or two values split by a forward slash");
         }
         Number before = parseValue(split[0], dataType);
         Number after = before;

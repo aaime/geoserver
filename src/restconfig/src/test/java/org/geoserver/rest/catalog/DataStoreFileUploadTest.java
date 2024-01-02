@@ -142,10 +142,7 @@ public class DataStoreFileUploadTest extends CatalogRESTTestSupport {
         URL url = URLs.fileToUrl(file.getCanonicalFile());
         String body = url.toExternalForm();
         MockHttpServletResponse response =
-                putAsServletResponse(
-                        ROOT_PATH + "/workspaces/gs/datastores/pds/external.shp",
-                        body,
-                        "text/plain");
+                putAsServletResponse(ROOT_PATH + "/workspaces/gs/datastores/pds/external.shp", body, "text/plain");
         assertEquals(400, response.getStatus());
     }
 
@@ -159,10 +156,7 @@ public class DataStoreFileUploadTest extends CatalogRESTTestSupport {
         assertNull(cat.getDataStoreByName("gs", "store with spaces"));
 
         byte[] bytes = shpZipAsBytes();
-        put(
-                ROOT_PATH + "/workspaces/gs/datastores/store%20with%20spaces/file.shp",
-                bytes,
-                "application/zip");
+        put(ROOT_PATH + "/workspaces/gs/datastores/store%20with%20spaces/file.shp", bytes, "application/zip");
 
         DataStoreInfo ds = cat.getDataStoreByName("gs", "store with spaces");
         assertNull(ds);
@@ -259,19 +253,14 @@ public class DataStoreFileUploadTest extends CatalogRESTTestSupport {
         loadAppSchemaTestData();
 
         // upload mapping file (datastore is created implicitly)
-        put(
-                ROOT_PATH + "/workspaces/gsml/datastores/mappedPolygons/file.appschema",
-                bytes,
-                "text/xml");
+        put(ROOT_PATH + "/workspaces/gsml/datastores/mappedPolygons/file.appschema", bytes, "text/xml");
         Document dom = getAsDOM("wfs?request=getfeature&typename=gsml:MappedFeature");
 
         // print(dom);
 
         assertEquals("wfs:FeatureCollection", dom.getDocumentElement().getNodeName());
-        NodeList mappedFeatureNodes =
-                dom.getDocumentElement()
-                        .getElementsByTagNameNS(
-                                "http://www.cgi-iugs.org/xml/GeoSciML/2", "MappedFeature");
+        NodeList mappedFeatureNodes = dom.getDocumentElement()
+                .getElementsByTagNameNS("http://www.cgi-iugs.org/xml/GeoSciML/2", "MappedFeature");
         assertNotNull(mappedFeatureNodes);
         assertEquals(2, mappedFeatureNodes.getLength());
 
@@ -280,20 +269,14 @@ public class DataStoreFileUploadTest extends CatalogRESTTestSupport {
 
         // upload alternative mapping file
         bytes = appSchemaAlternativeMappingAsBytes();
-        put(
-                ROOT_PATH
-                        + "/workspaces/gsml/datastores/mappedPolygons/file.appschema?configure=none",
-                bytes,
-                "text/xml");
+        put(ROOT_PATH + "/workspaces/gsml/datastores/mappedPolygons/file.appschema?configure=none", bytes, "text/xml");
         dom = getAsDOM("wfs?request=getfeature&typename=gsml:MappedFeature");
 
         // print(dom);
 
         assertEquals("wfs:FeatureCollection", dom.getDocumentElement().getNodeName());
-        mappedFeatureNodes =
-                dom.getDocumentElement()
-                        .getElementsByTagNameNS(
-                                "http://www.cgi-iugs.org/xml/GeoSciML/2", "MappedFeature");
+        mappedFeatureNodes = dom.getDocumentElement()
+                .getElementsByTagNameNS("http://www.cgi-iugs.org/xml/GeoSciML/2", "MappedFeature");
         assertNotNull(mappedFeatureNodes);
         assertEquals(2, mappedFeatureNodes.getLength());
 
@@ -318,10 +301,8 @@ public class DataStoreFileUploadTest extends CatalogRESTTestSupport {
     private void loadAppSchemaTestData() throws IOException {
         GeoServerResourceLoader loader =
                 new GeoServerResourceLoader(getTestData().getDataDirectoryRoot());
-        loader.copyFromClassPath(
-                "test-data/mappedPolygons.properties", "data/gsml/mappedPolygons.properties");
-        loader.copyFromClassPath(
-                "test-data/mappedPolygons.oasis.xml", "data/gsml/mappedPolygons.oasis.xml");
+        loader.copyFromClassPath("test-data/mappedPolygons.properties", "data/gsml/mappedPolygons.properties");
+        loader.copyFromClassPath("test-data/mappedPolygons.oasis.xml", "data/gsml/mappedPolygons.oasis.xml");
         loader.copyFromClassPath(
                 "test-data/commonSchemas_new/GeoSciML/CGI_basicTypes.xsd",
                 "data/gsml/commonSchemas_new/GeoSciML/CGI_basicTypes.xsd");
@@ -332,8 +313,7 @@ public class DataStoreFileUploadTest extends CatalogRESTTestSupport {
                 "test-data/commonSchemas_new/GeoSciML/earthMaterial.xsd",
                 "data/gsml/commonSchemas_new/GeoSciML/earthMaterial.xsd");
         loader.copyFromClassPath(
-                "test-data/commonSchemas_new/GeoSciML/fossil.xsd",
-                "data/gsml/commonSchemas_new/GeoSciML/fossil.xsd");
+                "test-data/commonSchemas_new/GeoSciML/fossil.xsd", "data/gsml/commonSchemas_new/GeoSciML/fossil.xsd");
         loader.copyFromClassPath(
                 "test-data/commonSchemas_new/GeoSciML/geologicStructure.xsd",
                 "data/gsml/commonSchemas_new/GeoSciML/geologicStructure.xsd");
@@ -344,8 +324,7 @@ public class DataStoreFileUploadTest extends CatalogRESTTestSupport {
                 "test-data/commonSchemas_new/GeoSciML/geosciml.xsd",
                 "data/gsml/commonSchemas_new/GeoSciML/geosciml.xsd");
         loader.copyFromClassPath(
-                "test-data/commonSchemas_new/GeoSciML/Gsml.xsd",
-                "data/gsml/commonSchemas_new/GeoSciML/Gsml.xsd");
+                "test-data/commonSchemas_new/GeoSciML/Gsml.xsd", "data/gsml/commonSchemas_new/GeoSciML/Gsml.xsd");
         loader.copyFromClassPath(
                 "test-data/commonSchemas_new/GeoSciML/metadata.xsd",
                 "data/gsml/commonSchemas_new/GeoSciML/metadata.xsd");
@@ -365,11 +344,10 @@ public class DataStoreFileUploadTest extends CatalogRESTTestSupport {
 
             String originalAsString = new String(original, StandardCharsets.UTF_8);
             // modify paths in the original mapping file
-            String modifiedAsString =
-                    originalAsString
-                            .replace("file:./", "file:../")
-                            .replace("commonSchemas_new/", "../commonSchemas_new/")
-                            .replace("mappedPolygons.oasis", "../mappedPolygons.oasis");
+            String modifiedAsString = originalAsString
+                    .replace("file:./", "file:../")
+                    .replace("commonSchemas_new/", "../commonSchemas_new/")
+                    .replace("mappedPolygons.oasis", "../mappedPolygons.oasis");
 
             byte[] modified = modifiedAsString.getBytes(StandardCharsets.UTF_8);
 
@@ -385,8 +363,7 @@ public class DataStoreFileUploadTest extends CatalogRESTTestSupport {
             Document mappingDom = dom(new ByteArrayInputStream(mapping));
 
             // remove mapping for MappedFeature/gml:name[2] attribute
-            NodeList attrMappingNodes =
-                    mappingDom.getDocumentElement().getElementsByTagName("AttributeMapping");
+            NodeList attrMappingNodes = mappingDom.getDocumentElement().getElementsByTagName("AttributeMapping");
             for (int i = 0; i < attrMappingNodes.getLength(); i++) {
                 Node attrMapping = attrMappingNodes.item(i);
                 NodeList children = attrMapping.getChildNodes();

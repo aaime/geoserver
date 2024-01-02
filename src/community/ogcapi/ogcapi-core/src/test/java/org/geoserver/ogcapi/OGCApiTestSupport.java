@@ -51,15 +51,13 @@ public class OGCApiTestSupport extends GeoServerSystemTestSupport {
         return getAsJSONPath(response);
     }
 
-    protected DocumentContext postAsJSONPath(String path, String body, int expectedHttpCode)
-            throws Exception {
+    protected DocumentContext postAsJSONPath(String path, String body, int expectedHttpCode) throws Exception {
         MockHttpServletResponse response = postAsServletResponse(path, body, "application/json");
         assertEquals(expectedHttpCode, response.getStatus());
         return getAsJSONPath(response);
     }
 
-    protected DocumentContext getAsJSONPath(MockHttpServletResponse response)
-            throws UnsupportedEncodingException {
+    protected DocumentContext getAsJSONPath(MockHttpServletResponse response) throws UnsupportedEncodingException {
         assertThat(response.getContentType(), containsString("json"));
         JsonContext json = (JsonContext) JsonPath.parse(response.getContentAsString());
         if (!isQuietTests()) {
@@ -68,8 +66,7 @@ public class OGCApiTestSupport extends GeoServerSystemTestSupport {
         return json;
     }
 
-    protected MockHttpServletResponse getAsMockHttpServletResponse(
-            String path, int expectedHttpCode) throws Exception {
+    protected MockHttpServletResponse getAsMockHttpServletResponse(String path, int expectedHttpCode) throws Exception {
         MockHttpServletResponse response = getAsServletResponse(path);
 
         assertEquals(expectedHttpCode, response.getStatus());
@@ -117,12 +114,7 @@ public class OGCApiTestSupport extends GeoServerSystemTestSupport {
     protected <T> T readSingle(DocumentContext json, String path) {
         List<Object> items = json.read(path);
         assertEquals(
-                "Found "
-                        + items.size()
-                        + " items for this path, but was expecting one: "
-                        + path
-                        + "\n"
-                        + items,
+                "Found " + items.size() + " items for this path, but was expecting one: " + path + "\n" + items,
                 1,
                 items.size());
         return (T) items.get(0);
@@ -156,9 +148,7 @@ public class OGCApiTestSupport extends GeoServerSystemTestSupport {
         List list = ctx.read(path, List.class);
         if (list.size() != 1)
             throw new RuntimeException(
-                    "Was expecting to get an array of one, but got "
-                            + list.size()
-                            + " elements instead");
+                    "Was expecting to get an array of one, but got " + list.size() + " elements instead");
         // remove the array markers around the json we want (ugly!, could not find another way)
         String array = ctx.read(path, JSONAware.class).toJSONString();
         int opening = array.indexOf("[");
@@ -213,8 +203,7 @@ public class OGCApiTestSupport extends GeoServerSystemTestSupport {
      * @param expectedValue the expected value
      * @return true if the header is present and contains the expected value
      */
-    protected boolean headerHasValue(
-            MockHttpServletResponse response, String headerName, String expectedValue) {
+    protected boolean headerHasValue(MockHttpServletResponse response, String headerName, String expectedValue) {
         String headerValue = response.getHeader(headerName);
         return headerValue != null && headerValue.contains(expectedValue);
     }

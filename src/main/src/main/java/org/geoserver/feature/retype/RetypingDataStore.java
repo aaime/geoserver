@@ -66,20 +66,17 @@ public class RetypingDataStore extends DecoratingDataStore {
 
     @Override
     public void createSchema(SimpleFeatureType featureType) throws IOException {
-        throw new UnsupportedOperationException(
-                "GeoServer does not support schema creation at the moment");
+        throw new UnsupportedOperationException("GeoServer does not support schema creation at the moment");
     }
 
     @Override
     public void updateSchema(String typeName, SimpleFeatureType featureType) throws IOException {
-        throw new UnsupportedOperationException(
-                "GeoServer does not support schema updates at the moment");
+        throw new UnsupportedOperationException("GeoServer does not support schema updates at the moment");
     }
 
     @Override
     public void removeSchema(String typeName) throws IOException {
-        throw new UnsupportedOperationException(
-                "GeoServer does not support schema removal at the moment");
+        throw new UnsupportedOperationException("GeoServer does not support schema removal at the moment");
     }
 
     @Override
@@ -94,8 +91,8 @@ public class RetypingDataStore extends DecoratingDataStore {
     }
 
     @Override
-    public FeatureWriter<SimpleFeatureType, SimpleFeature> getFeatureWriter(
-            String typeName, Transaction transaction) throws IOException {
+    public FeatureWriter<SimpleFeatureType, SimpleFeature> getFeatureWriter(String typeName, Transaction transaction)
+            throws IOException {
         FeatureTypeMap map = getTypeMapBackwards(typeName, true);
         updateMap(map, false);
         FeatureWriter<SimpleFeatureType, SimpleFeature> writer =
@@ -157,15 +154,14 @@ public class RetypingDataStore extends DecoratingDataStore {
     }
 
     @Override
-    public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(
-            Query query, Transaction transaction) throws IOException {
+    public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(Query query, Transaction transaction)
+            throws IOException {
         FeatureTypeMap map = getTypeMapBackwards(query.getTypeName(), true);
         updateMap(map, false);
         FeatureReader<SimpleFeatureType, SimpleFeature> reader =
                 wrapped.getFeatureReader(retypeQuery(query, map), transaction);
         if (map.isUnchanged()) return reader;
-        return new RetypingFeatureCollection.RetypingFeatureReader(
-                reader, map.getFeatureType(query));
+        return new RetypingFeatureCollection.RetypingFeatureReader(reader, map.getFeatureType(query));
     }
 
     @Override
@@ -190,16 +186,14 @@ public class RetypingDataStore extends DecoratingDataStore {
     }
 
     /** Returns the type map given the external type name */
-    FeatureTypeMap getTypeMapBackwards(String externalTypeName, boolean checkMap)
-            throws IOException {
+    FeatureTypeMap getTypeMapBackwards(String externalTypeName, boolean checkMap) throws IOException {
         FeatureTypeMap map = backwardsMap.get(externalTypeName);
         if (map == null && checkMap)
-            throw new IOException(
-                    "Type mapping has not been established for type  "
-                            + externalTypeName
-                            + ". "
-                            + "Make sure you access types using getTypeNames() or getSchema() "
-                            + "before trying to read/write onto them");
+            throw new IOException("Type mapping has not been established for type  "
+                    + externalTypeName
+                    + ". "
+                    + "Make sure you access types using getTypeNames() or getSchema() "
+                    + "before trying to read/write onto them");
         return map;
     }
 
@@ -214,9 +208,7 @@ public class RetypingDataStore extends DecoratingDataStore {
         } catch (IOException e) {
             LOGGER.log(
                     Level.INFO,
-                    "Failure to remap feature type "
-                            + map.getOriginalName()
-                            + ". The type will be ignored",
+                    "Failure to remap feature type " + map.getOriginalName() + ". The type will be ignored",
                     e);
             // if the feature type cannot be found in the original data store,
             // remove it from the map
@@ -229,8 +221,7 @@ public class RetypingDataStore extends DecoratingDataStore {
      * Transforms the original feature type into a destination one according to the renaming rules.
      * For the moment, it's just a feature type name replacement
      */
-    protected SimpleFeatureType transformFeatureType(SimpleFeatureType original)
-            throws IOException {
+    protected SimpleFeatureType transformFeatureType(SimpleFeatureType original) throws IOException {
         String transfomedName = transformFeatureTypeName(original.getTypeName());
         if (transfomedName.equals(original.getTypeName())) return original;
 
@@ -271,8 +262,7 @@ public class RetypingDataStore extends DecoratingDataStore {
                     // nothing we can do about it
                     modified.getJoins().add(join);
                 } else {
-                    final FeatureTypeMap joinTypeMap =
-                            getTypeMapBackwards(join.getTypeName(), true);
+                    final FeatureTypeMap joinTypeMap = getTypeMapBackwards(join.getTypeName(), true);
                     String originalName = joinTypeMap.getOriginalName();
                     Join mj = new Join(originalName, join.getJoinFilter());
                     mj.setType(join.getType());

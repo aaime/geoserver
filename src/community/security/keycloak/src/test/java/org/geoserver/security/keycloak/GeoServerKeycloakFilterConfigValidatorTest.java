@@ -30,8 +30,7 @@ public class GeoServerKeycloakFilterConfigValidatorTest {
         kcConfig.writeAdapterConfig(new AdapterConfig());
         SecurityNamedServiceConfig config = kcConfig;
         // attempt to validate the config
-        GeoServerKeycloakFilterConfigValidator validator =
-                new GeoServerKeycloakFilterConfigValidator(null);
+        GeoServerKeycloakFilterConfigValidator validator = new GeoServerKeycloakFilterConfigValidator(null);
         validator.validateFilterConfig(config);
         // exception on previous line
     }
@@ -47,8 +46,7 @@ public class GeoServerKeycloakFilterConfigValidatorTest {
         kcConfig.writeAdapterConfig(aConfig);
         SecurityNamedServiceConfig config = kcConfig;
         // attempt to validate the config
-        GeoServerKeycloakFilterConfigValidator validator =
-                new GeoServerKeycloakFilterConfigValidator(null);
+        GeoServerKeycloakFilterConfigValidator validator = new GeoServerKeycloakFilterConfigValidator(null);
         validator.validateFilterConfig(config);
     }
 }

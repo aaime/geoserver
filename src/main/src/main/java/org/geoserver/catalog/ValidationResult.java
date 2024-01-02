@@ -32,8 +32,7 @@ public class ValidationResult {
         if (!isValid()) {
             int n = errorList.size();
             String msg = errorList.get(0).getMessage();
-            throw new RuntimeException(
-                    "Validation failed with " + n + " errors.  First error message is: " + msg);
+            throw new RuntimeException("Validation failed with " + n + " errors.  First error message is: " + msg);
         }
     }
 
@@ -53,8 +52,6 @@ public class ValidationResult {
      * @return concatenation of all exceptions messages
      */
     public String getErrosAsString(String separator) {
-        return errorList.stream()
-                .map(RuntimeException::getMessage)
-                .collect(Collectors.joining(separator));
+        return errorList.stream().map(RuntimeException::getMessage).collect(Collectors.joining(separator));
     }
 }

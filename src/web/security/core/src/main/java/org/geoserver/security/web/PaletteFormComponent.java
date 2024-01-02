@@ -31,42 +31,34 @@ public class PaletteFormComponent<T extends Serializable> extends FormComponentP
     List<Behavior> toAdd = new ArrayList<>();
 
     public PaletteFormComponent(
-            String id,
-            IModel<List<T>> model,
-            IModel<List<T>> choicesModel,
-            ChoiceRenderer<T> renderer) {
+            String id, IModel<List<T>> model, IModel<List<T>> choicesModel, ChoiceRenderer<T> renderer) {
         super(id, new Model<>());
 
         add(
-                palette =
-                        new Palette<T>("palette", model, choicesModel, renderer, 10, false) {
-                            @Override
-                            protected Recorder<T> newRecorderComponent() {
-                                Recorder<T> rec = super.newRecorderComponent();
+                palette = new Palette<T>("palette", model, choicesModel, renderer, 10, false) {
+                    @Override
+                    protected Recorder<T> newRecorderComponent() {
+                        Recorder<T> rec = super.newRecorderComponent();
 
-                                // add any behaviors that need to be added
-                                rec.add(toAdd.toArray(new Behavior[toAdd.size()]));
-                                toAdd.clear();
-                                return rec;
-                            }
+                        // add any behaviors that need to be added
+                        rec.add(toAdd.toArray(new Behavior[toAdd.size()]));
+                        toAdd.clear();
+                        return rec;
+                    }
 
-                            /** Override otherwise the header is not i18n'ized */
-                            @Override
-                            public Component newSelectedHeader(final String componentId) {
+                    /** Override otherwise the header is not i18n'ized */
+                    @Override
+                    public Component newSelectedHeader(final String componentId) {
 
-                                return new Label(
-                                        componentId,
-                                        new ResourceModel(getSelectedHeaderPropertyKey()));
-                            }
+                        return new Label(componentId, new ResourceModel(getSelectedHeaderPropertyKey()));
+                    }
 
-                            /** Override otherwise the header is not i18n'ized */
-                            @Override
-                            public Component newAvailableHeader(final String componentId) {
-                                return new Label(
-                                        componentId,
-                                        new ResourceModel(getAvaliableHeaderPropertyKey()));
-                            }
-                        });
+                    /** Override otherwise the header is not i18n'ized */
+                    @Override
+                    public Component newAvailableHeader(final String componentId) {
+                        return new Label(componentId, new ResourceModel(getAvaliableHeaderPropertyKey()));
+                    }
+                });
         palette.add(new DefaultTheme());
         palette.setOutputMarkupId(true);
     }

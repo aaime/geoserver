@@ -91,8 +91,7 @@ public class GeoServerTemplateLoader implements TemplateLoader {
         this(
                 caller,
                 rl == null
-                        ? new GeoServerDataDirectory(
-                                GeoServerExtensions.bean(GeoServerResourceLoader.class))
+                        ? new GeoServerDataDirectory(GeoServerExtensions.bean(GeoServerResourceLoader.class))
                         : new GeoServerDataDirectory(rl));
     }
 
@@ -191,8 +190,7 @@ public class GeoServerTemplateLoader implements TemplateLoader {
         }
 
         // next, check the templates directory
-        template =
-                (File) fileTemplateLoader.findTemplateSource("templates" + File.separator + path);
+        template = (File) fileTemplateLoader.findTemplateSource("templates" + File.separator + path);
 
         if (template != null) {
             return template;
@@ -216,20 +214,14 @@ public class GeoServerTemplateLoader implements TemplateLoader {
 
         // first check relative to set feature type
         try {
-            template =
-                    (File)
-                            fileTemplateLoader.findTemplateSource(
-                                    "featureTypes" + File.separator + path);
+            template = (File) fileTemplateLoader.findTemplateSource("featureTypes" + File.separator + path);
 
             if (template != null) {
                 return template;
             }
 
             // next, try relative to featureTypes or coverages directory, as appropriate
-            template =
-                    (File)
-                            fileTemplateLoader.findTemplateSource(
-                                    "coverages" + File.separator + path);
+            template = (File) fileTemplateLoader.findTemplateSource("coverages" + File.separator + path);
 
             if (template != null) {
                 return template;

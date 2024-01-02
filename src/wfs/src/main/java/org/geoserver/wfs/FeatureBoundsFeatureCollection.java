@@ -39,8 +39,7 @@ class FeatureBoundsFeatureCollection extends AbstractFeatureCollection {
      * @param wrapped the wrapped feature collection
      * @param targetSchema the target schema
      */
-    public FeatureBoundsFeatureCollection(
-            final SimpleFeatureCollection wrapped, final SimpleFeatureType targetSchema) {
+    public FeatureBoundsFeatureCollection(final SimpleFeatureCollection wrapped, final SimpleFeatureType targetSchema) {
         super(targetSchema);
         this.wrapped = wrapped;
     }
@@ -139,8 +138,7 @@ class FeatureBoundsFeatureCollection extends AbstractFeatureCollection {
         }
 
         public Object[] getAttributes(Object[] attributes) {
-            Object[] retval =
-                    attributes != null ? attributes : new Object[type.getAttributeCount()];
+            Object[] retval = attributes != null ? attributes : new Object[type.getAttributeCount()];
             for (int i = 0; i < retval.length; i++) {
                 retval[i] = delegate.getAttribute(type.getDescriptor(i).getName());
             }

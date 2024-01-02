@@ -26,8 +26,7 @@ public class PropertyNameTypeBinding extends OGCPropertyNameTypeBinding {
     /** the geoserver catalog */
     Catalog catalog;
 
-    public PropertyNameTypeBinding(
-            FilterFactory filterFactory, NamespaceSupport namespaceSupport, Catalog catalog) {
+    public PropertyNameTypeBinding(FilterFactory filterFactory, NamespaceSupport namespaceSupport, Catalog catalog) {
         super(filterFactory, namespaceSupport);
         this.catalog = catalog;
     }
@@ -45,16 +44,14 @@ public class PropertyNameTypeBinding extends OGCPropertyNameTypeBinding {
             String namespaceURI = namespaceSupport.getURI(prefix);
 
             // only accept if its an application schema namespace, or gml
-            if (!GML.NAMESPACE.equals(namespaceURI)
-                    && (catalog.getNamespaceByURI(namespaceURI) == null)) {
+            if (!GML.NAMESPACE.equals(namespaceURI) && (catalog.getNamespaceByURI(namespaceURI) == null)) {
                 throw new WFSException("Illegal attribute namespace: " + namespaceURI);
             }
         }
 
         if (factory instanceof FilterFactory) {
             return factory.property(
-                    propertyName.getPropertyName(),
-                    GML3EncodingUtils.copyNamespaceSupport(namespaceSupport));
+                    propertyName.getPropertyName(), GML3EncodingUtils.copyNamespaceSupport(namespaceSupport));
         }
 
         return propertyName;

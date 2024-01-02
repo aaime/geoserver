@@ -30,8 +30,7 @@ public abstract class AbstractRecordTransformer extends AbstractCSWTransformer {
 
     protected NamespaceSupport ns;
 
-    public AbstractRecordTransformer(
-            RequestBaseType request, boolean canonicalSchemaLocation, NamespaceSupport ns) {
+    public AbstractRecordTransformer(RequestBaseType request, boolean canonicalSchemaLocation, NamespaceSupport ns) {
         super(request, canonicalSchemaLocation);
         this.ns = ns;
     }
@@ -58,10 +57,7 @@ public abstract class AbstractRecordTransformer extends AbstractCSWTransformer {
                 String prefix = (String) declaredPrefixes.nextElement();
                 if (!"xml".equalsIgnoreCase(prefix)) {
                     String uri = ns.getURI(prefix);
-                    addAttribute(
-                            attributes,
-                            StringUtils.isBlank(prefix) ? "xmlns" : "xmlns:" + prefix,
-                            uri);
+                    addAttribute(attributes, StringUtils.isBlank(prefix) ? "xmlns" : "xmlns:" + prefix, uri);
                 }
             }
             addAttribute(attributes, "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
@@ -87,10 +83,7 @@ public abstract class AbstractRecordTransformer extends AbstractCSWTransformer {
                 start("csw:GetRecordsResponse", attributes);
 
                 attributes = new AttributesImpl();
-                addAttribute(
-                        attributes,
-                        "timestamp",
-                        Converters.convert(response.getTimestamp(), String.class));
+                addAttribute(attributes, "timestamp", Converters.convert(response.getTimestamp(), String.class));
                 element("csw:SearchStatus", null, attributes);
 
                 if (response.getElementSet() == null) {
@@ -98,12 +91,8 @@ public abstract class AbstractRecordTransformer extends AbstractCSWTransformer {
                 }
 
                 attributes = new AttributesImpl();
-                addAttribute(
-                        attributes, "numberOfRecordsMatched", response.getNumberOfRecordsMatched());
-                addAttribute(
-                        attributes,
-                        "numberOfRecordsReturned",
-                        response.getNumberOfRecordsReturned());
+                addAttribute(attributes, "numberOfRecordsMatched", response.getNumberOfRecordsMatched());
+                addAttribute(attributes, "numberOfRecordsReturned", response.getNumberOfRecordsReturned());
                 addAttribute(attributes, "nextRecord", response.getNextRecord());
                 addAttribute(attributes, "recordSchema", response.getRecordSchema());
                 addAttribute(attributes, "elementSet", response.getElementSet());
@@ -120,10 +109,7 @@ public abstract class AbstractRecordTransformer extends AbstractCSWTransformer {
             // encode the records
             if (response.getRecords() != null) {
                 try {
-                    response.getRecords()
-                            .accepts(
-                                    feature -> encode(response, feature),
-                                    new LoggingProgressListener());
+                    response.getRecords().accepts(feature -> encode(response, feature), new LoggingProgressListener());
                 } catch (IOException e) {
                     throw new ServiceException("Failed to encoder records", e);
                 }

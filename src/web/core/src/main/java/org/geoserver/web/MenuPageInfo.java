@@ -19,8 +19,7 @@ import org.geoserver.web.services.ServiceMenuPageInfo;
  * @author David Winslow <dwinslow@opengeo.org>
  */
 @SuppressWarnings("serial")
-public class MenuPageInfo<T extends GeoServerBasePage> extends ComponentInfo<T>
-        implements Comparable<MenuPageInfo<T>> {
+public class MenuPageInfo<T extends GeoServerBasePage> extends ComponentInfo<T> implements Comparable<MenuPageInfo<T>> {
     Category category;
     int order;
     String icon;

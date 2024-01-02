@@ -38,8 +38,7 @@ public class RoleStoreHelper {
         Map<String, String> parentMap = new HashMap<>();
         for (GeoServerRole role : roleMap.values()) {
             GeoServerRole parentRole = role_parentMap.get(role);
-            parentMap.put(
-                    role.getAuthority(), parentRole == null ? null : parentRole.getAuthority());
+            parentMap.put(role.getAuthority(), parentRole == null ? null : parentRole.getAuthority());
         }
         return Collections.unmodifiableMap(parentMap);
     }

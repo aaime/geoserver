@@ -85,8 +85,7 @@ public class SecureTreeNode {
     /** Adds a child to this path element */
     public SecureTreeNode addChild(String name) {
         if (getChild(name) != null)
-            throw new IllegalArgumentException(
-                    "This pathElement " + name + " is already among my children");
+            throw new IllegalArgumentException("This pathElement " + name + " is already among my children");
 
         SecureTreeNode child = new SecureTreeNode(this);
         children.put(name, child);
@@ -103,8 +102,7 @@ public class SecureTreeNode {
     public boolean canAccess(Authentication user, AccessMode mode) {
         Set<String> roles = getAuthorizedRoles(mode);
 
-        if (GeoServerSecurityFilterChainProxy.isSecurityEnabledForCurrentRequest() == false)
-            return true;
+        if (GeoServerSecurityFilterChainProxy.isSecurityEnabledForCurrentRequest() == false) return true;
 
         // if we don't know, we ask the parent, otherwise we assume
         // the object is unsecured

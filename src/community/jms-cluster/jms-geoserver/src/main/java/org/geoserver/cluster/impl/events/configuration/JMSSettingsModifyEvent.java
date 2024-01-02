@@ -25,20 +25,12 @@ public class JMSSettingsModifyEvent extends JMSModifyEvent<SettingsInfo> {
     private static final long serialVersionUID = 1L;
 
     public JMSSettingsModifyEvent(
-            SettingsInfo source,
-            List<String> propertyNames,
-            List<Object> oldValues,
-            List<Object> newValues) {
+            SettingsInfo source, List<String> propertyNames, List<Object> oldValues, List<Object> newValues) {
         this(source, propertyNames, oldValues, newValues, JMSEventType.MODIFIED);
     }
 
     public JMSSettingsModifyEvent(SettingsInfo source, JMSEventType eventType) {
-        this(
-                source,
-                Collections.emptyList(),
-                Collections.emptyList(),
-                Collections.emptyList(),
-                eventType);
+        this(source, Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), eventType);
     }
 
     public JMSSettingsModifyEvent(

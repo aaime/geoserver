@@ -48,8 +48,7 @@ public class NetCDFUnitsConfigurator implements GeoServerLifecycleHandler {
 
         try {
             LinkedHashMap<String, String> replacements =
-                    getMapResource(
-                            NETCDF_UNIT_REPLACEMENTS, NetCDFUnitFormat.NETCDF_UNIT_REPLACEMENTS);
+                    getMapResource(NETCDF_UNIT_REPLACEMENTS, NetCDFUnitFormat.NETCDF_UNIT_REPLACEMENTS);
             if (replacements != null) {
                 NetCDFUnitFormat.setReplacements(replacements);
             }
@@ -63,8 +62,8 @@ public class NetCDFUnitsConfigurator implements GeoServerLifecycleHandler {
      * the GeoServer data dir. Will return a map with the contents of the property file, with the
      * same order as the file contents.
      */
-    private LinkedHashMap<String, String> getMapResource(
-            String absolutePathProperty, String defaultFileName) throws IOException {
+    private LinkedHashMap<String, String> getMapResource(String absolutePathProperty, String defaultFileName)
+            throws IOException {
         Resource aliasResource = getResource(absolutePathProperty, defaultFileName);
         if (aliasResource != null) {
             try (InputStream is = aliasResource.in()) {
@@ -109,8 +108,7 @@ public class NetCDFUnitsConfigurator implements GeoServerLifecycleHandler {
         if (path != null) {
             File resourceFile = new File(path);
             if (resourceFile.exists()) {
-                FileSystemResourceStore store =
-                        new FileSystemResourceStore(resourceFile.getParentFile());
+                FileSystemResourceStore store = new FileSystemResourceStore(resourceFile.getParentFile());
                 resource = store.get(resourceFile.getName());
             } else {
                 LOGGER.fine("Could not locate " + path + ", moving on");

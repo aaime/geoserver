@@ -87,12 +87,8 @@ public class GeoServerFileChooser extends Panel {
 
         // first check if the file is a relative reference into the data dir
         if (selection != null) {
-            File relativeToDataDir =
-                    Resources.find(
-                            Resources.fromURL(
-                                    Files.asResource(loader.getBaseDirectory()),
-                                    selection.getPath()),
-                            true);
+            File relativeToDataDir = Resources.find(
+                    Resources.fromURL(Files.asResource(loader.getBaseDirectory()), selection.getPath()), true);
             if (relativeToDataDir != null) {
                 selection = relativeToDataDir;
             }
@@ -128,52 +124,45 @@ public class GeoServerFileChooser extends Panel {
         setDefaultModel(file);
 
         // the root chooser
-        final DropDownChoice<File> choice =
-                new DropDownChoice<>(
-                        "roots",
-                        new Model<>(selectionRoot),
-                        new Model<>(roots),
-                        new FileRootsRenderer(this));
-        choice.add(
-                new AjaxFormComponentUpdatingBehavior("change") {
+        final DropDownChoice<File> choice = new DropDownChoice<>(
+                "roots", new Model<>(selectionRoot), new Model<>(roots), new FileRootsRenderer(this));
+        choice.add(new AjaxFormComponentUpdatingBehavior("change") {
 
-                    private static final long serialVersionUID = -1527567847101388940L;
+            private static final long serialVersionUID = -1527567847101388940L;
 
-                    @Override
-                    protected void onUpdate(AjaxRequestTarget target) {
-                        File selection = choice.getModelObject();
-                        breadcrumbs.setRootFile(selection);
-                        updateFileBrowser(selection, target);
-                    }
-                });
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {
+                File selection = choice.getModelObject();
+                breadcrumbs.setRootFile(selection);
+                updateFileBrowser(selection, target);
+            }
+        });
         choice.setOutputMarkupId(true);
         add(choice);
 
         // the breadcrumbs
-        breadcrumbs =
-                new FileBreadcrumbs("breadcrumbs", new Model<>(selectionRoot), file) {
+        breadcrumbs = new FileBreadcrumbs("breadcrumbs", new Model<>(selectionRoot), file) {
 
-                    private static final long serialVersionUID = -6995769189316700797L;
+            private static final long serialVersionUID = -6995769189316700797L;
 
-                    @Override
-                    protected void pathItemClicked(File file, AjaxRequestTarget target) {
-                        updateFileBrowser(file, target);
-                    }
-                };
+            @Override
+            protected void pathItemClicked(File file, AjaxRequestTarget target) {
+                updateFileBrowser(file, target);
+            }
+        };
         breadcrumbs.setOutputMarkupId(true);
         add(breadcrumbs);
 
         // the file tables
-        fileTable =
-                new FileDataView("fileTable", new FileProvider(file)) {
+        fileTable = new FileDataView("fileTable", new FileProvider(file)) {
 
-                    private static final long serialVersionUID = -5481794219862786117L;
+            private static final long serialVersionUID = -5481794219862786117L;
 
-                    @Override
-                    protected void linkNameClicked(File file, AjaxRequestTarget target) {
-                        updateFileBrowser(file, target);
-                    }
-                };
+            @Override
+            protected void linkNameClicked(File file, AjaxRequestTarget target) {
+                updateFileBrowser(file, target);
+            }
+        };
         fileTable.setOutputMarkupId(true);
         add(fileTable);
     }
@@ -266,8 +255,7 @@ public class GeoServerFileChooser extends Panel {
             if (f == USER_HOME) {
                 return new ParamResourceModel("userHome", component).getString();
             } else {
-                GeoServerResourceLoader loader =
-                        GeoServerExtensions.bean(GeoServerResourceLoader.class);
+                GeoServerResourceLoader loader = GeoServerExtensions.bean(GeoServerResourceLoader.class);
 
                 if (f.equals(loader.getBaseDirectory())) {
                     return new ParamResourceModel("dataDirectory", component).getString();
@@ -275,8 +263,7 @@ public class GeoServerFileChooser extends Panel {
             }
 
             try {
-                final String displayName =
-                        FileSystemView.getFileSystemView().getSystemDisplayName(f);
+                final String displayName = FileSystemView.getFileSystemView().getSystemDisplayName(f);
                 if (displayName != null && !displayName.trim().isEmpty()) {
                     return displayName.trim();
                 }

@@ -53,8 +53,7 @@ public abstract class WFSTestSupport extends GeoServerSystemTestSupport {
 
     /** @return The 1.1 xml configuration. */
     protected org.geoserver.wfs.xml.v1_1_0.WFSConfiguration getXmlConfiguration11() {
-        return (org.geoserver.wfs.xml.v1_1_0.WFSConfiguration)
-                applicationContext.getBean("wfsXmlConfiguration-1.1");
+        return (org.geoserver.wfs.xml.v1_1_0.WFSConfiguration) applicationContext.getBean("wfsXmlConfiguration-1.1");
     }
 
     @Override
@@ -92,20 +91,19 @@ public abstract class WFSTestSupport extends GeoServerSystemTestSupport {
     protected void setUpNamespaces(Map<String, String> namespaces) {}
 
     protected List<String> getSupportedSpatialOperatorsList(boolean wfs1_0_0) {
-        return Arrays.asList(
-                new String[] {
-                    "Disjoint",
-                    "Equals",
-                    "DWithin",
-                    "Beyond",
-                    "Intersect" + (wfs1_0_0 ? "" : "s"),
-                    "Touches",
-                    "Crosses",
-                    "Within",
-                    "Contains",
-                    "Overlaps",
-                    "BBOX"
-                });
+        return Arrays.asList(new String[] {
+            "Disjoint",
+            "Equals",
+            "DWithin",
+            "Beyond",
+            "Intersect" + (wfs1_0_0 ? "" : "s"),
+            "Touches",
+            "Crosses",
+            "Within",
+            "Contains",
+            "Overlaps",
+            "BBOX"
+        });
     }
 
     protected Boolean citeCompliant;
@@ -130,16 +128,13 @@ public abstract class WFSTestSupport extends GeoServerSystemTestSupport {
      * Helper method that activates or deactivates geometries measures encoding for the feature type
      * matching the provided name.
      */
-    protected static void setMeasuresEncoding(
-            Catalog catalog, String featureTypeName, boolean encodeMeasures) {
+    protected static void setMeasuresEncoding(Catalog catalog, String featureTypeName, boolean encodeMeasures) {
         // get the feature type from the catalog
         FeatureTypeInfo featureTypeInfo = catalog.getFeatureTypeByName(featureTypeName);
         if (featureTypeInfo == null) {
             // ouch, feature type not found
             throw new RuntimeException(
-                    String.format(
-                            "No feature type matching the provided name '%s' found.",
-                            featureTypeName));
+                    String.format("No feature type matching the provided name '%s' found.", featureTypeName));
         }
         // set encode measures and save
         featureTypeInfo.setEncodeMeasures(encodeMeasures);

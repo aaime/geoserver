@@ -61,8 +61,7 @@ import org.geotools.util.Converters;
  */
 public class KvpRequestReader {
     /** logging instance */
-    protected static Logger LOGGER =
-            org.geotools.util.logging.Logging.getLogger("org.geoserver.ows");
+    protected static Logger LOGGER = org.geotools.util.logging.Logging.getLogger("org.geoserver.ows");
 
     /** The class of the request bean */
     private Class<?> requestBean;
@@ -141,8 +140,7 @@ public class KvpRequestReader {
      * @param rawKvp The raw kvp set (unparsed), map of String,String
      * @return A new request object, or the original
      */
-    public Object read(Object request, Map<String, Object> kvp, Map<String, Object> rawKvp)
-            throws Exception {
+    public Object read(Object request, Map<String, Object> kvp, Map<String, Object> rawKvp) throws Exception {
         for (Map.Entry<String, Object> entry : kvp.entrySet()) {
             String property = entry.getKey();
             Object value = entry.getValue();

@@ -17,8 +17,7 @@ public class ItemsResponse extends AbstractItemsResponse {
 
     private String collectionId;
 
-    public ItemsResponse(
-            String collectionId, FeatureCollection items, BigInteger numberMatched, int returned) {
+    public ItemsResponse(String collectionId, FeatureCollection items, BigInteger numberMatched, int returned) {
         super(items, numberMatched, returned);
         this.collectionId = collectionId;
     }

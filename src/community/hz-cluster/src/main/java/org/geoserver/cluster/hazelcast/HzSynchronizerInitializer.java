@@ -18,8 +18,7 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextClosedEvent;
 
-public class HzSynchronizerInitializer
-        implements GeoServerInitializer, ApplicationListener<ApplicationEvent> {
+public class HzSynchronizerInitializer implements GeoServerInitializer, ApplicationListener<ApplicationEvent> {
 
     protected static Logger LOGGER = Logging.getLogger("org.geoserver.cluster.hazelcast");
 

@@ -41,8 +41,7 @@ public abstract class CatalogWriter<T> extends BackupRestoreItem
         this.setExecutionContextName(ClassUtils.getShortName(clazz));
     }
 
-    private final ExecutionContextUserSupport executionContextUserSupport =
-            new ExecutionContextUserSupport();
+    private final ExecutionContextUserSupport executionContextUserSupport = new ExecutionContextUserSupport();
 
     /**
      * No-op.
@@ -98,8 +97,7 @@ public abstract class CatalogWriter<T> extends BackupRestoreItem
 
         for (CatalogAdditionalResourcesWriter wr : additionalResourceWriters) {
             if (wr.canHandle(item)) {
-                wr.writeAdditionalResources(
-                        backupFacade, Files.asResource(resource.getFile()), item);
+                wr.writeAdditionalResources(backupFacade, Files.asResource(resource.getFile()), item);
             }
         }
     }

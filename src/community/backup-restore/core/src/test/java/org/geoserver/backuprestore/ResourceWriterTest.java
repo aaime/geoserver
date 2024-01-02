@@ -55,25 +55,11 @@ public class ResourceWriterTest extends BackupRestoreTestSupport {
         GeoServerDataDirectory td = new GeoServerDataDirectory(root);
 
         Resource srcTemplatesDir = BackupUtils.dir(dd.get(Paths.BASE), "templates");
-        File srcTitleFtl =
-                Resources.createNewFile(
-                        Files.asResource(new File(srcTemplatesDir.dir(), "title.ftl")));
-        File srcHeaderFtl =
-                Resources.createNewFile(
-                        Files.asResource(
-                                new File(
-                                        Paths.toFile(
-                                                dd.get(Paths.BASE).dir(),
-                                                Paths.path("workspaces", "gs", "foo", "t1")),
-                                        "header.ftl")));
-        File srcFakeFtl =
-                Resources.createNewFile(
-                        Files.asResource(
-                                new File(
-                                        Paths.toFile(
-                                                dd.get(Paths.BASE).dir(),
-                                                Paths.path("workspaces", "gs", "foo", "t1")),
-                                        "fake.ftl")));
+        File srcTitleFtl = Resources.createNewFile(Files.asResource(new File(srcTemplatesDir.dir(), "title.ftl")));
+        File srcHeaderFtl = Resources.createNewFile(Files.asResource(new File(
+                Paths.toFile(dd.get(Paths.BASE).dir(), Paths.path("workspaces", "gs", "foo", "t1")), "header.ftl")));
+        File srcFakeFtl = Resources.createNewFile(Files.asResource(new File(
+                Paths.toFile(dd.get(Paths.BASE).dir(), Paths.path("workspaces", "gs", "foo", "t1")), "fake.ftl")));
 
         assertTrue(Resources.exists(Files.asResource(srcTitleFtl)));
         assertTrue(Resources.exists(Files.asResource(srcHeaderFtl)));
@@ -91,20 +77,10 @@ public class ResourceWriterTest extends BackupRestoreTestSupport {
         assertTrue(Resources.exists(trgTemplatesDir));
 
         Resource trgTitleFtl = Files.asResource(new File(trgTemplatesDir.dir(), "title.ftl"));
-        Resource trgHeaderFtl =
-                Files.asResource(
-                        new File(
-                                Paths.toFile(
-                                        td.get(Paths.BASE).dir(),
-                                        Paths.path("workspaces", "gs", "foo", "t1")),
-                                "header.ftl"));
-        Resource trgFakeFtl =
-                Files.asResource(
-                        new File(
-                                Paths.toFile(
-                                        td.get(Paths.BASE).dir(),
-                                        Paths.path("workspaces", "gs", "foo", "t1")),
-                                "fake.ftl"));
+        Resource trgHeaderFtl = Files.asResource(new File(
+                Paths.toFile(td.get(Paths.BASE).dir(), Paths.path("workspaces", "gs", "foo", "t1")), "header.ftl"));
+        Resource trgFakeFtl = Files.asResource(new File(
+                Paths.toFile(td.get(Paths.BASE).dir(), Paths.path("workspaces", "gs", "foo", "t1")), "fake.ftl"));
 
         assertTrue(Resources.exists(trgTitleFtl));
         assertTrue(Resources.exists(trgHeaderFtl));
@@ -127,9 +103,7 @@ public class ResourceWriterTest extends BackupRestoreTestSupport {
         assertTrue(Resources.exists(srcStylesDir));
         assertTrue(Resources.exists(trgStylesDir));
 
-        assertTrue(
-                Resources.exists(
-                        Files.asResource(new File(trgStylesDir.dir(), style.getFilename()))));
+        assertTrue(Resources.exists(Files.asResource(new File(trgStylesDir.dir(), style.getFilename()))));
     }
 
     @Test
@@ -154,17 +128,11 @@ public class ResourceWriterTest extends BackupRestoreTestSupport {
         catalogTsklet.backupRestoreAdditionalResources(dd.getResourceStore(), td.get(Paths.BASE));
 
         assertTrue(Resources.exists(Files.asResource(new File(td.get(Paths.BASE).dir(), "demo"))));
-        assertTrue(
-                Resources.exists(Files.asResource(new File(td.get(Paths.BASE).dir(), "images"))));
+        assertTrue(Resources.exists(Files.asResource(new File(td.get(Paths.BASE).dir(), "images"))));
         assertTrue(Resources.exists(Files.asResource(new File(td.get(Paths.BASE).dir(), "logs"))));
-        assertTrue(
-                Resources.exists(Files.asResource(new File(td.get(Paths.BASE).dir(), "palettes"))));
-        assertTrue(
-                Resources.exists(
-                        Files.asResource(new File(td.get(Paths.BASE).dir(), "user_projections"))));
-        assertTrue(
-                Resources.exists(
-                        Files.asResource(new File(td.get(Paths.BASE).dir(), "validation"))));
+        assertTrue(Resources.exists(Files.asResource(new File(td.get(Paths.BASE).dir(), "palettes"))));
+        assertTrue(Resources.exists(Files.asResource(new File(td.get(Paths.BASE).dir(), "user_projections"))));
+        assertTrue(Resources.exists(Files.asResource(new File(td.get(Paths.BASE).dir(), "validation"))));
         assertTrue(Resources.exists(Files.asResource(new File(td.get(Paths.BASE).dir(), "www"))));
     }
 
@@ -181,15 +149,9 @@ public class ResourceWriterTest extends BackupRestoreTestSupport {
         catalogTsklet.doWrite(geoserver.getSettings(), td.get(Paths.BASE), "settings.xml");
         catalogTsklet.doWrite(geoserver.getLogging(), td.get(Paths.BASE), "logging.xml");
 
-        assertTrue(
-                Resources.exists(
-                        Files.asResource(new File(td.get(Paths.BASE).dir(), "global.xml"))));
-        assertTrue(
-                Resources.exists(
-                        Files.asResource(new File(td.get(Paths.BASE).dir(), "settings.xml"))));
-        assertTrue(
-                Resources.exists(
-                        Files.asResource(new File(td.get(Paths.BASE).dir(), "logging.xml"))));
+        assertTrue(Resources.exists(Files.asResource(new File(td.get(Paths.BASE).dir(), "global.xml"))));
+        assertTrue(Resources.exists(Files.asResource(new File(td.get(Paths.BASE).dir(), "settings.xml"))));
+        assertTrue(Resources.exists(Files.asResource(new File(td.get(Paths.BASE).dir(), "logging.xml"))));
 
         XStreamPersister xstream = catalogTsklet.getxStreamPersisterFactory().createXMLPersister();
         xstream.setCatalog(cat);
@@ -217,23 +179,13 @@ public class ResourceWriterTest extends BackupRestoreTestSupport {
         assertEquals(geoserver.getLogging(), gsLogging);
 
         catalogTsklet.doWrite(
-                cat.getDefaultWorkspace(),
-                BackupUtils.dir(td.get(Paths.BASE), "workspaces"),
-                "default.xml");
+                cat.getDefaultWorkspace(), BackupUtils.dir(td.get(Paths.BASE), "workspaces"), "default.xml");
 
-        assertTrue(
-                Resources.exists(
-                        Files.asResource(
-                                new File(
-                                        BackupUtils.dir(td.get(Paths.BASE), "workspaces").dir(),
-                                        "default.xml"))));
+        assertTrue(Resources.exists(Files.asResource(
+                new File(BackupUtils.dir(td.get(Paths.BASE), "workspaces").dir(), "default.xml"))));
 
-        WorkspaceInfo defaultWorkspace =
-                (WorkspaceInfo)
-                        xp.fromXML(
-                                new File(
-                                        BackupUtils.dir(td.get(Paths.BASE), "workspaces").dir(),
-                                        "default.xml"));
+        WorkspaceInfo defaultWorkspace = (WorkspaceInfo) xp.fromXML(
+                new File(BackupUtils.dir(td.get(Paths.BASE), "workspaces").dir(), "default.xml"));
 
         assertEquals(cat.getDefaultWorkspace().getName(), defaultWorkspace.getName());
     }

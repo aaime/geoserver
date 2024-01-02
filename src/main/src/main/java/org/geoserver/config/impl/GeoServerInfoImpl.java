@@ -332,9 +332,7 @@ public class GeoServerInfoImpl implements GeoServerInfo {
 
     @Override
     public Boolean isAllowStoredQueriesPerWorkspace() {
-        return allowStoredQueriesPerWorkspace == null
-                ? Boolean.TRUE
-                : allowStoredQueriesPerWorkspace;
+        return allowStoredQueriesPerWorkspace == null ? Boolean.TRUE : allowStoredQueriesPerWorkspace;
     }
 
     @Override
@@ -355,9 +353,7 @@ public class GeoServerInfoImpl implements GeoServerInfo {
         result = prime * result + Long.valueOf(updateSequence).hashCode();
         result = prime * result + (globalServices ? 1231 : 1237);
         result = prime * result + xmlPostRequestLogBufferSize;
-        result =
-                prime * result
-                        + ((resourceErrorHandling == null) ? 0 : resourceErrorHandling.hashCode());
+        result = prime * result + ((resourceErrorHandling == null) ? 0 : resourceErrorHandling.hashCode());
         result = prime * result + ((lockProviderName == null) ? 0 : lockProviderName.hashCode());
         return result;
     }

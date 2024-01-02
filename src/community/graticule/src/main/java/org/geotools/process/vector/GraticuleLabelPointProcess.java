@@ -135,10 +135,7 @@ public class GraticuleLabelPointProcess implements VectorProcess {
     }
 
     private SimpleFeature setPoint(
-            SimpleFeature feature,
-            ReferencedEnvelope bounds,
-            PositionEnum position,
-            double offset) {
+            SimpleFeature feature, ReferencedEnvelope bounds, PositionEnum position, double offset) {
 
         LineString line = (LineString) feature.getDefaultGeometry();
         boolean horizontal = (boolean) feature.getAttribute(LineFeatureBuilder.HORIZONTAL);
@@ -267,8 +264,7 @@ public class GraticuleLabelPointProcess implements VectorProcess {
         return null;
     }
 
-    private SimpleFeature buildFeature(
-            Point p, SimpleFeature feature, PositionEnum position, double offset) {
+    private SimpleFeature buildFeature(Point p, SimpleFeature feature, PositionEnum position, double offset) {
         log.finest("building Feature at " + p + " pos:" + position);
         Collection<Property> atts = feature.getProperties();
         for (Property prop : atts) {
@@ -311,11 +307,10 @@ public class GraticuleLabelPointProcess implements VectorProcess {
         builder.set(LineFeatureBuilder.OFFSET_Y, offsetY);
 
         SimpleFeature output = builder.buildFeature(null);
-        log.finest(
-                "Feature builder - left:"
-                        + output.getAttribute(LineFeatureBuilder.LEFT)
-                        + " top:"
-                        + output.getAttribute(LineFeatureBuilder.TOP));
+        log.finest("Feature builder - left:"
+                + output.getAttribute(LineFeatureBuilder.LEFT)
+                + " top:"
+                + output.getAttribute(LineFeatureBuilder.TOP));
         return output;
     }
 }

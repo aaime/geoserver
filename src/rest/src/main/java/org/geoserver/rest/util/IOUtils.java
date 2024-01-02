@@ -47,8 +47,7 @@ import org.geotools.util.URLs;
  */
 public class IOUtils extends org.apache.commons.io.IOUtils {
 
-    private static final Logger LOGGER =
-            org.geotools.util.logging.Logging.getLogger(FileCleaner.class);
+    private static final Logger LOGGER = org.geotools.util.logging.Logging.getLogger(FileCleaner.class);
 
     /** Default size of element for {@link FileChannel} based copy method. */
     private static final int DEFAULT_SIZE = 10 * 1024 * 1024;
@@ -57,8 +56,7 @@ public class IOUtils extends org.apache.commons.io.IOUtils {
     private static final FileCleaner FILE_CLEANER = new FileCleaner();
 
     private static final Set<String> FILES_PATH = Collections.synchronizedSet(new HashSet<>());
-    private static final Map<String, Integer> FILE_ATTEMPTS_COUNTS =
-            Collections.synchronizedMap(new HashMap<>());
+    private static final Map<String, Integer> FILE_ATTEMPTS_COUNTS = Collections.synchronizedMap(new HashMap<>());
 
     /** 30 seconds is the default period beteen two checks. */
     private static long DEFAULT_PERIOD = 5L;
@@ -160,8 +158,7 @@ public class IOUtils extends org.apache.commons.io.IOUtils {
 
                                 // get next file path and its count
                                 final String sFile = it.next();
-                                if (LOGGER.isLoggable(Level.INFO))
-                                    LOGGER.info("Trying to remove file " + sFile);
+                                if (LOGGER.isLoggable(Level.INFO)) LOGGER.info("Trying to remove file " + sFile);
                                 int attempts = FILE_ATTEMPTS_COUNTS.get(sFile);
                                 if (!new File(sFile).exists()) {
                                     it.remove();
@@ -178,8 +175,7 @@ public class IOUtils extends org.apache.commons.io.IOUtils {
                                             LOGGER.info("Unable to  remove file " + sFile);
                                         attempts++;
                                         if (maxAttempts < attempts) {
-                                            if (LOGGER.isLoggable(Level.INFO))
-                                                LOGGER.info("Dropping file " + sFile);
+                                            if (LOGGER.isLoggable(Level.INFO)) LOGGER.info("Dropping file " + sFile);
                                             it.remove();
                                             FILE_ATTEMPTS_COUNTS.remove(sFile);
                                             if (LOGGER.isLoggable(Level.WARNING))
@@ -210,8 +206,7 @@ public class IOUtils extends org.apache.commons.io.IOUtils {
                     Thread.sleep(period * 1000);
 
                 } catch (Throwable t) {
-                    if (LOGGER.isLoggable(Level.INFO))
-                        LOGGER.log(Level.INFO, t.getLocalizedMessage(), t);
+                    if (LOGGER.isLoggable(Level.INFO)) LOGGER.log(Level.INFO, t.getLocalizedMessage(), t);
                 }
             }
         }
@@ -269,8 +264,7 @@ public class IOUtils extends org.apache.commons.io.IOUtils {
      * @param destination the destination {@link WritableByteChannel};.
      * @throws IOException in case something bad happens.
      */
-    public static void copyChannel(
-            int bufferSize, ReadableByteChannel source, WritableByteChannel destination)
+    public static void copyChannel(int bufferSize, ReadableByteChannel source, WritableByteChannel destination)
             throws IOException {
 
         inputNotNull(source, destination);
@@ -298,8 +292,7 @@ public class IOUtils extends org.apache.commons.io.IOUtils {
      * @param destination the destination {@link WritableByteChannel};.
      * @throws IOException in case something bad happens.
      */
-    public static void copyFileChannel(int bufferSize, FileChannel source, FileChannel destination)
-            throws IOException {
+    public static void copyFileChannel(int bufferSize, FileChannel source, FileChannel destination) throws IOException {
 
         inputNotNull(source, destination);
         if (!source.isOpen() || !destination.isOpen())
@@ -334,8 +327,7 @@ public class IOUtils extends org.apache.commons.io.IOUtils {
      * @param oList list of elements to check for null.
      */
     private static void inputNotNull(Object... oList) {
-        for (Object o : oList)
-            if (o == null) throw new NullPointerException("Input objects cannot be null");
+        for (Object o : oList) if (o == null) throw new NullPointerException("Input objects cannot be null");
     }
 
     /**
@@ -360,10 +352,7 @@ public class IOUtils extends org.apache.commons.io.IOUtils {
      * @throws IOException in case something bad happens.
      */
     public static Long copyToFileChannel(
-            int bufferSize,
-            ReadableByteChannel source,
-            FileChannel destination,
-            Long initialWritePosition)
+            int bufferSize, ReadableByteChannel source, FileChannel destination, Long initialWritePosition)
             throws IOException {
         Long writedByte = 0L;
         inputNotNull(source, destination);
@@ -395,8 +384,7 @@ public class IOUtils extends org.apache.commons.io.IOUtils {
      * @param size buffer size.
      * @throws IOException in case something bad happens.
      */
-    public static void copyFile(File sourceFile, File destinationFile, int size)
-            throws IOException {
+    public static void copyFile(File sourceFile, File destinationFile, int size) throws IOException {
         inputNotNull(sourceFile, destinationFile);
         if (!sourceFile.exists() || !sourceFile.canRead() || !sourceFile.isFile())
             throw new IllegalStateException("Source is not in a legal state.");
@@ -423,13 +411,10 @@ public class IOUtils extends org.apache.commons.io.IOUtils {
     public static boolean deleteDirectory(
             File sourceDirectory, FilenameFilter filter, boolean recursive, boolean deleteItself) {
         inputNotNull(sourceDirectory, filter);
-        if (!sourceDirectory.exists()
-                || !sourceDirectory.canRead()
-                || !sourceDirectory.isDirectory())
+        if (!sourceDirectory.exists() || !sourceDirectory.canRead() || !sourceDirectory.isDirectory())
             throw new IllegalStateException("Source is not in a legal state.");
 
-        final File[] files =
-                (filter != null ? sourceDirectory.listFiles(filter) : sourceDirectory.listFiles());
+        final File[] files = (filter != null ? sourceDirectory.listFiles(filter) : sourceDirectory.listFiles());
         if (files != null) {
             for (File file : files) {
                 if (file.isDirectory()) {
@@ -487,15 +472,13 @@ public class IOUtils extends org.apache.commons.io.IOUtils {
      * @param source the input <code>File</code> which need to be moved.
      * @param destDir the destination directory where to move the file.
      */
-    public static void moveFileTo(File source, File destDir, boolean removeInputFile)
-            throws IOException {
+    public static void moveFileTo(File source, File destDir, boolean removeInputFile) throws IOException {
         inputNotNull(source, destDir);
         if (!source.exists() || !source.canRead() || source.isDirectory())
             throw new IllegalStateException("Source is not in a legal state.");
         if (!destDir.exists() || !destDir.canWrite() || !destDir.isDirectory())
             throw new IllegalStateException("Source is not in a legal state.");
-        if (destDir.getAbsolutePath().equalsIgnoreCase(source.getParentFile().getAbsolutePath()))
-            return;
+        if (destDir.getAbsolutePath().equalsIgnoreCase(source.getParentFile().getAbsolutePath())) return;
         // ///////////////////////////////////////////////////////////////
         //
         // Copy the inputFile in the specified destination directory
@@ -541,10 +524,7 @@ public class IOUtils extends org.apache.commons.io.IOUtils {
      * @throws IOException in case something bad happens.
      */
     public static void copyStream(
-            InputStream sourceStream,
-            OutputStream destinationStream,
-            boolean closeInput,
-            boolean closeOutput)
+            InputStream sourceStream, OutputStream destinationStream, boolean closeInput, boolean closeOutput)
             throws IOException {
         copyStream(sourceStream, destinationStream, DEFAULT_SIZE, closeInput, closeOutput);
     }
@@ -560,11 +540,7 @@ public class IOUtils extends org.apache.commons.io.IOUtils {
      * @throws IOException in case something bad happens.
      */
     public static void copyStream(
-            InputStream sourceStream,
-            OutputStream destinationStream,
-            int size,
-            boolean closeInput,
-            boolean closeOutput)
+            InputStream sourceStream, OutputStream destinationStream, int size, boolean closeInput, boolean closeOutput)
             throws IOException {
 
         inputNotNull(sourceStream, destinationStream);
@@ -650,8 +626,7 @@ public class IOUtils extends org.apache.commons.io.IOUtils {
      * @param fileName name of the file if present.
      * @throws IOException in case something bad happens.
      */
-    public static void inflate(ZipFile archive, Resource outputDirectory, String fileName)
-            throws IOException {
+    public static void inflate(ZipFile archive, Resource outputDirectory, String fileName) throws IOException {
         inflate(archive, outputDirectory, fileName, null, null, null, false, false);
     }
 
@@ -663,8 +638,7 @@ public class IOUtils extends org.apache.commons.io.IOUtils {
      * @param fileName name of the file if present.
      * @throws IOException in case something bad happens.
      */
-    public static void inflate(
-            ZipFile archive, Resource outputDirectory, String fileName, boolean external)
+    public static void inflate(ZipFile archive, Resource outputDirectory, String fileName, boolean external)
             throws IOException {
         inflate(archive, outputDirectory, fileName, null, null, null, external, false);
     }
@@ -725,21 +699,16 @@ public class IOUtils extends org.apache.commons.io.IOUtils {
                     final String ext = FilenameUtils.getExtension(name);
                     try (InputStream in = new BufferedInputStream(archive.getInputStream(entry))) {
                         // Builder associated to the path for the item
-                        StringBuilder itemPath =
-                                fileName != null
-                                        ? new StringBuilder(fileName).append(".").append(ext)
-                                        : new StringBuilder(name);
+                        StringBuilder itemPath = fileName != null
+                                ? new StringBuilder(fileName).append(".").append(ext)
+                                : new StringBuilder(name);
                         // String associated to the filename
-                        String initialFileName =
-                                fileName != null
-                                        ? fileName + "." + ext
-                                        : FilenameUtils.getName(name);
+                        String initialFileName = fileName != null ? fileName + "." + ext : FilenameUtils.getName(name);
                         // If the RESTUploadPathMapper are present then the output file position is
                         // changed
                         if (!external) {
                             Map<String, String> storeParams = new HashMap<>();
-                            RESTUtils.remapping(
-                                    workspace, store, itemPath, initialFileName, storeParams);
+                            RESTUtils.remapping(workspace, store, itemPath, initialFileName, storeParams);
                         }
 
                         final Resource outFile = outputDirectory.get(itemPath.toString());

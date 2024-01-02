@@ -16,8 +16,7 @@ import org.geoserver.security.config.SecurityNamedServiceConfig;
  *
  * @author mcr
  */
-public class GeoServerRequestHeaderAuthenticationFilter
-        extends GeoServerPreAuthenticatedUserNameFilter {
+public class GeoServerRequestHeaderAuthenticationFilter extends GeoServerPreAuthenticatedUserNameFilter {
 
     private String principalHeaderAttribute;
 
@@ -33,8 +32,7 @@ public class GeoServerRequestHeaderAuthenticationFilter
     public void initializeFromConfig(SecurityNamedServiceConfig config) throws IOException {
         super.initializeFromConfig(config);
 
-        RequestHeaderAuthenticationFilterConfig authConfig =
-                (RequestHeaderAuthenticationFilterConfig) config;
+        RequestHeaderAuthenticationFilterConfig authConfig = (RequestHeaderAuthenticationFilterConfig) config;
         setPrincipalHeaderAttribute(authConfig.getPrincipalHeaderAttribute());
     }
 

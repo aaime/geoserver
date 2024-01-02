@@ -25,20 +25,16 @@ import org.geoserver.security.impl.GeoServerRole;
  *
  * @author christian
  */
-public class RoleStoreValidationWrapper extends RoleServiceValidationWrapper
-        implements GeoServerRoleStore {
+public class RoleStoreValidationWrapper extends RoleServiceValidationWrapper implements GeoServerRoleStore {
 
     /** @see RoleServiceValidationWrapper */
     public RoleStoreValidationWrapper(
-            GeoServerRoleStore store,
-            boolean checkAgainstRules,
-            GeoServerUserGroupService... services) {
+            GeoServerRoleStore store, boolean checkAgainstRules, GeoServerUserGroupService... services) {
         super(store, checkAgainstRules, services);
     }
 
     /** @see RoleServiceValidationWrapper */
-    public RoleStoreValidationWrapper(
-            GeoServerRoleStore store, GeoServerUserGroupService... services) {
+    public RoleStoreValidationWrapper(GeoServerRoleStore store, GeoServerUserGroupService... services) {
         super(store, services);
     }
 

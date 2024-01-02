@@ -119,42 +119,23 @@ public abstract class GetCapabilitiesLegendURLTest extends WMSTestSupport {
         this.catalog = getCatalog();
         File dataDirRoot = testData.getDataDirectoryRoot();
         // create legendsamples folder
-        new File(
-                        dataDirRoot.getAbsolutePath()
-                                + File.separator
-                                + LegendSampleImpl.LEGEND_SAMPLES_FOLDER)
-                .mkdir();
+        new File(dataDirRoot.getAbsolutePath() + File.separator + LegendSampleImpl.LEGEND_SAMPLES_FOLDER).mkdir();
 
         testData.addStyle("squares", "squares.sld", GetFeatureInfoTest.class, catalog);
         testData.addVectorLayer(
-                SQUARES,
-                Collections.emptyMap(),
-                "squares.properties",
-                GetCapabilitiesLegendURLTest.class,
-                catalog);
+                SQUARES, Collections.emptyMap(), "squares.properties", GetCapabilitiesLegendURLTest.class, catalog);
         WorkspaceInfo workspaceInfo = catalog.getWorkspaceByName(MockData.CITE_PREFIX);
-        testData.addStyle(
-                workspaceInfo,
-                "states",
-                "Population.sld",
-                GetCapabilitiesLegendURLTest.class,
-                catalog);
+        testData.addStyle(workspaceInfo, "states", "Population.sld", GetCapabilitiesLegendURLTest.class, catalog);
         Map<LayerProperty, Object> properties = new HashMap<>();
         properties.put(LayerProperty.STYLE, "states");
         LocalWorkspace.set(workspaceInfo);
-        testData.addVectorLayer(
-                STATES,
-                properties,
-                "states.properties",
-                GetCapabilitiesLegendURLTest.class,
-                catalog);
+        testData.addVectorLayer(STATES, properties, "states.properties", GetCapabilitiesLegendURLTest.class, catalog);
         LocalWorkspace.set(null);
 
         testData.addStyle("temperature", "temperature.sld", WMSTestSupport.class, catalog);
         properties = new HashMap<>();
         properties.put(LayerProperty.STYLE, "temperature");
-        testData.addRasterLayer(
-                WORLD, "world.tiff", null, properties, SystemTestData.class, catalog);
+        testData.addRasterLayer(WORLD, "world.tiff", null, properties, SystemTestData.class, catalog);
     }
 
     @Before
@@ -223,11 +204,8 @@ public abstract class GetCapabilitiesLegendURLTest extends WMSTestSupport {
     public void testCachedLegendURLFolderCreated() throws Exception {
         GeoServerResourceLoader loader = GeoServerExtensions.bean(GeoServerResourceLoader.class);
 
-        File samplesFolder =
-                new File(
-                        loader.getBaseDirectory().getAbsolutePath()
-                                + File.separator
-                                + LegendSampleImpl.LEGEND_SAMPLES_FOLDER);
+        File samplesFolder = new File(
+                loader.getBaseDirectory().getAbsolutePath() + File.separator + LegendSampleImpl.LEGEND_SAMPLES_FOLDER);
         removeFileOrFolder(samplesFolder);
         TransformerBase tr = createTransformer();
         tr.setIndentation(2);
@@ -245,13 +223,8 @@ public abstract class GetCapabilitiesLegendURLTest extends WMSTestSupport {
         Document dom = WMSTestSupport.transform(req, tr);
         // print(dom);
 
-        String legendURL =
-                XPATH.evaluate(
-                        getLegendURLXPath("cite:squares")
-                                + "/"
-                                + getElementPrefix()
-                                + "OnlineResource/@xlink:href",
-                        dom);
+        String legendURL = XPATH.evaluate(
+                getLegendURLXPath("cite:squares") + "/" + getElementPrefix() + "OnlineResource/@xlink:href", dom);
         Map<String, Object> kvp = KvpUtils.parseQueryString(legendURL);
         assertEquals("cite:squares", kvp.get("layer"));
     }
@@ -296,13 +269,12 @@ public abstract class GetCapabilitiesLegendURLTest extends WMSTestSupport {
     }
 
     private File getSampleFile(String sampleName) {
-        return new File(
-                testData.getDataDirectoryRoot().getAbsolutePath()
-                        + File.separator
-                        + LegendSampleImpl.LEGEND_SAMPLES_FOLDER
-                        + File.separator
-                        + sampleName
-                        + ".png");
+        return new File(testData.getDataDirectoryRoot().getAbsolutePath()
+                + File.separator
+                + LegendSampleImpl.LEGEND_SAMPLES_FOLDER
+                + File.separator
+                + sampleName
+                + ".png");
     }
 
     /**
@@ -374,10 +346,7 @@ public abstract class GetCapabilitiesLegendURLTest extends WMSTestSupport {
         sldResource.file().setLastModified(lastTime + 1000);
 
         catalog.firePostModified(
-                catalog.getStyleByName("Bridges"),
-                new ArrayList<>(),
-                new ArrayList<>(),
-                new ArrayList<>());
+                catalog.getStyleByName("Bridges"), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
 
         TransformerBase tr = createTransformer();
         tr.setIndentation(2);
@@ -402,8 +371,7 @@ public abstract class GetCapabilitiesLegendURLTest extends WMSTestSupport {
         tr.setIndentation(2);
         Document dom = WMSTestSupport.transform(req, tr);
 
-        NodeList onlineResources =
-                XPATH.getMatchingNodes(getOnlineResourceXPath("cite:BasicPolygons"), dom);
+        NodeList onlineResources = XPATH.getMatchingNodes(getOnlineResourceXPath("cite:BasicPolygons"), dom);
         assertEquals(1, onlineResources.getLength());
         Element onlineResource = (Element) onlineResources.item(0);
         String href = onlineResource.getAttribute("xlink:href");
@@ -421,8 +389,7 @@ public abstract class GetCapabilitiesLegendURLTest extends WMSTestSupport {
         tr.setIndentation(2);
         Document dom = WMSTestSupport.transform(req, tr);
 
-        NodeList onlineResources =
-                XPATH.getMatchingNodes(getOnlineResourceXPath("cite:BasicPolygons"), dom);
+        NodeList onlineResources = XPATH.getMatchingNodes(getOnlineResourceXPath("cite:BasicPolygons"), dom);
         assertEquals(1, onlineResources.getLength());
         Element onlineResource = (Element) onlineResources.item(0);
         String href = onlineResource.getAttribute("xlink:href");
@@ -461,8 +428,7 @@ public abstract class GetCapabilitiesLegendURLTest extends WMSTestSupport {
             String legendURLHeight = legendURL.getAttribute("height");
             assertNotEquals("20", legendURLWidth);
             assertNotEquals("20", legendURLHeight);
-            NodeList onlineResources =
-                    XPATH.getMatchingNodes(getOnlineResourceXPath("cite:Bridges"), dom);
+            NodeList onlineResources = XPATH.getMatchingNodes(getOnlineResourceXPath("cite:Bridges"), dom);
             assertEquals(1, onlineResources.getLength());
             Element onlineResource = (Element) onlineResources.item(0);
             String href = onlineResource.getAttribute("xlink:href");

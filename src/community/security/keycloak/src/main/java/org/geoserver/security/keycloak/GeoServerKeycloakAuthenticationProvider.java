@@ -24,8 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class GeoServerKeycloakAuthenticationProvider extends AbstractFilterProvider {
 
-    private static final Logger LOG =
-            Logging.getLogger(GeoServerKeycloakAuthenticationProvider.class);
+    private static final Logger LOG = Logging.getLogger(GeoServerKeycloakAuthenticationProvider.class);
 
     @Autowired
     public GeoServerKeycloakAuthenticationProvider() {
@@ -54,11 +53,8 @@ public class GeoServerKeycloakAuthenticationProvider extends AbstractFilterProvi
     }
 
     @Override
-    public SecurityConfigValidator createConfigurationValidator(
-            GeoServerSecurityManager securityManager) {
-        LOG.log(
-                Level.FINER,
-                "GeoServerKeycloakAuthenticationProvider.createConfigurationValidator ENTRY");
+    public SecurityConfigValidator createConfigurationValidator(GeoServerSecurityManager securityManager) {
+        LOG.log(Level.FINER, "GeoServerKeycloakAuthenticationProvider.createConfigurationValidator ENTRY");
         return new GeoServerKeycloakFilterConfigValidator(securityManager);
     }
 }

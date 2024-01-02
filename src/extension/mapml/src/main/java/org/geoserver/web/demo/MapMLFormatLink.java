@@ -14,16 +14,11 @@ public class MapMLFormatLink extends CommonFormatLink {
 
     @Override
     public ExternalLink getFormatLink(PreviewLayer layer) {
-        ExternalLink mapmlLink =
-                new ExternalLink(
-                        this.getComponentId(),
-                        ResponseUtils.buildURL(
-                                layer.getBaseURL("", true),
-                                "mapml/" + layer.getName() + "/osmtile/",
-                                null,
-                                URLType.SERVICE),
-                        (new StringResourceModel(this.getTitleKey(), (Component) null, null))
-                                .getString());
+        ExternalLink mapmlLink = new ExternalLink(
+                this.getComponentId(),
+                ResponseUtils.buildURL(
+                        layer.getBaseURL("", true), "mapml/" + layer.getName() + "/osmtile/", null, URLType.SERVICE),
+                (new StringResourceModel(this.getTitleKey(), (Component) null, null)).getString());
         mapmlLink.setVisible(layer.hasServiceSupport("WMS"));
         return mapmlLink;
     }

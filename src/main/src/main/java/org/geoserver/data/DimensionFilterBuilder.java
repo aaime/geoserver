@@ -37,8 +37,7 @@ public class DimensionFilterBuilder {
 
         final List<Filter> timeFilters = new ArrayList<>();
         final PropertyName attribute = ff.property(startAttributeName);
-        final PropertyName endAttribute =
-                endAttributeName == null ? null : ff.property(endAttributeName);
+        final PropertyName endAttribute = endAttributeName == null ? null : ff.property(endAttributeName);
 
         for (Object range : ranges) {
             timeFilters.add(buildDimensionFilter(range, attribute, endAttribute));
@@ -69,11 +68,7 @@ public class DimensionFilterBuilder {
         } else if (value instanceof Range) {
             Range range = (Range) value;
             if (endAttribute == null) {
-                filter =
-                        ff.between(
-                                attribute,
-                                ff.literal(range.getMinValue()),
-                                ff.literal(range.getMaxValue()));
+                filter = ff.between(attribute, ff.literal(range.getMinValue()), ff.literal(range.getMaxValue()));
             } else {
                 // Range intersects valid range of feature
                 // @todo adding another option to dimensionInfo allows contains, versus intersects

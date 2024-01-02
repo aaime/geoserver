@@ -27,8 +27,7 @@ public class SubstitutionGroupCoverageWfsTest extends AbstractAppSchemaTestSuppo
     public void testGetFeature() {
         String path = "wfs?request=GetFeature&outputFormat=gml32&typeName=test:DiscreteCoverage";
         Document doc = getAsDOM(path);
-        LOGGER.info(
-                "WFS GetFeature, typename=test:DiscreteCoverage response:\n" + prettyString(doc));
+        LOGGER.info("WFS GetFeature, typename=test:DiscreteCoverage response:\n" + prettyString(doc));
         validateGet(path);
         assertXpathEvaluatesTo("1", "/wfs:FeatureCollection/@numberReturned", doc);
         assertXpathCount(1, "//test:DiscreteCoverage", doc);
@@ -36,14 +35,11 @@ public class SubstitutionGroupCoverageWfsTest extends AbstractAppSchemaTestSuppo
         assertXpathEvaluatesTo(id, "(//test:DiscreteCoverage)[1]/@gml:id", doc);
         assertXpathCount(1, "//test:DiscreteCoverage/test:domainSet", doc);
         assertXpathCount(1, "//test:DiscreteCoverage/test:domainSet/test:DomainObject", doc);
-        assertXpathCount(
-                1, "//test:DiscreteCoverage/test:domainSet/test:DomainObject/test:elements", doc);
-        assertXpathCount(
-                2, "//test:DiscreteCoverage/test:domainSet/test:DomainObject/test:elements/*", doc);
+        assertXpathCount(1, "//test:DiscreteCoverage/test:domainSet/test:DomainObject/test:elements", doc);
+        assertXpathCount(2, "//test:DiscreteCoverage/test:domainSet/test:DomainObject/test:elements/*", doc);
         assertXpathEvaluatesTo(
                 "-0.6476 81.0527",
-                "//test:DiscreteCoverage/test:domainSet/"
-                        + "test:DomainObject/test:elements[1]/gml:Point/gml:pos",
+                "//test:DiscreteCoverage/test:domainSet/" + "test:DomainObject/test:elements[1]/gml:Point/gml:pos",
                 doc);
     }
 }

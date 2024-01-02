@@ -29,16 +29,14 @@ class VolatileGeoServerTileLayer extends GeoServerTileLayer {
     }
 
     @Override
-    protected ConveyorTile getMetatilingReponse(
-            ConveyorTile tile, boolean tryCache, int metaX, int metaY)
+    protected ConveyorTile getMetatilingReponse(ConveyorTile tile, boolean tryCache, int metaX, int metaY)
             throws GeoWebCacheException, IOException {
         // forces meta tiling factors to 1x1 and disables cache usage
         return super.getMetatilingReponse(tile, false, 1, 1);
     }
 
     @Override
-    protected void saveTiles(MetaTile metaTile, ConveyorTile tileProto, long requestTime)
-            throws GeoWebCacheException {
+    protected void saveTiles(MetaTile metaTile, ConveyorTile tileProto, long requestTime) throws GeoWebCacheException {
         final GridSubset gridSubset = getGridSubset(tileProto.getGridSetId());
         final long[] gridPos = metaTile.getTilesGridPositions()[0];
         if (!gridSubset.covers(gridPos)) {
@@ -54,8 +52,7 @@ class VolatileGeoServerTileLayer extends GeoServerTileLayer {
                 LOGGER.severe("metaTile.writeTileToStream returned false, no tiles saved");
             }
         } catch (IOException ioe) {
-            LOGGER.log(
-                    Level.SEVERE, "Unable to write image tile to " + "ByteArrayOutputStream", ioe);
+            LOGGER.log(Level.SEVERE, "Unable to write image tile to " + "ByteArrayOutputStream", ioe);
         }
     }
 }

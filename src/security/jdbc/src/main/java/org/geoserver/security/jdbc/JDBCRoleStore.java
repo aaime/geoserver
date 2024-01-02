@@ -69,8 +69,7 @@ public class JDBCRoleStore extends JDBCRoleService implements GeoServerRoleStore
         setModified(false);
     }
 
-    protected void addRoleProperties(GeoServerRole role, Connection con)
-            throws SQLException, IOException {
+    protected void addRoleProperties(GeoServerRole role, Connection con) throws SQLException, IOException {
         if (role.getProperties().size() == 0) return; // nothing to do
 
         PreparedStatement ps = getDMLStatement("roleprops.insert", con);
@@ -308,13 +307,8 @@ public class JDBCRoleStore extends JDBCRoleService implements GeoServerRoleStore
     public void setParentRole(GeoServerRole role, GeoServerRole parentRole) throws IOException {
 
         RoleHierarchyHelper helper = new RoleHierarchyHelper(getParentMappings());
-        if (helper.isValidParent(
-                        role.getAuthority(), parentRole == null ? null : parentRole.getAuthority())
-                == false)
-            throw new IOException(
-                    parentRole.getAuthority()
-                            + " is not a valid parent for "
-                            + role.getAuthority());
+        if (helper.isValidParent(role.getAuthority(), parentRole == null ? null : parentRole.getAuthority()) == false)
+            throw new IOException(parentRole.getAuthority() + " is not a valid parent for " + role.getAuthority());
 
         Connection con = null;
         PreparedStatement ps = null;

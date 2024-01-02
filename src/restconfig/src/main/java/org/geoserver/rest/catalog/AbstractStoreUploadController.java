@@ -67,28 +67,21 @@ public abstract class AbstractStoreUploadController extends AbstractCatalogContr
                     filename = buildUploadedFilename(store, format);
                 }
                 uploadedFile =
-                        RESTUtils.handleBinUpload(
-                                filename, directory, cleanPreviousContents, request, workspace);
+                        RESTUtils.handleBinUpload(filename, directory, cleanPreviousContents, request, workspace);
             } else if (method == UploadMethod.url) {
                 uploadedFile =
-                        RESTUtils.handleURLUpload(
-                                buildUploadedFilename(store, format),
-                                workspace,
-                                directory,
-                                request);
+                        RESTUtils.handleURLUpload(buildUploadedFilename(store, format), workspace, directory, request);
             } else if (method == UploadMethod.external) {
                 uploadedFile = RESTUtils.handleEXTERNALUpload(request);
                 external = true;
             } else {
-                throw new RestException(
-                        "Unrecognized file upload method: " + method, HttpStatus.BAD_REQUEST);
+                throw new RestException("Unrecognized file upload method: " + method, HttpStatus.BAD_REQUEST);
             }
         } catch (Throwable t) {
             if (t instanceof RestException) {
                 throw (RestException) t;
             } else {
-                throw new RestException(
-                        "Error while storing uploaded file:", HttpStatus.INTERNAL_SERVER_ERROR, t);
+                throw new RestException("Error while storing uploaded file:", HttpStatus.INTERNAL_SERVER_ERROR, t);
             }
         }
 
@@ -97,16 +90,11 @@ public abstract class AbstractStoreUploadController extends AbstractCatalogContr
             // rename to .zip if need be
             if (!uploadedFile.name().endsWith(".zip")) {
                 Resource newUploadedFile =
-                        uploadedFile
-                                .parent()
-                                .get(FilenameUtils.getBaseName(uploadedFile.path()) + ".zip");
+                        uploadedFile.parent().get(FilenameUtils.getBaseName(uploadedFile.path()) + ".zip");
                 String oldFileName = uploadedFile.name();
                 if (!uploadedFile.renameTo(newUploadedFile)) {
                     String errorMessage =
-                            "Error renaming zip file from "
-                                    + oldFileName
-                                    + " -> "
-                                    + newUploadedFile.name();
+                            "Error renaming zip file from " + oldFileName + " -> " + newUploadedFile.name();
                     throw new RestException(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
                 }
                 uploadedFile = newUploadedFile;
@@ -123,14 +111,12 @@ public abstract class AbstractStoreUploadController extends AbstractCatalogContr
                     uploadedFile = primaryFile;
                 } else {
                     throw new RestException(
-                            "Could not find appropriate " + format + " file in archive",
-                            HttpStatus.BAD_REQUEST);
+                            "Could not find appropriate " + format + " file in archive", HttpStatus.BAD_REQUEST);
                 }
             } catch (RestException e) {
                 throw e;
             } catch (Exception e) {
-                throw new RestException(
-                        "Error occured unzipping file", HttpStatus.INTERNAL_SERVER_ERROR, e);
+                throw new RestException("Error occured unzipping file", HttpStatus.INTERNAL_SERVER_ERROR, e);
             }
         }
         // If the File List is empty then the uploaded file must be added
@@ -155,9 +141,7 @@ public abstract class AbstractStoreUploadController extends AbstractCatalogContr
 
     /** */
     protected Resource findPrimaryFile(Resource directory, String format) {
-        for (Resource f :
-                Resources.list(
-                        directory, new Resources.ExtensionFilter(format.toUpperCase()), true)) {
+        for (Resource f : Resources.list(directory, new Resources.ExtensionFilter(format.toUpperCase()), true)) {
             // assume the first
             return f;
         }

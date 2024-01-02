@@ -291,18 +291,13 @@ public class ImportContext implements Serializable {
      * @return boolean
      */
     public boolean isEmpty() {
-        boolean noLayersAvailable =
-                Iterables.all(
-                        getTasks(),
-                        input -> {
-                            final StoreInfo store = input != null ? input.getStore() : null;
-                            final Catalog catalog = store != null ? store.getCatalog() : null;
-                            final LayerInfo layer =
-                                    catalog != null
-                                            ? catalog.getLayer(input.getLayer().getId())
-                                            : null;
-                            return (layer == null);
-                        });
+        boolean noLayersAvailable = Iterables.all(getTasks(), input -> {
+            final StoreInfo store = input != null ? input.getStore() : null;
+            final Catalog catalog = store != null ? store.getCatalog() : null;
+            final LayerInfo layer =
+                    catalog != null ? catalog.getLayer(input.getLayer().getId()) : null;
+            return (layer == null);
+        });
         return noLayersAvailable;
     }
 
@@ -339,9 +334,7 @@ public class ImportContext implements Serializable {
                     } catch (IOException e) {
                         LOGGER.log(
                                 Level.WARNING,
-                                "It was not possible to set the directory '"
-                                        + directory
-                                        + "' eligible for cleaning!",
+                                "It was not possible to set the directory '" + directory + "' eligible for cleaning!",
                                 e);
                     }
                 }
@@ -373,8 +366,8 @@ public class ImportContext implements Serializable {
                 if (task.getData() instanceof Directory) {
                     directory = (Directory) task.getData();
                 } else if (task.getData() instanceof SpatialFile) {
-                    directory =
-                            new Directory(((SpatialFile) task.getData()).getFile().getParentFile());
+                    directory = new Directory(
+                            ((SpatialFile) task.getData()).getFile().getParentFile());
                 }
             }
         }

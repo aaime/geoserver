@@ -107,8 +107,7 @@ public class RoleHierarchyHelper {
      */
     protected void cycleDetected(String roleName1, String roleName2) {
         if (roleName2 == null) throw new RuntimeException("Cycle detected for " + roleName1);
-        else
-            throw new RuntimeException("Cycle detected between " + roleName1 + " and " + roleName2);
+        else throw new RuntimeException("Cycle detected between " + roleName1 + " and " + roleName2);
     }
 
     /** Check if the role is a root role */

@@ -51,8 +51,7 @@ public class GeoServerKeycloakFilterConfig extends PreAuthenticatedUserNameFilte
     public AdapterConfig readAdapterConfig() throws IOException {
         LOG.log(Level.FINER, "GeoServerKeycloakFilterConfig.readAdapterConfig ENTRY");
         try {
-            return KeycloakDeploymentBuilder.loadAdapterConfig(
-                    IOUtils.toInputStream(getAdapterConfig()));
+            return KeycloakDeploymentBuilder.loadAdapterConfig(IOUtils.toInputStream(getAdapterConfig()));
         } catch (RuntimeException e) {
             throw new IOException(e);
         }
@@ -137,8 +136,7 @@ public class GeoServerKeycloakFilterConfig extends PreAuthenticatedUserNameFilte
     // Don't be surprised if the copies behave badly though.
     @Override
     public SecurityConfig clone(boolean allowEnvParametrization) {
-        final GeoServerEnvironment gsEnvironment =
-                GeoServerExtensions.bean(GeoServerEnvironment.class);
+        final GeoServerEnvironment gsEnvironment = GeoServerExtensions.bean(GeoServerEnvironment.class);
         GeoServerKeycloakFilterConfig target;
         try {
             target = (GeoServerKeycloakFilterConfig) this.clone();

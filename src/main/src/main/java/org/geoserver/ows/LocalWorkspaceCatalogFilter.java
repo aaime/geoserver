@@ -149,8 +149,7 @@ public class LocalWorkspaceCatalogFilter extends AbstractCatalogFilter {
                 // name, ie
                 // overrides it
                 if (LocalWorkspace.get() != null) {
-                    if (catalog.getLayerGroupByName(LocalWorkspace.get(), layerGroup.getName())
-                            != null) {
+                    if (catalog.getLayerGroupByName(LocalWorkspace.get(), layerGroup.getName()) != null) {
                         return true;
                     }
                 }
@@ -202,8 +201,7 @@ public class LocalWorkspaceCatalogFilter extends AbstractCatalogFilter {
         // If it's a global use the global filter, otherwise check if it's in the local workspace
         return Predicates.or(
                 Predicates.and(Predicates.isNull("workspace.id"), forGlobal),
-                Predicates.and(
-                        Predicates.factory.not(Predicates.isNull("workspace.id")), inWorkspace()));
+                Predicates.and(Predicates.factory.not(Predicates.isNull("workspace.id")), inWorkspace()));
     }
 
     @Override
@@ -235,20 +233,16 @@ public class LocalWorkspaceCatalogFilter extends AbstractCatalogFilter {
                 if (localPublished instanceof LayerInfo) {
                     // TODO Need a well known recursive filter for layer groups instead of using an
                     // InternalVolatileFunction, KS
-                    Function subLayersHidden =
-                            new InternalVolatileFunction() {
-                                @Override
-                                public Boolean evaluate(Object object) {
-                                    return !subLayersHidden((LayerGroupInfo) object);
-                                }
-                            };
+                    Function subLayersHidden = new InternalVolatileFunction() {
+                        @Override
+                        public Boolean evaluate(Object object) {
+                            return !subLayersHidden((LayerGroupInfo) object);
+                        }
+                    };
                     FilterFactory factory = Predicates.factory;
 
                     // hide the layer if its sublayers are hidden
-                    filter =
-                            Predicates.and(
-                                    filter,
-                                    factory.equals(factory.literal(Boolean.TRUE), subLayersHidden));
+                    filter = Predicates.and(filter, factory.equals(factory.literal(Boolean.TRUE), subLayersHidden));
 
                     Predicates.and(filter, Predicates.equal("id", localPublished.getId()));
                 } else if (localPublished instanceof LayerGroupInfo) {
@@ -292,9 +286,7 @@ public class LocalWorkspaceCatalogFilter extends AbstractCatalogFilter {
                     return Predicates.or(layersIdFilters);
                 }
             } else {
-                throw new RuntimeException(
-                        "Unexpected local published reference of type "
-                                + localPublished.getClass());
+                throw new RuntimeException("Unexpected local published reference of type " + localPublished.getClass());
             }
         } else if (NamespaceInfo.class.isAssignableFrom(clazz)) {
             // TODO

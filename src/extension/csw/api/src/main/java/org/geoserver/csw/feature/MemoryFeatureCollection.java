@@ -40,8 +40,7 @@ public class MemoryFeatureCollection extends AbstractFeatureCollection<FeatureTy
                 if (!f.getType().equals(memberType)) {
                     // TODO: handle inheritance
                     throw new IllegalArgumentException(
-                            "Found a feature whose feature type is not equal to the declared one: "
-                                    + f);
+                            "Found a feature whose feature type is not equal to the declared one: " + f);
                 }
                 this.features.add(f);
             }

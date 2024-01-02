@@ -37,55 +37,35 @@ public class MigrateFrom_2_2_Test extends GeoServerSystemTestSupport {
     @Test
     public void testMigration() throws Exception {
 
-        File logoutFilterDir =
-                new File(
-                        getSecurityManager().get("security/filter").dir(),
-                        GeoServerSecurityFilterChain.FORM_LOGOUT_FILTER);
+        File logoutFilterDir = new File(
+                getSecurityManager().get("security/filter").dir(), GeoServerSecurityFilterChain.FORM_LOGOUT_FILTER);
         File oldLogoutFilterConfig = new File(logoutFilterDir, "config.xml.2.2.x");
         assertTrue(oldLogoutFilterConfig.exists());
 
-        File oldSecManagerConfig =
-                new File(getSecurityManager().get("security").dir(), "config.xml.2.2.x");
+        File oldSecManagerConfig = new File(getSecurityManager().get("security").dir(), "config.xml.2.2.x");
         assertTrue(oldSecManagerConfig.exists());
 
         RoleFilterConfig rfConfig =
-                (RoleFilterConfig)
-                        getSecurityManager()
-                                .loadFilterConfig(GeoServerSecurityFilterChain.ROLE_FILTER);
+                (RoleFilterConfig) getSecurityManager().loadFilterConfig(GeoServerSecurityFilterChain.ROLE_FILTER);
 
         assertNotNull(rfConfig);
 
         SSLFilterConfig sslConfig =
-                (SSLFilterConfig)
-                        getSecurityManager()
-                                .loadFilterConfig(GeoServerSecurityFilterChain.SSL_FILTER);
+                (SSLFilterConfig) getSecurityManager().loadFilterConfig(GeoServerSecurityFilterChain.SSL_FILTER);
 
         assertNotNull(sslConfig);
 
         assertNull(
-                getSecurityManager()
-                        .loadFilterConfig(
-                                GeoServerSecurityFilterChain.GUI_EXCEPTION_TRANSLATION_FILTER));
+                getSecurityManager().loadFilterConfig(GeoServerSecurityFilterChain.GUI_EXCEPTION_TRANSLATION_FILTER));
 
         SecurityManagerConfig config = getSecurityManager().loadSecurityConfig();
         for (RequestFilterChain chain : config.getFilterChain().getRequestChains()) {
             assertFalse(
-                    chain.getFilterNames()
-                            .contains(
-                                    GeoServerSecurityFilterChain
-                                            .DYNAMIC_EXCEPTION_TRANSLATION_FILTER));
-            assertFalse(
-                    chain.getFilterNames()
-                            .remove(GeoServerSecurityFilterChain.FILTER_SECURITY_INTERCEPTOR));
-            assertFalse(
-                    chain.getFilterNames()
-                            .remove(GeoServerSecurityFilterChain.FILTER_SECURITY_REST_INTERCEPTOR));
-            assertFalse(
-                    chain.getFilterNames()
-                            .remove(GeoServerSecurityFilterChain.SECURITY_CONTEXT_ASC_FILTER));
-            assertFalse(
-                    chain.getFilterNames()
-                            .remove(GeoServerSecurityFilterChain.SECURITY_CONTEXT_NO_ASC_FILTER));
+                    chain.getFilterNames().contains(GeoServerSecurityFilterChain.DYNAMIC_EXCEPTION_TRANSLATION_FILTER));
+            assertFalse(chain.getFilterNames().remove(GeoServerSecurityFilterChain.FILTER_SECURITY_INTERCEPTOR));
+            assertFalse(chain.getFilterNames().remove(GeoServerSecurityFilterChain.FILTER_SECURITY_REST_INTERCEPTOR));
+            assertFalse(chain.getFilterNames().remove(GeoServerSecurityFilterChain.SECURITY_CONTEXT_ASC_FILTER));
+            assertFalse(chain.getFilterNames().remove(GeoServerSecurityFilterChain.SECURITY_CONTEXT_NO_ASC_FILTER));
 
             assertFalse(chain.isDisabled());
             assertFalse(chain.isRequireSSL());
@@ -107,12 +87,9 @@ public class MigrateFrom_2_2_Test extends GeoServerSystemTestSupport {
                 if (GeoServerSecurityFilterChain.REST_CHAIN_NAME.equals(vchain.getName())
                         || GeoServerSecurityFilterChain.GWC_CHAIN_NAME.equals(vchain.getName()))
                     assertEquals(
-                            GeoServerSecurityFilterChain.FILTER_SECURITY_REST_INTERCEPTOR,
-                            vchain.getInterceptorName());
+                            GeoServerSecurityFilterChain.FILTER_SECURITY_REST_INTERCEPTOR, vchain.getInterceptorName());
                 else
-                    assertEquals(
-                            GeoServerSecurityFilterChain.FILTER_SECURITY_INTERCEPTOR,
-                            vchain.getInterceptorName());
+                    assertEquals(GeoServerSecurityFilterChain.FILTER_SECURITY_INTERCEPTOR, vchain.getInterceptorName());
             }
         }
     }
@@ -124,8 +101,7 @@ public class MigrateFrom_2_2_Test extends GeoServerSystemTestSupport {
         SecurityManagerConfig config = secMgr.loadSecurityConfig();
 
         RequestFilterChain chain =
-                config.getFilterChain()
-                        .getRequestChainByName(GeoServerSecurityFilterChain.WEB_LOGIN_CHAIN_NAME);
+                config.getFilterChain().getRequestChainByName(GeoServerSecurityFilterChain.WEB_LOGIN_CHAIN_NAME);
         assertTrue(chain.isAllowSessionCreation());
     }
 }

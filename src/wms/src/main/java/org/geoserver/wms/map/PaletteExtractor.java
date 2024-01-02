@@ -82,8 +82,7 @@ public class PaletteExtractor extends FilterAttributeExtractor implements StyleV
 
     public boolean canComputePalette() {
         // hard fail conditions
-        if (translucentSymbolizers || externalGraphicsSymbolizers || unknownColors || rasterUsed)
-            return false;
+        if (translucentSymbolizers || externalGraphicsSymbolizers || unknownColors || rasterUsed) return false;
 
         // impossible to devise a palette (0 shuold never happen, but you never know...)
         if (colors.isEmpty() || colors.size() > 256) return false;
@@ -98,11 +97,7 @@ public class PaletteExtractor extends FilterAttributeExtractor implements StyleV
         int[] cmap = new int[colors.size()];
         int i = 0;
         for (Color color : colors) {
-            cmap[i++] =
-                    (color.getAlpha() << 24)
-                            | (color.getRed() << 16)
-                            | (color.getGreen() << 8)
-                            | color.getBlue();
+            cmap[i++] = (color.getAlpha() << 24) | (color.getRed() << 16) | (color.getGreen() << 8) | color.getBlue();
         }
 
         // have a nice looking palette
@@ -128,8 +123,7 @@ public class PaletteExtractor extends FilterAttributeExtractor implements StyleV
             cmap = temp;
         }
 
-        return new IndexColorModel(
-                bits, cmap.length, cmap, 0, true, transparentIndex, DataBuffer.TYPE_BYTE);
+        return new IndexColorModel(bits, cmap.length, cmap, 0, true, transparentIndex, DataBuffer.TYPE_BYTE);
     }
 
     /**

@@ -40,9 +40,7 @@ public class GetCapabilities {
      *     capabilities documents
      */
     public GetCapabilities(
-            WFSInfo wfs,
-            Catalog catalog,
-            Collection<WFSExtendedCapabilitiesProvider> extendedCapabilitiesProviders) {
+            WFSInfo wfs, Catalog catalog, Collection<WFSExtendedCapabilitiesProvider> extendedCapabilitiesProviders) {
         this.wfs = wfs;
         this.catalog = catalog;
         this.extendedCapabilitiesProviders = extendedCapabilitiesProviders;
@@ -80,17 +78,16 @@ public class GetCapabilities {
         } else {
             if ("1.1.0".equals(version)) {
                 capsTransformer =
-                        new CapabilitiesTransformer.WFS1_1(
-                                wfs, baseUrl, catalog, extendedCapabilitiesProviders);
+                        new CapabilitiesTransformer.WFS1_1(wfs, baseUrl, catalog, extendedCapabilitiesProviders);
             } else if ("2.0.0".equals(version)) {
                 capsTransformer =
-                        new CapabilitiesTransformer.WFS2_0(
-                                wfs, baseUrl, catalog, extendedCapabilitiesProviders);
+                        new CapabilitiesTransformer.WFS2_0(wfs, baseUrl, catalog, extendedCapabilitiesProviders);
             } else {
                 throw new WFSException(request, "Could not understand version:" + version);
             }
         }
-        capsTransformer.setEncoding(Charset.forName(wfs.getGeoServer().getSettings().getCharset()));
+        capsTransformer.setEncoding(
+                Charset.forName(wfs.getGeoServer().getSettings().getCharset()));
         return capsTransformer;
     }
 

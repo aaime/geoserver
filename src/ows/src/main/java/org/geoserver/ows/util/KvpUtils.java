@@ -38,17 +38,16 @@ import org.geoserver.platform.ServiceException;
  */
 public class KvpUtils {
     /** Class logger */
-    private static Logger LOGGER =
-            org.geotools.util.logging.Logging.getLogger("org.vfny.geoserver.requests.readers");
+    private static Logger LOGGER = org.geotools.util.logging.Logging.getLogger("org.vfny.geoserver.requests.readers");
 
     /**
      * Comparator used to compare two parsers matching the same service/version/request
      * specification, and returning the most specific one (nulls are high, put at the end of list)
      */
-    private static final Comparator<KvpParser> KVP_PARSER_COMPARATOR =
-            Comparator.comparing(KvpParser::getService, new NullComparator<>())
-                    .thenComparing(KvpParser::getVersion, new NullComparator<>())
-                    .thenComparing(KvpParser::getRequest, new NullComparator<>());
+    private static final Comparator<KvpParser> KVP_PARSER_COMPARATOR = Comparator.comparing(
+                    KvpParser::getService, new NullComparator<>())
+            .thenComparing(KvpParser::getVersion, new NullComparator<>())
+            .thenComparing(KvpParser::getRequest, new NullComparator<>());
 
     /**
      * Defines how to tokenize a string by using some sort of delimiter.
@@ -95,25 +94,24 @@ public class KvpUtils {
     public static final Tokenizer VALUE_DELIMITER = new Tokenizer("=");
 
     /** Delimeter for outer value lists in the KVPs */
-    public static final Tokenizer OUTER_DELIMETER =
-            new Tokenizer("\\)\\(") {
-                @Override
-                public List<String> readFlat(final String rawList) {
-                    List<String> list = new ArrayList<>(super.readFlat(rawList));
-                    final int len = list.size();
-                    if (len > 0) {
-                        String first = list.get(0);
-                        if (first.startsWith("(")) {
-                            list.set(0, first.substring(1));
-                        }
-                        String last = list.get(len - 1);
-                        if (last.endsWith(")")) {
-                            list.set(len - 1, last.substring(0, last.length() - 1));
-                        }
-                    }
-                    return list;
+    public static final Tokenizer OUTER_DELIMETER = new Tokenizer("\\)\\(") {
+        @Override
+        public List<String> readFlat(final String rawList) {
+            List<String> list = new ArrayList<>(super.readFlat(rawList));
+            final int len = list.size();
+            if (len > 0) {
+                String first = list.get(0);
+                if (first.startsWith("(")) {
+                    list.set(0, first.substring(1));
                 }
-            };
+                String last = list.get(len - 1);
+                if (last.endsWith(")")) {
+                    list.set(len - 1, last.substring(0, last.length() - 1));
+                }
+            }
+            return list;
+        }
+    };
 
     /** Delimeter for inner value lists in the KVPs */
     public static final Tokenizer INNER_DELIMETER = new Tokenizer(",");
@@ -471,10 +469,7 @@ public class KvpUtils {
      * @param request the request parameter from the kvp (can be null)
      */
     public static void purgeParsers(
-            List<KvpParser> parsers,
-            final String service,
-            final String version,
-            final String request) {
+            List<KvpParser> parsers, final String service, final String version, final String request) {
         for (Iterator<KvpParser> p = parsers.iterator(); p.hasNext(); ) {
             KvpParser parser = p.next();
 
@@ -483,8 +478,7 @@ public class KvpUtils {
             } else if (parser.getVersion() != null
                     && !parser.getVersion().toString().equals(version)) {
                 p.remove();
-            } else if (parser.getRequest() != null
-                    && !parser.getRequest().equalsIgnoreCase(request)) {
+            } else if (parser.getRequest() != null && !parser.getRequest().equalsIgnoreCase(request)) {
                 p.remove();
             }
         }
@@ -524,8 +518,7 @@ public class KvpUtils {
                     int result = KVP_PARSER_COMPARATOR.compare(candidate, parser);
                     if (result == 0)
                         // ambiguous, unable to match
-                        throw new IllegalStateException(
-                                "Multiple kvp parsers: " + parser + "," + candidate);
+                        throw new IllegalStateException("Multiple kvp parsers: " + parser + "," + candidate);
                     else if (result < 0) parser = candidate;
                     // else skip, current parser is a better match
                 }
@@ -722,8 +715,7 @@ public class KvpUtils {
             }
         }
         if (escaped) {
-            throw new IllegalStateException(
-                    "The specified String ends with an incomplete escape sequence.");
+            throw new IllegalStateException("The specified String ends with an incomplete escape sequence.");
         }
         ret.add(sb.toString());
         return ret;
@@ -754,8 +746,7 @@ public class KvpUtils {
             }
         }
         if (escaped) {
-            throw new IllegalArgumentException(
-                    "The specified String ends with an incomplete escape sequence.");
+            throw new IllegalArgumentException("The specified String ends with an incomplete escape sequence.");
         }
         return sb.toString();
     }
@@ -768,12 +759,9 @@ public class KvpUtils {
             if (entry.getKey() instanceof String) {
                 if (paramname.equalsIgnoreCase((String) entry.getKey())) {
                     Object obj = entry.getValue();
-                    value =
-                            obj instanceof String
-                                    ? (String) obj
-                                    : (obj instanceof String[])
-                                            ? ((String[]) obj)[0].toLowerCase()
-                                            : value;
+                    value = obj instanceof String
+                            ? (String) obj
+                            : (obj instanceof String[]) ? ((String[]) obj)[0].toLowerCase() : value;
                 }
             }
         }

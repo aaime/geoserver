@@ -26,10 +26,7 @@ public interface NetCDFEncoderFactory {
      * @return A {@link NetCDFEncoder}, or null if this factory could not generate one
      */
     NetCDFEncoder getEncoderFor(
-            GranuleStack granuleStack,
-            File file,
-            Map<String, String> encodingParameters,
-            String outputFormat)
+            GranuleStack granuleStack, File file, Map<String, String> encodingParameters, String outputFormat)
             throws IOException;
 
     /** Builds a file name from the object to be encoded, or returns null */

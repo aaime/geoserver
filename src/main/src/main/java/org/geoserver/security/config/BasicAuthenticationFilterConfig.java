@@ -15,8 +15,7 @@ import org.geoserver.security.filter.GeoServerBasicAuthenticationFilter;
  *
  * @author mcr
  */
-public class BasicAuthenticationFilterConfig extends SecurityFilterConfig
-        implements SecurityAuthFilterConfig {
+public class BasicAuthenticationFilterConfig extends SecurityFilterConfig implements SecurityAuthFilterConfig {
 
     private static final long serialVersionUID = 1L;
     private boolean useRememberMe;

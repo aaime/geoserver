@@ -19,8 +19,7 @@ public final class MapMLConstants {
     public static final String MAPML_MIME_TYPE = "text/mapml";
 
     /** format MediaType */
-    public static final MediaType MAPML_MEDIA_TYPE =
-            new MediaType("text", "mapml", StandardCharsets.UTF_8);
+    public static final MediaType MAPML_MEDIA_TYPE = new MediaType("text", "mapml", StandardCharsets.UTF_8);
 
     /** format name */
     public static final String FORMAT_NAME = "MAPML";

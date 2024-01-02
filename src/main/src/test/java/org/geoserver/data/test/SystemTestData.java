@@ -77,10 +77,7 @@ import org.geotools.util.logging.Logging;
  *
  * @author Justin Deoliveira, OpenGeo
  */
-@SuppressWarnings({
-    "PMD.JUnit4TestShouldUseBeforeAnnotation",
-    "PMD.JUnit4TestShouldUseAfterAnnotation"
-})
+@SuppressWarnings({"PMD.JUnit4TestShouldUseBeforeAnnotation", "PMD.JUnit4TestShouldUseAfterAnnotation"})
 public class SystemTestData extends CiteTestData {
 
     /** Multiband tiff */
@@ -237,8 +234,7 @@ public class SystemTestData extends CiteTestData {
      *
      * @see {@link #addVectorLayer(QName, Map, Class, Catalog)}
      */
-    public void setUpVectorLayer(QName qName, Map<LayerProperty, Object> props, Class<?> scope)
-            throws IOException {
+    public void setUpVectorLayer(QName qName, Map<LayerProperty, Object> props, Class<?> scope) throws IOException {
         addVectorLayer(qName, props, scope, catalog);
     }
 
@@ -250,8 +246,7 @@ public class SystemTestData extends CiteTestData {
      *
      * @see {@link #addVectorLayer(QName, Map, String, Class, Catalog)}
      */
-    public void setUpVectorLayer(
-            QName qName, Map<LayerProperty, Object> props, String filename, Class<?> scope)
+    public void setUpVectorLayer(QName qName, Map<LayerProperty, Object> props, String filename, Class<?> scope)
             throws IOException {
         addVectorLayer(qName, props, filename, scope, catalog);
     }
@@ -264,8 +259,7 @@ public class SystemTestData extends CiteTestData {
      *
      * @see {@link #addRasterLayer(QName, String, String, Catalog)}
      */
-    public void setUpRasterLayer(QName qName, String filename, String extension)
-            throws IOException {
+    public void setUpRasterLayer(QName qName, String filename, String extension) throws IOException {
         addRasterLayer(qName, filename, extension, catalog);
     }
 
@@ -277,8 +271,7 @@ public class SystemTestData extends CiteTestData {
      *
      * @see {@link #addRasterLayer(QName, String, String, Map, Catalog)}
      */
-    public void setUpRasterLayer(
-            QName qName, String filename, String extension, Map<LayerProperty, Object> props)
+    public void setUpRasterLayer(QName qName, String filename, String extension, Map<LayerProperty, Object> props)
             throws IOException {
         addRasterLayer(qName, filename, extension, props, catalog);
     }
@@ -292,11 +285,7 @@ public class SystemTestData extends CiteTestData {
      * @see {@link #addRasterLayer(QName, String, String, Map, Class, Catalog)}
      */
     public void setUpRasterLayer(
-            QName qName,
-            String filename,
-            String extension,
-            Map<LayerProperty, Object> props,
-            Class<?> scope)
+            QName qName, String filename, String extension, Map<LayerProperty, Object> props, Class<?> scope)
             throws IOException {
         addRasterLayer(qName, filename, extension, props, scope, catalog);
     }
@@ -306,12 +295,9 @@ public class SystemTestData extends CiteTestData {
         IOUtils.decompress(SystemTestData.class.getResourceAsStream("security.zip"), secDir);
         String javaVendor = System.getProperty("java.vendor");
         if (javaVendor.contains("IBM")) {
-            IOUtils.copy(
-                    new File(secDir, "geoserver.jceks.ibm"), new File(secDir, "geoserver.jceks"));
+            IOUtils.copy(new File(secDir, "geoserver.jceks.ibm"), new File(secDir, "geoserver.jceks"));
         } else {
-            IOUtils.copy(
-                    new File(secDir, "geoserver.jceks.default"),
-                    new File(secDir, "geoserver.jceks"));
+            IOUtils.copy(new File(secDir, "geoserver.jceks.default"), new File(secDir, "geoserver.jceks"));
         }
     }
 
@@ -320,9 +306,7 @@ public class SystemTestData extends CiteTestData {
         catalog.setExtendedValidation(false);
         catalog.setResourceLoader(new GeoServerResourceLoader(data));
 
-        catalog.addListener(
-                new GeoServerConfigPersister(
-                        catalog.getResourceLoader(), createXStreamPersister()));
+        catalog.addListener(new GeoServerConfigPersister(catalog.getResourceLoader(), createXStreamPersister()));
         catalog.addListener(new GeoServerResourcePersister(catalog));
 
         // workspaces
@@ -342,8 +326,7 @@ public class SystemTestData extends CiteTestData {
     protected void createConfig() {
         GeoServerImpl geoServer = new GeoServerImpl();
         geoServer.addListener(
-                new GeoServerConfigPersister(
-                        new GeoServerResourceLoader(data), createXStreamPersister()));
+                new GeoServerConfigPersister(new GeoServerResourceLoader(data), createXStreamPersister()));
         catalog.addListener(new GeoServerResourcePersister(catalog));
 
         GeoServerInfo global = geoServer.getFactory().createGlobal();
@@ -447,8 +430,7 @@ public class SystemTestData extends CiteTestData {
      * @param filename The filename to copy from classpath.
      * @param scope Class from which to load sld resource from.
      */
-    public void addStyle(String name, String filename, Class<?> scope, Catalog catalog)
-            throws IOException {
+    public void addStyle(String name, String filename, Class<?> scope, Catalog catalog) throws IOException {
         addStyle(null, name, filename, scope, catalog);
     }
 
@@ -464,8 +446,7 @@ public class SystemTestData extends CiteTestData {
      * @param filename The filename to copy from classpath.
      * @param scope Class from which to load sld resource from.
      */
-    public void addStyle(
-            WorkspaceInfo ws, String name, String filename, Class<?> scope, Catalog catalog)
+    public void addStyle(WorkspaceInfo ws, String name, String filename, Class<?> scope, Catalog catalog)
             throws IOException {
         addStyle(ws, name, filename, scope, catalog, Collections.emptyMap());
     }
@@ -483,21 +464,10 @@ public class SystemTestData extends CiteTestData {
      * @param legend The legend for the style.
      */
     public void addStyle(
-            WorkspaceInfo ws,
-            String name,
-            String filename,
-            Class<?> scope,
-            Catalog catalog,
-            LegendInfo legend)
+            WorkspaceInfo ws, String name, String filename, Class<?> scope, Catalog catalog, LegendInfo legend)
             throws IOException {
 
-        addStyle(
-                ws,
-                name,
-                filename,
-                scope,
-                catalog,
-                Collections.singletonMap(StyleProperty.LEGEND_INFO, legend));
+        addStyle(ws, name, filename, scope, catalog, Collections.singletonMap(StyleProperty.LEGEND_INFO, legend));
     }
 
     /**
@@ -559,8 +529,7 @@ public class SystemTestData extends CiteTestData {
      * <p>This method calls through to {@link #addVectorLayer(QName, Map, Class, Catalog)} passing
      * in this class as the scope.
      */
-    public void addVectorLayer(QName qName, Map<LayerProperty, Object> props, Catalog catalog)
-            throws IOException {
+    public void addVectorLayer(QName qName, Map<LayerProperty, Object> props, Catalog catalog) throws IOException {
         addVectorLayer(qName, props, getClass(), catalog);
     }
 
@@ -580,8 +549,7 @@ public class SystemTestData extends CiteTestData {
      * <p>The <tt>props</tt> parameter is used to define custom properties for the layer. See the
      * {@link LayerProperty} class for supported properties.
      */
-    public void addVectorLayer(
-            QName qName, Map<LayerProperty, Object> props, Class<?> scope, Catalog catalog)
+    public void addVectorLayer(QName qName, Map<LayerProperty, Object> props, Class<?> scope, Catalog catalog)
             throws IOException {
         addVectorLayer(qName, props, qName.getLocalPart() + ".properties", scope, catalog);
     }
@@ -603,11 +571,7 @@ public class SystemTestData extends CiteTestData {
      * {@link LayerProperty} class for supported properties.
      */
     public void addVectorLayer(
-            QName qName,
-            Map<LayerProperty, Object> props,
-            String filename,
-            Class<?> scope,
-            Catalog catalog)
+            QName qName, Map<LayerProperty, Object> props, String filename, Class<?> scope, Catalog catalog)
             throws IOException {
         String prefix = qName.getPrefix();
         String name = qName.getLocalPart();
@@ -642,8 +606,7 @@ public class SystemTestData extends CiteTestData {
 
         // copy the properties file over
 
-        catalog.getResourceLoader()
-                .copyFromClassPath(filename, new File(storeDir, filename), scope);
+        catalog.getResourceLoader().copyFromClassPath(filename, new File(storeDir, filename), scope);
 
         // configure feature type
         FeatureTypeInfo featureType = catalog.getFactory().createFeatureType();
@@ -664,10 +627,8 @@ public class SystemTestData extends CiteTestData {
         featureType.setNumDecimals(8);
         featureType.getKeywords().add(new Keyword(name));
         featureType.setEnabled(true);
-        featureType.setProjectionPolicy(
-                LayerProperty.PROJECTION_POLICY.get(props, ProjectionPolicy.NONE));
-        featureType.setLatLonBoundingBox(
-                LayerProperty.LATLON_ENVELOPE.get(props, DEFAULT_LATLON_ENVELOPE));
+        featureType.setProjectionPolicy(LayerProperty.PROJECTION_POLICY.get(props, ProjectionPolicy.NONE));
+        featureType.setLatLonBoundingBox(LayerProperty.LATLON_ENVELOPE.get(props, DEFAULT_LATLON_ENVELOPE));
         featureType.setNativeBoundingBox(LayerProperty.ENVELOPE.get(props, null));
 
         FeatureTypeInfo ft = catalog.getFeatureTypeByDataStore(store, name);
@@ -687,10 +648,7 @@ public class SystemTestData extends CiteTestData {
             }
         }
 
-        if (layer == null
-                || !layer.getResource()
-                        .getNamespace()
-                        .equals(catalog.getNamespaceByPrefix(prefix))) {
+        if (layer == null || !layer.getResource().getNamespace().equals(catalog.getNamespaceByPrefix(prefix))) {
             layer = catalog.getFactory().createLayer();
         }
 
@@ -778,8 +736,7 @@ public class SystemTestData extends CiteTestData {
      *
      * <p>This method calls through to {@link #addRasterLayer(QName, String, String, Map, Catalog)}
      */
-    public void addRasterLayer(QName qName, String filename, String extension, Catalog catalog)
-            throws IOException {
+    public void addRasterLayer(QName qName, String filename, String extension, Catalog catalog) throws IOException {
         addRasterLayer(qName, filename, extension, new HashMap<>(), catalog);
     }
 
@@ -791,11 +748,7 @@ public class SystemTestData extends CiteTestData {
      * #addRasterLayer(QName, String, String, Map, Class, Catalog)}
      */
     public void addRasterLayer(
-            QName qName,
-            String filename,
-            String extension,
-            Map<LayerProperty, Object> props,
-            Catalog catalog)
+            QName qName, String filename, String extension, Map<LayerProperty, Object> props, Catalog catalog)
             throws IOException {
         addRasterLayer(qName, filename, extension, props, getClass(), catalog);
     }
@@ -887,10 +840,7 @@ public class SystemTestData extends CiteTestData {
             reader = format.getReader(file);
             if (reader == null) {
                 throw new RuntimeException(
-                        "No reader for "
-                                + file.getCanonicalPath()
-                                + " with format "
-                                + format.getName());
+                        "No reader for " + file.getCanonicalPath() + " with format " + format.getName());
             }
 
             // configure workspace if it doesn;t already exist
@@ -920,9 +870,7 @@ public class SystemTestData extends CiteTestData {
             builder.setStore(store);
 
             final String[] coverageNames = reader.getGridCoverageNames();
-            if (reader instanceof StructuredGridCoverage2DReader
-                    && coverageNames != null
-                    && coverageNames.length > 1) {
+            if (reader instanceof StructuredGridCoverage2DReader && coverageNames != null && coverageNames.length > 1) {
                 for (String coverageName : coverageNames) {
                     addCoverage(
                             store,
@@ -963,9 +911,7 @@ public class SystemTestData extends CiteTestData {
             if (format instanceof ImageMosaicFormat) {
                 //  make sure we work in immediate mode
                 coverage.getParameters()
-                        .put(
-                                AbstractGridFormat.USE_JAI_IMAGEREAD.getName().getCode(),
-                                Boolean.FALSE);
+                        .put(AbstractGridFormat.USE_JAI_IMAGEREAD.getName().getCode(), Boolean.FALSE);
             }
 
             coverage.setName(name);
@@ -991,8 +937,7 @@ public class SystemTestData extends CiteTestData {
             }
             layer.setResource(coverage);
 
-            layer.setDefaultStyle(
-                    catalog.getStyleByName(LayerProperty.STYLE.get(props, DEFAULT_RASTER_STYLE)));
+            layer.setDefaultStyle(catalog.getStyleByName(LayerProperty.STYLE.get(props, DEFAULT_RASTER_STYLE)));
             layer.setType(PublishedType.RASTER);
             layer.setEnabled(true);
 
@@ -1014,13 +959,11 @@ public class SystemTestData extends CiteTestData {
      * @param workspace The optional workspace for the service, may be <code>null</code>
      * @param geoServer The GeoServer configuration object.
      */
-    public <T extends ServiceInfo> void addService(
-            Class<T> serviceClass, String workspace, GeoServer geoServer) {
+    public <T extends ServiceInfo> void addService(Class<T> serviceClass, String workspace, GeoServer geoServer) {
 
         Catalog catalog = geoServer.getCatalog();
 
-        List<XStreamServiceLoader> loaders =
-                GeoServerExtensions.extensions(XStreamServiceLoader.class);
+        List<XStreamServiceLoader> loaders = GeoServerExtensions.extensions(XStreamServiceLoader.class);
         for (XStreamServiceLoader loader : loaders) {
             if (serviceClass.equals(loader.getServiceClass())) {
                 // create a new one
@@ -1060,8 +1003,7 @@ public class SystemTestData extends CiteTestData {
      * @param geoServer The GeoServer configuration object.
      */
     public void addSettings(String workspace, GeoServer geoServer) {
-        WorkspaceInfo ws =
-                workspace != null ? geoServer.getCatalog().getWorkspaceByName(workspace) : null;
+        WorkspaceInfo ws = workspace != null ? geoServer.getCatalog().getWorkspaceByName(workspace) : null;
 
         GeoServerInfo global = geoServer.getGlobal();
         SettingsInfo settings = ws != null ? geoServer.getSettings(ws) : global.getSettings();
@@ -1074,8 +1016,7 @@ public class SystemTestData extends CiteTestData {
         settings.getContact().setOnlineResource("https://www.osgeo.org");
         settings.getContact().setContactOrganization("Open Source Geospatial Foundation");
         settings.getContact()
-                .setAddressDeliveryPoint(
-                        "9450 SW Gemini Dr. #42523, Beaverton Oregon 97008, United States");
+                .setAddressDeliveryPoint("9450 SW Gemini Dr. #42523, Beaverton Oregon 97008, United States");
         settings.setNumDecimals(8);
         settings.setOnlineResource("https://geoserver.org");
         settings.setVerbose(false);
@@ -1117,15 +1058,12 @@ public class SystemTestData extends CiteTestData {
                 break;
             } catch (IOException e) {
                 if (i == MAX_ATTEMPTS && data.exists()) {
-                    throw new IOException(
-                            "Failed to clean up test data dir after " + MAX_ATTEMPTS + " attempts",
-                            e);
+                    throw new IOException("Failed to clean up test data dir after " + MAX_ATTEMPTS + " attempts", e);
                 }
-                System.err.println(
-                        "Error occurred while removing files. "
-                                + "Possible transient lock or H2 log race. "
-                                + "Sleeping 100ms and retrying. Error message: "
-                                + e.getMessage());
+                System.err.println("Error occurred while removing files. "
+                        + "Possible transient lock or H2 log race. "
+                        + "Sleeping 100ms and retrying. Error message: "
+                        + e.getMessage());
                 System.gc();
                 Thread.sleep(100);
             }

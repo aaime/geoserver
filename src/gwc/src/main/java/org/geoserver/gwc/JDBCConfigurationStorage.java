@@ -45,15 +45,13 @@ class JDBCConfigurationStorage implements ApplicationContextAware, SecurityManag
 
     public JDBCConfigurationStorage(ResourceStore store, GeoServerSecurityManager securityManager) {
         GeoserverXMLResourceProvider configProvider =
-                (GeoserverXMLResourceProvider)
-                        GeoServerExtensions.bean("jdbcDiskQuotaConfigResourceProvider");
+                (GeoserverXMLResourceProvider) GeoServerExtensions.bean("jdbcDiskQuotaConfigResourceProvider");
         this.configDir = configProvider.getConfigDirectory();
         this.passwordHelper = new JDBCPasswordEncryptionHelper(securityManager);
         securityManager.addListener(this);
     }
 
-    public synchronized void saveDiskQuotaConfig(
-            DiskQuotaConfig config, JDBCConfiguration jdbcConfig)
+    public synchronized void saveDiskQuotaConfig(DiskQuotaConfig config, JDBCConfiguration jdbcConfig)
             throws ConfigurationException, IOException, InterruptedException {
         Resource configFile = configDir.get("geowebcache-diskquota-jdbc.xml");
         if ("JDBC".equals(config.getQuotaStore())) {
@@ -65,9 +63,7 @@ class JDBCConfigurationStorage implements ApplicationContextAware, SecurityManag
             if (Resources.exists(configFile) && !configFile.delete()) {
                 LOGGER.log(
                         Level.SEVERE,
-                        "Failed to delete "
-                                + configFile
-                                + ", this might cause misbehavior on GeoServer restart");
+                        "Failed to delete " + configFile + ", this might cause misbehavior on GeoServer restart");
             }
         }
     }
@@ -95,8 +91,7 @@ class JDBCConfigurationStorage implements ApplicationContextAware, SecurityManag
      *
      * @param jdbcConfiguration the GWC diskquota JDBC configuration
      */
-    public void testQuotaConfiguration(JDBCConfiguration jdbcConfiguration)
-            throws ConfigurationException, IOException {
+    public void testQuotaConfiguration(JDBCConfiguration jdbcConfiguration) throws ConfigurationException, IOException {
         JDBCQuotaStoreFactory factory = GeoServerExtensions.bean(JDBCQuotaStoreFactory.class);
         QuotaStore qs = null;
         try {

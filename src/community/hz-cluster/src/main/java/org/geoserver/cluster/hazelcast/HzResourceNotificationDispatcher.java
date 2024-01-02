@@ -53,8 +53,7 @@ public class HzResourceNotificationDispatcher extends SimpleResourceNotification
         if (topic != null) {
             topic.publish(event);
         } else {
-            LOGGER.warning(
-                    "Failed to publish resource notification, cluster not initialized (yet).");
+            LOGGER.warning("Failed to publish resource notification, cluster not initialized (yet).");
             super.changed(event);
         }
     }

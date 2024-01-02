@@ -66,8 +66,7 @@ public class ReadOnlyDataStore extends org.geotools.data.store.DecoratingDataSto
         } else {
             final AccessLimits limits = policy.getLimits();
             VectorAccessLimits vectorLimits =
-                    new VectorAccessLimits(
-                            limits.getMode(), null, Filter.INCLUDE, null, Filter.EXCLUDE);
+                    new VectorAccessLimits(limits.getMode(), null, Filter.INCLUDE, null, Filter.EXCLUDE);
             childPolicy = this.policy.derive(vectorLimits);
         }
         return childPolicy;
@@ -80,8 +79,8 @@ public class ReadOnlyDataStore extends org.geotools.data.store.DecoratingDataSto
     }
 
     @Override
-    public FeatureWriter<SimpleFeatureType, SimpleFeature> getFeatureWriter(
-            String typeName, Transaction transaction) throws IOException {
+    public FeatureWriter<SimpleFeatureType, SimpleFeature> getFeatureWriter(String typeName, Transaction transaction)
+            throws IOException {
         throw notifyUnsupportedOperation();
     }
 

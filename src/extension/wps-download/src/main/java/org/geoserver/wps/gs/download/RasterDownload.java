@@ -97,8 +97,7 @@ import org.springframework.context.ApplicationContext;
  */
 class RasterDownload {
 
-    private static final int BUFFER_SIZE =
-            Integer.getInteger("org.geoserver.wps.download.raster.buffer.size", 16384);
+    private static final int BUFFER_SIZE = Integer.getInteger("org.geoserver.wps.download.raster.buffer.size", 16384);
 
     private static final Logger LOGGER = Logging.getLogger(RasterDownload.class);
 
@@ -202,10 +201,8 @@ class RasterDownload {
             if (LOGGER.isLoggable(Level.FINE)) {
                 LOGGER.log(Level.FINE, "Getting reader for the coverage");
             }
-            final GridCoverage2DReader reader =
-                    (GridCoverage2DReader) coverageInfo.getGridCoverageReader(null, null);
-            CRSRequestHandler crsRequestHandler =
-                    new CRSRequestHandler(reader, catalog, targetCRS, roi);
+            final GridCoverage2DReader reader = (GridCoverage2DReader) coverageInfo.getGridCoverageReader(null, null);
+            CRSRequestHandler crsRequestHandler = new CRSRequestHandler(reader, catalog, targetCRS, roi);
             crsRequestHandler.setFilter(filter);
             crsRequestHandler.setMinimizeReprojections(minimizeReprojections);
             crsRequestHandler.setUseBestResolutionOnMatchingCRS(bestResolutionOnMatchingCRS);
@@ -218,8 +215,7 @@ class RasterDownload {
                     readParametersDescriptor.getDescriptor().descriptors();
             Map<String, Serializable> coverageParameters = coverageInfo.getParameters();
             GeneralParameterValue[] readParameters =
-                    CoverageUtils.getParameters(
-                            readParametersDescriptor, coverageParameters, false);
+                    CoverageUtils.getParameters(readParametersDescriptor, coverageParameters, false);
 
             // read GridGeometry preparation and scaling setup if needed
             GridGeometry2D requestedGridGeometry = null;
@@ -237,16 +233,13 @@ class RasterDownload {
                 requestedGridGeometry = provider.getGridGeometry();
 
                 if (LOGGER.isLoggable(Level.FINE)) {
-                    LOGGER.log(
-                            Level.FINE,
-                            "Computed requested GridGeometry: " + requestedGridGeometry.toString());
+                    LOGGER.log(Level.FINE, "Computed requested GridGeometry: " + requestedGridGeometry.toString());
                 }
-                readParameters =
-                        CoverageUtils.mergeParameter(
-                                parameterDescriptors,
-                                readParameters,
-                                requestedGridGeometry,
-                                AbstractGridFormat.READ_GRIDGEOMETRY2D.getName().getCode());
+                readParameters = CoverageUtils.mergeParameter(
+                        parameterDescriptors,
+                        readParameters,
+                        requestedGridGeometry,
+                        AbstractGridFormat.READ_GRIDGEOMETRY2D.getName().getCode());
 
             } else {
                 if (targetSizeX == null || targetSizeY == null) {
@@ -261,10 +254,8 @@ class RasterDownload {
 
                 // Since we have imposed a target size, delegate GridCoverageRenderer to do all the
                 // dirty job
-                requestedGridGeometry =
-                        new GridGeometry2D(
-                                new GridEnvelope2D(0, 0, targetSizeX, targetSizeY),
-                                crsRequestHandler.getTargetEnvelope());
+                requestedGridGeometry = new GridGeometry2D(
+                        new GridEnvelope2D(0, 0, targetSizeX, targetSizeY), crsRequestHandler.getTargetEnvelope());
                 if (LOGGER.isLoggable(Level.FINE)) {
                     LOGGER.log(
                             Level.FINE,
@@ -274,17 +265,14 @@ class RasterDownload {
             }
 
             if (useTargetCrsAsNative) {
-                readParameters =
-                        CoverageUtils.mergeParameter(
-                                Collections.singletonList(
-                                        ImageMosaicFormat.OUTPUT_TO_ALTERNATIVE_CRS),
-                                readParameters,
-                                true,
-                                ImageMosaicFormat.OUTPUT_TO_ALTERNATIVE_CRS.getName().getCode());
+                readParameters = CoverageUtils.mergeParameter(
+                        Collections.singletonList(ImageMosaicFormat.OUTPUT_TO_ALTERNATIVE_CRS),
+                        readParameters,
+                        true,
+                        ImageMosaicFormat.OUTPUT_TO_ALTERNATIVE_CRS.getName().getCode());
             }
 
-            readParameters =
-                    updateReadParams(readParameters, parameterDescriptors, bandIndices, filter);
+            readParameters = updateReadParams(readParameters, parameterDescriptors, bandIndices, filter);
 
             // Setting background values and color
             double[] backgroundValues = getBackgroundValues(coverageParameters, readParameters);
@@ -292,21 +280,18 @@ class RasterDownload {
             //
             // Read and Reproject
             //
-            gridCoverage =
-                    readAndReproject(
-                            readParameters,
-                            targetSizeX,
-                            targetSizeY,
-                            interpolation,
-                            backgroundValues,
-                            isImposedTargetSize,
-                            crsRequestHandler,
-                            disposableSources);
+            gridCoverage = readAndReproject(
+                    readParameters,
+                    targetSizeX,
+                    targetSizeY,
+                    interpolation,
+                    backgroundValues,
+                    isImposedTargetSize,
+                    crsRequestHandler,
+                    disposableSources);
 
             // Add a bandSelectProcess call if the reader doesn't support bands
-            gridCoverage =
-                    bandSelect(
-                            reader, readParameters, bandIndices, gridCoverage, disposableSources);
+            gridCoverage = bandSelect(reader, readParameters, bandIndices, gridCoverage, disposableSources);
 
             //
             // Handle clip/crop/extend to region
@@ -324,8 +309,7 @@ class RasterDownload {
                     // provided what requested
 
                     final RenderedImage rasterData = gridCoverage.getRenderedImage();
-                    final GridEnvelope requestedRange =
-                            (GridEnvelope) requestedGridGeometry.getGridRange();
+                    final GridEnvelope requestedRange = (GridEnvelope) requestedGridGeometry.getGridRange();
 
                     // Preliminar check between requested imageLayout and coverage imageLayout
                     final int requestedW = requestedRange.getSpan(0);
@@ -338,8 +322,7 @@ class RasterDownload {
                         if (LOGGER.isLoggable(Level.FINE)) {
                             LOGGER.log(
                                     Level.FINE,
-                                    "No Crop is needed. "
-                                            + "Writing the coverage as provided by GridCoverageRenderer");
+                                    "No Crop is needed. " + "Writing the coverage as provided by GridCoverageRenderer");
                         }
 
                         disposableSources.add(gridCoverage);
@@ -354,13 +337,10 @@ class RasterDownload {
                             // extent.
                             // Let's do a mosaic to return the requested extent instead.
                             if (LOGGER.isLoggable(Level.FINE)) {
-                                LOGGER.log(
-                                        Level.FINE, "Expanding the result to the requested area");
+                                LOGGER.log(Level.FINE, "Expanding the result to the requested area");
                             }
                             disposableSources.add(gridCoverage);
-                            gridCoverage =
-                                    extendToRegion(
-                                            gridCoverage, requestedGridGeometry, backgroundValues);
+                            gridCoverage = extendToRegion(gridCoverage, requestedGridGeometry, backgroundValues);
                             return writeRaster(coverageInfo, mimeType, gridCoverage, writeParams);
                         }
                     }
@@ -374,13 +354,11 @@ class RasterDownload {
                     // Get the proper ROI (depending on clip parameter and CRS)
                     Geometry croppingRoi = crsRequestHandler.getRoiManager().getTargetRoi(clip);
                     disposableSources.add(gridCoverage);
-                    gridCoverage =
-                            cropCoverage.execute(gridCoverage, croppingRoi, progressListener);
+                    gridCoverage = cropCoverage.execute(gridCoverage, croppingRoi, progressListener);
 
                     if (gridCoverage == null) {
-                        throw new WPSException(
-                                "No data left after applying the ROI. This means there "
-                                        + "is source data, but none matching the requested ROI");
+                        throw new WPSException("No data left after applying the ROI. This means there "
+                                + "is source data, but none matching the requested ROI");
                     }
                 }
             }
@@ -389,18 +367,16 @@ class RasterDownload {
             CoordinateReferenceSystem sourceVerticalCRS = null;
             if (targetVerticalCRS != null) {
                 MetadataMap metadata = coverageInfo.getMetadata();
-                if (metadata != null
-                        && metadata.containsKey(VerticalCRSConfigurationPanel.VERTICAL_CRS_KEY)) {
-                    String sourceVerticalCRSvalue =
-                            metadata.get(VerticalCRSConfigurationPanel.VERTICAL_CRS_KEY).toString();
+                if (metadata != null && metadata.containsKey(VerticalCRSConfigurationPanel.VERTICAL_CRS_KEY)) {
+                    String sourceVerticalCRSvalue = metadata.get(VerticalCRSConfigurationPanel.VERTICAL_CRS_KEY)
+                            .toString();
                     if (sourceVerticalCRSvalue != null) {
                         sourceVerticalCRS = CRS.decode(sourceVerticalCRSvalue);
                     }
                 }
                 if (sourceVerticalCRS == null) {
-                    throw new WPSException(
-                            "A VerticalCRS reprojection has been required but no source"
-                                    + " VerticalCRS has been configured in the coverage.");
+                    throw new WPSException("A VerticalCRS reprojection has been required but no source"
+                            + " VerticalCRS has been configured in the coverage.");
                 }
                 if (!CRS.equalsIgnoreMetadata(sourceVerticalCRS, targetVerticalCRS)) {
                     VerticalResampler verticalResampler =
@@ -431,36 +407,26 @@ class RasterDownload {
             boolean isImposedTargetSize,
             CRSRequestHandler crsRequestHandler,
             List<GridCoverage2D> disposableSources)
-            throws TransformException, NoninvertibleTransformException, FactoryException,
-                    IOException {
+            throws TransformException, NoninvertibleTransformException, FactoryException, IOException {
 
         GridCoverage2DReader reader = crsRequestHandler.getReader();
         CoordinateReferenceSystem targetCRS = crsRequestHandler.getSelectedTargetCRS();
         if (isImposedTargetSize) {
-            if (LOGGER.isLoggable(Level.FINE))
-                LOGGER.log(Level.FINE, "Target Size has been imposed");
+            if (LOGGER.isLoggable(Level.FINE)) LOGGER.log(Level.FINE, "Target Size has been imposed");
             // mimic the GridCoverageRenderer logic without raster symbolization in place
             // and other colorMap related steps
             CoordinateReferenceSystem sourceCRS = crsRequestHandler.getSelectedNativeCRS();
             Rectangle destinationSize = new Rectangle(0, 0, targetSizeX, targetSizeY);
 
             GeneralBounds destinationEnvelope =
-                    new GeneralBounds(
-                            new ReferencedEnvelope(
-                                    crsRequestHandler.getTargetEnvelope(), targetCRS));
-            AffineTransform finalWorldToGrid =
-                    computeWorldToGrid(destinationEnvelope, destinationSize);
+                    new GeneralBounds(new ReferencedEnvelope(crsRequestHandler.getTargetEnvelope(), targetCRS));
+            AffineTransform finalWorldToGrid = computeWorldToGrid(destinationEnvelope, destinationSize);
             Hints hints = prepareHints(interpolation);
 
             List<GridCoverage2D> coverages;
             // read all the coverages we need, cut and whatnot
-            GridCoverageReaderHelper rh =
-                    new GridCoverageReaderHelper(
-                            reader,
-                            destinationSize,
-                            ReferencedEnvelope.reference(destinationEnvelope),
-                            interpolation,
-                            hints);
+            GridCoverageReaderHelper rh = new GridCoverageReaderHelper(
+                    reader, destinationSize, ReferencedEnvelope.reference(destinationEnvelope), interpolation, hints);
 
             ProjectionHandler handler = null;
             if (!crsRequestHandler.canUseTargetCRSAsNative()) {
@@ -470,45 +436,24 @@ class RasterDownload {
                 }
             }
             coverages = rh.readCoverages(readParameters, handler, GC_FACTORY);
-            coverages =
-                    GridCoverageRendererUtilities.forceToValidBounds(
-                            coverages, handler, backgroundValues, targetCRS, hints);
+            coverages = GridCoverageRendererUtilities.forceToValidBounds(
+                    coverages, handler, backgroundValues, targetCRS, hints);
 
             // reproject if needed
-            coverages =
-                    GridCoverageRendererUtilities.reproject(
-                            coverages,
-                            targetCRS,
-                            interpolation,
-                            destinationEnvelope,
-                            backgroundValues,
-                            GC_FACTORY,
-                            hints);
+            coverages = GridCoverageRendererUtilities.reproject(
+                    coverages, targetCRS, interpolation, destinationEnvelope, backgroundValues, GC_FACTORY, hints);
 
             // displace them if needed via a projection handler
-            coverages =
-                    GridCoverageRendererUtilities.displace(
-                            coverages,
-                            handler,
-                            destinationEnvelope,
-                            sourceCRS,
-                            targetCRS,
-                            GC_FACTORY);
+            coverages = GridCoverageRendererUtilities.displace(
+                    coverages, handler, destinationEnvelope, sourceCRS, targetCRS, GC_FACTORY);
 
             // remove displaced/reprojected coverages being outside of the destination envelope
             GridCoverageRendererUtilities.removeNotIntersecting(coverages, destinationEnvelope);
 
             List<GridCoverage2D> transformedCoverages = new ArrayList<>();
             for (GridCoverage2D displaced : coverages) {
-                GridCoverage2D transformed =
-                        GridCoverageRendererUtilities.affine(
-                                displaced,
-                                interpolation,
-                                finalWorldToGrid,
-                                backgroundValues,
-                                true,
-                                GC_FACTORY,
-                                hints);
+                GridCoverage2D transformed = GridCoverageRendererUtilities.affine(
+                        displaced, interpolation, finalWorldToGrid, backgroundValues, true, GC_FACTORY, hints);
                 if (transformed != null) {
                     transformedCoverages.add(transformed);
                 }
@@ -516,8 +461,7 @@ class RasterDownload {
             coverages = transformedCoverages;
 
             GridCoverage2D mosaicked =
-                    GridCoverageRendererUtilities.mosaicSorted(
-                            coverages, destinationEnvelope, backgroundValues, hints);
+                    GridCoverageRendererUtilities.mosaicSorted(coverages, destinationEnvelope, backgroundValues, hints);
 
             // the mosaicking can cut off images that are just slightly out of the
             // request (effect of the read buffer + a request touching the actual data area)
@@ -528,8 +472,7 @@ class RasterDownload {
             // at this point, we might have a coverage that's still slightly larger
             // than the one requested, crop as needed
             GridCoverage2D cropped =
-                    GridCoverageRendererUtilities.crop(
-                            mosaicked, destinationEnvelope, false, backgroundValues, hints);
+                    GridCoverageRendererUtilities.crop(mosaicked, destinationEnvelope, false, backgroundValues, hints);
 
             if (cropped == null || cropped.getRenderedImage() == null) {
                 throw new WPSException(
@@ -558,35 +501,21 @@ class RasterDownload {
                     LOGGER.log(Level.FINE, "Reprojecting the coverage");
                 }
                 disposableSources.add(gridCoverage);
-                GridCoverage2D testCoverage =
-                        (GridCoverage2D)
-                                Operations.DEFAULT.resample(
-                                        gridCoverage,
-                                        targetCRS,
-                                        null,
-                                        interpolation,
-                                        backgroundValues);
+                GridCoverage2D testCoverage = (GridCoverage2D)
+                        Operations.DEFAULT.resample(gridCoverage, targetCRS, null, interpolation, backgroundValues);
                 // check for native resolution to be applied only if tolerance is not 0
                 if (!forceNativeRes) {
                     return testCoverage;
                 }
-                GridGeometryProvider gridGeometryProvider =
-                        new GridGeometryProvider(crsRequestHandler);
+                GridGeometryProvider gridGeometryProvider = new GridGeometryProvider(crsRequestHandler);
                 GridGeometry2D gg2D =
-                        gridGeometryProvider.getGridGeometryWithNativeResolution(
-                                gridCoverage, testCoverage);
+                        gridGeometryProvider.getGridGeometryWithNativeResolution(gridCoverage, testCoverage);
                 if (gg2D != null) {
                     if (LOGGER.isLoggable(Level.FINE)) {
                         LOGGER.log(Level.FINE, "Forcing native resolution on reprojected coverage");
                     }
-                    gridCoverage =
-                            (GridCoverage2D)
-                                    Operations.DEFAULT.resample(
-                                            gridCoverage,
-                                            targetCRS,
-                                            gg2D,
-                                            interpolation,
-                                            backgroundValues);
+                    gridCoverage = (GridCoverage2D)
+                            Operations.DEFAULT.resample(gridCoverage, targetCRS, gg2D, interpolation, backgroundValues);
                 } else {
                     gridCoverage = testCoverage;
                 }
@@ -595,15 +524,13 @@ class RasterDownload {
         }
     }
 
-    private AffineTransform computeWorldToGrid(
-            GeneralBounds destinationEnvelope, Rectangle destinationSize)
+    private AffineTransform computeWorldToGrid(GeneralBounds destinationEnvelope, Rectangle destinationSize)
             throws NoninvertibleTransformException {
         final GridToEnvelopeMapper gridToEnvelopeMapper = new GridToEnvelopeMapper();
         gridToEnvelopeMapper.setPixelAnchor(PixelInCell.CELL_CORNER);
         gridToEnvelopeMapper.setGridRange(new GridEnvelope2D(destinationSize));
         gridToEnvelopeMapper.setEnvelope(destinationEnvelope);
-        AffineTransform finalGridToWorld =
-                new AffineTransform(gridToEnvelopeMapper.createAffineTransform());
+        AffineTransform finalGridToWorld = new AffineTransform(gridToEnvelopeMapper.createAffineTransform());
         AffineTransform finalWorldToGrid = finalGridToWorld.createInverse();
         return finalWorldToGrid;
     }
@@ -613,9 +540,7 @@ class RasterDownload {
         Hints hints = new Hints(new RenderingHints(JAI.KEY_INTERPOLATION, interpolation));
         hints.put(Hints.LENIENT_DATUM_SHIFT, Boolean.TRUE);
         hints.add(
-                new RenderingHints(
-                        JAI.KEY_BORDER_EXTENDER,
-                        BorderExtender.createInstance(BorderExtender.BORDER_COPY)));
+                new RenderingHints(JAI.KEY_BORDER_EXTENDER, BorderExtender.createInstance(BorderExtender.BORDER_COPY)));
         if (interpolation instanceof InterpolationNearest) {
             hints.add(new RenderingHints(JAI.KEY_REPLACE_INDEX_COLOR_MODEL, Boolean.FALSE));
             hints.add(new RenderingHints(JAI.KEY_TRANSFORM_ON_COLORMAP, Boolean.TRUE));
@@ -638,7 +563,8 @@ class RasterDownload {
         if (coverageParameters != null && coverageParameters.containsKey("BackgroundValues")) {
             for (GeneralParameterValue readParameter : readParameters) {
                 if ("BackgroundValues"
-                        .equalsIgnoreCase(readParameter.getDescriptor().getName().toString())) {
+                        .equalsIgnoreCase(
+                                readParameter.getDescriptor().getName().toString())) {
                     Object bgValue = ((ParameterValue) readParameter).getValue();
                     if (bgValue != null && bgValue instanceof double[]) {
                         backgroundValues = ((double[]) bgValue);
@@ -687,11 +613,9 @@ class RasterDownload {
      * minimal extent). Extend the result to the requested region, using background value.
      */
     private GridCoverage2D extendToRegion(
-            GridCoverage2D gridCoverage,
-            GridGeometry2D requestedGridGeometry,
-            double[] backgroundValues)
-            throws IllegalStateException, NoninvertibleTransformException,
-                    MismatchedDimensionException, TransformException {
+            GridCoverage2D gridCoverage, GridGeometry2D requestedGridGeometry, double[] backgroundValues)
+            throws IllegalStateException, NoninvertibleTransformException, MismatchedDimensionException,
+                    TransformException {
 
         RenderedImage rasterData = gridCoverage.getRenderedImage();
         final GridEnvelope requestedRange = (GridEnvelope) requestedGridGeometry.getGridRange();
@@ -700,15 +624,10 @@ class RasterDownload {
 
         ImageLayout layout = new ImageLayout();
 
-        GridToEnvelopeMapper mapper =
-                new GridToEnvelopeMapper(
-                        new GridEnvelope2D(
-                                new Rectangle(
-                                        rasterData.getMinX(),
-                                        rasterData.getMinY(),
-                                        rasterData.getWidth(),
-                                        rasterData.getHeight())),
-                        gridCoverage.getEnvelope());
+        GridToEnvelopeMapper mapper = new GridToEnvelopeMapper(
+                new GridEnvelope2D(new Rectangle(
+                        rasterData.getMinX(), rasterData.getMinY(), rasterData.getWidth(), rasterData.getHeight())),
+                gridCoverage.getEnvelope());
         mapper.setPixelAnchor(PixelInCell.CELL_CORNER);
 
         AffineTransform envToGrid = mapper.createAffineTransform().createInverse();
@@ -720,29 +639,26 @@ class RasterDownload {
         int minY = (int) transformedEnvelope.getMinY();
 
         layout.setHeight(requestedH).setWidth(requestedW).setMinX(minX).setMinY(minY);
-        layout.setSampleModel(
-                rasterData.getSampleModel().createCompatibleSampleModel(requestedW, requestedH));
+        layout.setSampleModel(rasterData.getSampleModel().createCompatibleSampleModel(requestedW, requestedH));
         layout.setColorModel(rasterData.getColorModel());
 
         final RenderingHints jaiHints = new RenderingHints(JAI.KEY_IMAGE_LAYOUT, layout);
         jaiHints.add(BORDER_EXTENDER_HINTS);
-        final RenderedImage mosaic =
-                MosaicDescriptor.create(
-                        new RenderedImage[] {rasterData},
-                        MosaicDescriptor.MOSAIC_TYPE_BLEND,
-                        null,
-                        null,
-                        null,
-                        backgroundValues,
-                        jaiHints);
+        final RenderedImage mosaic = MosaicDescriptor.create(
+                new RenderedImage[] {rasterData},
+                MosaicDescriptor.MOSAIC_TYPE_BLEND,
+                null,
+                null,
+                null,
+                backgroundValues,
+                jaiHints);
 
         // Setting up a gridCoverage on top of the new image
-        final Bounds envelope =
-                new GeneralBounds(
-                        new GridEnvelope2D(minX, minY, requestedW, requestedH),
-                        PixelInCell.CELL_CENTER,
-                        requestedGridGeometry.getGridToCRS(),
-                        requestedGridGeometry.getCoordinateReferenceSystem());
+        final Bounds envelope = new GeneralBounds(
+                new GridEnvelope2D(minX, minY, requestedW, requestedH),
+                PixelInCell.CELL_CENTER,
+                requestedGridGeometry.getGridToCRS(),
+                requestedGridGeometry.getCoordinateReferenceSystem());
 
         return GC_FACTORY.create("mosaic", mosaic, envelope);
     }
@@ -786,14 +702,13 @@ class RasterDownload {
             int sampleDimensionsNumber = originalGridCoverage.getNumSampleDimensions();
             for (int i : bandIndices) {
                 if (i < 0 || i >= sampleDimensionsNumber) {
-                    throw new WPSException(
-                            "Band index "
-                                    + i
-                                    + " is invalid for the current input raster. "
-                                    + "This raster contains "
-                                    + sampleDimensionsNumber
-                                    + " band"
-                                    + (sampleDimensionsNumber > 1 ? "s" : ""));
+                    throw new WPSException("Band index "
+                            + i
+                            + " is invalid for the current input raster. "
+                            + "This raster contains "
+                            + sampleDimensionsNumber
+                            + " band"
+                            + (sampleDimensionsNumber > 1 ? "s" : ""));
                 }
             }
 
@@ -804,8 +719,7 @@ class RasterDownload {
             // GeoTools BandSelector2D takes care of remapping visible band index
             // or assigns it to first band in order if remapping is not possible
             disposableSources.add(originalGridCoverage);
-            bandFilteredCoverage =
-                    bandSelectProcess.execute(originalGridCoverage, bandIndices, null);
+            bandFilteredCoverage = bandSelectProcess.execute(originalGridCoverage, bandIndices, null);
         }
         return bandFilteredCoverage;
     }
@@ -826,8 +740,7 @@ class RasterDownload {
                 LOGGER.log(Level.FINE, "Add the filter");
             }
             readParameters =
-                    CoverageUtils.mergeParameter(
-                            parameterDescriptors, readParameters, filter, "FILTER", "Filter");
+                    CoverageUtils.mergeParameter(parameterDescriptors, readParameters, filter, "FILTER", "Filter");
         }
 
         // make sure we work in streaming fashion
@@ -843,12 +756,11 @@ class RasterDownload {
         }
 
         if (!replacedJai) {
-            readParameters =
-                    CoverageUtils.mergeParameter(
-                            parameterDescriptors,
-                            readParameters,
-                            Boolean.TRUE,
-                            AbstractGridFormat.USE_JAI_IMAGEREAD.getName().getCode());
+            readParameters = CoverageUtils.mergeParameter(
+                    parameterDescriptors,
+                    readParameters,
+                    Boolean.TRUE,
+                    AbstractGridFormat.USE_JAI_IMAGEREAD.getName().getCode());
         }
 
         // Setting band selection parameter
@@ -863,12 +775,11 @@ class RasterDownload {
             }
         }
         if (!replacedBands) {
-            readParameters =
-                    CoverageUtils.mergeParameter(
-                            parameterDescriptors,
-                            readParameters,
-                            bandIndices,
-                            AbstractGridFormat.BANDS.getName().getCode());
+            readParameters = CoverageUtils.mergeParameter(
+                    parameterDescriptors,
+                    readParameters,
+                    bandIndices,
+                    AbstractGridFormat.BANDS.getName().getCode());
         }
         return readParameters;
     }
@@ -882,8 +793,7 @@ class RasterDownload {
      * @return a {@link File} that points to the GridCoverage we wrote.
      */
     @SuppressWarnings("unchecked")
-    private Resource writeRaster(
-            CoverageInfo ci, String mimeType, GridCoverage2D gridCoverage, Parameters writeParams)
+    private Resource writeRaster(CoverageInfo ci, String mimeType, GridCoverage2D gridCoverage, Parameters writeParams)
             throws Exception {
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.log(Level.FINE, "Writing raster");
@@ -952,8 +862,7 @@ class RasterDownload {
 
     private ImageOutputStream getImageOutputStream(long limit, Resource output) throws IOException {
         @SuppressWarnings("PMD.CloseResource") // wrapped and returned along with "os"
-        ImageOutputStream fileImageOutputStreamExtImpl =
-                new FileImageOutputStreamExtImpl(output.file(), BUFFER_SIZE);
+        ImageOutputStream fileImageOutputStreamExtImpl = new FileImageOutputStreamExtImpl(output.file(), BUFFER_SIZE);
 
         // If limit is defined, LimitedImageOutputStream is used
         if (limit > DownloadServiceConfiguration.NO_LIMIT) {
@@ -964,8 +873,7 @@ class RasterDownload {
 
                 @Override
                 protected void raiseError(long pSizeMax, long pCount) throws IOException {
-                    IOException e =
-                            new IOException("Download Exceeded the maximum HARD allowed size!");
+                    IOException e = new IOException("Download Exceeded the maximum HARD allowed size!");
                     throw e;
                 }
             };

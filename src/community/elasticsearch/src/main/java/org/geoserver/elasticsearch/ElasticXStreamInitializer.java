@@ -20,8 +20,7 @@ class ElasticXStreamInitializer implements XStreamPersisterInitializer {
 
     @Override
     public void init(XStreamPersister persister) {
-        persister.registerBreifMapComplexType(
-                "elasticLayerConfiguration", ElasticLayerConfiguration.class);
+        persister.registerBreifMapComplexType("elasticLayerConfiguration", ElasticLayerConfiguration.class);
         XStream xs = persister.getXStream();
         xs.alias("esAttribute", ElasticAttribute.class);
     }

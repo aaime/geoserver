@@ -82,23 +82,15 @@ public class WFSWorkspaceQualifierTest {
     private void invokeQualifyRequest() {
         TransactionType transactionType = Wfs20Factory.eINSTANCE.createTransactionType();
         ReplaceType replaceType = Wfs20Factory.eINSTANCE.createReplaceType();
-        EList<AbstractTransactionActionType> action =
-                transactionType.getAbstractTransactionAction();
+        EList<AbstractTransactionActionType> action = transactionType.getAbstractTransactionAction();
         action.add(replaceType);
         replaceType.getAny().add(mockFeature);
 
         Version version = new Version("2.0.0");
-        Service service =
-                new Service("id", "service", version, Collections.singletonList("Transaction"));
+        Service service = new Service("id", "service", version, Collections.singletonList("Transaction"));
         Operation operation = new Operation("id", service, null, new Object[] {transactionType});
 
-        replay(
-                mockCatalog,
-                mockFeature,
-                mockFeatureType,
-                mockName,
-                mockNamespaceInfo,
-                mockWorkspaceInfo);
+        replay(mockCatalog, mockFeature, mockFeatureType, mockName, mockNamespaceInfo, mockWorkspaceInfo);
         sut.qualifyRequest(mockWorkspaceInfo, null, operation, null);
     }
 }

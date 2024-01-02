@@ -18,8 +18,7 @@ import org.springframework.security.web.authentication.RememberMeServices;
  *
  * @author mcr
  */
-public class RememberMeAuthenticationFilterConfig extends SecurityFilterConfig
-        implements SecurityAuthFilterConfig {
+public class RememberMeAuthenticationFilterConfig extends SecurityFilterConfig implements SecurityAuthFilterConfig {
 
     private static final long serialVersionUID = 1L;
 }

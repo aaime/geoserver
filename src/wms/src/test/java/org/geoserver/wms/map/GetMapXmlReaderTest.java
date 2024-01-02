@@ -72,8 +72,7 @@ public class GetMapXmlReaderTest extends KvpRequestReaderTestSupport {
     @Test
     public void testResolveStylesForLayerGroup() throws Exception {
         GetMapRequest request = reader.createRequest();
-        try (BufferedReader input =
-                getResourceInputStream("WMSPostLayerGroupNonDefaultStyle.xml")) {
+        try (BufferedReader input = getResourceInputStream("WMSPostLayerGroupNonDefaultStyle.xml")) {
 
             request = (GetMapRequest) reader.read(request, input, new HashMap());
 
@@ -91,8 +90,7 @@ public class GetMapXmlReaderTest extends KvpRequestReaderTestSupport {
     @Test
     public void testLayerFeatureConstraintFilterParsing() throws Exception {
         GetMapRequest request = reader.createRequest();
-        try (BufferedReader input =
-                getResourceInputStream("WMSPostLayerFeatureConstraintFilter.xml")) {
+        try (BufferedReader input = getResourceInputStream("WMSPostLayerFeatureConstraintFilter.xml")) {
 
             request = (GetMapRequest) reader.read(request, input, new HashMap());
 
@@ -110,8 +108,7 @@ public class GetMapXmlReaderTest extends KvpRequestReaderTestSupport {
     @Test
     public void testAllowDynamicStyles() throws Exception {
         GetMapRequest request = reader.createRequest();
-        try (BufferedReader input =
-                getResourceInputStream("WMSPostLayerGroupNonDefaultStyle.xml")) {
+        try (BufferedReader input = getResourceInputStream("WMSPostLayerGroupNonDefaultStyle.xml")) {
 
             WMS wms = new WMS(getGeoServer());
             WMSInfo oldInfo = wms.getGeoServer().getService(WMSInfo.class);

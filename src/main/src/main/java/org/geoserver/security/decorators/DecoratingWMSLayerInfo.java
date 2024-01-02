@@ -37,8 +37,7 @@ import org.geotools.util.decorate.AbstractDecorator;
  *
  * @author Andrea Aime - GeoSolutions
  */
-public class DecoratingWMSLayerInfo extends AbstractDecorator<WMSLayerInfo>
-        implements WMSLayerInfo {
+public class DecoratingWMSLayerInfo extends AbstractDecorator<WMSLayerInfo> implements WMSLayerInfo {
 
     public DecoratingWMSLayerInfo(WMSLayerInfo delegate) {
         super(delegate);

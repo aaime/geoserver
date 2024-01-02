@@ -23,8 +23,7 @@ public class FeatureServiceErrors {
     }
 
     public static ServiceError notNullable(String fieldName, List<String> details) {
-        return new ServiceError(
-                1001, "Field: " + fieldName + "is not nullable. Cannot set null value.", details);
+        return new ServiceError(1001, "Field: " + fieldName + "is not nullable. Cannot set null value.", details);
     }
 
     public static ServiceError noMValues(List<String> details) {
@@ -44,15 +43,11 @@ public class FeatureServiceErrors {
     }
 
     public static ServiceError untrustedHtml(String fieldName, List<String> details) {
-        return new ServiceError(
-                1006,
-                "Invalid untrusted Html content detected in field: " + fieldName + ".",
-                details);
+        return new ServiceError(1006, "Invalid untrusted Html content detected in field: " + fieldName + ".", details);
     }
 
     public static ServiceError permissionDenied(List<String> details) {
-        return new ServiceError(
-                1007, "Edit denied due to ownership-based access control.", details);
+        return new ServiceError(1007, "Edit denied due to ownership-based access control.", details);
     }
 
     public static ServiceError addAttachmentFailed(List<String> details) {
@@ -77,9 +72,7 @@ public class FeatureServiceErrors {
 
     public static ServiceError objectMissingOrPermissionDenied(List<String> details) {
         return new ServiceError(
-                1013,
-                "Object is missing or edit denied due to ownership-based access control.",
-                details);
+                1013, "Object is missing or edit denied due to ownership-based access control.", details);
     }
 
     public static ServiceError noZValue(List<String> details) {
@@ -115,8 +108,7 @@ public class FeatureServiceErrors {
     }
 
     public static ServiceError uniqueConstraintViolation(List<String> details) {
-        return new ServiceError(
-                1022, "Unique constraint violation error on inserting the value.", details);
+        return new ServiceError(1022, "Unique constraint violation error on inserting the value.", details);
     }
 
     public static ServiceError notEditiable(String fieldName, List<String> details) {

@@ -35,8 +35,7 @@ public class PNGLegendOutputFormat implements GetLegendGraphicOutputFormat {
      * @see GetLegendGraphicOutputFormat#produceLegendGraphic(GetLegendGraphicRequest)
      */
     @Override
-    public LegendGraphic produceLegendGraphic(GetLegendGraphicRequest request)
-            throws ServiceException {
+    public LegendGraphic produceLegendGraphic(GetLegendGraphicRequest request) throws ServiceException {
         LegendGraphicBuilder builder = new BufferedImageLegendGraphicBuilder();
         BufferedImage legendGraphic = (BufferedImage) builder.buildLegendGraphic(request);
         LegendGraphic legend = new BufferedImageLegendGraphic(legendGraphic);

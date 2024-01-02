@@ -253,12 +253,8 @@ public class WMSMapContent extends MapContent {
         tx.translate(offsetX, offsetY);
         tx.rotate(Math.toRadians(getAngle()));
         tx.translate(-offsetX, -offsetY);
-        Rectangle2D dataAreaShape =
-                new Rectangle2D.Double(
-                        dataArea.getMinX(),
-                        dataArea.getMinY(),
-                        dataArea.getWidth(),
-                        dataArea.getHeight());
+        Rectangle2D dataAreaShape = new Rectangle2D.Double(
+                dataArea.getMinX(), dataArea.getMinY(), dataArea.getWidth(), dataArea.getHeight());
         Rectangle2D transformedBounds = tx.createTransformedShape(dataAreaShape).getBounds2D();
         return new ReferencedEnvelope(transformedBounds, dataArea.getCoordinateReferenceSystem());
     }
@@ -371,11 +367,9 @@ public class WMSMapContent extends MapContent {
         } else {
             AffineTransform at = getRenderingTransform();
             if (Math.abs(XAffineTransform.getRotation(at)) != 0.0) {
-                return RendererUtilities.calculateOGCScaleAffine(
-                        getCoordinateReferenceSystem(), at, hints);
+                return RendererUtilities.calculateOGCScaleAffine(getCoordinateReferenceSystem(), at, hints);
             } else {
-                return RendererUtilities.calculateOGCScale(
-                        getViewport().getBounds(), getMapWidth(), hints);
+                return RendererUtilities.calculateOGCScale(getViewport().getBounds(), getMapWidth(), hints);
             }
         }
     }

@@ -106,8 +106,7 @@ public class TestWfsPost extends HttpServlet {
                 urlInfo.delete(urlInfo.indexOf("?"), urlInfo.length());
             }
 
-            String geoserverUrl =
-                    urlInfo.substring(0, urlInfo.indexOf("/", 8)) + request.getContextPath();
+            String geoserverUrl = urlInfo.substring(0, urlInfo.indexOf("/", 8)) + request.getContextPath();
             response.setContentType("text/html");
             out.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">");
             out.println("<html>");
@@ -140,8 +139,7 @@ public class TestWfsPost extends HttpServlet {
             out.println("</script>");
             out.println("<body>");
             out.println("<form name=\"frm\" action=\"JavaScript:doNothing()\" method=\"POST\">");
-            out.println(
-                    "<table align=\"center\" cellspacing=\"2\" cellpadding=\"2\" border=\"0\">");
+            out.println("<table align=\"center\" cellspacing=\"2\" cellpadding=\"2\" border=\"0\">");
             out.println("<tr>");
             out.println("<td><b>URL:</b></td>");
             out.print("<td><input name=\"url\" value=\"");
@@ -155,10 +153,8 @@ public class TestWfsPost extends HttpServlet {
             out.println("</table>");
             out.println("<table align=\"center\">");
             out.println("<tr>");
-            out.println(
-                    "<td><input type=\"button\" value=\"Clear\" onclick=\"clearRequest()\"></td>");
-            out.println(
-                    "<td><input type=\"button\" value=\"Submit\" onclick=\"sendRequest()\"></td>");
+            out.println("<td><input type=\"button\" value=\"Clear\" onclick=\"clearRequest()\"></td>");
+            out.println("<td><input type=\"button\" value=\"Submit\" onclick=\"sendRequest()\"></td>");
             out.println("<td></td>");
             out.println("</tr>");
             out.println("</table>");
@@ -200,10 +196,7 @@ public class TestWfsPost extends HttpServlet {
                 }
 
                 if (!doGet) {
-                    xmlOut =
-                            new PrintWriter(
-                                    new BufferedWriter(
-                                            new OutputStreamWriter(acon.getOutputStream())));
+                    xmlOut = new PrintWriter(new BufferedWriter(new OutputStreamWriter(acon.getOutputStream())));
                     xmlOut = new java.io.PrintWriter(acon.getOutputStream());
 
                     xmlOut.write(requestString);
@@ -222,8 +215,7 @@ public class TestWfsPost extends HttpServlet {
                     responseContent.append(acon.getResponseCode());
                     responseContent.append("\n");
                     if (acon.getResponseMessage() != null) {
-                        responseContent.append(
-                                URLDecoder.decode(acon.getResponseMessage(), "UTF-8"));
+                        responseContent.append(URLDecoder.decode(acon.getResponseMessage(), "UTF-8"));
                     }
                     responseContent.append("</servlet-exception>\n");
 
@@ -238,8 +230,7 @@ public class TestWfsPost extends HttpServlet {
                     // System.out.println("got encoding from acon: "
                     // + acon.getContentType());
                     response.setContentType(acon.getContentType());
-                    response.setHeader(
-                            "Content-disposition", acon.getHeaderField("Content-disposition"));
+                    response.setHeader("Content-disposition", acon.getHeaderField("Content-disposition"));
 
                     @SuppressWarnings("PMD.CloseResource") // managed by the servlet
                     OutputStream output = response.getOutputStream();
@@ -337,23 +328,19 @@ public class TestWfsPost extends HttpServlet {
         // this should not happen, but let's not make it an open proxy if it does
         if (!request.getServletPath().equals(TEST_WFS_POST_PATH)) {
             throw new IllegalStateException(
-                    "Unepected, the TestWfsPost was accessed by a path not ending with TestWfsPost: "
-                            + requestString);
+                    "Unepected, the TestWfsPost was accessed by a path not ending with TestWfsPost: " + requestString);
         }
         if (null != requestUrl.getQuery()) {
             throw new IllegalStateException(
-                    "Unepected, the TestWfsPost was accessed by a path not ending with TestWfsPost: "
-                            + requestString);
+                    "Unepected, the TestWfsPost was accessed by a path not ending with TestWfsPost: " + requestString);
         }
         if (!request.getContextPath().equals(this.getServletContext().getContextPath())) {
             throw new IllegalStateException(
                     "Unepected, the TestWfsPost was accessed by a path from a different servlet context: "
                             + requestString);
         }
-        if (!url.getProtocol().equalsIgnoreCase("http")
-                && !url.getProtocol().equalsIgnoreCase("https")) {
-            throw new IllegalArgumentException(
-                    "Invalid url requested; not an HTTP or HTTPS URL: " + urlString);
+        if (!url.getProtocol().equalsIgnoreCase("http") && !url.getProtocol().equalsIgnoreCase("https")) {
+            throw new IllegalArgumentException("Invalid url requested; not an HTTP or HTTPS URL: " + urlString);
         } else {
             for (String path : url.getPath().split("/")) {
                 if (path.equals("..") || ResponseUtils.urlDecode(path).equals("..")) {
@@ -370,8 +357,7 @@ public class TestWfsPost extends HttpServlet {
                 baseUrlString = proxyBase;
                 baseUrl = new URL(proxyBase);
             } catch (MalformedURLException e) {
-                throw new IllegalArgumentException(
-                        "Invalid Proxy Base URL; not a URL: " + proxyBase, e);
+                throw new IllegalArgumentException("Invalid Proxy Base URL; not a URL: " + proxyBase, e);
             }
         }
         String urlPath = url.getPath();

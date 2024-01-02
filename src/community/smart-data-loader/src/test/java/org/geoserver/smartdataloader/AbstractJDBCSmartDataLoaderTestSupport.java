@@ -45,9 +45,7 @@ public abstract class AbstractJDBCSmartDataLoaderTestSupport extends GeoServerSy
     }
 
     protected Properties getFixture() {
-        File fixtureFile =
-                FixtureUtilities.getFixtureFile(
-                        getFixtureDirectory(), fixtureHelper.getFixtureId());
+        File fixtureFile = FixtureUtilities.getFixtureFile(getFixtureDirectory(), fixtureHelper.getFixtureId());
         if (fixtureFile.exists()) {
             return FixtureUtilities.loadProperties(fixtureFile);
         } else {
@@ -97,8 +95,7 @@ public abstract class AbstractJDBCSmartDataLoaderTestSupport extends GeoServerSy
 
     protected DataStoreMetadata getDataStoreMetadata(DatabaseMetaData metaData) throws Exception {
         DataStoreMetadataConfig config =
-                new JdbcDataStoreMetadataConfig(
-                        ONLINE_DB_SCHEMA, metaData.getConnection(), null, ONLINE_DB_SCHEMA);
+                new JdbcDataStoreMetadataConfig(ONLINE_DB_SCHEMA, metaData.getConnection(), null, ONLINE_DB_SCHEMA);
         DataStoreMetadata dsm = (new DataStoreMetadataFactory()).getDataStoreMetadata(config);
         return dsm;
     }

@@ -78,13 +78,11 @@ public class WFSHandlerFactory implements HandlerFactory {
     }
 
     @Override
-    public ElementHandler createElementHandler(
-            XSDElementDeclaration e, Handler parent, ParserHandler parser) {
+    public ElementHandler createElementHandler(XSDElementDeclaration e, Handler parent, ParserHandler parser) {
         return null;
     }
 
-    public AttributeHandler createAttributeHandler(
-            XSDAttributeDeclaration a, Handler parent, ParserHandler parser) {
+    public AttributeHandler createAttributeHandler(XSDAttributeDeclaration a, Handler parent, ParserHandler parser) {
         return null;
     }
 }

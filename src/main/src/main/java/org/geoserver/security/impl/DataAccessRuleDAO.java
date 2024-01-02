@@ -87,22 +87,17 @@ public class DataAccessRuleDAO extends AbstractAccessRuleDAO<DataAccessRule> {
                 try {
                     catalogMode = CatalogMode.valueOf(ruleValue.toUpperCase());
                 } catch (Exception e) {
-                    LOGGER.warning(
-                            "Invalid security mode "
-                                    + ruleValue
-                                    + " acceptable values are "
-                                    + Arrays.asList(CatalogMode.values()));
+                    LOGGER.warning("Invalid security mode "
+                            + ruleValue
+                            + " acceptable values are "
+                            + Arrays.asList(CatalogMode.values()));
                 }
             } else {
                 DataAccessRule rule = parseDataAccessRule(ruleKey, ruleValue);
                 if (rule != null) {
                     if (result.contains(rule))
                         LOGGER.warning(
-                                "Rule "
-                                        + ruleKey
-                                        + "."
-                                        + ruleValue
-                                        + " overwrites another rule on the same path");
+                                "Rule " + ruleKey + "." + ruleValue + " overwrites another rule on the same path");
                     result.add(rule);
                 }
             }
@@ -166,25 +161,18 @@ public class DataAccessRuleDAO extends AbstractAccessRuleDAO<DataAccessRule> {
         // check the access mode sanity
         AccessMode mode = AccessMode.getByAlias(modeAlias);
         if (mode == null) {
-            LOGGER.warning(
-                    "Unknown access mode "
-                            + modeAlias
-                            + " in "
-                            + ruleKey
-                            + ", skipping rule "
-                            + rule);
+            LOGGER.warning("Unknown access mode " + modeAlias + " in " + ruleKey + ", skipping rule " + rule);
             return null;
         }
 
         // check ANY usage sanity
         if (ANY.equals(root)) {
             if (!ANY.equals(layerName)) {
-                LOGGER.warning(
-                        "Invalid rule "
-                                + rule
-                                + ", when namespace "
-                                + "is * then also layer must be *. Skipping rule "
-                                + rule);
+                LOGGER.warning("Invalid rule "
+                        + rule
+                        + ", when namespace "
+                        + "is * then also layer must be *. Skipping rule "
+                        + rule);
                 return null;
             }
         }
@@ -192,11 +180,10 @@ public class DataAccessRuleDAO extends AbstractAccessRuleDAO<DataAccessRule> {
         // check admin access only applied globally to workspace
         if (mode == AccessMode.ADMIN && !ANY.equals(layerName)) {
             // TODO: should this throw an exception instead of ignore rule?
-            LOGGER.warning(
-                    "Invalid rule "
-                            + rule
-                            + ", admin (a) privileges may only be applied "
-                            + "globally to a workspace, layer must be *, skipping rule");
+            LOGGER.warning("Invalid rule "
+                    + rule
+                    + ", admin (a) privileges may only be applied "
+                    + "globally to a workspace, layer must be *, skipping rule");
             return null;
         }
 
@@ -210,8 +197,7 @@ public class DataAccessRuleDAO extends AbstractAccessRuleDAO<DataAccessRule> {
         Properties props = new Properties();
         props.put("mode", catalogMode.toString());
         for (DataAccessRule rule : rules) {
-            StringBuilder sbKey =
-                    new StringBuilder(DOT.matcher(rule.getRoot()).replaceAll("\\\\."));
+            StringBuilder sbKey = new StringBuilder(DOT.matcher(rule.getRoot()).replaceAll("\\\\."));
             if (!rule.isGlobalGroupRule()) {
                 sbKey.append(".").append(DOT.matcher(rule.getLayer()).replaceAll("\\\\."));
             }

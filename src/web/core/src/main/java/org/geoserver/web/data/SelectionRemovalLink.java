@@ -30,9 +30,7 @@ public class SelectionRemovalLink extends AjaxLink<Void> {
     GeoServerDialog dialog;
 
     public SelectionRemovalLink(
-            String id,
-            GeoServerTablePanel<? extends CatalogInfo> catalogObjects,
-            GeoServerDialog dialog) {
+            String id, GeoServerTablePanel<? extends CatalogInfo> catalogObjects, GeoServerDialog dialog) {
         super(id);
         this.catalogObjects = catalogObjects;
         this.dialog = dialog;
@@ -48,46 +46,44 @@ public class SelectionRemovalLink extends AjaxLink<Void> {
 
         // if there is something to cancel, let's warn the user about what
         // could go wrong, and if the user accepts, let's delete what's needed
-        dialog.showOkCancel(
-                target,
-                new GeoServerDialog.DialogDelegate() {
+        dialog.showOkCancel(target, new GeoServerDialog.DialogDelegate() {
+            @Override
+            protected Component getContents(String id) {
+                // show a confirmation panel for all the objects we have to remove
+                return new ConfirmRemovalPanel(id, selection) {
                     @Override
-                    protected Component getContents(String id) {
-                        // show a confirmation panel for all the objects we have to remove
-                        return new ConfirmRemovalPanel(id, selection) {
-                            @Override
-                            protected StringResourceModel canRemove(CatalogInfo info) {
-                                return SelectionRemovalLink.this.canRemove(info);
-                            }
-                        };
+                    protected StringResourceModel canRemove(CatalogInfo info) {
+                        return SelectionRemovalLink.this.canRemove(info);
                     }
+                };
+            }
 
-                    @Override
-                    protected boolean onSubmit(AjaxRequestTarget target, Component contents) {
-                        // cascade delete the whole selection
-                        Catalog catalog = GeoServerApplication.get().getCatalog();
-                        CascadeDeleteVisitor visitor = new CascadeDeleteVisitor(catalog);
-                        for (CatalogInfo ci : selection) {
-                            ci.accept(visitor);
-                        }
+            @Override
+            protected boolean onSubmit(AjaxRequestTarget target, Component contents) {
+                // cascade delete the whole selection
+                Catalog catalog = GeoServerApplication.get().getCatalog();
+                CascadeDeleteVisitor visitor = new CascadeDeleteVisitor(catalog);
+                for (CatalogInfo ci : selection) {
+                    ci.accept(visitor);
+                }
 
-                        // the deletion will have changed what we see in the page
-                        // so better clear out the selection
-                        catalogObjects.clearSelection();
-                        return true;
-                    }
+                // the deletion will have changed what we see in the page
+                // so better clear out the selection
+                catalogObjects.clearSelection();
+                return true;
+            }
 
-                    @Override
-                    public void onClose(AjaxRequestTarget target) {
-                        // if the selection has been cleared out it's sign a deletion
-                        // occurred, so refresh the table
-                        if (catalogObjects.getSelection().size() == 0) {
-                            setEnabled(false);
-                            target.add(SelectionRemovalLink.this);
-                            target.add(catalogObjects);
-                        }
-                    }
-                });
+            @Override
+            public void onClose(AjaxRequestTarget target) {
+                // if the selection has been cleared out it's sign a deletion
+                // occurred, so refresh the table
+                if (catalogObjects.getSelection().size() == 0) {
+                    setEnabled(false);
+                    target.add(SelectionRemovalLink.this);
+                    target.add(catalogObjects);
+                }
+            }
+        });
     }
 
     /**

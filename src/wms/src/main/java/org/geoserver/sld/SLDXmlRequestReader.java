@@ -36,8 +36,7 @@ public class SLDXmlRequestReader extends XmlRequestReader {
 
         GetMapRequest getMap = (GetMapRequest) request;
         StyledLayerDescriptor sld =
-                Styles.handler(getMap.getStyleFormat())
-                        .parse(reader, getMap.styleVersion(), null, null);
+                Styles.handler(getMap.getStyleFormat()).parse(reader, getMap.styleVersion(), null, null);
 
         // process the sld
         sld.accept(new ProcessStandaloneSLDVisitor(wms, getMap));

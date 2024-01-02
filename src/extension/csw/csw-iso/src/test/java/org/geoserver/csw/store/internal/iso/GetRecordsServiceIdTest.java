@@ -31,16 +31,14 @@ public class GetRecordsServiceIdTest extends MDTestSupport {
         FileUtils.copyDirectory(records, csw);
 
         ResourceInfo forestInfo = getCatalog().getLayerByName("Forests").getResource();
-        forestInfo.setLatLonBoundingBox(
-                new ReferencedEnvelope(-200, -180, -100, -90, CRS.decode("EPSG:4326")));
+        forestInfo.setLatLonBoundingBox(new ReferencedEnvelope(-200, -180, -100, -90, CRS.decode("EPSG:4326")));
         getCatalog().save(forestInfo);
     }
 
     @Test
     public void testAllRecordsPaged() throws Exception {
-        String request =
-                "csw?service=CSW&version=2.0.2&request=GetRecords&typeNames=gmd:MD_Metadata"
-                        + "&resultType=results&elementSetName=full&outputSchema=http://www.isotc211.org/2005/gmd";
+        String request = "csw?service=CSW&version=2.0.2&request=GetRecords&typeNames=gmd:MD_Metadata"
+                + "&resultType=results&elementSetName=full&outputSchema=http://www.isotc211.org/2005/gmd";
 
         Document d = getAsDOM(request);
         // print(d);
@@ -59,10 +57,9 @@ public class GetRecordsServiceIdTest extends MDTestSupport {
 
     @Test
     public void testAllRecords() throws Exception {
-        String request =
-                "csw?service=CSW&version=2.0.2&request=GetRecords&typeNames=gmd:MD_Metadata"
-                        + "&resultType=results&elementSetName=full&outputSchema=http://www.isotc211.org/2005/gmd"
-                        + "&maxRecords=100";
+        String request = "csw?service=CSW&version=2.0.2&request=GetRecords&typeNames=gmd:MD_Metadata"
+                + "&resultType=results&elementSetName=full&outputSchema=http://www.isotc211.org/2005/gmd"
+                + "&maxRecords=100";
         Document d = getAsDOM(request);
         // print(d);
         // validateSchema(d.getElementsByTagName("//gmd:MD_MetaData"));
@@ -166,10 +163,9 @@ public class GetRecordsServiceIdTest extends MDTestSupport {
 
     @Test
     public void testAllRecordsBrief() throws Exception {
-        String request =
-                "csw?service=CSW&version=2.0.2&request=GetRecords&typeNames=gmd:MD_Metadata"
-                        + "&resultType=results&elementSetName=brief&outputSchema=http://www.isotc211.org/2005/gmd"
-                        + "&maxRecords=100";
+        String request = "csw?service=CSW&version=2.0.2&request=GetRecords&typeNames=gmd:MD_Metadata"
+                + "&resultType=results&elementSetName=brief&outputSchema=http://www.isotc211.org/2005/gmd"
+                + "&maxRecords=100";
         Document d = getAsDOM(request);
         print(d);
         // validateSchema(d.getElementsByTagName("//gmd:MD_MetaData"));
@@ -316,9 +312,8 @@ public class GetRecordsServiceIdTest extends MDTestSupport {
     @Test
     public void testLayerDisabledServiceRecords() throws Exception {
         disableCWSOnLinesLayer();
-        String request =
-                "csw?service=CSW&version=2.0.2&request=GetRecords&typeNames=gmd:MD_Metadata"
-                        + "&resultType=results&elementSetName=full&outputSchema=http://www.isotc211.org/2005/gmd";
+        String request = "csw?service=CSW&version=2.0.2&request=GetRecords&typeNames=gmd:MD_Metadata"
+                + "&resultType=results&elementSetName=full&outputSchema=http://www.isotc211.org/2005/gmd";
         Document doc = getAsDOM(request);
 
         assertXpathEvaluatesTo(
@@ -334,9 +329,8 @@ public class GetRecordsServiceIdTest extends MDTestSupport {
     @Test
     public void testLayerEnabledServiceRecords() throws Exception {
         enableCWSOnLinesLayer();
-        String request =
-                "csw?service=CSW&version=2.0.2&request=GetRecords&typeNames=gmd:MD_Metadata"
-                        + "&resultType=results&elementSetName=full&outputSchema=http://www.isotc211.org/2005/gmd";
+        String request = "csw?service=CSW&version=2.0.2&request=GetRecords&typeNames=gmd:MD_Metadata"
+                + "&resultType=results&elementSetName=full&outputSchema=http://www.isotc211.org/2005/gmd";
         Document doc = getAsDOM(request);
 
         assertXpathEvaluatesTo(

@@ -28,8 +28,7 @@ public interface WebCoverageService20 {
      * A key that can be be used to identify the originating CoverageInfo attached to the output
      * GridCoverage, which can be used to retrieve extra metadata about the coverage
      */
-    public static final String ORIGINATING_COVERAGE_INFO =
-            "org.geoserver.wcs.originatingCoverageInfo";
+    public static final String ORIGINATING_COVERAGE_INFO = "org.geoserver.wcs.originatingCoverageInfo";
 
     /** WCS service info. */
     WCSInfo getServiceInfo();

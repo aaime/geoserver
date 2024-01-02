@@ -18,8 +18,7 @@ public class GeneralGrid {
     private List<Axis> axis;
     private GridLimits gridLimits;
 
-    public GeneralGrid(
-            String srsName, List<String> axisLabels, List<Axis> axis, GridLimits gridLimits) {
+    public GeneralGrid(String srsName, List<String> axisLabels, List<Axis> axis, GridLimits gridLimits) {
         this.srsName = srsName;
         this.axisLabels = axisLabels;
         this.axis = axis;

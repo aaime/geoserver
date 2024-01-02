@@ -38,8 +38,7 @@ class FidTransformerVisitor extends DuplicatingFilterVisitor {
         for (Object o : ids) {
             FeatureId id = new FeatureIdImpl((String) o);
             FeatureId retyped =
-                    RetypingFeatureCollection.reTypeId(
-                            id, map.getFeatureType(), map.getOriginalFeatureType());
+                    RetypingFeatureCollection.reTypeId(id, map.getFeatureType(), map.getOriginalFeatureType());
             fids.add(retyped);
         }
         return ff.id(fids);

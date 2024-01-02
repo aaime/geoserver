@@ -16,8 +16,7 @@ import org.geotools.data.simple.SimpleFeatureIterator;
  *
  * @author Josh Vote, CSIRO Earth Science and Resource Engineering
  */
-public class SecuredSimpleFeatureIterator
-        implements SimpleFeatureIterator, Iterator<SimpleFeature> {
+public class SecuredSimpleFeatureIterator implements SimpleFeatureIterator, Iterator<SimpleFeature> {
 
     SimpleFeatureIterator wrapped;
 

@@ -106,8 +106,7 @@ public class LoggerRule extends java.util.logging.Handler implements TestRule {
     private void assumeCaptureWorks() {
         // FIXME: LoggerAdapter overrides addHandler to do nothing which prevents LoggerRule from
         // capturing records.
-        Assume.assumeFalse(
-                "LoggerRule can't capture logs for LoggerAdapter", log instanceof LoggerAdapter);
+        Assume.assumeFalse("LoggerRule can't capture logs for LoggerAdapter", log instanceof LoggerAdapter);
     }
 
     /** Get the captured log records */

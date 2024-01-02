@@ -54,9 +54,7 @@ public class PriorityThreadBlocker implements ThreadBlocker {
         synchronized (this) {
             if (runningQueue.size() < maxRunningRequests) {
                 if (LOGGER.isLoggable(Level.FINER)) {
-                    LOGGER.log(
-                            Level.FINER,
-                            "Running requests at " + runningQueue.size() + ", no block");
+                    LOGGER.log(Level.FINER, "Running requests at " + runningQueue.size() + ", no block");
                 }
                 result = true;
             } else {
@@ -94,9 +92,7 @@ public class PriorityThreadBlocker implements ThreadBlocker {
                         boolean removed = queue.remove(token);
                         if (!removed) {
                             if (LOGGER.isLoggable(Level.FINER)) {
-                                LOGGER.log(
-                                        Level.FINER,
-                                        "Request was not found in queue, releasing next");
+                                LOGGER.log(Level.FINER, "Request was not found in queue, releasing next");
                             }
                             // has already been removed by releaseNext, release the next one then
                             if (runningQueue.size() < maxRunningRequests) {

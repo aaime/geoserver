@@ -93,8 +93,7 @@ public interface OAuth2FilterConfig {
      * @param enableRedirectAuthenticationEntryPoint the enableRedirectAuthenticationEntryPoint to
      *     set
      */
-    public void setEnableRedirectAuthenticationEntryPoint(
-            Boolean enableRedirectAuthenticationEntryPoint);
+    public void setEnableRedirectAuthenticationEntryPoint(Boolean enableRedirectAuthenticationEntryPoint);
 
     /**
      * Returns filter {@link AuthenticationEntryPoint} actual implementation

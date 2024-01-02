@@ -37,18 +37,12 @@ public class ServiceLinkDescription implements Serializable, Comparable<ServiceL
     /** Layer name for virtual web service, may be null for workspace or global services. */
     private final String layer;
 
-    public ServiceLinkDescription(
-            String serviceType, Version version, String link, String workspace, String layer) {
+    public ServiceLinkDescription(String serviceType, Version version, String link, String workspace, String layer) {
         this(serviceType, version, link, workspace, layer, null);
     }
 
     public ServiceLinkDescription(
-            String serviceType,
-            Version version,
-            String link,
-            String workspace,
-            String layer,
-            String protocol) {
+            String serviceType, Version version, String link, String workspace, String layer, String protocol) {
         this.serviceType = serviceType;
         this.version = version;
         this.link = link;

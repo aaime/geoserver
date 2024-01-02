@@ -60,19 +60,17 @@ public class HzLockProvider implements LockProvider, InitializingBean {
         HazelcastInstance clusterInstance = cluster.getHz();
 
         // if (LOGGER.isLoggable(Level.FINE)) {
-        LOGGER.info(
-                format(
-                        "%s - Acquiring distributed lock '%s' (Thread %s)",
-                        nodeId(cluster), path, Thread.currentThread().getName()));
+        LOGGER.info(format(
+                "%s - Acquiring distributed lock '%s' (Thread %s)",
+                nodeId(cluster), path, Thread.currentThread().getName()));
         // }
         FencedLock lock = clusterInstance.getCPSubsystem().getLock(path);
         lock.lock();
 
         // if (LOGGER.isLoggable(Level.FINE)) {
-        LOGGER.info(
-                format(
-                        "%s - Successfully acquired distributed lock '%s' (Thread %s)",
-                        nodeId(cluster), path, Thread.currentThread().getName()));
+        LOGGER.info(format(
+                "%s - Successfully acquired distributed lock '%s' (Thread %s)",
+                nodeId(cluster), path, Thread.currentThread().getName()));
         // }
         Preconditions.checkState(lock.isLockedByCurrentThread());
         return new LockAdapter(lock, path, cluster);
@@ -95,32 +93,26 @@ public class HzLockProvider implements LockProvider, InitializingBean {
         @Override
         public void release() {
             if (null == lock || !lock.isLocked()) {
-                LOGGER.info(
-                        format(
-                                "%s - Distributed lock is already unlocked '%s' (Thread %s)",
-                                nodeId(cluster), path, Thread.currentThread().getName()));
+                LOGGER.info(format(
+                        "%s - Distributed lock is already unlocked '%s' (Thread %s)",
+                        nodeId(cluster), path, Thread.currentThread().getName()));
                 return;
             }
             try {
-                LOGGER.info(
-                        format(
-                                "%s - Releasing distributed lock '%s' (Thread %s)",
-                                nodeId(cluster), path, Thread.currentThread().getName()));
+                LOGGER.info(format(
+                        "%s - Releasing distributed lock '%s' (Thread %s)",
+                        nodeId(cluster), path, Thread.currentThread().getName()));
                 this.lock.unlock();
                 this.lock = null;
-                LOGGER.info(
-                        format(
-                                "%s - Successfully released distributed lock '%s' (Thread %s)",
-                                nodeId(cluster), path, Thread.currentThread().getName()));
+                LOGGER.info(format(
+                        "%s - Successfully released distributed lock '%s' (Thread %s)",
+                        nodeId(cluster), path, Thread.currentThread().getName()));
             } catch (RuntimeException e) {
                 LOGGER.log(
                         Level.SEVERE,
                         format(
                                 "%s - Error releasing distributed lock '%s' (Thread %s): %s",
-                                nodeId(cluster),
-                                path,
-                                Thread.currentThread().getName(),
-                                e.getMessage()),
+                                nodeId(cluster), path, Thread.currentThread().getName(), e.getMessage()),
                         e);
                 throw e;
             }

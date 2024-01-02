@@ -87,10 +87,7 @@ class LoggingUtilsDelegate {
         // when geoserver is reloaded (for example a test appender)
         List<Appender> savedAppenders = new ArrayList<>();
         {
-            @SuppressWarnings({
-                "resource",
-                "PMD.CloseResource"
-            }) // current context, no need to enforce AutoClosable
+            @SuppressWarnings({"resource", "PMD.CloseResource"}) // current context, no need to enforce AutoClosable
             LoggerContext loggerContext = (LoggerContext) LogManager.getContext(false);
             Configuration configuration = loggerContext.getConfiguration();
 
@@ -121,18 +118,12 @@ class LoggingUtilsDelegate {
 
         // first try log4j configuration
         successfulConfiguration =
-                configureFromLog4j2(
-                        configResource, suppressFileLogging, suppressStdOutLogging, logFileName);
+                configureFromLog4j2(configResource, suppressFileLogging, suppressStdOutLogging, logFileName);
 
-        if (!successfulConfiguration
-                && "properties".equals(Paths.extension(configResource.path()))) {
+        if (!successfulConfiguration && "properties".equals(Paths.extension(configResource.path()))) {
             // fallback to log4j 1.2 configuration
-            successfulConfiguration =
-                    configureFromLog4jProperties(
-                            configResource,
-                            suppressFileLogging,
-                            suppressStdOutLogging,
-                            logFileName);
+            successfulConfiguration = configureFromLog4jProperties(
+                    configResource, suppressFileLogging, suppressStdOutLogging, logFileName);
         }
 
         if (!successfulConfiguration) {
@@ -149,15 +140,11 @@ class LoggingUtilsDelegate {
         }
 
         // Check configuration via Log4J 2 API
-        boolean reloadRequired =
-                checkConfiguration(suppressStdOutLogging, suppressFileLogging, logFileName);
+        boolean reloadRequired = checkConfiguration(suppressStdOutLogging, suppressFileLogging, logFileName);
 
         // add the appenders we saved above (for example a test appender)
         {
-            @SuppressWarnings({
-                "resource",
-                "PMD.CloseResource"
-            }) // current context, no need to enforce AutoClosable
+            @SuppressWarnings({"resource", "PMD.CloseResource"}) // current context, no need to enforce AutoClosable
             LoggerContext loggerContext = (LoggerContext) LogManager.getContext(false);
             Configuration configuration = loggerContext.getConfiguration();
 
@@ -187,10 +174,7 @@ class LoggingUtilsDelegate {
     private static boolean checkConfiguration(
             boolean suppressStdOutLogging, boolean suppressFileLogging, String logFileName) {
 
-        @SuppressWarnings({
-            "resource",
-            "PMD.CloseResource"
-        }) // current context, no need to enforce AutoClosable
+        @SuppressWarnings({"resource", "PMD.CloseResource"}) // current context, no need to enforce AutoClosable
         LoggerContext loggerContext = (LoggerContext) LogManager.getContext(false);
 
         Configuration configuration = loggerContext.getConfiguration();
@@ -201,10 +185,9 @@ class LoggingUtilsDelegate {
             if (configuration.getProperties().containsKey("GEOSERVER_LOG_LOCATION")) {
                 // this is a log4j 2 configuration using default properties
                 LoggingStartupContextListener.getLogger()
-                        .fine(
-                                "Logging property GEOSERVER_LOG_LOCATION set to file '"
-                                        + logFileName
-                                        + "' for use by appenders.");
+                        .fine("Logging property GEOSERVER_LOG_LOCATION set to file '"
+                                + logFileName
+                                + "' for use by appenders.");
             }
 
             // check resulting configuring of log4j file logger
@@ -212,30 +195,26 @@ class LoggingUtilsDelegate {
             if (gslf instanceof RollingFileAppender) {
                 RollingFileAppender fileAppender = (RollingFileAppender) gslf;
                 if (logFileName.equals(fileAppender.getFileName())) {
-                    LoggingStartupContextListener.getLogger()
-                            .fine("Logging output set to file '" + logFileName + "'");
+                    LoggingStartupContextListener.getLogger().fine("Logging output set to file '" + logFileName + "'");
                 } else {
                     LoggingStartupContextListener.getLogger()
-                            .fine(
-                                    "Logging output to file '"
-                                            + fileAppender.getFileName()
-                                            + "', ignored '"
-                                            + logFileName
-                                            + "'");
+                            .fine("Logging output to file '"
+                                    + fileAppender.getFileName()
+                                    + "', ignored '"
+                                    + logFileName
+                                    + "'");
                 }
             } else if (gslf instanceof FileAppender) {
                 FileAppender fileAppender = (FileAppender) gslf;
                 if (logFileName.equals(fileAppender.getFileName())) {
-                    LoggingStartupContextListener.getLogger()
-                            .fine("Logging output set to file '" + logFileName + "'");
+                    LoggingStartupContextListener.getLogger().fine("Logging output set to file '" + logFileName + "'");
                 } else {
                     LoggingStartupContextListener.getLogger()
-                            .fine(
-                                    "Logging output to file '"
-                                            + fileAppender.getFileName()
-                                            + "', ignored '"
-                                            + logFileName
-                                            + "'");
+                            .fine("Logging output to file '"
+                                    + fileAppender.getFileName()
+                                    + "', ignored '"
+                                    + logFileName
+                                    + "'");
                 }
             } else if (gslf != null) {
                 LoggingStartupContextListener.getLogger()
@@ -244,15 +223,13 @@ class LoggingUtilsDelegate {
             }
         } else {
             LoggingStartupContextListener.getLogger()
-                    .info(
-                            "Suppressing file logging, if you want to see GeoServer logs, be sure to look in stdOut");
+                    .info("Suppressing file logging, if you want to see GeoServer logs, be sure to look in stdOut");
             for (Appender check : configuration.getAppenders().values()) {
                 if (check instanceof FileAppender || check instanceof RollingFileAppender) {
                     LoggingStartupContextListener.getLogger()
-                            .warning(
-                                    "'"
-                                            + check.getName()
-                                            + "' appender is defined, but GeoServer asked that file logging be supressed.");
+                            .warning("'"
+                                    + check.getName()
+                                    + "' appender is defined, but GeoServer asked that file logging be supressed.");
                 }
             }
         }
@@ -260,10 +237,9 @@ class LoggingUtilsDelegate {
         // ... and the std output logging too
         if (suppressStdOutLogging) {
             LoggingStartupContextListener.getLogger()
-                    .info(
-                            "Suppressing StdOut logging.  If you want to see GeoServer logs, be sure to look in '"
-                                    + logFileName
-                                    + "'");
+                    .info("Suppressing StdOut logging.  If you want to see GeoServer logs, be sure to look in '"
+                            + logFileName
+                            + "'");
             for (Appender check : configuration.getAppenders().values()) {
                 if (check instanceof ConsoleAppender) {
                     configuration.getAppenders().values().remove(check);
@@ -301,10 +277,7 @@ class LoggingUtilsDelegate {
 
         String extension = Paths.extension(configResource.path());
 
-        @SuppressWarnings({
-            "resource",
-            "PMD.CloseResource"
-        }) // current context, no need to enforce AutoClosable
+        @SuppressWarnings({"resource", "PMD.CloseResource"}) // current context, no need to enforce AutoClosable
         LoggerContext loggerContext = (LoggerContext) LogManager.getContext(false);
 
         try {
@@ -313,16 +286,15 @@ class LoggingUtilsDelegate {
 
             if (extension.equalsIgnoreCase("xml")) {
                 ConfigurationSource source = ConfigurationSource.fromUri(configLocation);
-                GeoServerXMLConfiguration configuration =
-                        new GeoServerXMLConfiguration(loggerContext, source) {
-                            @Override
-                            public void setup() {
-                                this.loggingLocation = logFileName;
-                                this.suppressFileLogging = noFileLogging;
-                                this.suppressStdOutLogging = noConsoleLogging;
-                                super.setup();
-                            }
-                        };
+                GeoServerXMLConfiguration configuration = new GeoServerXMLConfiguration(loggerContext, source) {
+                    @Override
+                    public void setup() {
+                        this.loggingLocation = logFileName;
+                        this.suppressFileLogging = noFileLogging;
+                        this.suppressStdOutLogging = noConsoleLogging;
+                        super.setup();
+                    }
+                };
 
                 loggerContext.reconfigure(configuration);
 
@@ -331,8 +303,7 @@ class LoggingUtilsDelegate {
                 return true;
             } else {
                 loggerContext.setConfigLocation(configLocation);
-                LoggingStartupContextListener.LOGGER.config(
-                        "Log4j 2 configuration set to " + configResource.name());
+                LoggingStartupContextListener.LOGGER.config("Log4j 2 configuration set to " + configResource.name());
 
                 if (extension.equalsIgnoreCase("properties")) {
                     if (loggerContext.getConfiguration().getAppenders().size() == 1
@@ -346,9 +317,7 @@ class LoggingUtilsDelegate {
             LoggingStartupContextListener.getLogger()
                     .log(
                             Level.WARNING,
-                            "Could not access Log4J 2 configuration uri '"
-                                    + configResource.name()
-                                    + "'",
+                            "Could not access Log4J 2 configuration uri '" + configResource.name() + "'",
                             unsuccessful);
         }
         return false;
@@ -374,10 +343,7 @@ class LoggingUtilsDelegate {
      * @return true for successful configuration
      */
     private static boolean configureFromLog4jProperties(
-            Resource configResource,
-            boolean suppressFileLogging,
-            boolean suppressStdOutLogging,
-            String logFileName) {
+            Resource configResource, boolean suppressFileLogging, boolean suppressStdOutLogging, String logFileName) {
 
         Properties lprops = new Properties();
 
@@ -386,9 +352,7 @@ class LoggingUtilsDelegate {
                 LoggingStartupContextListener.getLogger()
                         .log(
                                 Level.WARNING,
-                                "Could not access Log4J 1.2 configuration file '"
-                                        + configResource.name()
-                                        + "'");
+                                "Could not access Log4J 1.2 configuration file '" + configResource.name() + "'");
                 return false;
             } else {
                 LoggingStartupContextListener.getLogger()
@@ -399,37 +363,31 @@ class LoggingUtilsDelegate {
             LoggingStartupContextListener.getLogger()
                     .log(
                             Level.WARNING,
-                            "Could not access Log4J 1.2 configuration file '"
-                                    + configResource.name()
-                                    + "'");
+                            "Could not access Log4J 1.2 configuration file '" + configResource.name() + "'");
             return false;
         }
 
         if (lprops.containsKey("rootLogger")) {
-            LoggingStartupContextListener.getLogger()
-                    .fine("Confident this is a log4j 2 properties configuration");
+            LoggingStartupContextListener.getLogger().fine("Confident this is a log4j 2 properties configuration");
             return false;
         } else if (lprops.containsKey("log4j.rootLogger")) {
-            LoggingStartupContextListener.getLogger()
-                    .fine("Confident this is a log4j 1.2 properties configuration");
+            LoggingStartupContextListener.getLogger().fine("Confident this is a log4j 1.2 properties configuration");
         }
 
         if (suppressStdOutLogging) {
-            List<String> removeAppender =
-                    lprops.keySet().stream()
-                            .map(k -> (String) k)
-                            .filter(k -> ((String) k).startsWith("log4j.appender.stdout"))
-                            .collect(Collectors.toList());
+            List<String> removeAppender = lprops.keySet().stream()
+                    .map(k -> (String) k)
+                    .filter(k -> ((String) k).startsWith("log4j.appender.stdout"))
+                    .collect(Collectors.toList());
 
             lprops.keySet().removeAll(removeAppender);
         }
 
         if (suppressFileLogging) {
-            List<String> removeAppender =
-                    lprops.keySet().stream()
-                            .map(k -> (String) k)
-                            .filter(k -> ((String) k).startsWith("log4j.appender.geoserverlogfile"))
-                            .collect(Collectors.toList());
+            List<String> removeAppender = lprops.keySet().stream()
+                    .map(k -> (String) k)
+                    .filter(k -> ((String) k).startsWith("log4j.appender.geoserverlogfile"))
+                    .collect(Collectors.toList());
 
             lprops.keySet().removeAll(removeAppender);
         } else {
@@ -451,9 +409,7 @@ class LoggingUtilsDelegate {
             LoggingStartupContextListener.getLogger()
                     .log(
                             Level.WARNING,
-                            "Could not access Log4J 1.2 configuration file '"
-                                    + configResource.name()
-                                    + "'",
+                            "Could not access Log4J 1.2 configuration file '" + configResource.name() + "'",
                             unsuccessful);
             return false;
         }
@@ -485,10 +441,7 @@ class LoggingUtilsDelegate {
         }
         System.setProperty(DefaultConfiguration.DEFAULT_LEVEL, defaultLevel);
 
-        @SuppressWarnings({
-            "resource",
-            "PMD.CloseResource"
-        }) // current context, no need to enforce AutoClosable
+        @SuppressWarnings({"resource", "PMD.CloseResource"}) // current context, no need to enforce AutoClosable
         LoggerContext loggerContext = (LoggerContext) LogManager.getContext(false);
         loggerContext.reconfigure(new DefaultConfiguration());
 
@@ -522,8 +475,7 @@ class LoggingUtilsDelegate {
         // 2)  If they *have*, then we don't worry about configuring logging
         // 3)  If they haven't, then we configure logging to use the log4j config file
         // specified, and remove console appenders if the suppressstdoutlogging is true.
-        LoggingStartupContextListener.getLogger()
-                .fine("CONFIGURING GEOSERVER LOGGING -------------------------");
+        LoggingStartupContextListener.getLogger().fine("CONFIGURING GEOSERVER LOGGING -------------------------");
 
         // ensure standard logging configuration files are in place (although they may be
         // customized)
@@ -531,30 +483,24 @@ class LoggingUtilsDelegate {
         if (configFileName == null) {
             configFileName = "DEFAULT_LOGGING";
             LoggingStartupContextListener.getLogger()
-                    .config(
-                            "No logging configuration (the logging.xml level) defined:  using 'DEFAULT_LOGGING'");
+                    .config("No logging configuration (the logging.xml level) defined:  using 'DEFAULT_LOGGING'");
         }
 
         Resource configResource = determineLoggingProfile(resourceLoader, configFileName);
         if (configResource.getType() != Type.RESOURCE) {
             configureDefault(Level.INFO);
             LoggingStartupContextListener.getLogger()
-                    .warning(
-                            "Unable to load logging configuration '"
-                                    + configFileName
-                                    + "'.  In addition, an attempt was made to create the 'logs' directory in your data dir, "
-                                    + "and to use the DEFAULT_LOGGING configuration, but this failed as well. "
-                                    + "Is your data dir writeable?");
+                    .warning("Unable to load logging configuration '"
+                            + configFileName
+                            + "'.  In addition, an attempt was made to create the 'logs' directory in your data dir, "
+                            + "and to use the DEFAULT_LOGGING configuration, but this failed as well. "
+                            + "Is your data dir writeable?");
             return;
         }
 
         // reconfiguring log4j logger levels by resetting and loading a new configuration
         configureGeoServerLogging(
-                resourceLoader,
-                configResource,
-                suppressStdOutLogging,
-                suppressFileLogging,
-                logFileName);
+                resourceLoader, configResource, suppressStdOutLogging, suppressFileLogging, logFileName);
     }
 
     /**
@@ -564,8 +510,7 @@ class LoggingUtilsDelegate {
      * @param configFileName
      * @return config resource, or null if not found
      */
-    private static Resource determineLoggingProfile(
-            GeoServerResourceLoader resourceLoader, String configFileName) {
+    private static Resource determineLoggingProfile(GeoServerResourceLoader resourceLoader, String configFileName) {
         Resource logs = resourceLoader.get("logs");
 
         Resource configResource = logs.get(configFileName);
@@ -573,23 +518,17 @@ class LoggingUtilsDelegate {
 
             final String[] EXTENSIONS = {"xml", "yml", "yaml", "json", "jsn", "properties"};
 
-            Map<String, Resource> availableLoggingConfigurations =
-                    logs.list().stream()
-                            .filter(
-                                    r ->
-                                            r.getType() == Type.RESOURCE
-                                                    && r.name().contains("_LOGGING"))
-                            .collect(Collectors.toMap(r -> r.name(), r -> r));
+            Map<String, Resource> availableLoggingConfigurations = logs.list().stream()
+                    .filter(r -> r.getType() == Type.RESOURCE && r.name().contains("_LOGGING"))
+                    .collect(Collectors.toMap(r -> r.name(), r -> r));
 
-            String baseFileName =
-                    configFileName.lastIndexOf('.') == -1
-                            ? configFileName
-                            : configFileName.substring(0, configFileName.lastIndexOf('.'));
+            String baseFileName = configFileName.lastIndexOf('.') == -1
+                    ? configFileName
+                    : configFileName.substring(0, configFileName.lastIndexOf('.'));
 
             for (String extension : EXTENSIONS) {
                 if (availableLoggingConfigurations.containsKey(baseFileName + "." + extension)) {
-                    configResource =
-                            availableLoggingConfigurations.get(baseFileName + "." + extension);
+                    configResource = availableLoggingConfigurations.get(baseFileName + "." + extension);
                     break;
                 }
             }
@@ -608,8 +547,7 @@ class LoggingUtilsDelegate {
      * @param resourceLoader GeoServer resource access
      * @param logConfigFile Logging profile matching a built-in template on the classpath
      */
-    static void checkBuiltInLoggingConfiguration(
-            GeoServerResourceLoader resourceLoader, String logConfigFile) {
+    static void checkBuiltInLoggingConfiguration(GeoServerResourceLoader resourceLoader, String logConfigFile) {
         Resource logs = resourceLoader.get("logs");
         File logsDirectory = logs.dir();
         String logConfigXml = logConfigFile + ".xml";
@@ -625,18 +563,14 @@ class LoggingUtilsDelegate {
                         boolean renamed = target.renameTo(backup);
                         if (renamed) {
                             LoggingStartupContextListener.getLogger()
-                                    .finer(
-                                            "Check '"
-                                                    + logConfigXml
-                                                    + "' logging configuration - outdated and renamed to '"
-                                                    + logConfigBackup
-                                                    + "'");
+                                    .finer("Check '"
+                                            + logConfigXml
+                                            + "' logging configuration - outdated and renamed to '"
+                                            + logConfigBackup
+                                            + "'");
                         }
                         LoggingStartupContextListener.getLogger()
-                                .finer(
-                                        "Check '"
-                                                + logConfigXml
-                                                + "' logging configuration, outdated");
+                                .finer("Check '" + logConfigXml + "' logging configuration, outdated");
                         resourceLoader.copyFromClassPath(logConfigXml, target);
                     }
                 } catch (IOException e) {
@@ -654,10 +588,9 @@ class LoggingUtilsDelegate {
                 resourceLoader.copyFromClassPath(logConfigXml, target);
             } catch (IOException e) {
                 LoggingStartupContextListener.getLogger()
-                        .config(
-                                "Check '"
-                                        + logConfigXml
-                                        + "' logging configuration - unable to create. Is your data dir writeable?");
+                        .config("Check '"
+                                + logConfigXml
+                                + "' logging configuration - unable to create. Is your data dir writeable?");
             }
         }
     }
@@ -684,12 +617,11 @@ class LoggingUtilsDelegate {
                 boolean renamed = properties.renameTo(backup);
                 if (renamed) {
                     LoggingStartupContextListener.getLogger()
-                            .finer(
-                                    "Check '"
-                                            + logConfigProperties
-                                            + "' logging configuration - outdated and renamed to '"
-                                            + logConfigBackup
-                                            + "'");
+                            .finer("Check '"
+                                    + logConfigProperties
+                                    + "' logging configuration - outdated and renamed to '"
+                                    + logConfigBackup
+                                    + "'");
                 } else {
                     LoggingStartupContextListener.getLogger()
                             .config(
@@ -713,12 +645,11 @@ class LoggingUtilsDelegate {
         InputStream is = null;
         is = Thread.currentThread().getContextClassLoader().getResourceAsStream(classpathResource);
         if (is == null) {
-            throw new IOException(
-                    "Could not obtain "
-                            + classpathResource
-                            + " from scope "
-                            + Thread.currentThread().getContextClassLoader().toString()
-                            + ".");
+            throw new IOException("Could not obtain "
+                    + classpathResource
+                    + " from scope "
+                    + Thread.currentThread().getContextClassLoader().toString()
+                    + ".");
         }
         return is;
     }

@@ -47,10 +47,10 @@ import org.locationtech.jts.geom.Geometry;
  */
 public abstract class AbstractLayerOrTable extends AbstractGSRModel implements GSRModel {
 
-    private static final Logger LOGGER =
-            org.geotools.util.logging.Logging.getLogger(AbstractLayerOrTable.class);
+    private static final Logger LOGGER = org.geotools.util.logging.Logging.getLogger(AbstractLayerOrTable.class);
 
-    @JsonIgnore public final LayerInfo layer;
+    @JsonIgnore
+    public final LayerInfo layer;
 
     protected Double currentVersion = CURRENT_VERSION;
     protected Integer id;
@@ -104,16 +104,11 @@ public abstract class AbstractLayerOrTable extends AbstractGSRModel implements G
                 layerOrTable.layer,
                 layerOrTable.getId(),
                 layerOrTable.getExtent(),
-                (layerOrTable.getDrawingInfo() == null
-                        ? null
-                        : layerOrTable.getDrawingInfo().renderer),
-                (layerOrTable.getDrawingInfo() == null
-                        ? null
-                        : layerOrTable.getDrawingInfo().labelingInfo));
+                (layerOrTable.getDrawingInfo() == null ? null : layerOrTable.getDrawingInfo().renderer),
+                (layerOrTable.getDrawingInfo() == null ? null : layerOrTable.getDrawingInfo().labelingInfo));
     }
 
-    AbstractLayerOrTable(
-            LayerInfo layer, int id, Envelope extent, Renderer renderer, List<Label> labelingInfo)
+    AbstractLayerOrTable(LayerInfo layer, int id, Envelope extent, Renderer renderer, List<Label> labelingInfo)
             throws IOException {
         this.layer = layer;
         this.id = id;
@@ -152,16 +147,9 @@ public abstract class AbstractLayerOrTable extends AbstractGSRModel implements G
             try {
                 // generated field
                 FeatureType schema = featureTypeInfo.getFeatureType();
-                boolean editable =
-                        featureTypeInfo.getFeatureSource(null, null) instanceof FeatureStore;
-                fields.add(
-                        new Field(
-                                FeatureEncoder.OBJECTID_FIELD_NAME,
-                                FieldTypeEnum.OID,
-                                "Feature Id",
-                                4000,
-                                false,
-                                false));
+                boolean editable = featureTypeInfo.getFeatureSource(null, null) instanceof FeatureStore;
+                fields.add(new Field(
+                        FeatureEncoder.OBJECTID_FIELD_NAME, FieldTypeEnum.OID, "Feature Id", 4000, false, false));
 
                 for (PropertyDescriptor desc : schema.getDescriptors()) {
                     try {
@@ -169,10 +157,7 @@ public abstract class AbstractLayerOrTable extends AbstractGSRModel implements G
                             fields.add(FeatureEncoder.field(desc, editable));
                         }
                     } catch (Exception e) {
-                        LOGGER.log(
-                                Level.WARNING,
-                                "Omitting fields for PropertyDescriptor: " + desc,
-                                e);
+                        LOGGER.log(Level.WARNING, "Omitting fields for PropertyDescriptor: " + desc, e);
                     }
                 }
 
@@ -222,8 +207,7 @@ public abstract class AbstractLayerOrTable extends AbstractGSRModel implements G
 
             return gtype;
         } else {
-            throw new IllegalArgumentException(
-                    "Layer controller not a valid type: " + resource.getClass());
+            throw new IllegalArgumentException("Layer controller not a valid type: " + resource.getClass());
         }
     }
 

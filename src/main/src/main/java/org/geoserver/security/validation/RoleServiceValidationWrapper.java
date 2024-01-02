@@ -53,8 +53,7 @@ import org.springframework.util.StringUtils;
  *
  * @author christian
  */
-public class RoleServiceValidationWrapper extends AbstractSecurityValidator
-        implements GeoServerRoleService {
+public class RoleServiceValidationWrapper extends AbstractSecurityValidator implements GeoServerRoleService {
 
     static Logger LOGGER = Logging.getLogger("org.geoserver.security");
 
@@ -69,9 +68,7 @@ public class RoleServiceValidationWrapper extends AbstractSecurityValidator
      * names and group names is required
      */
     public RoleServiceValidationWrapper(
-            GeoServerRoleService service,
-            boolean checkAgainstRules,
-            GeoServerUserGroupService... services) {
+            GeoServerRoleService service, boolean checkAgainstRules, GeoServerUserGroupService... services) {
         super(service.getSecurityManager());
         this.service = service;
         this.services = services;
@@ -79,8 +76,7 @@ public class RoleServiceValidationWrapper extends AbstractSecurityValidator
     }
 
     /** Construct a wrapper without checking againset rules */
-    public RoleServiceValidationWrapper(
-            GeoServerRoleService service, GeoServerUserGroupService... services) {
+    public RoleServiceValidationWrapper(GeoServerRoleService service, GeoServerUserGroupService... services) {
         this(service, false, services);
     }
 
@@ -113,11 +109,9 @@ public class RoleServiceValidationWrapper extends AbstractSecurityValidator
         GeoServerSecurityManager secMgr = getSecurityManager();
 
         List<String> keys = new ArrayList<>();
-        for (ServiceAccessRule rule :
-                secMgr.getServiceAccessRuleDAO().getRulesAssociatedWithRole(role.getAuthority()))
+        for (ServiceAccessRule rule : secMgr.getServiceAccessRuleDAO().getRulesAssociatedWithRole(role.getAuthority()))
             keys.add(rule.getKey());
-        for (DataAccessRule rule :
-                secMgr.getDataAccessRuleDAO().getRulesAssociatedWithRole(role.getAuthority()))
+        for (DataAccessRule rule : secMgr.getDataAccessRuleDAO().getRulesAssociatedWithRole(role.getAuthority()))
             keys.add(rule.getKey());
 
         if (!keys.isEmpty()) {
@@ -161,14 +155,12 @@ public class RoleServiceValidationWrapper extends AbstractSecurityValidator
 
     protected void checkExistingRoleName(String roleName) throws IOException {
         checkRoleName(roleName);
-        if (service.getRoleByName(roleName) == null)
-            throw createSecurityException(NOT_FOUND, roleName);
+        if (service.getRoleByName(roleName) == null) throw createSecurityException(NOT_FOUND, roleName);
     }
 
     protected void checkReservedNames(String roleName) throws IOException {
         for (GeoServerRole systemRole : GeoServerRole.SystemRoles) {
-            if (systemRole.getAuthority().equals(roleName))
-                throw createSecurityException(RESERVED_NAME, roleName);
+            if (systemRole.getAuthority().equals(roleName)) throw createSecurityException(RESERVED_NAME, roleName);
         }
     }
 
@@ -179,10 +171,7 @@ public class RoleServiceValidationWrapper extends AbstractSecurityValidator
             if (service.getName().equals(serviceName)) continue;
             GeoServerRole role = null;
             try {
-                role =
-                        service.getSecurityManager()
-                                .loadRoleService(serviceName)
-                                .getRoleByName(roleName);
+                role = service.getSecurityManager().loadRoleService(serviceName).getRoleByName(roleName);
             } catch (IOException ex) {
                 LOGGER.log(Level.WARNING, ex.getMessage(), ex);
                 throw createSecurityException(CANNOT_CHECK_ROLE_IN_SERVICE, roleName, serviceName);
@@ -195,8 +184,7 @@ public class RoleServiceValidationWrapper extends AbstractSecurityValidator
 
     protected void checkNotExistingRoleName(String roleName) throws IOException {
         checkRoleName(roleName);
-        if (service.getRoleByName(roleName) != null)
-            throw createSecurityException(ALREADY_EXISTS, roleName);
+        if (service.getRoleByName(roleName) != null) throw createSecurityException(ALREADY_EXISTS, roleName);
     }
 
     // start wrapper methods
@@ -304,8 +292,7 @@ public class RoleServiceValidationWrapper extends AbstractSecurityValidator
 
     @Override
     public Properties personalizeRoleParams(
-            String roleName, Properties roleParams, String userName, Properties userProps)
-            throws IOException {
+            String roleName, Properties roleParams, String userName, Properties userProps) throws IOException {
         return service.personalizeRoleParams(roleName, roleParams, userName, userProps);
     }
 

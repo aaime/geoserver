@@ -31,8 +31,7 @@ public class GraticuleLabelPointProcessTest extends GraticuleLabelTestSupport {
     @Test
     public void testBottomBigBBox() throws Exception {
         ReferencedEnvelope bbox =
-                new ReferencedEnvelope(
-                        -260.15625, 279.84375, -97.734375, 172.265625, DefaultGeographicCRS.WGS84);
+                new ReferencedEnvelope(-260.15625, 279.84375, -97.734375, 172.265625, DefaultGeographicCRS.WGS84);
         SimpleFeatureCollection features = runLabels(bbox, "bottom");
         checkLabels(features, "bottom");
     }
@@ -40,21 +39,15 @@ public class GraticuleLabelPointProcessTest extends GraticuleLabelTestSupport {
     @Test
     public void testBigBBox() throws Exception {
         ReferencedEnvelope bbox =
-                new ReferencedEnvelope(
-                        -260.15625, 279.84375, -97.734375, 172.265625, DefaultGeographicCRS.WGS84);
+                new ReferencedEnvelope(-260.15625, 279.84375, -97.734375, 172.265625, DefaultGeographicCRS.WGS84);
         SimpleFeatureCollection features = runLabels(bbox, "both");
         checkLabels(features, "both");
     }
 
     @Test
     public void testSmallBBox() throws Exception {
-        ReferencedEnvelope bbox =
-                new ReferencedEnvelope(
-                        -92.724609375,
-                        -25.224609375,
-                        -0.615234375,
-                        33.134765625,
-                        DefaultGeographicCRS.WGS84);
+        ReferencedEnvelope bbox = new ReferencedEnvelope(
+                -92.724609375, -25.224609375, -0.615234375, 33.134765625, DefaultGeographicCRS.WGS84);
         runLabels(bbox, "both");
         SimpleFeatureCollection features = runLabels(bbox, "topright");
         checkLabels(features, "topright");
@@ -103,14 +96,13 @@ public class GraticuleLabelPointProcessTest extends GraticuleLabelTestSupport {
                     left = !left;
                 }
                 boolean horizontal = (boolean) f.getAttribute("horizontal");
-                log.fine(
-                        f.getDefaultGeometry()
-                                + " left:"
-                                + f.getAttribute("left")
-                                + " top:"
-                                + f.getAttribute("top")
-                                + " Horiz:"
-                                + horizontal);
+                log.fine(f.getDefaultGeometry()
+                        + " left:"
+                        + f.getAttribute("left")
+                        + " top:"
+                        + f.getAttribute("top")
+                        + " Horiz:"
+                        + horizontal);
                 boolean obs = (boolean) f.getAttribute("left");
                 if (horizontal) Assert.assertEquals("wrong left", left, obs);
                 obs = (boolean) f.getAttribute("top");
@@ -119,9 +111,9 @@ public class GraticuleLabelPointProcessTest extends GraticuleLabelTestSupport {
         }
     }
 
-    private SimpleFeatureCollection runLabels(ReferencedEnvelope box, String pos)
-            throws IOException {
-        SimpleFeatureCollection features = store.getFeatureSource("Graticule_10_30").getFeatures();
+    private SimpleFeatureCollection runLabels(ReferencedEnvelope box, String pos) throws IOException {
+        SimpleFeatureCollection features =
+                store.getFeatureSource("Graticule_10_30").getFeatures();
 
         GraticuleLabelPointProcess process = new GraticuleLabelPointProcess();
 

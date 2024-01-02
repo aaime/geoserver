@@ -687,8 +687,7 @@ public class GeoServerDataDirectory {
         final DefaultResourceLocator locator = new ResourceAwareResourceLocator();
         locator.setSourceUrl(Resources.toURL(styleResource));
         StyledLayerDescriptor sld =
-                Styles.handler(s.getFormat())
-                        .parse(styleResource, s.getFormatVersion(), locator, null);
+                Styles.handler(s.getFormat()).parse(styleResource, s.getFormatVersion(), locator, null);
         final Style style = Styles.style(sld);
         assert style != null;
         return style;
@@ -704,12 +703,9 @@ public class GeoServerDataDirectory {
     public @Nonnull StyledLayerDescriptor parsedSld(final StyleInfo s) throws IOException {
         final Resource styleResource = style(s);
         if (styleResource.getType() == Type.UNDEFINED) {
-            throw new IOException(
-                    "No such resource: "
-                            + s.getFilename()
-                            + (s.getWorkspace() != null
-                                    ? " in workspace " + s.getWorkspace()
-                                    : ""));
+            throw new IOException("No such resource: "
+                    + s.getFilename()
+                    + (s.getWorkspace() != null ? " in workspace " + s.getWorkspace() : ""));
         }
         File input = styleResource.file();
 
@@ -717,8 +713,7 @@ public class GeoServerDataDirectory {
         locator.setSourceUrl(Resources.toURL(styleResource));
         EntityResolver entityResolver = getEntityResolver();
         final StyledLayerDescriptor sld =
-                Styles.handler(s.getFormat())
-                        .parse(input, s.getFormatVersion(), locator, getEntityResolver());
+                Styles.handler(s.getFormat()).parse(input, s.getFormatVersion(), locator, getEntityResolver());
 
         return sld;
     }
@@ -792,64 +787,59 @@ public class GeoServerDataDirectory {
         final Resource baseDir = get(s);
         try {
             Style parsedStyle = parsedStyleResources(s);
-            parsedStyle.accept(
-                    new AbstractStyleVisitor() {
-                        @Override
-                        public void visit(ExternalGraphic exgr) {
-                            if (exgr.getOnlineResource() == null) {
-                                return;
-                            }
+            parsedStyle.accept(new AbstractStyleVisitor() {
+                @Override
+                public void visit(ExternalGraphic exgr) {
+                    if (exgr.getOnlineResource() == null) {
+                        return;
+                    }
+                    try {
+                        final String location = exgr.getURI();
+                        Resource r = resourceLoader.fromURL(location);
+
+                        if (r != null && r.getType() != Type.UNDEFINED) {
+                            resources.add(r);
+                        }
+                    } catch (IllegalArgumentException e) {
+                        GeoServerConfigPersister.LOGGER.log(
+                                Level.WARNING, "Error attemping to process SLD resource", e);
+                    }
+                }
+
+                @Override
+                public void visit(Mark mark) {
+                    final Expression wellKnownName = mark.getWellKnownName();
+                    if (wellKnownName instanceof Literal) {
+                        final String name = wellKnownName.evaluate(null, String.class);
+                        if (name.startsWith("resource:")) {
                             try {
-                                final String location = exgr.getURI();
-                                Resource r = resourceLoader.fromURL(location);
+                                Resource r = resourceLoader.fromURL(name);
 
                                 if (r != null && r.getType() != Type.UNDEFINED) {
                                     resources.add(r);
                                 }
                             } catch (IllegalArgumentException e) {
                                 GeoServerConfigPersister.LOGGER.log(
-                                        Level.WARNING,
-                                        "Error attemping to process SLD resource",
-                                        e);
+                                        Level.WARNING, "Error attemping to process SLD resource", e);
                             }
                         }
+                    }
+                }
 
-                        @Override
-                        public void visit(Mark mark) {
-                            final Expression wellKnownName = mark.getWellKnownName();
-                            if (wellKnownName instanceof Literal) {
-                                final String name = wellKnownName.evaluate(null, String.class);
-                                if (name.startsWith("resource:")) {
-                                    try {
-                                        Resource r = resourceLoader.fromURL(name);
-
-                                        if (r != null && r.getType() != Type.UNDEFINED) {
-                                            resources.add(r);
-                                        }
-                                    } catch (IllegalArgumentException e) {
-                                        GeoServerConfigPersister.LOGGER.log(
-                                                Level.WARNING,
-                                                "Error attemping to process SLD resource",
-                                                e);
-                                    }
-                                }
-                            }
+                // TODO: Workaround for GEOT-4803, Remove when it is fixed, KS
+                @Override
+                public void visit(ChannelSelection cs) {
+                    if (cs.getGrayChannel() != null) {
+                        cs.getGrayChannel().accept(this);
+                    }
+                    final SelectedChannelType[] rgbChannels = cs.getRGBChannels();
+                    if (rgbChannels != null) {
+                        for (SelectedChannelType ch : rgbChannels) {
+                            if (ch != null) ch.accept(this);
                         }
-
-                        // TODO: Workaround for GEOT-4803, Remove when it is fixed, KS
-                        @Override
-                        public void visit(ChannelSelection cs) {
-                            if (cs.getGrayChannel() != null) {
-                                cs.getGrayChannel().accept(this);
-                            }
-                            final SelectedChannelType[] rgbChannels = cs.getRGBChannels();
-                            if (rgbChannels != null) {
-                                for (SelectedChannelType ch : rgbChannels) {
-                                    if (ch != null) ch.accept(this);
-                                }
-                            }
-                        }
-                    });
+                    }
+                }
+            });
         } catch (FileNotFoundException e) {
             GeoServerConfigPersister.LOGGER.log(Level.WARNING, "Error loading style:" + e);
         } catch (IOException e) {
@@ -939,9 +929,7 @@ public class GeoServerDataDirectory {
                         u = new URL(u.toString() + "?" + url.getQuery());
                     } catch (MalformedURLException ex) {
                         GeoServerConfigPersister.LOGGER.log(
-                                Level.WARNING,
-                                "Error processing query string for resource with uri: " + uri,
-                                ex);
+                                Level.WARNING, "Error processing query string for resource with uri: " + uri, ex);
                         return null;
                     }
                 }
@@ -951,9 +939,7 @@ public class GeoServerDataDirectory {
                         u = new URL(u.toString() + "#" + url.getRef());
                     } catch (MalformedURLException ex) {
                         GeoServerConfigPersister.LOGGER.log(
-                                Level.WARNING,
-                                "Error processing # fragment for resource with uri: " + uri,
-                                ex);
+                                Level.WARNING, "Error processing # fragment for resource with uri: " + uri, ex);
                         return null;
                     }
                 }

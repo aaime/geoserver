@@ -83,8 +83,7 @@ class NoOpGraphics2D extends AbstractGraphics2D {
     }
 
     @Override
-    public boolean drawImage(
-            Image img, int x, int y, int width, int height, ImageObserver observer) {
+    public boolean drawImage(Image img, int x, int y, int width, int height, ImageObserver observer) {
         return false;
     }
 

@@ -173,8 +173,7 @@ public class GeoServerOAuth2FilterConfig extends PreAuthenticatedUserNameFilterC
      *     set
      */
     @Override
-    public void setEnableRedirectAuthenticationEntryPoint(
-            Boolean enableRedirectAuthenticationEntryPoint) {
+    public void setEnableRedirectAuthenticationEntryPoint(Boolean enableRedirectAuthenticationEntryPoint) {
         this.enableRedirectAuthenticationEntryPoint = enableRedirectAuthenticationEntryPoint;
     }
 
@@ -184,9 +183,7 @@ public class GeoServerOAuth2FilterConfig extends PreAuthenticatedUserNameFilterC
 
             @Override
             public void commence(
-                    HttpServletRequest request,
-                    HttpServletResponse response,
-                    AuthenticationException authException)
+                    HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
                     throws IOException, ServletException {
                 final StringBuilder loginUri = buildAuthorizationUrl();
 

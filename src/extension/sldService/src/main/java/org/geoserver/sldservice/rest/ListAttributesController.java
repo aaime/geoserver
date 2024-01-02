@@ -73,11 +73,7 @@ public class ListAttributesController extends AbstractCatalogController {
 
     @GetMapping(
             path = "/{layerName}/attributes",
-            produces = {
-                MediaType.APPLICATION_JSON_VALUE,
-                MediaType.APPLICATION_XML_VALUE,
-                MediaType.TEXT_HTML_VALUE
-            })
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, MediaType.TEXT_HTML_VALUE})
     public Object attributes(
             @PathVariable String layerName,
             @RequestParam(value = "cache", required = false, defaultValue = "600") long cachingTime,
@@ -191,8 +187,7 @@ public class ListAttributesController extends AbstractCatalogController {
          *     com.thoughtworks.xstream.converters.MarshallingContext)
          */
         @Override
-        public void marshal(
-                Object value, HierarchicalStreamWriter writer, MarshallingContext context) {
+        public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext context) {
             final LayerAttributesList obj = (LayerAttributesList) value;
 
             writer.addAttribute("layer", obj.getLayerName());

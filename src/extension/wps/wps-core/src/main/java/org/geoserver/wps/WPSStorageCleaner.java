@@ -48,9 +48,7 @@ public class WPSStorageCleaner extends TimerTask {
             resourceManager.cleanExpiredResources(expirationThreshold, statusTracker);
         } catch (Exception e) {
             LOGGER.log(
-                    Level.WARNING,
-                    "Error occurred while trying to clean up " + "old coverages from temp storage",
-                    e);
+                    Level.WARNING, "Error occurred while trying to clean up " + "old coverages from temp storage", e);
         }
     }
 

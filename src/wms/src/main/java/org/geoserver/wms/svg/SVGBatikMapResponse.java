@@ -31,8 +31,7 @@ public final class SVGBatikMapResponse extends AbstractMapResponse {
      *     org.geoserver.platform.Operation)
      */
     @Override
-    public void write(Object value, OutputStream output, Operation operation)
-            throws IOException, ServiceException {
+    public void write(Object value, OutputStream output, Operation operation) throws IOException, ServiceException {
 
         BatikSVGMap map = (BatikSVGMap) value;
         try {

@@ -173,9 +173,7 @@ public class LocalWorkspaceCatalog extends AbstractCatalogDecorator implements C
 
     public List<CoverageInfo> wrapCoverageListIfNeeded(List<CoverageInfo> coverages) {
         if (coverages != null && useNameDequalifyingProxyForAll()) {
-            return coverages.stream()
-                    .map(ft -> wrap(ft, CoverageInfo.class))
-                    .collect(Collectors.toList());
+            return coverages.stream().map(ft -> wrap(ft, CoverageInfo.class)).collect(Collectors.toList());
         }
         return coverages;
     }
@@ -299,8 +297,7 @@ public class LocalWorkspaceCatalog extends AbstractCatalogDecorator implements C
 
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         if (requestAttributes == null) return false;
-        return Boolean.TRUE.equals(
-                requestAttributes.getAttribute(DEQUALIFY_ALL, RequestAttributes.SCOPE_REQUEST));
+        return Boolean.TRUE.equals(requestAttributes.getAttribute(DEQUALIFY_ALL, RequestAttributes.SCOPE_REQUEST));
     }
 
     @Override
@@ -374,8 +371,7 @@ public class LocalWorkspaceCatalog extends AbstractCatalogDecorator implements C
      */
     LayerGroupInfo check(LayerGroupInfo layerGroup) {
         if (LocalWorkspace.get() != null) {
-            if (layerGroup.getWorkspace() != null
-                    && !LocalWorkspace.get().equals(layerGroup.getWorkspace())) {
+            if (layerGroup.getWorkspace() != null && !LocalWorkspace.get().equals(layerGroup.getWorkspace())) {
                 return null;
             }
         }
@@ -559,8 +555,7 @@ public class LocalWorkspaceCatalog extends AbstractCatalogDecorator implements C
     }
 
     @Override
-    public <T extends CatalogInfo> T get(Class<T> type, Filter filter)
-            throws IllegalArgumentException {
+    public <T extends CatalogInfo> T get(Class<T> type, Filter filter) throws IllegalArgumentException {
         return wrap(delegate.get(type, filter), type);
     }
 
@@ -579,11 +574,7 @@ public class LocalWorkspaceCatalog extends AbstractCatalogDecorator implements C
      */
     @Override
     public <T extends CatalogInfo> CloseableIterator<T> list(
-            final Class<T> of,
-            final Filter filter,
-            final Integer offset,
-            final Integer count,
-            final SortBy sortBy) {
+            final Class<T> of, final Filter filter, final Integer offset, final Integer count, final SortBy sortBy) {
 
         CloseableIterator<T> iterator = delegate.list(of, filter, offset, count, sortBy);
         if (iterator.hasNext() && useNameDequalifyingProxy()) {

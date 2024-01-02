@@ -72,10 +72,7 @@ public final class IntegrationTestsUtils {
                 remove(instanceB.getGeoServer(), instanceB.getCatalog(), infoB);
             } else if (infoB == null) {
                 // this info exists only in the reference instance so it needs to be added
-                add(
-                        instanceB.getGeoServer(),
-                        instanceB.getCatalog(),
-                        (Info) SerializationUtils.clone(infoA));
+                add(instanceB.getGeoServer(), instanceB.getCatalog(), (Info) SerializationUtils.clone(infoA));
             } else {
                 // this info exists in both instances but is different
                 save(
@@ -106,8 +103,7 @@ public final class IntegrationTestsUtils {
     }
 
     /** Returns the catalog and configuration differences between two GeoServer instance. */
-    public static List<InfoDiff> differences(
-            GeoServerInstance instanceA, GeoServerInstance instanceB) {
+    public static List<InfoDiff> differences(GeoServerInstance instanceA, GeoServerInstance instanceB) {
         List<InfoDiff> differences = new ArrayList<>();
         // get catalog differences
         differences.addAll(catalogDifferences(instanceA, instanceB));
@@ -117,14 +113,10 @@ public final class IntegrationTestsUtils {
     }
 
     /** Returns the catalog differences between two GeoServer instances. */
-    public static List<InfoDiff> catalogDifferences(
-            GeoServerInstance instanceA, GeoServerInstance instanceB) {
+    public static List<InfoDiff> catalogDifferences(GeoServerInstance instanceA, GeoServerInstance instanceB) {
         // instantiate the differences visitor
-        CatalogDiffVisitor visitor =
-                new CatalogDiffVisitor(
-                        instanceB.getCatalog(),
-                        instanceA.getDataDirectory(),
-                        instanceB.getDataDirectory());
+        CatalogDiffVisitor visitor = new CatalogDiffVisitor(
+                instanceB.getCatalog(), instanceA.getDataDirectory(), instanceB.getDataDirectory());
         // visit the two catalogs
         instanceA.getCatalog().accept(visitor);
         // return the found differences
@@ -132,8 +124,7 @@ public final class IntegrationTestsUtils {
     }
 
     /** Return the configuration differences between two GeoServer instances. */
-    public static List<InfoDiff> configurationDifferences(
-            GeoServerInstance instanceA, GeoServerInstance instanceB) {
+    public static List<InfoDiff> configurationDifferences(GeoServerInstance instanceA, GeoServerInstance instanceB) {
         ConfigurationDiffVisitor visitor =
                 new ConfigurationDiffVisitor(instanceA.getGeoServer(), instanceB.getGeoServer());
         return visitor.differences();
@@ -185,10 +176,9 @@ public final class IntegrationTestsUtils {
         } else if (infoA instanceof GeoServerInfo) {
             geoServer.save(updateInfoImpl(infoA, infoB, GeoServerInfo.class));
         } else {
-            throw new RuntimeException(
-                    String.format(
-                            "Don't know how to handle info of type '%s'.",
-                            infoA.getClass().getSimpleName()));
+            throw new RuntimeException(String.format(
+                    "Don't know how to handle info of type '%s'.",
+                    infoA.getClass().getSimpleName()));
         }
     }
 
@@ -198,12 +188,11 @@ public final class IntegrationTestsUtils {
     private static <U> U updateInfoImpl(Info infoA, Info infoB, Class<U> type) {
         // make sure that we are dealing with infos that are compatible
         if (!type.isAssignableFrom(infoA.getClass()) || !type.isAssignableFrom(infoB.getClass())) {
-            throw new RuntimeException(
-                    String.format(
-                            "Info objects should be of type '%s', but are of types '%s' and '%s'.",
-                            type.getSimpleName(),
-                            infoA.getClass().getSimpleName(),
-                            infoB.getClass().getSimpleName()));
+            throw new RuntimeException(String.format(
+                    "Info objects should be of type '%s', but are of types '%s' and '%s'.",
+                    type.getSimpleName(),
+                    infoA.getClass().getSimpleName(),
+                    infoB.getClass().getSimpleName()));
         }
         // create a modification proxy for the second info
         U proxy = ModificationProxy.create(type.cast(infoB), type);
@@ -219,11 +208,10 @@ public final class IntegrationTestsUtils {
                     Object otherPropertyValue = OwsUtils.get(infoB, propertyName);
                     if (otherPropertyValue instanceof Info) {
                         // recursively update this info
-                        propertyValue =
-                                updateInfoImpl(
-                                        (Info) propertyValue,
-                                        (Info) otherPropertyValue,
-                                        getInfoInterface(propertyValue.getClass()));
+                        propertyValue = updateInfoImpl(
+                                (Info) propertyValue,
+                                (Info) otherPropertyValue,
+                                getInfoInterface(propertyValue.getClass()));
                     }
                 }
                 // if the property value is not a info clone it if possible
@@ -234,10 +222,7 @@ public final class IntegrationTestsUtils {
                 OwsUtils.set(proxy, propertyName, propertyValue);
             } catch (IllegalArgumentException exception) {
                 // ignore non existing property
-                LOGGER.log(
-                        Level.FINE,
-                        String.format("Error setting property '%s'.", propertyName),
-                        exception);
+                LOGGER.log(Level.FINE, String.format("Error setting property '%s'.", propertyName), exception);
             }
         }
         // return modification proxy of second info
@@ -286,10 +271,9 @@ public final class IntegrationTestsUtils {
         } else if (info instanceof ServiceInfo) {
             geoServer.add((ServiceInfo) info);
         } else {
-            throw new RuntimeException(
-                    String.format(
-                            "Don't know how to handle info of type '%s'.",
-                            info.getClass().getSimpleName()));
+            throw new RuntimeException(String.format(
+                    "Don't know how to handle info of type '%s'.",
+                    info.getClass().getSimpleName()));
         }
     }
 
@@ -324,10 +308,9 @@ public final class IntegrationTestsUtils {
         } else if (info instanceof ServiceInfo) {
             geoServer.remove((ServiceInfo) info);
         } else {
-            throw new RuntimeException(
-                    String.format(
-                            "Don't know how to handle info of type '%s'.",
-                            info.getClass().getSimpleName()));
+            throw new RuntimeException(String.format(
+                    "Don't know how to handle info of type '%s'.",
+                    info.getClass().getSimpleName()));
         }
     }
 }

@@ -44,12 +44,11 @@ public abstract class CoveragePPIO extends BinaryPPIO {
                 quality = Float.parseFloat(compressionQuality);
             } catch (NumberFormatException nfe) {
                 if (LOGGER.isLoggable(Level.INFO)) {
-                    LOGGER.info(
-                            "Specified quality is not valid (it should be in the range [0,1])."
-                                    + " quality = "
-                                    + compressionQuality
-                                    + "\nUsing default Quality: "
-                                    + DEFAULT_QUALITY);
+                    LOGGER.info("Specified quality is not valid (it should be in the range [0,1])."
+                            + " quality = "
+                            + compressionQuality
+                            + "\nUsing default Quality: "
+                            + DEFAULT_QUALITY);
                 }
             }
         }
@@ -68,8 +67,7 @@ public abstract class CoveragePPIO extends BinaryPPIO {
         }
 
         @Override
-        public void encode(
-                Object value, Map<String, Object> encodingParameters, OutputStream outputStream)
+        public void encode(Object value, Map<String, Object> encodingParameters, OutputStream outputStream)
                 throws Exception {
             GridCoverage2D gridCoverage = (GridCoverage2D) value;
             RenderedImage renderedImage = gridCoverage.getRenderedImage();
@@ -107,8 +105,7 @@ public abstract class CoveragePPIO extends BinaryPPIO {
         }
 
         @Override
-        public void encode(
-                Object value, Map<String, Object> encodingParameters, OutputStream outputStream)
+        public void encode(Object value, Map<String, Object> encodingParameters, OutputStream outputStream)
                 throws Exception {
             GridCoverage2D gridCoverage = (GridCoverage2D) value;
             RenderedImage renderedImage = gridCoverage.getRenderedImage();

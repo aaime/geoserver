@@ -34,8 +34,7 @@ public class TemplatedSchemaComponentDelegate implements SchemaComponentDelegate
 
     GeoServer gs;
 
-    public TemplatedSchemaComponentDelegate(
-            GeoServer gs, String namespaceURI, String name, String schemaPath) {
+    public TemplatedSchemaComponentDelegate(GeoServer gs, String namespaceURI, String name, String schemaPath) {
         this.gs = gs;
         this.typeName = new NameImpl(namespaceURI, name);
         this.schemaPath = schemaPath;
@@ -47,8 +46,7 @@ public class TemplatedSchemaComponentDelegate implements SchemaComponentDelegate
     }
 
     @Override
-    public void writeSchemaComponent(
-            DescribeRecordType request, Writer bw, AttributeDescriptor descriptor)
+    public void writeSchemaComponent(DescribeRecordType request, Writer bw, AttributeDescriptor descriptor)
             throws IOException {
         if (!canHandle(descriptor)) {
             throw new IllegalArgumentException("Cannot handle schema " + descriptor.getName());
@@ -67,11 +65,8 @@ public class TemplatedSchemaComponentDelegate implements SchemaComponentDelegate
             schemaLocationRoot = schemaLocationRoot.substring(0, schemaLocationRoot.length() - 1);
         }
 
-        try (BufferedReader reader =
-                new BufferedReader(
-                        new InputStreamReader(
-                                getClass().getResourceAsStream(schemaPath),
-                                StandardCharsets.UTF_8))) {
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(getClass().getResourceAsStream(schemaPath), StandardCharsets.UTF_8))) {
 
             String line;
             while ((line = reader.readLine()) != null) {

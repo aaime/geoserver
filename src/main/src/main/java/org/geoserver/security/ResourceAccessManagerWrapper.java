@@ -73,15 +73,12 @@ public abstract class ResourceAccessManagerWrapper implements ResourceAccessMana
         if (b == null) return a;
 
         CatalogMode mode = intersection(a.getMode(), b.getMode());
-        List<PropertyName> readAttributes =
-                intersection(a.getReadAttributes(), b.getReadAttributes());
+        List<PropertyName> readAttributes = intersection(a.getReadAttributes(), b.getReadAttributes());
         Filter readFilter = intersection(a.getReadFilter(), b.getReadFilter());
-        List<PropertyName> writeAttributes =
-                intersection(a.getReadAttributes(), b.getReadAttributes());
+        List<PropertyName> writeAttributes = intersection(a.getReadAttributes(), b.getReadAttributes());
         Filter writeFilter = intersection(a.getWriteFilter(), b.getWriteFilter());
 
-        return new VectorAccessLimits(
-                mode, readAttributes, readFilter, writeAttributes, writeFilter);
+        return new VectorAccessLimits(mode, readAttributes, readFilter, writeAttributes, writeFilter);
     }
 
     protected CoverageAccessLimits intersection(CoverageAccessLimits a, CoverageAccessLimits b) {
@@ -101,15 +98,11 @@ public abstract class ResourceAccessManagerWrapper implements ResourceAccessMana
                     rasterFilter = (MultiPolygon) intersection;
                 } else {
                     final List<Polygon> accum = new ArrayList<>();
-                    intersection.apply(
-                            (GeometryComponentFilter)
-                                    geom -> {
-                                        if (geom instanceof Polygon) accum.add((Polygon) geom);
-                                    });
+                    intersection.apply((GeometryComponentFilter) geom -> {
+                        if (geom instanceof Polygon) accum.add((Polygon) geom);
+                    });
 
-                    rasterFilter =
-                            geomFactory.createMultiPolygon(
-                                    accum.toArray(new Polygon[accum.size()]));
+                    rasterFilter = geomFactory.createMultiPolygon(accum.toArray(new Polygon[accum.size()]));
                 }
             }
         }
@@ -159,8 +152,7 @@ public abstract class ResourceAccessManagerWrapper implements ResourceAccessMana
         }
     }
 
-    protected GeneralParameterValue[] intersection(
-            GeneralParameterValue[] a, GeneralParameterValue[] b) {
+    protected GeneralParameterValue[] intersection(GeneralParameterValue[] a, GeneralParameterValue[] b) {
         if (a == null) return b;
         if (b == null) return a;
 
@@ -222,8 +214,7 @@ public abstract class ResourceAccessManagerWrapper implements ResourceAccessMana
     }
 
     @Override
-    public DataAccessLimits getAccessLimits(
-            Authentication user, LayerInfo layer, List<LayerGroupInfo> containers) {
+    public DataAccessLimits getAccessLimits(Authentication user, LayerInfo layer, List<LayerGroupInfo> containers) {
         return delegate.getAccessLimits(user, layer, containers);
     }
 

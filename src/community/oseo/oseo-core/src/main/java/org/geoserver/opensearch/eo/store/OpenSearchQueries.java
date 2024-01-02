@@ -38,7 +38,6 @@ public class OpenSearchQueries {
 
     private static boolean isSimple(PropertyDescriptor pd) {
         Class<?> binding = pd.getType().getBinding();
-        return !(List.class.isAssignableFrom(binding))
-                && !(FeatureType.class.isAssignableFrom(binding));
+        return !(List.class.isAssignableFrom(binding)) && !(FeatureType.class.isAssignableFrom(binding));
     }
 }

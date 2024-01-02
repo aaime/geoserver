@@ -35,8 +35,7 @@ public abstract class BaseCapabilitiesResponse extends Response {
      *     org.geoserver.platform.Operation)
      */
     @Override
-    public String getMimeType(final Object value, final Operation operation)
-            throws ServiceException {
+    public String getMimeType(final Object value, final Operation operation) throws ServiceException {
 
         if (value != null && value.getClass().isAssignableFrom(super.getBinding())) {
             return mime;

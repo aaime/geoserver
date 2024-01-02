@@ -32,17 +32,13 @@ public class DefaultProcessAccessManager implements ProcessAccessManager {
     @Override
     public ProcessAccessLimits getAccessLimits(Authentication user, String namespace) {
         SecureTreeNode node = dao.getSecurityTreeRoot().getDeepestNode(new String[] {namespace});
-        return new ProcessAccessLimits(
-                dao.getMode(), node.canAccess(user, AccessMode.READ), namespace);
+        return new ProcessAccessLimits(dao.getMode(), node.canAccess(user, AccessMode.READ), namespace);
     }
 
     @Override
     public ProcessAccessLimits getAccessLimits(Authentication user, Name process) {
-        SecureTreeNode node =
-                dao.getSecurityTreeRoot()
-                        .getDeepestNode(
-                                new String[] {process.getNamespaceURI(), process.getLocalPart()});
-        return new ProcessAccessLimits(
-                dao.getMode(), node.canAccess(user, AccessMode.READ), process.toString());
+        SecureTreeNode node = dao.getSecurityTreeRoot()
+                .getDeepestNode(new String[] {process.getNamespaceURI(), process.getLocalPart()});
+        return new ProcessAccessLimits(dao.getMode(), node.canAccess(user, AccessMode.READ), process.toString());
     }
 }

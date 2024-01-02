@@ -64,8 +64,7 @@ public class EOCoverageResourceCodec {
             boolean structured = reader instanceof StructuredGridCoverage2DReader;
             return dataset != null && dataset && time != null && time.isEnabled() && structured;
         } catch (IOException e) {
-            throw new ServiceException(
-                    "Failed to locate the grid coverage reader for coverage " + ci.prefixedName());
+            throw new ServiceException("Failed to locate the grid coverage reader for coverage " + ci.prefixedName());
         }
     }
 
@@ -76,22 +75,19 @@ public class EOCoverageResourceCodec {
      */
     public CoverageInfo getDatasetCoverage(String datasetId) {
         if (!datasetId.endsWith(DATASET_SUFFIX)) {
-            LOGGER.fine(
-                    "Invalid dataset id " + datasetId + " it does not end with " + DATASET_SUFFIX);
+            LOGGER.fine("Invalid dataset id " + datasetId + " it does not end with " + DATASET_SUFFIX);
             return null;
         }
 
         String coverageName = datasetId.substring(0, datasetId.length() - DATASET_SUFFIX.length());
         LayerInfo layer = NCNameResourceCodec.getCoverage(catalog, coverageName);
         if (layer == null) {
-            LOGGER.fine(
-                    "Invalid dataset id " + datasetId + " does not match any published dataset");
+            LOGGER.fine("Invalid dataset id " + datasetId + " does not match any published dataset");
             return null;
         }
         CoverageInfo ci = (CoverageInfo) layer.getResource();
         if (!isValidDataset(ci)) {
-            LOGGER.fine(
-                    "Invalid dataset id " + datasetId + " does not match any published dataset");
+            LOGGER.fine("Invalid dataset id " + datasetId + " does not match any published dataset");
             return null;
         }
 

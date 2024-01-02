@@ -112,9 +112,7 @@ public class LandingPageTest extends StylesTestSupport {
         assertEquals(12, (int) json.read("links.length()", Integer.class));
         // check landing page links
         assertJSONList(
-                json,
-                "links[?(@.type == 'application/json' && @.href =~ /.*ogc\\/styles\\/v1\\/\\?.*/)].rel",
-                "self");
+                json, "links[?(@.type == 'application/json' && @.href =~ /.*ogc\\/styles\\/v1\\/\\?.*/)].rel", "self");
         assertJSONList(
                 json,
                 "links[?(@.type != 'application/json' && @.href =~ /.*ogc\\/styles\\/v1\\/\\?.*/)].rel",
@@ -139,12 +137,7 @@ public class LandingPageTest extends StylesTestSupport {
                 Link.REL_CONFORMANCE_URI,
                 Link.REL_CONFORMANCE_URI);
         // check collection links
-        assertJSONList(
-                json,
-                "links[?(@.href =~ /.*ogc\\/styles\\/v1\\/styles.*/)].rel",
-                "styles",
-                "styles",
-                "styles");
+        assertJSONList(json, "links[?(@.href =~ /.*ogc\\/styles\\/v1\\/styles.*/)].rel", "styles", "styles", "styles");
         // check title
         assertEquals("Styles server", json.read("title"));
         // check description

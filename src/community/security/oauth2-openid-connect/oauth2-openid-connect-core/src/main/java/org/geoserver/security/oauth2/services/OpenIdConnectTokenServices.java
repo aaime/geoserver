@@ -63,17 +63,12 @@ public class OpenIdConnectTokenServices extends GeoServerOAuthRemoteTokenService
      * in the Authorization header. See
      * https://openid.net/specs/openid-connect-core-1_0.html#UserInfo
      */
-    protected Map<String, Object> checkTokenEndpoint(
-            String checkTokenEndpoint, String accessToken) {
+    protected Map<String, Object> checkTokenEndpoint(String checkTokenEndpoint, String accessToken) {
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", getAuthorizationHeader(accessToken));
         return restTemplate
-                .exchange(
-                        checkTokenEndpoint,
-                        HttpMethod.GET,
-                        new HttpEntity<>(formData, headers),
-                        Map.class)
+                .exchange(checkTokenEndpoint, HttpMethod.GET, new HttpEntity<>(formData, headers), Map.class)
                 .getBody();
     }
 
@@ -92,8 +87,7 @@ public class OpenIdConnectTokenServices extends GeoServerOAuthRemoteTokenService
             tokenValidator.validateSignature(rsaKey, jwsToken);
         } catch (ParseException parseException) {
             throw (InvalidSignatureException)
-                    new InvalidSignatureException(
-                                    "Could not verify signature of the JWT with the given RSA Public Key")
+                    new InvalidSignatureException("Could not verify signature of the JWT with the given RSA Public Key")
                             .initCause(parseException);
         }
         // verify access token - this did not validate signature as initially assumed
@@ -151,7 +145,6 @@ public class OpenIdConnectTokenServices extends GeoServerOAuthRemoteTokenService
         }
 
         setAccessTokenConverter(
-                new GeoServerAccessTokenConverter(
-                        new GeoServerUserAuthenticationConverter(config.getPrincipalKey())));
+                new GeoServerAccessTokenConverter(new GeoServerUserAuthenticationConverter(config.getPrincipalKey())));
     }
 }

@@ -60,139 +60,117 @@ abstract class AbstractWMTSStorePage extends GeoServerSecuredPage {
 
         // name
         PropertyModel<String> nameModel = new PropertyModel<>(model, "name");
-        final TextParamPanel namePanel =
-                new TextParamPanel<>(
-                        "namePanel",
-                        nameModel,
-                        new ResourceModel("AbstractWMTSStorePage.dataSrcName", "Data Source Name"),
-                        true);
+        final TextParamPanel namePanel = new TextParamPanel<>(
+                "namePanel",
+                nameModel,
+                new ResourceModel("AbstractWMTSStorePage.dataSrcName", "Data Source Name"),
+                true);
 
         form.add(namePanel);
 
         // description and enabled
-        form.add(
-                new TextParamPanel<>(
-                        "descriptionPanel",
-                        new PropertyModel<>(model, "description"),
-                        new ResourceModel("AbstractWMTSStorePage.description", "Description"),
-                        false));
-        form.add(
-                new CheckBoxParamPanel(
-                        "enabledPanel",
-                        new PropertyModel<>(model, "enabled"),
-                        new ResourceModel("enabled", "Enabled")));
+        form.add(new TextParamPanel<>(
+                "descriptionPanel",
+                new PropertyModel<>(model, "description"),
+                new ResourceModel("AbstractWMTSStorePage.description", "Description"),
+                false));
+        form.add(new CheckBoxParamPanel(
+                "enabledPanel", new PropertyModel<>(model, "enabled"), new ResourceModel("enabled", "Enabled")));
 
-        form.add(
-                new CheckBoxParamPanel(
-                        "disableOnConnFailurePanel",
-                        new PropertyModel<>(model, "disableOnConnFailure"),
-                        new ResourceModel(
-                                "AbstractWMTSStorePage.disableOnConnFailure",
-                                "Autodisable on connection failure")));
+        form.add(new CheckBoxParamPanel(
+                "disableOnConnFailurePanel",
+                new PropertyModel<>(model, "disableOnConnFailure"),
+                new ResourceModel("AbstractWMTSStorePage.disableOnConnFailure", "Autodisable on connection failure")));
         // a custom converter will turn this into a namespace url
-        workspacePanel =
-                new WorkspacePanel(
-                        "workspacePanel",
-                        new PropertyModel<>(model, "workspace"),
-                        new ResourceModel("workspace", "Workspace"),
-                        true);
+        workspacePanel = new WorkspacePanel(
+                "workspacePanel",
+                new PropertyModel<>(model, "workspace"),
+                new ResourceModel("workspace", "Workspace"),
+                true);
         form.add(workspacePanel);
 
-        capabilitiesURL =
-                new TextParamPanel<>(
-                        "capabilitiesURL",
-                        new PropertyModel<>(model, "capabilitiesURL"),
-                        new ParamResourceModel("capabilitiesURL", this),
-                        true);
+        capabilitiesURL = new TextParamPanel<>(
+                "capabilitiesURL",
+                new PropertyModel<>(model, "capabilitiesURL"),
+                new ParamResourceModel("capabilitiesURL", this),
+                true);
         form.add(capabilitiesURL);
 
         // user name
-        usernamePanel =
-                new TextParamPanel<>(
-                        "userNamePanel",
-                        new PropertyModel<>(model, "username"),
-                        new ResourceModel("AbstractWMTSStorePage.userName"),
-                        false);
+        usernamePanel = new TextParamPanel<>(
+                "userNamePanel",
+                new PropertyModel<>(model, "username"),
+                new ResourceModel("AbstractWMTSStorePage.userName"),
+                false);
 
         form.add(usernamePanel);
 
         // password
         form.add(
-                password =
-                        new PasswordParamPanel(
-                                "passwordPanel",
-                                new PropertyModel<>(model, "password"),
-                                new ResourceModel("AbstractWMTSStorePage.password"),
-                                false));
+                password = new PasswordParamPanel(
+                        "passwordPanel",
+                        new PropertyModel<>(model, "password"),
+                        new ResourceModel("AbstractWMTSStorePage.password"),
+                        false));
 
         // http header
-        headerNamePanel =
-                new TextParamPanel<>(
-                        "headerNamePanel",
-                        new PropertyModel<>(model, "headerName"),
-                        new ResourceModel("AbstractWMTSStorePage.headerName"),
-                        false);
+        headerNamePanel = new TextParamPanel<>(
+                "headerNamePanel",
+                new PropertyModel<>(model, "headerName"),
+                new ResourceModel("AbstractWMTSStorePage.headerName"),
+                false);
         form.add(headerNamePanel);
 
-        headerValuePanel =
-                new TextParamPanel<>(
-                        "headerValuePanel",
-                        new PropertyModel<>(model, "headerValue"),
-                        new ResourceModel("AbstractWMTSStorePage.headerValue"),
-                        false);
+        headerValuePanel = new TextParamPanel<>(
+                "headerValuePanel",
+                new PropertyModel<>(model, "headerValue"),
+                new ResourceModel("AbstractWMTSStorePage.headerValue"),
+                false);
         form.add(headerValuePanel);
 
         // max concurrent connections
-        final PropertyModel<Boolean> useHttpConnectionPoolModel =
-                new PropertyModel<>(model, "useConnectionPooling");
-        CheckBoxParamPanel useConnectionPooling =
-                new CheckBoxParamPanel(
-                        "useConnectionPoolingPanel",
-                        useHttpConnectionPoolModel,
-                        new ResourceModel("AbstractWMTSStorePage.useHttpConnectionPooling"));
+        final PropertyModel<Boolean> useHttpConnectionPoolModel = new PropertyModel<>(model, "useConnectionPooling");
+        CheckBoxParamPanel useConnectionPooling = new CheckBoxParamPanel(
+                "useConnectionPoolingPanel",
+                useHttpConnectionPoolModel,
+                new ResourceModel("AbstractWMTSStorePage.useHttpConnectionPooling"));
         form.add(useConnectionPooling);
 
-        final TextParamPanel<Integer> maxConnections =
-                new TextParamPanel<>(
-                        "maxConnectionsPanel",
-                        new PropertyModel<>(model, "maxConnections"),
-                        new ResourceModel("AbstractWMTSStorePage.maxConnections"),
-                        true,
-                        new RangeValidator<>(1, 128));
+        final TextParamPanel<Integer> maxConnections = new TextParamPanel<>(
+                "maxConnectionsPanel",
+                new PropertyModel<>(model, "maxConnections"),
+                new ResourceModel("AbstractWMTSStorePage.maxConnections"),
+                true,
+                new RangeValidator<>(1, 128));
         maxConnections.setOutputMarkupId(true);
         maxConnections.setEnabled(useHttpConnectionPoolModel.getObject());
         form.add(maxConnections);
 
-        useConnectionPooling
-                .getFormComponent()
-                .add(
-                        new OnChangeAjaxBehavior() {
+        useConnectionPooling.getFormComponent().add(new OnChangeAjaxBehavior() {
 
-                            @Override
-                            protected void onUpdate(AjaxRequestTarget target) {
-                                boolean enabled = useHttpConnectionPoolModel.getObject();
-                                maxConnections.setEnabled(enabled);
-                                target.add(maxConnections);
-                            }
-                        });
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {
+                boolean enabled = useHttpConnectionPoolModel.getObject();
+                maxConnections.setEnabled(enabled);
+                target.add(maxConnections);
+            }
+        });
 
         // connect timeout
-        form.add(
-                new TextParamPanel<>(
-                        "connectTimeoutPanel",
-                        new PropertyModel<>(model, "connectTimeout"),
-                        new ResourceModel("AbstractWMTSStorePage.connectTimeout"),
-                        true,
-                        new RangeValidator<>(1, 240)));
+        form.add(new TextParamPanel<>(
+                "connectTimeoutPanel",
+                new PropertyModel<>(model, "connectTimeout"),
+                new ResourceModel("AbstractWMTSStorePage.connectTimeout"),
+                true,
+                new RangeValidator<>(1, 240)));
 
         // read timeout
-        form.add(
-                new TextParamPanel<>(
-                        "readTimeoutPanel",
-                        new PropertyModel<>(model, "readTimeout"),
-                        new ResourceModel("AbstractWMTSStorePage.readTimeout"),
-                        true,
-                        new RangeValidator<>(1, 360)));
+        form.add(new TextParamPanel<>(
+                "readTimeoutPanel",
+                new PropertyModel<>(model, "readTimeout"),
+                new ResourceModel("AbstractWMTSStorePage.readTimeout"),
+                true,
+                new RangeValidator<>(1, 360)));
 
         // cancel/submit buttons
         form.add(new BookmarkablePageLink<>("cancel", StorePage.class));
@@ -203,10 +181,7 @@ abstract class AbstractWMTSStorePage extends GeoServerSecuredPage {
         form.add(new FeedbackPanel("feedback"));
 
         StoreNameValidator storeNameValidator =
-                new StoreNameValidator(
-                        workspacePanel.getFormComponent(),
-                        namePanel.getFormComponent(),
-                        store.getId());
+                new StoreNameValidator(workspacePanel.getFormComponent(), namePanel.getFormComponent(), store.getId());
         form.add(storeNameValidator);
     }
 
@@ -241,8 +216,7 @@ abstract class AbstractWMTSStorePage extends GeoServerSecuredPage {
      * @throws IllegalArgumentException with an appropriate error message if the save action can't
      *     be successfully performed
      */
-    protected abstract void onSave(WMTSStoreInfo info, AjaxRequestTarget target)
-            throws IllegalArgumentException;
+    protected abstract void onSave(WMTSStoreInfo info, AjaxRequestTarget target) throws IllegalArgumentException;
 
     @Override
     protected ComponentAuthorizer getPageAuthorizer() {

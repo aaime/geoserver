@@ -109,48 +109,39 @@ public class CapabilitiesSystemTest extends WMSTestSupport {
         SchemaFactory factory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
         URL schemaLocation = getClass().getResource("/schemas/wms/1.3.0/capabilities_1_3_0.xsd");
 
-        factory.setResourceResolver(
-                new LSResourceResolver() {
+        factory.setResourceResolver(new LSResourceResolver() {
 
-                    @Override
-                    public LSInput resolveResource(
-                            String type,
-                            String namespaceURI,
-                            String publicId,
-                            String systemId,
-                            String baseURI) {
+            @Override
+            public LSInput resolveResource(
+                    String type, String namespaceURI, String publicId, String systemId, String baseURI) {
 
-                        if (namespaceURI.equals("http://www.w3.org/1999/xlink")) {
-                            try {
-                                LSInput input =
-                                        ((DOMImplementationLS) dom.getImplementation())
-                                                .createLSInput();
-                                URL xlink = getClass().getResource("/schemas/xlink/1999/xlink.xsd");
-                                systemId = xlink.toURI().toASCIIString();
-                                input.setPublicId(publicId);
-                                input.setSystemId(systemId);
-                                return input;
-                            } catch (Exception e) {
-                                return null;
-                            }
-                        } else if (XML.NAMESPACE.equals(namespaceURI)) {
-                            try {
-                                LSInput input =
-                                        ((DOMImplementationLS) dom.getImplementation())
-                                                .createLSInput();
-                                URL xml = XML.class.getResource("xml.xsd");
-                                systemId = xml.toURI().toASCIIString();
-                                input.setPublicId(publicId);
-                                input.setSystemId(systemId);
-                                return input;
-                            } catch (Exception e) {
-                                return null;
-                            }
-                        } else {
-                            return null;
-                        }
+                if (namespaceURI.equals("http://www.w3.org/1999/xlink")) {
+                    try {
+                        LSInput input = ((DOMImplementationLS) dom.getImplementation()).createLSInput();
+                        URL xlink = getClass().getResource("/schemas/xlink/1999/xlink.xsd");
+                        systemId = xlink.toURI().toASCIIString();
+                        input.setPublicId(publicId);
+                        input.setSystemId(systemId);
+                        return input;
+                    } catch (Exception e) {
+                        return null;
                     }
-                });
+                } else if (XML.NAMESPACE.equals(namespaceURI)) {
+                    try {
+                        LSInput input = ((DOMImplementationLS) dom.getImplementation()).createLSInput();
+                        URL xml = XML.class.getResource("xml.xsd");
+                        systemId = xml.toURI().toASCIIString();
+                        input.setPublicId(publicId);
+                        input.setSystemId(systemId);
+                        return input;
+                    } catch (Exception e) {
+                        return null;
+                    }
+                } else {
+                    return null;
+                }
+            }
+        });
         Schema schema = factory.newSchema(schemaLocation);
 
         Validator validator = schema.newValidator();
@@ -229,8 +220,7 @@ public class CapabilitiesSystemTest extends WMSTestSupport {
         assertEquals("WMS_Capabilities", getAsDOM(path).getDocumentElement().getNodeName());
         assertEquals("text/xml", response.getContentType());
 
-        path =
-                "ows?service=WMS&request=GetCapabilities&version=1.3.0&format=application/unsupported";
+        path = "ows?service=WMS&request=GetCapabilities&version=1.3.0&format=application/unsupported";
         response = getAsServletResponse(path);
         assertEquals("WMS_Capabilities", getAsDOM(path).getDocumentElement().getNodeName());
         assertEquals("text/xml", response.getContentType());
@@ -241,8 +231,7 @@ public class CapabilitiesSystemTest extends WMSTestSupport {
     public void testRequestMandatoryServiceParameter() throws Exception {
         Document dom = getAsDOM("ows?request=GetCapabilities&version=1.3.0");
         // print(dom);
-        assertXpathEvaluatesTo(
-                "InvalidParameterValue", "/ows:ExceptionReport/ows:Exception/@exceptionCode", dom);
+        assertXpathEvaluatesTo("InvalidParameterValue", "/ows:ExceptionReport/ows:Exception/@exceptionCode", dom);
     }
 
     /**
@@ -253,8 +242,7 @@ public class CapabilitiesSystemTest extends WMSTestSupport {
     public void testRequestMandatoryRequestParameter() throws Exception {
         Document dom = getAsDOM("ows?request=GetCapabilities&version=1.3.0");
         // print(dom);
-        assertXpathEvaluatesTo(
-                "InvalidParameterValue", "/ows:ExceptionReport/ows:Exception/@exceptionCode", dom);
+        assertXpathEvaluatesTo("InvalidParameterValue", "/ows:ExceptionReport/ows:Exception/@exceptionCode", dom);
     }
 
     /**
@@ -286,37 +274,22 @@ public class CapabilitiesSystemTest extends WMSTestSupport {
         /*
          * Client: equal, Server: equal, response: exception code=CurrentUpdateSequence
          */
-        dom =
-                getAsDOM(
-                        "ows?service=WMS&request=GetCapabilities&version=1.3.0&updateSequence="
-                                + updateSeq);
+        dom = getAsDOM("ows?service=WMS&request=GetCapabilities&version=1.3.0&updateSequence=" + updateSeq);
         // print(dom);
         assertXpathEvaluatesTo("1.3.0", "/ogc:ServiceExceptionReport/@version", dom);
-        assertXpathEvaluatesTo(
-                "CurrentUpdateSequence",
-                "/ogc:ServiceExceptionReport/ogc:ServiceException/@code",
-                dom);
+        assertXpathEvaluatesTo("CurrentUpdateSequence", "/ogc:ServiceExceptionReport/ogc:ServiceException/@code", dom);
 
         /*
          * Client: lower, Server: higher, response: current
          */
-        dom =
-                getAsDOM(
-                        "ows?service=WMS&request=GetCapabilities&version=1.3.0&updateSequence="
-                                + (currUpdateSeq - 1));
+        dom = getAsDOM("ows?service=WMS&request=GetCapabilities&version=1.3.0&updateSequence=" + (currUpdateSeq - 1));
         assertXpathEvaluatesTo(updateSeq, locationPath, dom);
 
         /*
          * Client: higher, Server: lower, response: exception code=InvalidUpdateSequence
          */
-        dom =
-                getAsDOM(
-                        "ows?service=WMS&request=GetCapabilities&version=1.3.0&updateSequence="
-                                + (currUpdateSeq + 1));
-        assertXpathEvaluatesTo(
-                "InvalidUpdateSequence",
-                "/ogc:ServiceExceptionReport/ogc:ServiceException/@code",
-                dom);
+        dom = getAsDOM("ows?service=WMS&request=GetCapabilities&version=1.3.0&updateSequence=" + (currUpdateSeq + 1));
+        assertXpathEvaluatesTo("InvalidUpdateSequence", "/ogc:ServiceExceptionReport/ogc:ServiceException/@code", dom);
     }
 
     @Test

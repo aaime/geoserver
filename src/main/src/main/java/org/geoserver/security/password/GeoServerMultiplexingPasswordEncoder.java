@@ -39,8 +39,7 @@ public class GeoServerMultiplexingPasswordEncoder implements PasswordEncoder {
         this(secMgr, null);
     }
 
-    public GeoServerMultiplexingPasswordEncoder(
-            GeoServerSecurityManager secMgr, GeoServerUserGroupService service) {
+    public GeoServerMultiplexingPasswordEncoder(GeoServerSecurityManager secMgr, GeoServerUserGroupService service) {
         encoders = new HashSet<>();
         for (GeoServerPasswordEncoder enc : secMgr.loadPasswordEncoders()) {
             if (StringUtils.hasLength(enc.getPrefix())) {
@@ -61,8 +60,7 @@ public class GeoServerMultiplexingPasswordEncoder implements PasswordEncoder {
         }
     }
 
-    GeoServerPasswordEncoder lookupEncoderForEncodedPassword(String encPass)
-            throws UnsupportedOperationException {
+    GeoServerPasswordEncoder lookupEncoderForEncodedPassword(String encPass) throws UnsupportedOperationException {
         for (GeoServerPasswordEncoder enc : encoders) {
             if (enc.isResponsibleForEncoding(encPass)) {
                 return enc;
@@ -82,14 +80,12 @@ public class GeoServerMultiplexingPasswordEncoder implements PasswordEncoder {
         throw new UnsupportedOperationException();
     }
 
-    public boolean isPasswordValid(String encPass, String rawPass, Object salt)
-            throws UnsupportedOperationException {
+    public boolean isPasswordValid(String encPass, String rawPass, Object salt) throws UnsupportedOperationException {
         GeoServerPasswordEncoder enc = lookupEncoderForEncodedPassword(encPass);
         return enc.isPasswordValid(encPass, rawPass, salt);
     }
 
-    public boolean isPasswordValid(String encPass, char[] rawPass, Object salt)
-            throws UnsupportedOperationException {
+    public boolean isPasswordValid(String encPass, char[] rawPass, Object salt) throws UnsupportedOperationException {
         GeoServerPasswordEncoder enc = lookupEncoderForEncodedPassword(encPass);
         return enc.isPasswordValid(encPass, rawPass, salt);
     }

@@ -31,8 +31,7 @@ public class SimpleBookmarkableLink extends Panel {
 
     private static PageParameters toPageParameters(String[] pageParams) {
         if (pageParams.length % 2 == 1)
-            throw new IllegalArgumentException(
-                    "The page parameters array should contain an even number of elements");
+            throw new IllegalArgumentException("The page parameters array should contain an even number of elements");
 
         PageParameters result = new PageParameters();
         for (int i = 0; i < pageParams.length; i += 2) {

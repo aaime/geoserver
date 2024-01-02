@@ -58,15 +58,14 @@ public class Ogr2OgrOutputFormat extends WFSGetFeatureOutputFormat
         implements FormatConverter, ComplexFeatureAwareFormat {
 
     /** The types of geometries a shapefile can handle */
-    private static final Set<Class<?>> SHAPEFILE_GEOM_TYPES =
-            Set.of(
-                    Point.class,
-                    LineString.class,
-                    LinearRing.class,
-                    Polygon.class,
-                    MultiPoint.class,
-                    MultiLineString.class,
-                    MultiPolygon.class);
+    private static final Set<Class<?>> SHAPEFILE_GEOM_TYPES = Set.of(
+            Point.class,
+            LineString.class,
+            LinearRing.class,
+            Polygon.class,
+            MultiPoint.class,
+            MultiLineString.class,
+            MultiPolygon.class);
 
     /** Factory to create the ogr2ogr wrapper. */
     ToolWrapperFactory ogrWrapperFactory;
@@ -190,8 +189,7 @@ public class Ogr2OgrOutputFormat extends WFSGetFeatureOutputFormat
         } else {
             String outputFileName;
 
-            if (request.getFormatOptions() != null
-                    && request.getFormatOptions().containsKey("FILENAME")) {
+            if (request.getFormatOptions() != null && request.getFormatOptions().containsKey("FILENAME")) {
                 outputFileName = (String) request.getFormatOptions().get("FILENAME");
                 if (outputFileName.contains(".")) {
                     return outputFileName; // includes extension
@@ -251,8 +249,7 @@ public class Ogr2OgrOutputFormat extends WFSGetFeatureOutputFormat
      * generated file into the destination format. Finally, zips up all the resulting files.
      */
     @Override
-    protected void write(
-            FeatureCollectionResponse featureCollection, OutputStream output, Operation getFeature)
+    protected void write(FeatureCollectionResponse featureCollection, OutputStream output, Operation getFeature)
             throws IOException, ServiceException {
 
         // figure out which output format we're going to generate
@@ -285,8 +282,7 @@ public class Ogr2OgrOutputFormat extends WFSGetFeatureOutputFormat
                 // convert with ogr2ogr
                 final SimpleFeatureType schema = curCollection.getSchema();
                 final CoordinateReferenceSystem crs = schema.getCoordinateReferenceSystem();
-                outputFile =
-                        wrapper.convert(intermediate, tempOGR, schema.getTypeName(), format, crs);
+                outputFile = wrapper.convert(intermediate, tempOGR, schema.getTypeName(), format, crs);
 
                 // wipe out the input dir contents
                 IOUtils.emptyDirectory(tempGS);
@@ -387,9 +383,7 @@ public class Ogr2OgrOutputFormat extends WFSGetFeatureOutputFormat
             fstore.addFeatures(collection);
         } catch (IOException ioe) {
             LOGGER.log(
-                    Level.WARNING,
-                    "Error while writing featuretype '" + schema.getTypeName() + "' to shapefile.",
-                    ioe);
+                    Level.WARNING, "Error while writing featuretype '" + schema.getTypeName() + "' to shapefile.", ioe);
             throw new ServiceException(ioe);
         } finally {
             if (dstore != null) {

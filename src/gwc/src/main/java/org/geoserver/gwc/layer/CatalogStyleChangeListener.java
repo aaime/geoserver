@@ -96,10 +96,8 @@ public class CatalogStyleChangeListener implements CatalogListener {
                 return;
             }
             final int nameIdx = propertyNames.indexOf("name");
-            final String oldName =
-                    nameIdx != -1 ? (String) event.getOldValues().get(nameIdx) : null;
-            final String newName =
-                    nameIdx != -1 ? (String) event.getNewValues().get(nameIdx) : null;
+            final String oldName = nameIdx != -1 ? (String) event.getOldValues().get(nameIdx) : null;
+            final String newName = nameIdx != -1 ? (String) event.getNewValues().get(nameIdx) : null;
             final int workspaceIdx = propertyNames.indexOf("wokspace");
             final String oldWorkspaceName =
                     workspaceIdx != -1 ? (String) event.getOldValues().get(workspaceIdx) : null;
@@ -141,10 +139,9 @@ public class CatalogStyleChangeListener implements CatalogListener {
                 newStyles.remove(oldStyleName);
                 newStyles.add(newStyleName);
                 LayerInfo layerInfo = (LayerInfo) tl.getPublishedInfo();
-                String defaultStyle =
-                        layerInfo.getDefaultStyle() == null
-                                ? null
-                                : layerInfo.getDefaultStyle().prefixedName();
+                String defaultStyle = layerInfo.getDefaultStyle() == null
+                        ? null
+                        : layerInfo.getDefaultStyle().prefixedName();
                 TileLayerInfoUtil.setCachedStyles(info, defaultStyle, newStyles);
 
                 mediator.save(tl);
@@ -193,8 +190,7 @@ public class CatalogStyleChangeListener implements CatalogListener {
 
         // grab the styles
         try (CloseableIterator<StyleInfo> styles =
-                catalog.list(
-                        StyleInfo.class, Predicates.equal("workspace.name", newWorkspaceName))) {
+                catalog.list(StyleInfo.class, Predicates.equal("workspace.name", newWorkspaceName))) {
             while (styles.hasNext()) {
                 StyleInfo style = styles.next();
                 String oldStyleName = oldWorkspaceName + ":" + style.getName();
@@ -223,24 +219,14 @@ public class CatalogStyleChangeListener implements CatalogListener {
         for (LayerInfo affectedLayer : layers) {
             // If the style name changes, we need to update the layer's parameter filter
             String prefixedName = tileLayerName(affectedLayer);
-            log.info(
-                    "Truncating layer '"
-                            + prefixedName
-                            + "' due to a change in style '"
-                            + styleName
-                            + "'");
+            log.info("Truncating layer '" + prefixedName + "' due to a change in style '" + styleName + "'");
             mediator.truncateByLayerAndStyle(prefixedName, styleName);
         }
 
         // Now we check for layer groups that are affected
         for (LayerGroupInfo layerGroup : mediator.getLayerGroupsFor(modifiedStyle)) {
             String layerGroupName = tileLayerName(layerGroup);
-            log.info(
-                    "Truncating layer group '"
-                            + layerGroupName
-                            + "' due to a change in style '"
-                            + styleName
-                            + "'");
+            log.info("Truncating layer group '" + layerGroupName + "' due to a change in style '" + styleName + "'");
             mediator.truncate(layerGroupName);
         }
     }

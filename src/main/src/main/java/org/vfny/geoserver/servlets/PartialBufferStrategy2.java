@@ -25,8 +25,7 @@ import org.vfny.geoserver.util.PartialBufferedOutputStream2;
  */
 public class PartialBufferStrategy2 implements ServiceStrategy {
     /** Class logger */
-    protected static Logger LOGGER =
-            org.geotools.util.logging.Logging.getLogger("org.vfny.geoserver.servlets");
+    protected static Logger LOGGER = org.geotools.util.logging.Logging.getLogger("org.vfny.geoserver.servlets");
 
     public static final int DEFAULT_BUFFER_SIZE = 50;
     private PartialBufferedOutputStream2 out = null;

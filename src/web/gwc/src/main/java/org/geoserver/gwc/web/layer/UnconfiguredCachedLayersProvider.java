@@ -42,25 +42,24 @@ class UnconfiguredCachedLayersProvider extends GeoServerDataProvider<TileLayer> 
 
     private static final Logger LOGGER = Logging.getLogger(UnconfiguredCachedLayersProvider.class);
 
-    static final Property<TileLayer> TYPE =
-            new AbstractProperty<TileLayer>("type") {
+    static final Property<TileLayer> TYPE = new AbstractProperty<TileLayer>("type") {
 
-                private static final long serialVersionUID = 3215255763580377079L;
+        private static final long serialVersionUID = 3215255763580377079L;
 
-                @Override
-                public GWCIconFactory.CachedLayerType getPropertyValue(TileLayer item) {
-                    return GWCIconFactory.getCachedLayerType(item);
-                }
+        @Override
+        public GWCIconFactory.CachedLayerType getPropertyValue(TileLayer item) {
+            return GWCIconFactory.getCachedLayerType(item);
+        }
 
-                @Override
-                public Comparator<TileLayer> getComparator() {
-                    return (o1, o2) -> {
-                        GWCIconFactory.CachedLayerType r1 = getPropertyValue(o1);
-                        GWCIconFactory.CachedLayerType r2 = getPropertyValue(o2);
-                        return r1.compareTo(r2);
-                    };
-                }
+        @Override
+        public Comparator<TileLayer> getComparator() {
+            return (o1, o2) -> {
+                GWCIconFactory.CachedLayerType r1 = getPropertyValue(o1);
+                GWCIconFactory.CachedLayerType r2 = getPropertyValue(o2);
+                return r1.compareTo(r2);
             };
+        }
+    };
 
     static final Property<TileLayer> NAME = new BeanProperty<>("name", "name");
 
@@ -85,8 +84,7 @@ class UnconfiguredCachedLayersProvider extends GeoServerDataProvider<TileLayer> 
             if (cachedSize == NOT_CACHED || !Arrays.equals(keywords, cachedSizeKeywords)) {
                 long size = size(getFilter());
                 cachedSize = size;
-                cachedSizeKeywords =
-                        keywords == null ? null : Arrays.copyOf(keywords, keywords.length);
+                cachedSizeKeywords = keywords == null ? null : Arrays.copyOf(keywords, keywords.length);
                 return size;
             } else {
                 return cachedSize;
@@ -121,19 +119,14 @@ class UnconfiguredCachedLayersProvider extends GeoServerDataProvider<TileLayer> 
         final Filter filter = getFilter();
         final Stream<TileLayer> stream;
         if (sort == null) {
-            stream =
-                    unconfiguredLayers(filter)
-                            .skip(first)
-                            .limit(count)
-                            .map(this::createUnconfiguredTileLayer);
+            stream = unconfiguredLayers(filter).skip(first).limit(count).map(this::createUnconfiguredTileLayer);
         } else {
             Comparator<TileLayer> comparator = getComparator(sort);
-            stream =
-                    unconfiguredLayers(filter)
-                            .map(this::createUnconfiguredTileLayer)
-                            .sorted(comparator)
-                            .skip(first)
-                            .limit(count);
+            stream = unconfiguredLayers(filter)
+                    .map(this::createUnconfiguredTileLayer)
+                    .sorted(comparator)
+                    .skip(first)
+                    .limit(count);
         }
         return stream;
     }
@@ -187,13 +180,10 @@ class UnconfiguredCachedLayersProvider extends GeoServerDataProvider<TileLayer> 
         final CloseableIterator<LayerGroupInfo> groups = catalog.list(LayerGroupInfo.class, filter);
 
         Stream<PublishedInfo> all = Stream.concat(Streams.stream(layers), Streams.stream(groups));
-        all =
-                all.filter(this::isUnconfigured)
-                        .onClose(
-                                () -> {
-                                    layers.close();
-                                    groups.close();
-                                });
+        all = all.filter(this::isUnconfigured).onClose(() -> {
+            layers.close();
+            groups.close();
+        });
         return all;
     }
 

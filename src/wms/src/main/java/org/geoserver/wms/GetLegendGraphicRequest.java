@@ -501,8 +501,7 @@ public class GetLegendGraphicRequest extends WMSRequest {
      */
     @SuppressWarnings("unchecked")
     public Map<String, Object> getLegendOptions() {
-        return (Map<String, Object>)
-                (legendOptions == null ? Collections.emptyMap() : legendOptions);
+        return (Map<String, Object>) (legendOptions == null ? Collections.emptyMap() : legendOptions);
     }
 
     /**
@@ -600,10 +599,7 @@ public class GetLegendGraphicRequest extends WMSRequest {
         T converted = Converters.convert(value, optionClass);
         if (converted == null) {
             throw new ServiceException(
-                    "Invalid syntax for option "
-                            + key
-                            + ", cannot be convered to a "
-                            + optionClass.getSimpleName());
+                    "Invalid syntax for option " + key + ", cannot be convered to a " + optionClass.getSimpleName());
         }
         return converted;
     }

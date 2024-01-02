@@ -93,10 +93,8 @@ public class GeoFenceConfiguration implements Serializable, Cloneable {
      * @param grantWriteToWorkspacesToAuthenticatedUsers the
      *     grantWriteToWorkspacesToAuthenticatedUsers to set
      */
-    public void setGrantWriteToWorkspacesToAuthenticatedUsers(
-            boolean grantWriteToWorkspacesToAuthenticatedUsers) {
-        this.grantWriteToWorkspacesToAuthenticatedUsers =
-                grantWriteToWorkspacesToAuthenticatedUsers;
+    public void setGrantWriteToWorkspacesToAuthenticatedUsers(boolean grantWriteToWorkspacesToAuthenticatedUsers) {
+        this.grantWriteToWorkspacesToAuthenticatedUsers = grantWriteToWorkspacesToAuthenticatedUsers;
     }
 
     /**
@@ -175,8 +173,7 @@ public class GeoFenceConfiguration implements Serializable, Cloneable {
     public GeoFenceConfiguration clone() {
         try {
             GeoFenceConfiguration clone = (GeoFenceConfiguration) super.clone();
-            clone.setAcceptedRoles(
-                    acceptedRoles); // make sure the computed list is properly initted
+            clone.setAcceptedRoles(acceptedRoles); // make sure the computed list is properly initted
             return clone;
         } catch (CloneNotSupportedException ex) {
             throw new UnknownError("Unexpected exception: " + ex.getMessage());

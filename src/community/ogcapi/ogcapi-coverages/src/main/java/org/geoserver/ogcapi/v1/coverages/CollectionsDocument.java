@@ -49,8 +49,7 @@ public class CollectionsDocument extends AbstractDocument {
     @JacksonXmlProperty(localName = "Collection")
     @SuppressWarnings("PMD.CloseResource")
     public Iterator<CollectionDocument> getCollections() {
-        CloseableIterator<CoverageInfo> coverages =
-                geoServer.getCatalog().list(CoverageInfo.class, Filter.INCLUDE);
+        CloseableIterator<CoverageInfo> coverages = geoServer.getCatalog().list(CoverageInfo.class, Filter.INCLUDE);
         return new Iterator<CollectionDocument>() {
 
             CollectionDocument next;
@@ -66,10 +65,8 @@ public class CollectionsDocument extends AbstractDocument {
                         CoverageInfo coverage = coverages.next();
                         try {
                             List<String> crs =
-                                    CoveragesService.getCoverageCRS(
-                                            coverage, Collections.singletonList("#/crs"));
-                            CollectionDocument collection =
-                                    new CollectionDocument(geoServer, coverage, crs);
+                                    CoveragesService.getCoverageCRS(coverage, Collections.singletonList("#/crs"));
+                            CollectionDocument collection = new CollectionDocument(geoServer, coverage, crs);
 
                             next = collection;
                             return true;
@@ -77,9 +74,7 @@ public class CollectionsDocument extends AbstractDocument {
                             // e.g., maybe the plugin to read the format is missing
                             LOGGER.log(
                                     Level.WARNING,
-                                    "Failed to build collection for "
-                                            + coverage.prefixedName()
-                                            + ", skipping",
+                                    "Failed to build collection for " + coverage.prefixedName() + ", skipping",
                                     e);
                         }
                     }

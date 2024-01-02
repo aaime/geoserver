@@ -29,21 +29,16 @@ public class GeoServerSecuredPage extends GeoServerBasePage {
     public GeoServerSecuredPage() {
         super();
 
-        if (GeoServerSecurityFilterChainProxy.isSecurityEnabledForCurrentRequest() == false)
-            return; // nothing to do
+        if (GeoServerSecurityFilterChainProxy.isSecurityEnabledForCurrentRequest() == false) return; // nothing to do
 
         Authentication auth = getSession().getAuthentication();
-        if (auth == null
-                || !auth.isAuthenticated()
-                || auth instanceof AnonymousAuthenticationToken) {
+        if (auth == null || !auth.isAuthenticated() || auth instanceof AnonymousAuthenticationToken) {
             // emulate what spring security url control would do so that we get a proper redirect
             // after login
-            HttpServletRequest httpRequest =
-                    (HttpServletRequest) getRequest().getContainerRequest();
+            HttpServletRequest httpRequest = (HttpServletRequest) getRequest().getContainerRequest();
             // ExceptionTranslationFilter translator = (ExceptionTranslationFilter)
             // getGeoServerApplication().getBean("consoleExceptionTranslationFilter");
-            SavedRequest savedRequest =
-                    new DefaultSavedRequest(httpRequest, new PortResolverImpl());
+            SavedRequest savedRequest = new DefaultSavedRequest(httpRequest, new PortResolverImpl());
 
             HttpSession session = httpRequest.getSession();
             // TODO, Justin, WebAttributes.SAVED_REQUEST has disappeared in spring security

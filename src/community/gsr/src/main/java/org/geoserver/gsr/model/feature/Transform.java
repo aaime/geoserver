@@ -23,10 +23,7 @@ public class Transform {
     public final double[] scale;
     public final double[] translate;
 
-    public Transform(
-            QuantizedGeometryEncoder.OriginPosition originPosition,
-            double[] scale,
-            double[] translate) {
+    public Transform(QuantizedGeometryEncoder.OriginPosition originPosition, double[] scale, double[] translate) {
         this.originPosition = originPosition;
         this.scale = scale;
         this.translate = translate;

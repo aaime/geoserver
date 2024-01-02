@@ -45,10 +45,8 @@ public interface DimensionInfo extends Serializable {
     public static String NEAREST_FAIL_BEHAVIOR_KEY = "org.geoserver.wms.nearestFail";
 
     /** Default value for nearest fail behavior */
-    public static final NearestFailBehavior DEFAULT_NEAREST_FAIL =
-            NearestFailBehavior.valueOf(
-                    System.getProperty(
-                            NEAREST_FAIL_BEHAVIOR_KEY, NearestFailBehavior.IGNORE.name()));
+    public static final NearestFailBehavior DEFAULT_NEAREST_FAIL = NearestFailBehavior.valueOf(
+            System.getProperty(NEAREST_FAIL_BEHAVIOR_KEY, NearestFailBehavior.IGNORE.name()));
 
     /**
      * Returns the KVP key used for a given dimension name, which can be either a standard one

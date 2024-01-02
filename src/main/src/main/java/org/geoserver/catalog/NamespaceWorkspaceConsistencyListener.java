@@ -34,9 +34,7 @@ public class NamespaceWorkspaceConsistencyListener implements CatalogListener {
     @Override
     public synchronized void handleModifyEvent(CatalogModifyEvent event) throws CatalogException {
         List<String> properties = event.getPropertyNames();
-        if (event.getSource() instanceof NamespaceInfo
-                && !editing
-                && properties.contains("prefix")) {
+        if (event.getSource() instanceof NamespaceInfo && !editing && properties.contains("prefix")) {
             int prefixIdx = properties.indexOf("prefix");
             String oldPrefix = (String) event.getOldValues().get(prefixIdx);
             String newPrefix = (String) event.getNewValues().get(prefixIdx);
@@ -50,12 +48,8 @@ public class NamespaceWorkspaceConsistencyListener implements CatalogListener {
                     editing = false;
                 }
             }
-        } else if (event.getSource() instanceof Catalog
-                && properties.contains("defaultNamespace")
-                && !editing) {
-            NamespaceInfo newDefault =
-                    (NamespaceInfo)
-                            event.getNewValues().get(properties.indexOf("defaultNamespace"));
+        } else if (event.getSource() instanceof Catalog && properties.contains("defaultNamespace") && !editing) {
+            NamespaceInfo newDefault = (NamespaceInfo) event.getNewValues().get(properties.indexOf("defaultNamespace"));
             if (newDefault != null) {
                 WorkspaceInfo ws = catalog.getWorkspaceByName(newDefault.getPrefix());
                 if (ws != null && !catalog.getDefaultWorkspace().equals(ws)) {
@@ -67,9 +61,7 @@ public class NamespaceWorkspaceConsistencyListener implements CatalogListener {
                     }
                 }
             }
-        } else if (event.getSource() instanceof WorkspaceInfo
-                && !editing
-                && properties.contains("name")) {
+        } else if (event.getSource() instanceof WorkspaceInfo && !editing && properties.contains("name")) {
             int nameIdx = properties.indexOf("name");
             String oldName = (String) event.getOldValues().get(nameIdx);
             String newName = (String) event.getNewValues().get(nameIdx);
@@ -83,12 +75,8 @@ public class NamespaceWorkspaceConsistencyListener implements CatalogListener {
                     editing = false;
                 }
             }
-        } else if (event.getSource() instanceof Catalog
-                && properties.contains("defaultWorkspace")
-                && !editing) {
-            WorkspaceInfo newDefault =
-                    (WorkspaceInfo)
-                            event.getNewValues().get(properties.indexOf("defaultWorkspace"));
+        } else if (event.getSource() instanceof Catalog && properties.contains("defaultWorkspace") && !editing) {
+            WorkspaceInfo newDefault = (WorkspaceInfo) event.getNewValues().get(properties.indexOf("defaultWorkspace"));
             if (newDefault != null) {
                 NamespaceInfo ns = catalog.getNamespaceByPrefix(newDefault.getName());
                 if (ns != null && !catalog.getDefaultNamespace().equals(ns)) {

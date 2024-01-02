@@ -73,8 +73,7 @@ public class DescribeCoverageTransformer extends TransformerBase {
     protected CoverageResponseDelegateFinder responseFactory;
 
     /** Creates a new WFSCapsTransformer object. */
-    public DescribeCoverageTransformer(
-            WCSInfo wcs, Catalog catalog, CoverageResponseDelegateFinder responseFactory) {
+    public DescribeCoverageTransformer(WCSInfo wcs, Catalog catalog, CoverageResponseDelegateFinder responseFactory) {
         super();
         this.wcs = wcs;
         this.catalog = catalog;
@@ -107,8 +106,9 @@ public class DescribeCoverageTransformer extends TransformerBase {
         public void encode(Object o) throws IllegalArgumentException {
             // try {
             if (!(o instanceof DescribeCoverageType)) {
-                throw new IllegalArgumentException(
-                        new StringBuffer("Not a GetCapabilitiesType: ").append(o).toString());
+                throw new IllegalArgumentException(new StringBuffer("Not a GetCapabilitiesType: ")
+                        .append(o)
+                        .toString());
             }
 
             this.request = (DescribeCoverageType) o;
@@ -116,24 +116,20 @@ public class DescribeCoverageTransformer extends TransformerBase {
             final AttributesImpl attributes = new AttributesImpl();
             attributes.addAttribute("", "xmlns:wcs", "xmlns:wcs", "", WCS_URI);
 
-            attributes.addAttribute(
-                    "", "xmlns:xlink", "xmlns:xlink", "", "http://www.w3.org/1999/xlink");
+            attributes.addAttribute("", "xmlns:xlink", "xmlns:xlink", "", "http://www.w3.org/1999/xlink");
             attributes.addAttribute("", "xmlns:ogc", "xmlns:ogc", "", "http://www.opengis.net/ogc");
-            attributes.addAttribute(
-                    "", "xmlns:ows", "xmlns:ows", "", "http://www.opengis.net/ows/1.1");
+            attributes.addAttribute("", "xmlns:ows", "xmlns:ows", "", "http://www.opengis.net/ows/1.1");
             attributes.addAttribute("", "xmlns:gml", "xmlns:gml", "", "http://www.opengis.net/gml");
 
-            final String prefixDef = new StringBuffer("xmlns:").append(XSI_PREFIX).toString();
+            final String prefixDef =
+                    new StringBuffer("xmlns:").append(XSI_PREFIX).toString();
             attributes.addAttribute("", prefixDef, prefixDef, "", XSI_URI);
 
             final String locationAtt =
                     new StringBuffer(XSI_PREFIX).append(":schemaLocation").toString();
 
             final String locationDef =
-                    WCS_URI
-                            + " "
-                            + buildSchemaURL(
-                                    request.getBaseUrl(), "wcs/1.1.1/wcsDescribeCoverage.xsd");
+                    WCS_URI + " " + buildSchemaURL(request.getBaseUrl(), "wcs/1.1.1/wcsDescribeCoverage.xsd");
 
             attributes.addAttribute("", locationAtt, locationAtt, "", locationDef);
 
@@ -154,8 +150,7 @@ public class DescribeCoverageTransformer extends TransformerBase {
                 try {
                     handleCoverageDescription(ci);
                 } catch (Exception e) {
-                    throw new RuntimeException(
-                            "Unexpected error occurred during describe coverage xml encoding", e);
+                    throw new RuntimeException("Unexpected error occurred during describe coverage xml encoding", e);
                 }
             }
             end("wcs:CoverageDescriptions");
@@ -192,8 +187,7 @@ public class DescribeCoverageTransformer extends TransformerBase {
             }
 
             if (isNotBlank(mdl.getMetadataType())) {
-                attributes.addAttribute(
-                        "", "metadataType", "metadataType", "", mdl.getMetadataType());
+                attributes.addAttribute("", "metadataType", "metadataType", "", mdl.getMetadataType());
             }
 
             if (isNotBlank(linkType)) {
@@ -265,8 +259,7 @@ public class DescribeCoverageTransformer extends TransformerBase {
             end("wcs:GridCRS");
         }
 
-        protected void handleBoundingBox(ReferencedEnvelope encodedEnvelope, boolean wgsLonLat)
-                throws Exception {
+        protected void handleBoundingBox(ReferencedEnvelope encodedEnvelope, boolean wgsLonLat) throws Exception {
             final AttributesImpl attributes = new AttributesImpl();
             final CoordinateReferenceSystem crs = encodedEnvelope.getCoordinateReferenceSystem();
             if (wgsLonLat) {
@@ -286,17 +279,15 @@ public class DescribeCoverageTransformer extends TransformerBase {
             start("ows:BoundingBox", attributes);
             element(
                     "ows:LowerCorner",
-                    new StringBuffer(
-                                    Double.toString(
-                                            encodedEnvelope.getLowerCorner().getOrdinate(0)))
+                    new StringBuffer(Double.toString(
+                                    encodedEnvelope.getLowerCorner().getOrdinate(0)))
                             .append(" ")
                             .append(encodedEnvelope.getLowerCorner().getOrdinate(1))
                             .toString());
             element(
                     "ows:UpperCorner",
-                    new StringBuffer(
-                                    Double.toString(
-                                            encodedEnvelope.getUpperCorner().getOrdinate(0)))
+                    new StringBuffer(Double.toString(
+                                    encodedEnvelope.getUpperCorner().getOrdinate(0)))
                             .append(" ")
                             .append(encodedEnvelope.getUpperCorner().getOrdinate(1))
                             .toString());
@@ -369,8 +360,7 @@ public class DescribeCoverageTransformer extends TransformerBase {
                     // Can we assume min and max are two integer numbers and
                     // make up a list out of them? For the moment, just fail
                     throw new IllegalArgumentException(
-                            "Cannot encode a range of null values, "
-                                    + "only single values are handled");
+                            "Cannot encode a range of null values, " + "only single values are handled");
                 }
             }
         }
@@ -419,8 +409,7 @@ public class DescribeCoverageTransformer extends TransformerBase {
             }
         }
 
-        protected String urnIdentifier(final CoordinateReferenceSystem crs)
-                throws FactoryException {
+        protected String urnIdentifier(final CoordinateReferenceSystem crs) throws FactoryException {
             String identifier = CRS.lookupIdentifier(crs, false);
             return SrsSyntax.OGC_URN.getSRS(identifier);
         }

@@ -40,8 +40,7 @@ public abstract class GeoServerSecurityFilter extends AbstractGeoServerSecurityS
      * <p>The {@link GeoServerExceptionTranslationFilter} may use the entry point in case of an
      * {@link AuthenticationException}
      */
-    public static final String AUTHENTICATION_ENTRY_POINT_HEADER =
-            "_AUTHENTICATION_ENTRY_POINT_HEADER";
+    public static final String AUTHENTICATION_ENTRY_POINT_HEADER = "_AUTHENTICATION_ENTRY_POINT_HEADER";
 
     private String beanName;
 
@@ -68,18 +67,15 @@ public abstract class GeoServerSecurityFilter extends AbstractGeoServerSecurityS
      *
      * <p>A not <code>null</code> return value indicates a missing cache entry
      */
-    protected String authenticateFromCache(
-            AuthenticationCachingFilter filter, HttpServletRequest request) {
+    protected String authenticateFromCache(AuthenticationCachingFilter filter, HttpServletRequest request) {
 
         Authentication authFromCache = null;
         String cacheKey = null;
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
             cacheKey = filter.getCacheKey(request);
             if (cacheKey != null) {
-                authFromCache =
-                        getSecurityManager().getAuthenticationCache().get(getName(), cacheKey);
-                if (authFromCache != null)
-                    SecurityContextHolder.getContext().setAuthentication(authFromCache);
+                authFromCache = getSecurityManager().getAuthenticationCache().get(getName(), cacheKey);
+                if (authFromCache != null) SecurityContextHolder.getContext().setAuthentication(authFromCache);
                 else return cacheKey;
             }
         }

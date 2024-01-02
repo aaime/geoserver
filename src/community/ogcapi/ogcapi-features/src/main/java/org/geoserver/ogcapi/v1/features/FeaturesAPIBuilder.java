@@ -22,11 +22,7 @@ import org.geoserver.wfs.WFSInfo;
 public class FeaturesAPIBuilder extends org.geoserver.ogcapi.OpenAPIBuilder<WFSInfo> {
 
     public FeaturesAPIBuilder() {
-        super(
-                FeaturesAPIBuilder.class,
-                "openapi.yaml",
-                "Features 1.0 server",
-                FeatureService.class);
+        super(FeaturesAPIBuilder.class, "openapi.yaml", "Features 1.0 server", FeatureService.class);
     }
 
     /**
@@ -41,10 +37,9 @@ public class FeaturesAPIBuilder extends org.geoserver.ogcapi.OpenAPIBuilder<WFSI
         OpenAPI api = super.build(wfs);
 
         // the external documentation
-        api.externalDocs(
-                new ExternalDocumentation()
-                        .description("WFS specification")
-                        .url("https://github.com/opengeospatial/WFS_FES"));
+        api.externalDocs(new ExternalDocumentation()
+                .description("WFS specification")
+                .url("https://github.com/opengeospatial/WFS_FES"));
 
         // adjust path output formats
         declareGetResponseFormats(api, "/", OpenAPI.class);
@@ -52,17 +47,14 @@ public class FeaturesAPIBuilder extends org.geoserver.ogcapi.OpenAPIBuilder<WFSI
         declareGetResponseFormats(api, "/collections", CollectionsDocument.class);
         declareGetResponseFormats(api, "/collections/{collectionId}", CollectionsDocument.class);
         declareGetResponseFormats(api, "/collections/{collectionId}/items", FeaturesResponse.class);
-        declareGetResponseFormats(
-                api, "/collections/{collectionId}/items/{featureId}", FeaturesResponse.class);
+        declareGetResponseFormats(api, "/collections/{collectionId}/items/{featureId}", FeaturesResponse.class);
 
         // provide a list of valid values for collectionId
         Map<String, Parameter> parameters = api.getComponents().getParameters();
         Parameter collectionId = parameters.get("collectionId");
         Catalog catalog = wfs.getGeoServer().getCatalog();
         List<String> validCollectionIds =
-                catalog.getFeatureTypes().stream()
-                        .map(ft -> ft.prefixedName())
-                        .collect(Collectors.toList());
+                catalog.getFeatureTypes().stream().map(ft -> ft.prefixedName()).collect(Collectors.toList());
         collectionId.getSchema().setEnum(validCollectionIds);
 
         // list of valid filter-lang values

@@ -45,8 +45,7 @@ public class NCNameResourceCodec {
         return workspaceName + DELIMITER + resourceName;
     }
 
-    public static LayerInfo getCoverage(Catalog catalog, String encodedCoverageId)
-            throws WCS20Exception {
+    public static LayerInfo getCoverage(Catalog catalog, String encodedCoverageId) throws WCS20Exception {
         List<LayerInfo> layers = NCNameResourceCodec.getLayers(catalog, encodedCoverageId);
         if (layers == null) return null;
 
@@ -57,14 +56,13 @@ public class NCNameResourceCodec {
                 if (ret == null) {
                     ret = layer;
                 } else {
-                    LOGGER.warning(
-                            "Multiple coverages found for NSName '"
-                                    + encodedCoverageId
-                                    + "': "
-                                    + ret.prefixedName()
-                                    + " is selected, "
-                                    + layer.prefixedName()
-                                    + " will be ignored");
+                    LOGGER.warning("Multiple coverages found for NSName '"
+                            + encodedCoverageId
+                            + "': "
+                            + ret.prefixedName()
+                            + " is selected, "
+                            + layer.prefixedName()
+                            + " will be ignored");
                 }
             }
         }

@@ -124,11 +124,10 @@ public interface CoverageInfo extends ResourceInfo {
      */
     GridCoverage getGridCoverage(ProgressListener listener, Hints hints) throws IOException;
 
-    GridCoverage getGridCoverage(
-            ProgressListener listener, ReferencedEnvelope envelope, Hints hints) throws IOException;
-
-    GridCoverageReader getGridCoverageReader(ProgressListener listener, Hints hints)
+    GridCoverage getGridCoverage(ProgressListener listener, ReferencedEnvelope envelope, Hints hints)
             throws IOException;
+
+    GridCoverageReader getGridCoverageReader(ProgressListener listener, Hints hints) throws IOException;
 
     /** Returns the native coverage name (might be null for single coverage formats) */
     String getNativeCoverageName();

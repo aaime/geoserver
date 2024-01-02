@@ -65,15 +65,10 @@ public class ProxifyingURLMangler implements URLMangler {
     public static Map<String, Pattern> FORWARDED_PATTERNS = new HashMap<>();
 
     {
-        Arrays.asList(ForwardedComponents.values())
-                .forEach(
-                        (comp) -> {
-                            FORWARDED_PATTERNS.put(
-                                    comp.asString(),
-                                    Pattern.compile(
-                                            String.format(
-                                                    "(.*)%s=([^;^ ]+)(.*)", comp.asString())));
-                        });
+        Arrays.asList(ForwardedComponents.values()).forEach((comp) -> {
+            FORWARDED_PATTERNS.put(
+                    comp.asString(), Pattern.compile(String.format("(.*)%s=([^;^ ]+)(.*)", comp.asString())));
+        });
     }
 
     public ProxifyingURLMangler(GeoServer geoServer) {
@@ -81,14 +76,12 @@ public class ProxifyingURLMangler implements URLMangler {
     }
 
     @Override
-    public void mangleURL(
-            StringBuilder baseURL, StringBuilder path, Map<String, String> kvp, URLType type) {
+    public void mangleURL(StringBuilder baseURL, StringBuilder path, Map<String, String> kvp, URLType type) {
 
         // first check the system property, then fall back to configuration
-        String proxyBase =
-                (GeoServerExtensions.getProperty(Requests.PROXY_PARAM) != null)
-                        ? GeoServerExtensions.getProperty(Requests.PROXY_PARAM)
-                        : this.geoServer.getSettings().getProxyBaseUrl();
+        String proxyBase = (GeoServerExtensions.getProperty(Requests.PROXY_PARAM) != null)
+                ? GeoServerExtensions.getProperty(Requests.PROXY_PARAM)
+                : this.geoServer.getSettings().getProxyBaseUrl();
 
         // resolve parameters values if parametrization is activated
         proxyBase = resolveParametrization(proxyBase);
@@ -106,10 +99,9 @@ public class ProxifyingURLMangler implements URLMangler {
 
     private boolean resolveDoMangleHeaders() {
         Boolean wsAwareFlag = geoServer.getSettings().isUseHeadersProxyURL();
-        Boolean resultFlag =
-                wsAwareFlag != null
-                        ? wsAwareFlag
-                        : geoServer.getGlobal().getSettings().isUseHeadersProxyURL();
+        Boolean resultFlag = wsAwareFlag != null
+                ? wsAwareFlag
+                : geoServer.getGlobal().getSettings().isUseHeadersProxyURL();
         if (resultFlag != null) return resultFlag;
         return false;
     }
@@ -119,8 +111,7 @@ public class ProxifyingURLMangler implements URLMangler {
      */
     private String resolveParametrization(String proxyBase) {
         if (GeoServerEnvironment.allowEnvParametrization() && StringUtils.isNotBlank(proxyBase)) {
-            GeoServerEnvironment gsEnvironment =
-                    GeoServerExtensions.bean(GeoServerEnvironment.class);
+            GeoServerEnvironment gsEnvironment = GeoServerExtensions.bean(GeoServerEnvironment.class);
             proxyBase = (String) gsEnvironment.resolveValue(proxyBase);
         }
         return proxyBase;
@@ -198,14 +189,13 @@ public class ProxifyingURLMangler implements URLMangler {
     }
 
     private void collectForwardedHeaders(Map<String, String> headers, String headerValue) {
-        FORWARDED_PATTERNS.forEach(
-                (comp, pattern) -> {
-                    Matcher m = pattern.matcher(headerValue);
-                    if (m.matches()) {
-                        String key = toTemplate(Headers.FORWARDED.asString() + "." + comp);
-                        headers.put(key, m.group(2));
-                    }
-                });
+        FORWARDED_PATTERNS.forEach((comp, pattern) -> {
+            Matcher m = pattern.matcher(headerValue);
+            if (m.matches()) {
+                String key = toTemplate(Headers.FORWARDED.asString() + "." + comp);
+                headers.put(key, m.group(2));
+            }
+        });
     }
 
     private String toTemplate(String header) {

@@ -46,8 +46,7 @@ public class DescribeLayerKvpRequestReader extends KvpRequestReader {
         if (null == version) {
             String code = "NoVersionInfo";
             String simpleName = getClass().getSimpleName();
-            throw new ServiceException(
-                    "Version parameter not provided for DescribeLayer operation", code, simpleName);
+            throw new ServiceException("Version parameter not provided for DescribeLayer operation", code, simpleName);
         }
 
         if (!wms.getVersion().equals(version)) {
@@ -60,12 +59,13 @@ public class DescribeLayerKvpRequestReader extends KvpRequestReader {
                     getClass().getSimpleName());
         }
 
-        List<MapLayerInfo> layers =
-                new MapLayerInfoKvpParser("LAYERS", wms).parse((String) rawKvp.get("LAYERS"));
+        List<MapLayerInfo> layers = new MapLayerInfoKvpParser("LAYERS", wms).parse((String) rawKvp.get("LAYERS"));
         request.setLayers(layers);
         if (layers == null || layers.isEmpty()) {
             throw new ServiceException(
-                    "No LAYERS have been requested", "NoLayerRequested", getClass().getName());
+                    "No LAYERS have been requested",
+                    "NoLayerRequested",
+                    getClass().getName());
         }
         return request;
     }

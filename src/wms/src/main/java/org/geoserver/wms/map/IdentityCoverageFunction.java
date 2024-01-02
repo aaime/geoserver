@@ -17,8 +17,7 @@ import org.geotools.filter.expression.InternalVolatileFunction;
  */
 class IdentityCoverageFunction extends InternalVolatileFunction {
 
-    public static FunctionName NAME =
-            new FunctionNameImpl("Identify", parameter("coverage", GridCoverage2D.class));
+    public static FunctionName NAME = new FunctionNameImpl("Identify", parameter("coverage", GridCoverage2D.class));
 
     public IdentityCoverageFunction() {
         super("Identity");

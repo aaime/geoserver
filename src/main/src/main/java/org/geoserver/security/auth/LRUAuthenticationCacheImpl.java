@@ -44,8 +44,7 @@ public class LRUAuthenticationCacheImpl implements AuthenticationCache {
         this(DEFAULT_IDLE_TIME, DEFAULT_LIVE_TIME, maxEntries);
     }
 
-    public LRUAuthenticationCacheImpl(
-            int timeToIdleSeconds, int timeToLiveSeconds, int maxEntries) {
+    public LRUAuthenticationCacheImpl(int timeToIdleSeconds, int timeToLiveSeconds, int maxEntries) {
         super();
         this.timeToIdleSeconds = timeToIdleSeconds;
         this.timeToLiveSeconds = timeToLiveSeconds;
@@ -107,8 +106,7 @@ public class LRUAuthenticationCacheImpl implements AuthenticationCache {
         boolean hasTobeRemoved = false;
         try {
             long currentTime = System.currentTimeMillis();
-            AuthenticationCacheEntry entry =
-                    cache.get(new AuthenticationCacheKey(filterName, cacheKey));
+            AuthenticationCacheEntry entry = cache.get(new AuthenticationCacheKey(filterName, cacheKey));
             if (entry == null) return null;
             if (entry.hasExpired(currentTime)) {
                 hasTobeRemoved = true;

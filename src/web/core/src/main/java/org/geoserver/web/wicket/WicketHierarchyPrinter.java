@@ -109,11 +109,9 @@ public class WicketHierarchyPrinter {
             try {
                 String value = "null";
                 if (c.getDefaultModel() != null && c.getDefaultModelObject() != null) {
-                    value =
-                            "'"
-                                    + NEWLINE.matcher(c.getDefaultModelObjectAsString())
-                                            .replaceAll("\\\\n")
-                                    + "'";
+                    value = "'"
+                            + NEWLINE.matcher(c.getDefaultModelObjectAsString()).replaceAll("\\\\n")
+                            + "'";
                 }
                 out.print(" " + value);
             } catch (Exception e) {

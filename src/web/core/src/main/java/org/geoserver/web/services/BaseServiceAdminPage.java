@@ -106,16 +106,12 @@ public abstract class BaseServiceAdminPage<T extends ServiceInfo> extends GeoSer
 
         form.add(new HelpLink("workspaceHelp").setDialog(dialog));
 
-        form.add(
-                new Label(
-                        "service.enabled",
-                        new StringResourceModel("service.enabled", this)
-                                .setParameters(getServiceName())));
+        form.add(new Label(
+                "service.enabled", new StringResourceModel("service.enabled", this).setParameters(getServiceName())));
         form.add(new TextField("maintainer"));
         TextField<String> onlineResource = new TextField<>("onlineResource");
 
-        final GeoServerEnvironment gsEnvironment =
-                GeoServerExtensions.bean(GeoServerEnvironment.class);
+        final GeoServerEnvironment gsEnvironment = GeoServerExtensions.bean(GeoServerEnvironment.class);
 
         // AF: Disable Binding if GeoServer Env Parametrization is enabled!
         if (gsEnvironment == null || !GeoServerEnvironment.allowEnvParametrization()) {
@@ -132,10 +128,7 @@ public abstract class BaseServiceAdminPage<T extends ServiceInfo> extends GeoSer
         citeCompliant.setMarkupId("citeCompliant");
         form.add(citeCompliant);
         form.add(getInternationalContentFragment(infoModel, "serviceTitleAndAbstract"));
-        form.add(
-                new KeywordsEditor(
-                        "keywords",
-                        LiveCollectionModel.list(new PropertyModel<>(infoModel, "keywords"))));
+        form.add(new KeywordsEditor("keywords", LiveCollectionModel.list(new PropertyModel<>(infoModel, "keywords"))));
         form.add(new TextField("fees"));
         form.add(new TextField("accessConstraints"));
 
@@ -146,30 +139,28 @@ public abstract class BaseServiceAdminPage<T extends ServiceInfo> extends GeoSer
         extensionPanels.setReuseItems(true);
         form.add(extensionPanels);
 
-        SubmitLink submit =
-                new SubmitLink("submit", new StringResourceModel("save", null, null)) {
-                    @Override
-                    public void onSubmit() {
-                        try {
-                            onSave(infoModel, true);
-                        } catch (IllegalArgumentException ex) {
-                            error(ex.getMessage());
-                        } catch (Exception e) {
-                            error(e);
-                        }
-                    }
-                };
+        SubmitLink submit = new SubmitLink("submit", new StringResourceModel("save", null, null)) {
+            @Override
+            public void onSubmit() {
+                try {
+                    onSave(infoModel, true);
+                } catch (IllegalArgumentException ex) {
+                    error(ex.getMessage());
+                } catch (Exception e) {
+                    error(e);
+                }
+            }
+        };
         form.add(submit);
 
         form.add(applyLink(infoModel, form));
 
-        Button cancel =
-                new Button("cancel") {
-                    @Override
-                    public void onSubmit() {
-                        doReturn();
-                    }
-                };
+        Button cancel = new Button("cancel") {
+            @Override
+            public void onSubmit() {
+                doReturn();
+            }
+        };
         form.add(cancel);
         cancel.setDefaultFormProcessing(false);
     }
@@ -177,10 +168,9 @@ public abstract class BaseServiceAdminPage<T extends ServiceInfo> extends GeoSer
     protected void onSave(IModel<T> infoModel, boolean doReturn) {
         handleSubmit(infoModel.getObject());
         // execute all submit hooks
-        onSubmitHooks.forEach(
-                x -> {
-                    x.accept(null);
-                });
+        onSubmitHooks.forEach(x -> {
+            x.accept(null);
+        });
         if (doReturn) {
             doReturn();
         }
@@ -208,8 +198,7 @@ public abstract class BaseServiceAdminPage<T extends ServiceInfo> extends GeoSer
     }
 
     protected ListView createExtensionPanelList(String id, final IModel infoModel) {
-        List<AdminPagePanelInfo> panels =
-                getGeoServerApplication().getBeansOfType(AdminPagePanelInfo.class);
+        List<AdminPagePanelInfo> panels = getGeoServerApplication().getBeansOfType(AdminPagePanelInfo.class);
         for (Iterator<AdminPagePanelInfo> it = panels.iterator(); it.hasNext(); ) {
             AdminPagePanelInfo panel = it.next();
             if (!getServiceClass().equals(panel.getServiceClass())) {
@@ -223,10 +212,9 @@ public abstract class BaseServiceAdminPage<T extends ServiceInfo> extends GeoSer
             protected void populateItem(ListItem<AdminPagePanelInfo> item) {
                 AdminPagePanelInfo info = item.getModelObject();
                 try {
-                    AdminPagePanel panel =
-                            info.getComponentClass()
-                                    .getConstructor(String.class, IModel.class)
-                                    .newInstance("content", infoModel);
+                    AdminPagePanel panel = info.getComponentClass()
+                            .getConstructor(String.class, IModel.class)
+                            .newInstance("content", infoModel);
                     item.add(panel);
                     // add onMainFormSubmit to hooks
                     onSubmitHooks.add(x -> panel.onMainFormSubmit());
@@ -358,26 +346,24 @@ public abstract class BaseServiceAdminPage<T extends ServiceInfo> extends GeoSer
         public GlobalWorkspacePanel(String id) {
             super(id);
 
-            final DropDownChoice<WorkspaceInfo> wsChoice =
-                    new DropDownChoice<>(
-                            "workspace",
-                            new ServiceFilteredWorkspacesModel(new WorkspacesModel()),
-                            new WorkspaceChoiceRenderer());
+            final DropDownChoice<WorkspaceInfo> wsChoice = new DropDownChoice<>(
+                    "workspace",
+                    new ServiceFilteredWorkspacesModel(new WorkspacesModel()),
+                    new WorkspaceChoiceRenderer());
             wsChoice.setNullValid(true);
-            wsChoice.add(
-                    new AjaxFormComponentUpdatingBehavior("change") {
-                        @Override
-                        protected void onUpdate(AjaxRequestTarget target) {
-                            WorkspaceInfo ws = wsChoice.getModelObject();
-                            PageParameters pp = new PageParameters();
+            wsChoice.add(new AjaxFormComponentUpdatingBehavior("change") {
+                @Override
+                protected void onUpdate(AjaxRequestTarget target) {
+                    WorkspaceInfo ws = wsChoice.getModelObject();
+                    PageParameters pp = new PageParameters();
 
-                            if (ws != null) {
-                                pp.add("workspace", ws.getName());
-                            }
+                    if (ws != null) {
+                        pp.add("workspace", ws.getName());
+                    }
 
-                            setResponsePage(BaseServiceAdminPage.this.getClass(), pp);
-                        }
-                    });
+                    setResponsePage(BaseServiceAdminPage.this.getClass(), pp);
+                }
+            });
             add(wsChoice);
         }
     }
@@ -404,9 +390,7 @@ public abstract class BaseServiceAdminPage<T extends ServiceInfo> extends GeoSer
         Fragment fragment;
         if (supportInternationalContent()) {
             fragment = new Fragment(id, "internationalStringFragment", this);
-            fragment.add(
-                    new TitleAndAbstractPanel(
-                            "titleAndAbstract", infoModel, "titleMsg", "abstract", this));
+            fragment.add(new TitleAndAbstractPanel("titleAndAbstract", infoModel, "titleMsg", "abstract", this));
         } else {
             fragment = new Fragment(id, "stringFragment", this);
             fragment.add(new TextField<String>("title"));

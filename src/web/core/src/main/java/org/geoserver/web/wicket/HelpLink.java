@@ -79,8 +79,7 @@ public class HelpLink extends AjaxLink<Void> {
     @Override
     public void onClick(AjaxRequestTarget target) {
         // load the help title
-        StringResourceModel heading =
-                new StringResourceModel(getId() + ".title", getContainer(), null);
+        StringResourceModel heading = new StringResourceModel(getId() + ".title", getContainer(), null);
         StringResourceModel content = new StringResourceModel(getId(), getContainer(), null);
 
         dialog.showInfo(target, heading, content);

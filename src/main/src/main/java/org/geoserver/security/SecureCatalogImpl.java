@@ -101,8 +101,7 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
     }
 
     static ResourceAccessManager lookupResourceAccessManager() throws Exception {
-        List<ResourceAccessManager> managers =
-                GeoServerExtensions.extensions(ResourceAccessManager.class);
+        List<ResourceAccessManager> managers = GeoServerExtensions.extensions(ResourceAccessManager.class);
         ResourceAccessManager manager = null;
         int size = managers.size();
         if (size == 1) {
@@ -140,14 +139,12 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
 
     @Override
     public CoverageInfo getCoverageByName(String ns, String name) {
-        return checkAccess(
-                user(), delegate.getCoverageByName(ns, name), MixedModeBehavior.CHALLENGE);
+        return checkAccess(user(), delegate.getCoverageByName(ns, name), MixedModeBehavior.CHALLENGE);
     }
 
     @Override
     public CoverageInfo getCoverageByName(NamespaceInfo ns, String name) {
-        return checkAccess(
-                user(), delegate.getCoverageByName(ns, name), MixedModeBehavior.CHALLENGE);
+        return checkAccess(user(), delegate.getCoverageByName(ns, name), MixedModeBehavior.CHALLENGE);
     }
 
     @Override
@@ -178,9 +175,7 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
     @Override
     public CoverageInfo getCoverageByCoverageStore(CoverageStoreInfo coverageStore, String name) {
         return checkAccess(
-                user(),
-                delegate.getCoverageByCoverageStore(coverageStore, name),
-                MixedModeBehavior.CHALLENGE);
+                user(), delegate.getCoverageByCoverageStore(coverageStore, name), MixedModeBehavior.CHALLENGE);
     }
 
     @Override
@@ -195,24 +190,17 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
 
     @Override
     public CoverageStoreInfo getCoverageStoreByName(String name) {
-        return checkAccess(
-                user(), delegate.getCoverageStoreByName(name), MixedModeBehavior.CHALLENGE);
+        return checkAccess(user(), delegate.getCoverageStoreByName(name), MixedModeBehavior.CHALLENGE);
     }
 
     @Override
     public CoverageStoreInfo getCoverageStoreByName(String workspaceName, String name) {
-        return checkAccess(
-                user(),
-                delegate.getCoverageStoreByName(workspaceName, name),
-                MixedModeBehavior.CHALLENGE);
+        return checkAccess(user(), delegate.getCoverageStoreByName(workspaceName, name), MixedModeBehavior.CHALLENGE);
     }
 
     @Override
     public CoverageStoreInfo getCoverageStoreByName(WorkspaceInfo workspace, String name) {
-        return checkAccess(
-                user(),
-                delegate.getCoverageStoreByName(workspace, name),
-                MixedModeBehavior.CHALLENGE);
+        return checkAccess(user(), delegate.getCoverageStoreByName(workspace, name), MixedModeBehavior.CHALLENGE);
     }
 
     @Override
@@ -262,16 +250,12 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
 
     @Override
     public DataStoreInfo getDataStoreByName(String workspaceName, String name) {
-        return checkAccess(
-                user(),
-                delegate.getDataStoreByName(workspaceName, name),
-                MixedModeBehavior.CHALLENGE);
+        return checkAccess(user(), delegate.getDataStoreByName(workspaceName, name), MixedModeBehavior.CHALLENGE);
     }
 
     @Override
     public DataStoreInfo getDataStoreByName(WorkspaceInfo workspace, String name) {
-        return checkAccess(
-                user(), delegate.getDataStoreByName(workspace, name), MixedModeBehavior.CHALLENGE);
+        return checkAccess(user(), delegate.getDataStoreByName(workspace, name), MixedModeBehavior.CHALLENGE);
     }
 
     @Override
@@ -306,26 +290,22 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
 
     @Override
     public FeatureTypeInfo getFeatureTypeByName(String ns, String name) {
-        return checkAccess(
-                user(), delegate.getFeatureTypeByName(ns, name), MixedModeBehavior.CHALLENGE);
+        return checkAccess(user(), delegate.getFeatureTypeByName(ns, name), MixedModeBehavior.CHALLENGE);
     }
 
     @Override
     public FeatureTypeInfo getFeatureTypeByName(NamespaceInfo ns, String name) {
-        return checkAccess(
-                user(), delegate.getFeatureTypeByName(ns, name), MixedModeBehavior.CHALLENGE);
+        return checkAccess(user(), delegate.getFeatureTypeByName(ns, name), MixedModeBehavior.CHALLENGE);
     }
 
     @Override
     public FeatureTypeInfo getFeatureTypeByName(Name name) {
-        return checkAccess(
-                user(), delegate.getFeatureTypeByName(name), MixedModeBehavior.CHALLENGE);
+        return checkAccess(user(), delegate.getFeatureTypeByName(name), MixedModeBehavior.CHALLENGE);
     }
 
     @Override
     public FeatureTypeInfo getFeatureTypeByName(String name) {
-        return checkAccess(
-                user(), delegate.getFeatureTypeByName(name), MixedModeBehavior.CHALLENGE);
+        return checkAccess(user(), delegate.getFeatureTypeByName(name), MixedModeBehavior.CHALLENGE);
     }
 
     @Override
@@ -340,10 +320,7 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
 
     @Override
     public FeatureTypeInfo getFeatureTypeByDataStore(DataStoreInfo dataStore, String name) {
-        return checkAccess(
-                user(),
-                delegate.getFeatureTypeByDataStore(dataStore, name),
-                MixedModeBehavior.CHALLENGE);
+        return checkAccess(user(), delegate.getFeatureTypeByDataStore(dataStore, name), MixedModeBehavior.CHALLENGE);
     }
 
     @Override
@@ -378,16 +355,12 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
 
     @Override
     public LayerGroupInfo getLayerGroupByName(String workspaceName, String name) {
-        return checkAccess(
-                user(),
-                delegate.getLayerGroupByName(workspaceName, name),
-                MixedModeBehavior.CHALLENGE);
+        return checkAccess(user(), delegate.getLayerGroupByName(workspaceName, name), MixedModeBehavior.CHALLENGE);
     }
 
     @Override
     public LayerGroupInfo getLayerGroupByName(WorkspaceInfo workspace, String name) {
-        return checkAccess(
-                user(), delegate.getLayerGroupByName(workspace, name), MixedModeBehavior.CHALLENGE);
+        return checkAccess(user(), delegate.getLayerGroupByName(workspace, name), MixedModeBehavior.CHALLENGE);
     }
 
     @Override
@@ -419,8 +392,7 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
     public List<LayerInfo> getLayers(StyleInfo style) {
 
         String id = style.getId();
-        Filter filter =
-                or(Predicates.equal("defaultStyle.id", id), Predicates.equal("styles.id", id));
+        Filter filter = or(Predicates.equal("defaultStyle.id", id), Predicates.equal("styles.id", id));
 
         return filterLayers(filter);
     }
@@ -439,8 +411,7 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
 
     @Override
     public NamespaceInfo getNamespaceByPrefix(String prefix) {
-        return checkAccess(
-                user(), delegate.getNamespaceByPrefix(prefix), MixedModeBehavior.CHALLENGE);
+        return checkAccess(user(), delegate.getNamespaceByPrefix(prefix), MixedModeBehavior.CHALLENGE);
     }
 
     @Override
@@ -460,27 +431,22 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
 
     @Override
     public <T extends ResourceInfo> T getResourceByName(Name name, Class<T> clazz) {
-        return checkAccess(
-                user(), delegate.getResourceByName(name, clazz), MixedModeBehavior.CHALLENGE);
+        return checkAccess(user(), delegate.getResourceByName(name, clazz), MixedModeBehavior.CHALLENGE);
     }
 
     @Override
     public <T extends ResourceInfo> T getResourceByName(String name, Class<T> clazz) {
-        return checkAccess(
-                user(), delegate.getResourceByName(name, clazz), MixedModeBehavior.CHALLENGE);
+        return checkAccess(user(), delegate.getResourceByName(name, clazz), MixedModeBehavior.CHALLENGE);
     }
 
     @Override
-    public <T extends ResourceInfo> T getResourceByName(
-            NamespaceInfo ns, String name, Class<T> clazz) {
-        return checkAccess(
-                user(), delegate.getResourceByName(ns, name, clazz), MixedModeBehavior.CHALLENGE);
+    public <T extends ResourceInfo> T getResourceByName(NamespaceInfo ns, String name, Class<T> clazz) {
+        return checkAccess(user(), delegate.getResourceByName(ns, name, clazz), MixedModeBehavior.CHALLENGE);
     }
 
     @Override
     public <T extends ResourceInfo> T getResourceByName(String ns, String name, Class<T> clazz) {
-        return checkAccess(
-                user(), delegate.getResourceByName(ns, name, clazz), MixedModeBehavior.CHALLENGE);
+        return checkAccess(user(), delegate.getResourceByName(ns, name, clazz), MixedModeBehavior.CHALLENGE);
     }
 
     @Override
@@ -489,24 +455,18 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
     }
 
     @Override
-    public <T extends ResourceInfo> List<T> getResourcesByNamespace(
-            NamespaceInfo namespace, Class<T> clazz) {
+    public <T extends ResourceInfo> List<T> getResourcesByNamespace(NamespaceInfo namespace, Class<T> clazz) {
         return filterResources(user(), delegate.getResourcesByNamespace(namespace, clazz));
     }
 
     @Override
-    public <T extends ResourceInfo> List<T> getResourcesByNamespace(
-            String namespace, Class<T> clazz) {
+    public <T extends ResourceInfo> List<T> getResourcesByNamespace(String namespace, Class<T> clazz) {
         return filterResources(user(), delegate.getResourcesByNamespace(namespace, clazz));
     }
 
     @Override
-    public <T extends ResourceInfo> T getResourceByStore(
-            StoreInfo store, String name, Class<T> clazz) {
-        return checkAccess(
-                user(),
-                delegate.getResourceByStore(store, name, clazz),
-                MixedModeBehavior.CHALLENGE);
+    public <T extends ResourceInfo> T getResourceByStore(StoreInfo store, String name, Class<T> clazz) {
+        return checkAccess(user(), delegate.getResourceByStore(store, name, clazz), MixedModeBehavior.CHALLENGE);
     }
 
     @Override
@@ -521,26 +481,17 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
 
     @Override
     public <T extends StoreInfo> T getStoreByName(String name, Class<T> clazz) {
-        return checkAccess(
-                user(), delegate.getStoreByName(name, clazz), MixedModeBehavior.CHALLENGE);
+        return checkAccess(user(), delegate.getStoreByName(name, clazz), MixedModeBehavior.CHALLENGE);
     }
 
     @Override
-    public <T extends StoreInfo> T getStoreByName(
-            String workspaceName, String name, Class<T> clazz) {
-        return checkAccess(
-                user(),
-                delegate.getStoreByName(workspaceName, name, clazz),
-                MixedModeBehavior.CHALLENGE);
+    public <T extends StoreInfo> T getStoreByName(String workspaceName, String name, Class<T> clazz) {
+        return checkAccess(user(), delegate.getStoreByName(workspaceName, name, clazz), MixedModeBehavior.CHALLENGE);
     }
 
     @Override
-    public <T extends StoreInfo> T getStoreByName(
-            WorkspaceInfo workspace, String name, Class<T> clazz) {
-        return checkAccess(
-                user(),
-                delegate.getStoreByName(workspace, name, clazz),
-                MixedModeBehavior.CHALLENGE);
+    public <T extends StoreInfo> T getStoreByName(WorkspaceInfo workspace, String name, Class<T> clazz) {
+        return checkAccess(user(), delegate.getStoreByName(workspace, name, clazz), MixedModeBehavior.CHALLENGE);
     }
 
     @Override
@@ -549,14 +500,12 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
     }
 
     @Override
-    public <T extends StoreInfo> List<T> getStoresByWorkspace(
-            String workspaceName, Class<T> clazz) {
+    public <T extends StoreInfo> List<T> getStoresByWorkspace(String workspaceName, Class<T> clazz) {
         return filterStores(user(), delegate.getStoresByWorkspace(workspaceName, clazz));
     }
 
     @Override
-    public <T extends StoreInfo> List<T> getStoresByWorkspace(
-            WorkspaceInfo workspace, Class<T> clazz) {
+    public <T extends StoreInfo> List<T> getStoresByWorkspace(WorkspaceInfo workspace, Class<T> clazz) {
         return filterStores(user(), delegate.getStoresByWorkspace(workspace, clazz));
     }
 
@@ -584,8 +533,7 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
     }
 
     @SuppressWarnings("unchecked")
-    protected <T extends CatalogInfo> T checkAccess(
-            Authentication user, T info, MixedModeBehavior mixedModeBehavior) {
+    protected <T extends CatalogInfo> T checkAccess(Authentication user, T info, MixedModeBehavior mixedModeBehavior) {
         if (info instanceof WorkspaceInfo) {
             return (T) checkAccess(user, (WorkspaceInfo) info, mixedModeBehavior);
         }
@@ -599,16 +547,10 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
             return (T) checkAccess(user, (ResourceInfo) info, mixedModeBehavior);
         }
         if (info instanceof LayerInfo) {
-            return (T)
-                    checkAccess(user, (LayerInfo) info, mixedModeBehavior, Collections.emptyList());
+            return (T) checkAccess(user, (LayerInfo) info, mixedModeBehavior, Collections.emptyList());
         }
         if (info instanceof LayerGroupInfo) {
-            return (T)
-                    checkAccess(
-                            user,
-                            (LayerGroupInfo) info,
-                            mixedModeBehavior,
-                            Collections.emptyList());
+            return (T) checkAccess(user, (LayerGroupInfo) info, mixedModeBehavior, Collections.emptyList());
         }
 
         return info;
@@ -616,10 +558,7 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
 
     @SuppressWarnings("unchecked")
     protected <T extends PublishedInfo> T checkAccess(
-            Authentication user,
-            T info,
-            MixedModeBehavior mixedModeBehavior,
-            List<LayerGroupInfo> containers) {
+            Authentication user, T info, MixedModeBehavior mixedModeBehavior, List<LayerGroupInfo> containers) {
         if (info instanceof LayerInfo) {
             return (T) checkAccess(user, (LayerInfo) info, mixedModeBehavior, containers);
         }
@@ -635,8 +574,7 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
      * write mode, makes it read only if the user can access it in read only mode, returns null
      * otherwise
      */
-    protected <T extends ResourceInfo> T checkAccess(
-            Authentication user, T info, MixedModeBehavior mixedModeBehavior) {
+    protected <T extends ResourceInfo> T checkAccess(Authentication user, T info, MixedModeBehavior mixedModeBehavior) {
         // handle null case
         if (info == null) return null;
 
@@ -658,8 +596,7 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
      *
      * @return <code>null</code> if the user can't acess the style, otherwise the original style.
      */
-    protected StyleInfo checkAccess(
-            Authentication user, StyleInfo style, MixedModeBehavior mixedModeBehavior) {
+    protected StyleInfo checkAccess(Authentication user, StyleInfo style, MixedModeBehavior mixedModeBehavior) {
         if (style == null) return null;
 
         WrapperPolicy policy = buildWrapperPolicy(user, style, style.getName(), mixedModeBehavior);
@@ -674,18 +611,15 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
      * Given a store and a user, returns it back if the user can access its workspace in read mode,
      * null otherwise
      */
-    protected <T extends StoreInfo> T checkAccess(
-            Authentication user, T store, MixedModeBehavior mixedModeBehavior) {
+    protected <T extends StoreInfo> T checkAccess(Authentication user, T store, MixedModeBehavior mixedModeBehavior) {
         if (store == null) return null;
 
-        WrapperPolicy policy =
-                buildWrapperPolicy(user, store.getWorkspace(), store.getName(), mixedModeBehavior);
+        WrapperPolicy policy = buildWrapperPolicy(user, store.getWorkspace(), store.getName(), mixedModeBehavior);
 
         // handle the modes that do not require wrapping
         if (policy.level == AccessLevel.HIDDEN) return null;
         else if (policy.level == AccessLevel.READ_WRITE
-                || (policy.level == AccessLevel.READ_ONLY && store instanceof CoverageStoreInfo))
-            return store;
+                || (policy.level == AccessLevel.READ_ONLY && store instanceof CoverageStoreInfo)) return store;
 
         // otherwise we are in a mixed case where the user can read but not
         // write, or
@@ -711,8 +645,7 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
         if (layer == null) return null;
 
         // first off, handle the case where the user cannot even read the data
-        WrapperPolicy policy =
-                buildWrapperPolicy(user, layer, layer.getName(), mixedModeBehavior, containers);
+        WrapperPolicy policy = buildWrapperPolicy(user, layer, layer.getName(), mixedModeBehavior, containers);
 
         // handle the modes that do not require wrapping
         if (policy.level == AccessLevel.HIDDEN) return null;
@@ -732,8 +665,7 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
         if (group == null) return null;
 
         // first check the layer group itself
-        WrapperPolicy policy =
-                buildWrapperPolicy(user, group, group.getName(), mixedModeBehavior, containers);
+        WrapperPolicy policy = buildWrapperPolicy(user, group, group.getName(), mixedModeBehavior, containers);
         if (policy.level == AccessLevel.HIDDEN) {
             return null;
         }
@@ -758,8 +690,7 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
             PublishedInfo layer = layers.get(i);
             StyleInfo style = (styles != null && styles.size() > i) ? styles.get(i) : null;
             // for nested layers, hide in mixed mode, the inner layers were not explicitly requested
-            PublishedInfo checked =
-                    checkAccess(user, layer, MixedModeBehavior.HIDE, extendedContainers);
+            PublishedInfo checked = checkAccess(user, layer, MixedModeBehavior.HIDE, extendedContainers);
             if (checked != null) {
                 wrapped.add(checked);
                 selectedStyles.add(style);
@@ -777,8 +708,7 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
     }
 
     /** Given a namespace and user, returns it back if the user can access it, null otherwise */
-    protected <T extends NamespaceInfo> T checkAccess(
-            Authentication user, T ns, MixedModeBehavior mixedModeBehavior) {
+    protected <T extends NamespaceInfo> T checkAccess(Authentication user, T ns, MixedModeBehavior mixedModeBehavior) {
         if (ns == null) return null;
 
         // route the security check thru the associated workspace info
@@ -795,8 +725,7 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
     }
 
     /** Given a workspace and user, returns it back if the user can access it, null otherwise */
-    protected <T extends WorkspaceInfo> T checkAccess(
-            Authentication user, T ws, MixedModeBehavior mixedModeBehavior) {
+    protected <T extends WorkspaceInfo> T checkAccess(Authentication user, T ws, MixedModeBehavior mixedModeBehavior) {
         if (ws == null) return null;
 
         WrapperPolicy policy = buildWrapperPolicy(user, ws, ws.getName(), mixedModeBehavior);
@@ -837,8 +766,7 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
         }
 
         if (info instanceof WorkspaceInfo) {
-            return buildWrapperPolicy(
-                    accessManager, user, info, ((WorkspaceInfo) info).getName(), mixedModeBehavior);
+            return buildWrapperPolicy(accessManager, user, info, ((WorkspaceInfo) info).getName(), mixedModeBehavior);
         }
 
         if (info instanceof StoreInfo) {
@@ -851,13 +779,11 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
         }
 
         if (info instanceof ResourceInfo) {
-            return buildWrapperPolicy(
-                    accessManager, user, info, ((ResourceInfo) info).getName(), mixedModeBehavior);
+            return buildWrapperPolicy(accessManager, user, info, ((ResourceInfo) info).getName(), mixedModeBehavior);
         }
 
         if (info instanceof LayerInfo) {
-            return buildWrapperPolicy(
-                    accessManager, user, info, ((LayerInfo) info).getName(), mixedModeBehavior);
+            return buildWrapperPolicy(accessManager, user, info, ((LayerInfo) info).getName(), mixedModeBehavior);
         }
 
         if (info instanceof LayerGroupInfo) {
@@ -867,8 +793,7 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
 
             for (PublishedInfo layer : ((LayerGroupInfo) info).getLayers()) {
                 WrapperPolicy policy =
-                        buildWrapperPolicy(
-                                accessManager, user, layer, layer.getName(), mixedModeBehavior);
+                        buildWrapperPolicy(accessManager, user, layer, layer.getName(), mixedModeBehavior);
                 if (AccessLevel.HIDDEN.equals(policy.getAccessLevel())) {
                     return policy;
                 }
@@ -881,12 +806,11 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
 
             return mostRestrictive;
         } else if (info instanceof StyleInfo) {
-            return buildWrapperPolicy(
-                    accessManager, user, info, ((StyleInfo) info).getName(), mixedModeBehavior);
+            return buildWrapperPolicy(accessManager, user, info, ((StyleInfo) info).getName(), mixedModeBehavior);
         }
 
-        throw new IllegalArgumentException(
-                "Can't build wrapper policy for objects of type " + info.getClass().getName());
+        throw new IllegalArgumentException("Can't build wrapper policy for objects of type "
+                + info.getClass().getName());
     }
 
     protected WrapperPolicy buildWrapperPolicy(
@@ -899,17 +823,9 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
      * resource considering the read/write access, the security mode, and the filtering status
      */
     public WrapperPolicy buildWrapperPolicy(
-            Authentication user,
-            CatalogInfo info,
-            String resourceName,
-            MixedModeBehavior mixedModeBehavior) {
+            Authentication user, CatalogInfo info, String resourceName, MixedModeBehavior mixedModeBehavior) {
         return SecureCatalogImpl.buildWrapperPolicy(
-                accessManager,
-                user,
-                info,
-                resourceName,
-                mixedModeBehavior,
-                Collections.emptyList());
+                accessManager, user, info, resourceName, mixedModeBehavior, Collections.emptyList());
     }
 
     /**
@@ -932,13 +848,7 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
             CatalogInfo info,
             String resourceName,
             MixedModeBehavior mixedModeBehavior) {
-        return buildWrapperPolicy(
-                accessManager,
-                user,
-                info,
-                resourceName,
-                mixedModeBehavior,
-                Collections.emptyList());
+        return buildWrapperPolicy(accessManager, user, info, resourceName, mixedModeBehavior, Collections.emptyList());
     }
 
     static WrapperPolicy buildWrapperPolicy(
@@ -979,14 +889,12 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
 
             if (info instanceof LayerInfo) {
                 dl = accessManager.getAccessLimits(user, (LayerInfo) info, containers);
-                wl =
-                        accessManager.getAccessLimits(
-                                user, ((LayerInfo) info).getResource().getStore().getWorkspace());
+                wl = accessManager.getAccessLimits(
+                        user, ((LayerInfo) info).getResource().getStore().getWorkspace());
             } else {
                 dl = accessManager.getAccessLimits(user, (ResourceInfo) info);
-                wl =
-                        accessManager.getAccessLimits(
-                                user, ((ResourceInfo) info).getStore().getWorkspace());
+                wl = accessManager.getAccessLimits(
+                        user, ((ResourceInfo) info).getStore().getWorkspace());
             }
             if (dl != null) {
                 canRead = dl.getReadFilter() != Filter.EXCLUDE;
@@ -1027,9 +935,7 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
             }
         } else {
             throw new IllegalArgumentException(
-                    "Can't build the wrapper policy for objects "
-                            + "other than workspace, layer or resource: "
-                            + info);
+                    "Can't build the wrapper policy for objects " + "other than workspace, layer or resource: " + info);
         }
 
         final CatalogMode mode = limits != null ? limits.getMode() : CatalogMode.HIDE;
@@ -1066,11 +972,8 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
         // is an unauthorized direct resource access, complain
         Authentication user = user();
         if (user == null || user.getAuthorities().size() == 0)
-            return new InsufficientAuthenticationException(
-                    "Cannot access " + resourceName + " as anonymous");
-        else
-            return new AccessDeniedException(
-                    "Cannot access " + resourceName + " with the current privileges");
+            return new InsufficientAuthenticationException("Cannot access " + resourceName + " as anonymous");
+        else return new AccessDeniedException("Cannot access " + resourceName + " with the current privileges");
     }
 
     public static RuntimeException unauthorizedAccess() {
@@ -1078,8 +981,7 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
         // is an unauthorized direct resource access, complain
         Authentication user = user();
         if (user == null || user.getAuthorities().size() == 0)
-            return new InsufficientAuthenticationException(
-                    "Operation unallowed with the current privileges");
+            return new InsufficientAuthenticationException("Operation unallowed with the current privileges");
         else return new AccessDeniedException("Operation unallowed with the current privileges");
     }
 
@@ -1087,8 +989,7 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
      * Given a list of resources, returns a copy of it containing only the resources the user can
      * access
      */
-    protected <T extends ResourceInfo> List<T> filterResources(
-            Authentication user, List<T> resources) {
+    protected <T extends ResourceInfo> List<T> filterResources(Authentication user, List<T> resources) {
         List<T> result = new ArrayList<>();
         for (T original : resources) {
             T secured = checkAccess(user, original, MixedModeBehavior.HIDE);
@@ -1151,8 +1052,7 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
      * Given a list of namespaces, returns a copy of it containing only the namespaces the user can
      * access
      */
-    protected <T extends NamespaceInfo> List<T> filterNamespaces(
-            Authentication user, List<T> namespaces) {
+    protected <T extends NamespaceInfo> List<T> filterNamespaces(Authentication user, List<T> namespaces) {
         List<T> result = new ArrayList<>();
         for (T original : namespaces) {
             T secured = checkAccess(user, original, MixedModeBehavior.HIDE);
@@ -1165,8 +1065,7 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
      * Given a list of workspaces, returns a copy of it containing only the workspaces the user can
      * access
      */
-    protected <T extends WorkspaceInfo> List<T> filterWorkspaces(
-            Authentication user, List<T> workspaces) {
+    protected <T extends WorkspaceInfo> List<T> filterWorkspaces(Authentication user, List<T> workspaces) {
         List<T> result = new ArrayList<>();
         for (T original : workspaces) {
             T secured = checkAccess(user, original, MixedModeBehavior.HIDE);
@@ -1186,32 +1085,23 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
     }
 
     static LayerInfo unwrap(LayerInfo layer) {
-        if (layer instanceof SecuredLayerInfo)
-            return ((SecuredLayerInfo) layer).unwrap(LayerInfo.class);
+        if (layer instanceof SecuredLayerInfo) return ((SecuredLayerInfo) layer).unwrap(LayerInfo.class);
         return layer;
     }
 
     static ResourceInfo unwrap(ResourceInfo info) {
-        if (info instanceof SecuredFeatureTypeInfo)
-            return ((SecuredFeatureTypeInfo) info).unwrap(ResourceInfo.class);
-        if (info instanceof SecuredCoverageInfo)
-            return ((SecuredCoverageInfo) info).unwrap(ResourceInfo.class);
-        if (info instanceof SecuredWMSLayerInfo)
-            return ((SecuredWMSLayerInfo) info).unwrap(ResourceInfo.class);
-        if (info instanceof SecuredWMTSLayerInfo)
-            return ((SecuredWMTSLayerInfo) info).unwrap(ResourceInfo.class);
+        if (info instanceof SecuredFeatureTypeInfo) return ((SecuredFeatureTypeInfo) info).unwrap(ResourceInfo.class);
+        if (info instanceof SecuredCoverageInfo) return ((SecuredCoverageInfo) info).unwrap(ResourceInfo.class);
+        if (info instanceof SecuredWMSLayerInfo) return ((SecuredWMSLayerInfo) info).unwrap(ResourceInfo.class);
+        if (info instanceof SecuredWMTSLayerInfo) return ((SecuredWMTSLayerInfo) info).unwrap(ResourceInfo.class);
         return info;
     }
 
     static StoreInfo unwrap(StoreInfo info) {
-        if (info instanceof SecuredDataStoreInfo)
-            return ((SecuredDataStoreInfo) info).unwrap(StoreInfo.class);
-        if (info instanceof SecuredCoverageStoreInfo)
-            return ((SecuredCoverageStoreInfo) info).unwrap(StoreInfo.class);
-        if (info instanceof SecuredWMSStoreInfo)
-            return ((SecuredWMSStoreInfo) info).unwrap(StoreInfo.class);
-        if (info instanceof SecuredWMTSStoreInfo)
-            return ((SecuredWMTSStoreInfo) info).unwrap(StoreInfo.class);
+        if (info instanceof SecuredDataStoreInfo) return ((SecuredDataStoreInfo) info).unwrap(StoreInfo.class);
+        if (info instanceof SecuredCoverageStoreInfo) return ((SecuredCoverageStoreInfo) info).unwrap(StoreInfo.class);
+        if (info instanceof SecuredWMSStoreInfo) return ((SecuredWMSStoreInfo) info).unwrap(StoreInfo.class);
+        if (info instanceof SecuredWMTSStoreInfo) return ((SecuredWMTSStoreInfo) info).unwrap(StoreInfo.class);
         return info;
     }
 
@@ -1410,19 +1300,13 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
 
     @Override
     public void fireModified(
-            CatalogInfo object,
-            List<String> propertyNames,
-            List<Object> oldValues,
-            List<Object> newValues) {
+            CatalogInfo object, List<String> propertyNames, List<Object> oldValues, List<Object> newValues) {
         delegate.fireModified(object, propertyNames, oldValues, newValues);
     }
 
     @Override
     public void firePostModified(
-            CatalogInfo object,
-            List<String> propertyNames,
-            List<Object> oldValues,
-            List<Object> newValues) {
+            CatalogInfo object, List<String> propertyNames, List<Object> oldValues, List<Object> newValues) {
         delegate.firePostModified(object, propertyNames, oldValues, newValues);
     }
 
@@ -1449,14 +1333,12 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
 
     @Override
     public StyleInfo getStyleByName(String workspaceName, String name) {
-        return checkAccess(
-                user(), delegate.getStyleByName(workspaceName, name), MixedModeBehavior.CHALLENGE);
+        return checkAccess(user(), delegate.getStyleByName(workspaceName, name), MixedModeBehavior.CHALLENGE);
     }
 
     @Override
     public StyleInfo getStyleByName(WorkspaceInfo workspace, String name) {
-        return checkAccess(
-                user(), delegate.getStyleByName(workspace, name), MixedModeBehavior.CHALLENGE);
+        return checkAccess(user(), delegate.getStyleByName(workspace, name), MixedModeBehavior.CHALLENGE);
     }
 
     @Override
@@ -1591,8 +1473,7 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
 
     @Override
     public DataStoreInfo getDefaultDataStore(WorkspaceInfo workspace) {
-        return checkAccess(
-                user(), delegate.getDefaultDataStore(workspace), MixedModeBehavior.CHALLENGE);
+        return checkAccess(user(), delegate.getDefaultDataStore(workspace), MixedModeBehavior.CHALLENGE);
     }
 
     @Override
@@ -1608,8 +1489,7 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
     }
 
     @Override
-    public <T extends CatalogInfo> T get(Class<T> type, Filter filter)
-            throws IllegalArgumentException {
+    public <T extends CatalogInfo> T get(Class<T> type, Filter filter) throws IllegalArgumentException {
 
         Filter securityFilter = securityFilter(type, filter);
         T result = delegate.get(type, securityFilter);
@@ -1633,16 +1513,14 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
         // for accessing a single resource by name/id, thus use hide policy for mixed mode
         final Function<T, T> securityWrapper = securityWrapper(of, MixedModeBehavior.HIDE);
         @SuppressWarnings("PMD.CloseResource") // wrapped and returned
-        final CloseableIterator<T> filteredWrapped =
-                CloseableIteratorAdapter.transform(filtered, securityWrapper);
+        final CloseableIterator<T> filteredWrapped = CloseableIteratorAdapter.transform(filtered, securityWrapper);
 
         // wrap the iterator in a notNull filter to ensure any filtered
         // layers (result is null) don't get passed on from the securityWrapper
         // Function. When the AccessLevel is HIDDEN and a layer gets filtered
         // out via a CatalogFilter - for example, this can happen with a
         // LocalWorkspaceCatalogFilter and a virtual service request
-        return CloseableIteratorAdapter.filter(
-                filteredWrapped, com.google.common.base.Predicates.notNull());
+        return CloseableIteratorAdapter.filter(filteredWrapped, com.google.common.base.Predicates.notNull());
     }
 
     public <T extends CatalogInfo> CloseableIterator<T> list(
@@ -1651,23 +1529,20 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
 
         @SuppressWarnings("PMD.CloseResource") // wrapped and returned
         // HACK here, go straigth to the facade of the delegate to get a method supporting sortby[]
-        CloseableIterator<T> filtered =
-                delegate.getFacade().list(of, securityFilter, offset, count, sortBy);
+        CloseableIterator<T> filtered = delegate.getFacade().list(of, securityFilter, offset, count, sortBy);
 
         // create secured decorators on-demand. Assume this method is used only for listing, not
         // for accessing a single resource by name/id, thus use hide policy for mixed mode
         final Function<T, T> securityWrapper = securityWrapper(of, MixedModeBehavior.HIDE);
         @SuppressWarnings("PMD.CloseResource") // wrapped and returned
-        final CloseableIterator<T> filteredWrapped =
-                CloseableIteratorAdapter.transform(filtered, securityWrapper);
+        final CloseableIterator<T> filteredWrapped = CloseableIteratorAdapter.transform(filtered, securityWrapper);
 
         // wrap the iterator in a notNull filter to ensure any filtered
         // layers (result is null) don't get passed on from the securityWrapper
         // Function. When the AccessLevel is HIDDEN and a layer gets filtered
         // out via a CatalogFilter - for example, this can happen with a
         // LocalWorkspaceCatalogFilter and a virtual service request
-        return CloseableIteratorAdapter.filter(
-                filteredWrapped, com.google.common.base.Predicates.notNull());
+        return CloseableIteratorAdapter.filter(filteredWrapped, com.google.common.base.Predicates.notNull());
     }
 
     /**
@@ -1704,8 +1579,7 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
      * @return a catalog Predicate that evaluates if an object of the required type is accessible to
      *     the given user
      */
-    private <T extends CatalogInfo> Filter securityFilter(
-            final Class<T> infoType, final Filter filter) {
+    private <T extends CatalogInfo> Filter securityFilter(final Class<T> infoType, final Filter filter) {
 
         final Authentication user = user();
         if (isAdmin(user)) {
@@ -1730,8 +1604,7 @@ public class SecureCatalogImpl extends AbstractDecorator<Catalog> implements Cat
      */
     protected boolean isAdmin(Authentication authentication) {
 
-        return GeoServerExtensions.bean(GeoServerSecurityManager.class)
-                .checkAuthenticationForAdminRole(authentication);
+        return GeoServerExtensions.bean(GeoServerSecurityManager.class).checkAuthenticationForAdminRole(authentication);
     }
 
     @Override

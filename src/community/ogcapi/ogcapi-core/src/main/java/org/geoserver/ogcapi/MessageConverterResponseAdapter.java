@@ -32,8 +32,7 @@ import org.springframework.http.converter.HttpMessageNotWritableException;
  *
  * @param <T>
  */
-public class MessageConverterResponseAdapter<T>
-        implements HttpMessageConverter<T>, ApplicationContextAware {
+public class MessageConverterResponseAdapter<T> implements HttpMessageConverter<T>, ApplicationContextAware {
 
     protected final Class<T> valueClass;
     protected final Class<?> responseBinding;
@@ -74,10 +73,7 @@ public class MessageConverterResponseAdapter<T>
         Optional<Response> response = getResponse(mediaType);
         if (!response.isPresent()) {
             throw new IllegalArgumentException(
-                    "Could not find a Response handling "
-                            + mediaType
-                            + " for binding "
-                            + valueClass);
+                    "Could not find a Response handling " + mediaType + " for binding " + valueClass);
         }
 
         Request dr = Dispatcher.REQUEST.get();
@@ -85,8 +81,7 @@ public class MessageConverterResponseAdapter<T>
         writeResponse(value, httpOutputMessage, operation, response.get());
     }
 
-    protected void writeResponse(
-            T value, HttpOutputMessage httpOutputMessage, Operation operation, Response response)
+    protected void writeResponse(T value, HttpOutputMessage httpOutputMessage, Operation operation, Response response)
             throws IOException {
         setHeaders(value, operation, response, httpOutputMessage);
         response.write(value, httpOutputMessage.getBody(), operation);
@@ -111,15 +106,13 @@ public class MessageConverterResponseAdapter<T>
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         Predicate<Response> predicate = getResponseFilterPredicate();
-        this.responses =
-                GeoServerExtensions.extensions(Response.class, applicationContext).stream()
-                        .filter(predicate)
-                        .collect(Collectors.toList());
-        this.supportedMediaTypes =
-                this.responses.stream()
-                        .flatMap(r -> getMediaTypeStream(r))
-                        .distinct()
-                        .collect(Collectors.toList());
+        this.responses = GeoServerExtensions.extensions(Response.class, applicationContext).stream()
+                .filter(predicate)
+                .collect(Collectors.toList());
+        this.supportedMediaTypes = this.responses.stream()
+                .flatMap(r -> getMediaTypeStream(r))
+                .distinct()
+                .collect(Collectors.toList());
     }
 
     protected Predicate<Response> getResponseFilterPredicate() {
@@ -129,17 +122,16 @@ public class MessageConverterResponseAdapter<T>
     protected Stream<MediaType> getMediaTypeStream(Response r) {
         return r.getOutputFormats().stream()
                 .filter(f -> f.contains("/"))
-                .filter(
-                        f -> {
-                            // GML2 content type is not really valid, this is here to filter rough
-                            // content types
-                            try {
-                                MediaType.parseMediaType(f);
-                                return true;
-                            } catch (Exception e) {
-                                return false;
-                            }
-                        })
+                .filter(f -> {
+                    // GML2 content type is not really valid, this is here to filter rough
+                    // content types
+                    try {
+                        MediaType.parseMediaType(f);
+                        return true;
+                    } catch (Exception e) {
+                        return false;
+                    }
+                })
                 .map(f -> MediaType.parseMediaType(f));
     }
 
@@ -147,8 +139,7 @@ public class MessageConverterResponseAdapter<T>
      * Allows response to set headers like in the OGC Dispatcher, controls content disposition
      * override based on query parameters too
      */
-    protected void setHeaders(
-            Object result, Operation operation, Response response, HttpOutputMessage message) {
+    protected void setHeaders(Object result, Operation operation, Response response, HttpOutputMessage message) {
         // get the basics using the new api
         String disposition = response.getPreferredDisposition(result, operation);
         String filename = response.getAttachmentFileName(result, operation);

@@ -24,8 +24,7 @@ public abstract class DynamicJsonBuilder extends DynamicValueBuilder {
 
     protected JsonNode node;
 
-    protected DynamicJsonBuilder(
-            String key, String expression, NamespaceSupport namespaces, JsonNode node) {
+    protected DynamicJsonBuilder(String key, String expression, NamespaceSupport namespaces, JsonNode node) {
         super(key, expression, namespaces);
         this.node = node;
     }
@@ -48,12 +47,10 @@ public abstract class DynamicJsonBuilder extends DynamicValueBuilder {
      * @throws IOException
      */
     protected void iterateAndEvaluateNestedTree(
-            TemplateBuilderContext context, TemplateOutputWriter writer, JsonNode node)
-            throws IOException {
+            TemplateBuilderContext context, TemplateOutputWriter writer, JsonNode node) throws IOException {
         TemplateBuilder builder = getNestedTree(node, context);
         List<TemplateBuilder> children = builder.getChildren();
-        if (!children.isEmpty())
-            for (TemplateBuilder child : children) child.evaluate(writer, context);
+        if (!children.isEmpty()) for (TemplateBuilder child : children) child.evaluate(writer, context);
     }
 
     /**
@@ -74,12 +71,9 @@ public abstract class DynamicJsonBuilder extends DynamicValueBuilder {
      *     be considered as a topLevelComplex builder, hence without its own output or not.
      * @return the builder tree.
      */
-    protected TemplateBuilder getNestedTree(
-            JsonNode node, TemplateBuilderContext context, boolean topLevelComplex) {
-        TemplateReaderConfiguration configuration =
-                new TemplateReaderConfiguration(getNamespaces());
-        JSONTemplateReader jsonTemplateReader =
-                new JSONTemplateReader(node, configuration, new ArrayList<>());
+    protected TemplateBuilder getNestedTree(JsonNode node, TemplateBuilderContext context, boolean topLevelComplex) {
+        TemplateReaderConfiguration configuration = new TemplateReaderConfiguration(getNamespaces());
+        JSONTemplateReader jsonTemplateReader = new JSONTemplateReader(node, configuration, new ArrayList<>());
 
         TemplateBuilderMaker maker = configuration.getBuilderMaker();
         maker.namespaces(configuration.getNamespaces());

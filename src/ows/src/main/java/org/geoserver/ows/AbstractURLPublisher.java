@@ -55,8 +55,8 @@ import org.springframework.web.servlet.mvc.AbstractController;
 public abstract class AbstractURLPublisher extends AbstractController {
 
     @Override
-    protected ModelAndView handleRequestInternal(
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
+    protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
         URL url = getUrl(request);
 
         // if not found return a 404
@@ -84,15 +84,17 @@ public abstract class AbstractURLPublisher extends AbstractController {
         // set the mime if known by the servlet container, otherwise default to
         // application/octet-stream to mitigate potential cross-site scripting
         String filename = new File(url.getFile()).getName();
-        String mime =
-                Optional.ofNullable(getServletContext())
-                        .map(sc -> sc.getMimeType(filename))
-                        .orElse(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+        String mime = Optional.ofNullable(getServletContext())
+                .map(sc -> sc.getMimeType(filename))
+                .orElse(MediaType.APPLICATION_OCTET_STREAM_VALUE);
         response.setContentType(mime);
         String dispositionType = isAttachment(url, filename, mime) ? "attachment" : "inline";
         response.setHeader(
                 "Content-Disposition",
-                ContentDisposition.builder(dispositionType).filename(filename).build().toString());
+                ContentDisposition.builder(dispositionType)
+                        .filename(filename)
+                        .build()
+                        .toString());
 
         // set the content length and content type
         URLConnection connection = url.openConnection();
@@ -114,8 +116,7 @@ public abstract class AbstractURLPublisher extends AbstractController {
             // Read the first four bytes, and determine charset encoding
             count = input.read(b4);
             encInfo = XmlCharsetDetector.getEncodingName(b4, count);
-            response.setCharacterEncoding(
-                    encInfo.getEncoding() != null ? encInfo.getEncoding() : "UTF-8");
+            response.setCharacterEncoding(encInfo.getEncoding() != null ? encInfo.getEncoding() : "UTF-8");
 
             // count < 1 -> empty file
             if (count > 0) {
@@ -138,10 +139,9 @@ public abstract class AbstractURLPublisher extends AbstractController {
 
     private boolean checkNotModified(HttpServletRequest request, long timeStamp) {
         Enumeration headers = request.getHeaders("If-Modified-Since");
-        String header =
-                headers != null && headers.hasMoreElements()
-                        ? headers.nextElement().toString()
-                        : null;
+        String header = headers != null && headers.hasMoreElements()
+                ? headers.nextElement().toString()
+                : null;
         if (header != null && header.length() > 0) {
             long ifModSinceSeconds = lastModified(header);
             // the HTTP header has second precision

@@ -58,11 +58,10 @@ public final class ConfigurationDiffVisitor {
         Collection<ServiceInfo> servicesA = getAllServices(geoServerA);
         Collection<ServiceInfo> servicesB = getAllServices(geoServerB);
         // register the services that are only present in GeoServer B has differences
-        differences.addAll(
-                servicesB.stream()
-                        .filter(service -> search(service, servicesA) == null)
-                        .map(service -> new InfoDiff(null, service))
-                        .collect(Collectors.toList()));
+        differences.addAll(servicesB.stream()
+                .filter(service -> search(service, servicesA) == null)
+                .map(service -> new InfoDiff(null, service))
+                .collect(Collectors.toList()));
         // iterate over GeoServer A services and compare them with GeoServer B services
         for (ServiceInfo service : servicesA) {
             ServiceInfo otherService = search(service, servicesB);
@@ -98,11 +97,10 @@ public final class ConfigurationDiffVisitor {
         List<SettingsInfo> settingsA = getAllSettings(geoServerA);
         List<SettingsInfo> settingsB = getAllSettings(geoServerB);
         // register the settings that are only present in GeoServer B has differences
-        differences.addAll(
-                settingsB.stream()
-                        .filter(settings -> search(settings, settingsA) == null)
-                        .map(settings -> new InfoDiff(null, settings))
-                        .collect(Collectors.toList()));
+        differences.addAll(settingsB.stream()
+                .filter(settings -> search(settings, settingsA) == null)
+                .map(settings -> new InfoDiff(null, settings))
+                .collect(Collectors.toList()));
         // iterate over GeoServer A settings and compare them with GeoServer B services
         for (SettingsInfo settings : settingsA) {
             SettingsInfo otherSettings = search(settings, settingsB);

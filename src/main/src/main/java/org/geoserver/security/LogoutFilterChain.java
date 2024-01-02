@@ -37,11 +37,9 @@ public class LogoutFilterChain extends ConstantFilterChain {
             String... skipHandlerName)
             throws IOException, ServletException {
         GeoServerLogoutFilter filter =
-                (GeoServerLogoutFilter)
-                        manager.loadFilter(GeoServerSecurityFilterChain.FORM_LOGOUT_FILTER);
+                (GeoServerLogoutFilter) manager.loadFilter(GeoServerSecurityFilterChain.FORM_LOGOUT_FILTER);
         if (filter == null) {
-            LOGGER.warning(
-                    "Cannot find filter: " + GeoServerSecurityFilterChain.FORM_LOGOUT_FILTER);
+            LOGGER.warning("Cannot find filter: " + GeoServerSecurityFilterChain.FORM_LOGOUT_FILTER);
             return;
         }
         filter.doLogout(request, response, skipHandlerName);

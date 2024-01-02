@@ -106,19 +106,14 @@ final class HistogramUtils {
                 indexes.forEach(i -> histogramValues.set(i, histogramValues.get(i) + 1));
             } else if (LOGGER.isLoggable(Level.FINE)) {
                 LOGGER.log(
-                        Level.FINE,
-                        "No values found for interval: "
-                                + range.getMinValue()
-                                + "-"
-                                + range.getMaxValue());
+                        Level.FINE, "No values found for interval: " + range.getMinValue() + "-" + range.getMaxValue());
             }
         }
         return Tuple.tuple(bucketsTuple.first, histogramValues);
     }
 
     /** Compute the buckets for the given domain values and resolution. */
-    private static Tuple<String, List<Range>> computeBuckets(
-            List<Comparable> domainValues, String resolution) {
+    private static Tuple<String, List<Range>> computeBuckets(List<Comparable> domainValues, String resolution) {
         switch (findHistogramType(domainValues)) {
             case NUMERIC:
                 return getNumericBuckets(domainValues, resolution);
@@ -151,8 +146,7 @@ final class HistogramUtils {
      * Helper method that creates buckets for a numeric domain based on the provided resolution. The
      * returned tuple will contain the domain representation and the domain buckets.
      */
-    private static Tuple<String, List<Range>> getNumericBuckets(
-            List<Comparable> domainValues, String resolution) {
+    private static Tuple<String, List<Range>> getNumericBuckets(List<Comparable> domainValues, String resolution) {
         Tuple<Double, Double> minMax = DimensionsUtils.getMinMax(domainValues, Double.class);
         return getNumericBuckets(minMax.first, minMax.second, resolution);
     }
@@ -161,8 +155,7 @@ final class HistogramUtils {
      * Helper method that creates buckets for a numeric domain based on the provided resolution. The
      * returned tuple will contain the domain representation and the domain buckets.
      */
-    public static Tuple<String, List<Range>> getNumericBuckets(
-            double min, double max, String resolution) {
+    public static Tuple<String, List<Range>> getNumericBuckets(double min, double max, String resolution) {
         resolution = resolution != null ? resolution : NUMERICAL_DEFAULT_RESOLUTION;
         double finalResolution = Double.parseDouble(resolution);
         int i = 0;
@@ -181,8 +174,7 @@ final class HistogramUtils {
             // one bucket catches all
             boolean includeLast = (max - min) < finalResolution;
             return Tuple.tuple(
-                    domainString,
-                    Collections.singletonList(NumberRange.create(min, true, max, includeLast)));
+                    domainString, Collections.singletonList(NumberRange.create(min, true, max, includeLast)));
         }
         List<Range> buckets = new ArrayList<>();
         for (double step = min; step < max; step += finalResolution) {
@@ -201,8 +193,7 @@ final class HistogramUtils {
      * Helper method that creates buckets for a time domain based on the provided resolution. The
      * returned tuple will contain the domain representation and the domain buckets.
      */
-    private static Tuple<String, List<Range>> getTimeBuckets(
-            List<Comparable> domainValues, String resolution) {
+    private static Tuple<String, List<Range>> getTimeBuckets(List<Comparable> domainValues, String resolution) {
         Tuple<Date, Date> minMax = DimensionsUtils.getMinMax(domainValues, Date.class);
         return getTimeBuckets(minMax.first, minMax.second, resolution);
     }
@@ -227,8 +218,7 @@ final class HistogramUtils {
                 max = new Date(max.getTime() + resolutionInMs);
             }
         } catch (ParseException e) {
-            throw new RuntimeException(
-                    String.format("Error parsing time resolution '%s'.", resolution), e);
+            throw new RuntimeException(String.format("Error parsing time resolution '%s'.", resolution), e);
         }
         Tuple<Date, Date> minMax = Tuple.tuple(min, max);
         Tuple<String, List<Date>> intervalsAndSpec = getDateIntervals(minMax, resolution);
@@ -243,8 +233,7 @@ final class HistogramUtils {
         if (intervals.size() == 1) {
             boolean includeLast = difference < resolutionInMs;
             return Tuple.tuple(
-                    intervalsAndSpec.first,
-                    Collections.singletonList(new DateRange(min, true, max, includeLast)));
+                    intervalsAndSpec.first, Collections.singletonList(new DateRange(min, true, max, includeLast)));
         }
         List<Range> buckets = new ArrayList<>();
         Date previous = intervals.get(0);
@@ -256,8 +245,7 @@ final class HistogramUtils {
     }
 
     /** Helper method that computes the time intervals for a certain resolution. */
-    private static Tuple<String, List<Date>> getDateIntervals(
-            Tuple<Date, Date> minMax, String resolution) {
+    private static Tuple<String, List<Date>> getDateIntervals(Tuple<Date, Date> minMax, String resolution) {
         ISO8601Formatter dateFormatter = new ISO8601Formatter();
         String domainString = dateFormatter.format(minMax.first);
         domainString += "/" + dateFormatter.format(minMax.second) + "/" + resolution;
@@ -266,13 +254,12 @@ final class HistogramUtils {
             List<Date> intervals = new ArrayList<>();
             @SuppressWarnings("unchecked")
             Collection<Object> parsed = timeParser.parse(domainString);
-            parsed.forEach(
-                    o -> {
-                        if (o instanceof Date) intervals.add((Date) o);
-                        else
-                            throw new RuntimeException(
-                                    "Unexpected DateRange specification found, this service can only handle points in time");
-                    });
+            parsed.forEach(o -> {
+                if (o instanceof Date) intervals.add((Date) o);
+                else
+                    throw new RuntimeException(
+                            "Unexpected DateRange specification found, this service can only handle points in time");
+            });
             Date last = intervals.get(intervals.size() - 1);
             long resolutionInMs = org.geoserver.ows.kvp.TimeParser.parsePeriod(resolution);
             if (last.getTime() < minMax.second.getTime()) {
@@ -280,8 +267,7 @@ final class HistogramUtils {
             }
             return Tuple.tuple(domainString, intervals);
         } catch (ParseException exception) {
-            throw new RuntimeException(
-                    String.format("Error parsing time resolution '%s'.", resolution), exception);
+            throw new RuntimeException(String.format("Error parsing time resolution '%s'.", resolution), exception);
         }
     }
 

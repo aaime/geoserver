@@ -90,15 +90,14 @@ public class CatalogMultiResourceItemReader<T> extends CatalogReader<T> {
         this.strict = strict;
     }
 
-    private Comparator<Resource> comparator =
-            new Comparator<Resource>() {
+    private Comparator<Resource> comparator = new Comparator<Resource>() {
 
-                /** Compares resource filenames. */
-                @Override
-                public int compare(Resource r1, Resource r2) {
-                    return r1.getFilename().compareTo(r2.getFilename());
-                }
-            };
+        /** Compares resource filenames. */
+        @Override
+        public int compare(Resource r1, Resource r2) {
+            return r1.getFilename().compareTo(r2.getFilename());
+        }
+    };
 
     /** Reads the next item, jumping to next resource if necessary. */
     @Override
@@ -185,8 +184,7 @@ public class CatalogMultiResourceItemReader<T> extends CatalogReader<T> {
                 throw new IllegalStateException(
                         "No resources to read. Set strict=false if this is not an error condition.");
             } else {
-                logger.warning(
-                        "No resources to read. Set strict=true if this should be an error condition.");
+                logger.warning("No resources to read. Set strict=true if this should be an error condition.");
                 noInput = true;
                 return;
             }

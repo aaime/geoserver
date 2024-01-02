@@ -26,16 +26,12 @@ public class CachedGridReaderLayer extends GridReaderLayer {
         super(reader, style, title);
     }
 
-    public CachedGridReaderLayer(
-            GridCoverage2DReader reader, Style style, GeneralParameterValue[] params) {
+    public CachedGridReaderLayer(GridCoverage2DReader reader, Style style, GeneralParameterValue[] params) {
         super(reader, style, params);
     }
 
     public CachedGridReaderLayer(
-            GridCoverage2DReader reader,
-            Style style,
-            String title,
-            GeneralParameterValue[] params) {
+            GridCoverage2DReader reader, Style style, String title, GeneralParameterValue[] params) {
         super(reader, style, title, params);
     }
 

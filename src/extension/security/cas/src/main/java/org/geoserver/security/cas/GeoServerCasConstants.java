@@ -19,8 +19,7 @@ import org.springframework.security.cas.ServiceProperties;
 public class GeoServerCasConstants {
 
     public static final String CAS_PROXY_RECEPTOR_PATTERN = "/j_spring_cas_security_proxyreceptor";
-    public static final String ARTIFACT_PARAMETER =
-            ServiceProperties.DEFAULT_CAS_ARTIFACT_PARAMETER;
+    public static final String ARTIFACT_PARAMETER = ServiceProperties.DEFAULT_CAS_ARTIFACT_PARAMETER;
     public static final String LOGIN_URI = "/login";
     public static final String LOGOUT_URI = "/logout";
     public static final String LOGOUT_URL_PARAM = "url";
@@ -55,9 +54,7 @@ public class GeoServerCasConstants {
         if (casUrlPrefix == null) return null;
 
         String resultURL =
-                casUrlPrefix.endsWith("/")
-                        ? casUrlPrefix.substring(0, casUrlPrefix.length() - 1)
-                        : casUrlPrefix;
+                casUrlPrefix.endsWith("/") ? casUrlPrefix.substring(0, casUrlPrefix.length() - 1) : casUrlPrefix;
         return resultURL + casUri;
     }
 }

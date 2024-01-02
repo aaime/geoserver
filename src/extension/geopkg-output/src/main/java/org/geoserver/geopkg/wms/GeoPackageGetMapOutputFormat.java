@@ -113,13 +113,12 @@ public class GeoPackageGetMapOutputFormat extends AbstractTilesGetMapOutputForma
             // the gridset bounds (otherwise the layer bounds will be used as the gridset ones)
             BoundingBox subsetBounds = gridSubset.getGridSetBounds();
             if (subsetBounds != null) {
-                ReferencedEnvelope re =
-                        new ReferencedEnvelope(
-                                subsetBounds.getMinX(),
-                                subsetBounds.getMaxX(),
-                                subsetBounds.getMinY(),
-                                subsetBounds.getMaxY(),
-                                box.getCoordinateReferenceSystem());
+                ReferencedEnvelope re = new ReferencedEnvelope(
+                        subsetBounds.getMinX(),
+                        subsetBounds.getMaxX(),
+                        subsetBounds.getMinY(),
+                        subsetBounds.getMaxY(),
+                        box.getCoordinateReferenceSystem());
                 e.setTileMatrixSetBounds(re);
             }
 
@@ -197,8 +196,7 @@ public class GeoPackageGetMapOutputFormat extends AbstractTilesGetMapOutputForma
                 CoordinateReferenceSystem flippedCRS = CRS.decode(_identifier, true);
                 if (CRS.getAxisOrder(flippedCRS) == CRS.AxisOrder.EAST_NORTH) {
                     Envelope reqJTSEnvelope = req.getBbox();
-                    ReferencedEnvelope reqEnvelope =
-                            ReferencedEnvelope.envelope(reqJTSEnvelope, req.getCrs());
+                    ReferencedEnvelope reqEnvelope = ReferencedEnvelope.envelope(reqJTSEnvelope, req.getCrs());
                     ReferencedEnvelope flippedEnvelope = reqEnvelope.transform(flippedCRS, false);
 
                     req.setBbox(flippedEnvelope);
@@ -212,12 +210,7 @@ public class GeoPackageGetMapOutputFormat extends AbstractTilesGetMapOutputForma
     }
 
     /** Add tiles to an existing GeoPackage */
-    public void addTiles(
-            GeoPackage geopkg,
-            TileEntry e,
-            GetMapRequest req,
-            String name,
-            ProgressListener listener)
+    public void addTiles(GeoPackage geopkg, TileEntry e, GetMapRequest req, String name, ProgressListener listener)
             throws IOException {
         addTiles(new GeopackageWrapper(geopkg, e), req, name, listener);
     }

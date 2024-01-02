@@ -46,15 +46,10 @@ public class LayerGroupContainmentCache implements ApplicationListener<ContextRe
 
     /** Verifies a certain {@link PublishedInfo} is actually a {@link LayerInfo} */
     static final Predicate<PublishedInfo> IS_LAYER =
-            p ->
-                    p != null
-                            && p.getId() != null
-                            && p instanceof LayerInfo
-                            && ((LayerInfo) p).getResource() != null;
+            p -> p != null && p.getId() != null && p instanceof LayerInfo && ((LayerInfo) p).getResource() != null;
 
     /** Verifies a certain {@link PublishedInfo} is actually a {@link LayerGroupInfo} */
-    static final Predicate<PublishedInfo> IS_GROUP =
-            p -> p != null && p.getId() != null && p instanceof LayerGroupInfo;
+    static final Predicate<PublishedInfo> IS_GROUP = p -> p != null && p.getId() != null && p instanceof LayerGroupInfo;
 
     /** Lookup from layer group id to group parent information */
     Map<String, LayerGroupSummary> groupCache = new ConcurrentHashMap<>();
@@ -91,51 +86,39 @@ public class LayerGroupContainmentCache implements ApplicationListener<ContextRe
     }
 
     private void registerContainedGroups(LayerGroupInfo lg) {
-        lg.getLayers().stream()
-                .filter(IS_GROUP)
-                .forEach(
-                        p -> {
-                            String containerId = lg.getId();
-                            String containedId = p.getId();
-                            LayerGroupSummary container = groupCache.get(containerId);
-                            LayerGroupSummary contained = groupCache.get(containedId);
-                            if (container != null && contained != null) {
-                                contained.containerGroups.add(container);
-                            }
-                        });
+        lg.getLayers().stream().filter(IS_GROUP).forEach(p -> {
+            String containerId = lg.getId();
+            String containedId = p.getId();
+            LayerGroupSummary container = groupCache.get(containerId);
+            LayerGroupSummary contained = groupCache.get(containedId);
+            if (container != null && contained != null) {
+                contained.containerGroups.add(container);
+            }
+        });
     }
 
     private void addGroupInfo(LayerGroupInfo lg) {
         LayerGroupSummary groupData = new LayerGroupSummary(lg);
         groupCache.put(lg.getId(), groupData);
-        lg.getLayers().stream()
-                .filter(IS_LAYER)
-                .forEach(
-                        p -> {
-                            String id = ((LayerInfo) p).getResource().getId();
-                            Set<LayerGroupSummary> containers =
-                                    resourceContainmentCache.computeIfAbsent(
-                                            id, CONCURRENT_SET_BUILDER);
-                            containers.add(groupData);
-                        });
+        lg.getLayers().stream().filter(IS_LAYER).forEach(p -> {
+            String id = ((LayerInfo) p).getResource().getId();
+            Set<LayerGroupSummary> containers = resourceContainmentCache.computeIfAbsent(id, CONCURRENT_SET_BUILDER);
+            containers.add(groupData);
+        });
     }
 
     private void clearGroupInfo(LayerGroupInfo lg) {
         LayerGroupSummary data = groupCache.remove(lg.getId());
         // clear the resource containment cache
-        lg.getLayers().stream()
-                .filter(IS_LAYER)
-                .forEach(
-                        p -> {
-                            String rid = ((LayerInfo) p).getResource().getId();
-                            synchronized (rid) {
-                                Set<LayerGroupSummary> containers =
-                                        resourceContainmentCache.get(rid);
-                                if (containers != null) {
-                                    containers.remove(data);
-                                }
-                            }
-                        });
+        lg.getLayers().stream().filter(IS_LAYER).forEach(p -> {
+            String rid = ((LayerInfo) p).getResource().getId();
+            synchronized (rid) {
+                Set<LayerGroupSummary> containers = resourceContainmentCache.get(rid);
+                if (containers != null) {
+                    containers.remove(data);
+                }
+            }
+        });
         // this group does not contain anything anymore, remove from containment
         for (LayerGroupSummary d : groupCache.values()) {
             // will be removed by equality
@@ -336,7 +319,8 @@ public class LayerGroupContainmentCache implements ApplicationListener<ContextRe
                 }
                 int wsIdx = event.getPropertyNames().indexOf("workspace");
                 if (wsIdx != -1) {
-                    WorkspaceInfo newWorkspace = (WorkspaceInfo) event.getNewValues().get(wsIdx);
+                    WorkspaceInfo newWorkspace =
+                            (WorkspaceInfo) event.getNewValues().get(wsIdx);
                     updateGroupWorkspace(lg.getId(), newWorkspace);
                 }
                 int layerIdx = event.getPropertyNames().indexOf("layers");
@@ -370,9 +354,7 @@ public class LayerGroupContainmentCache implements ApplicationListener<ContextRe
         }
 
         private void updateContainedLayers(
-                LayerGroupSummary groupSummary,
-                List<PublishedInfo> oldLayers,
-                List<PublishedInfo> newLayers) {
+                LayerGroupSummary groupSummary, List<PublishedInfo> oldLayers, List<PublishedInfo> newLayers) {
 
             // process layers that are no more contained
             final HashSet<PublishedInfo> removedLayers = new HashSet<>(oldLayers);
@@ -406,8 +388,7 @@ public class LayerGroupContainmentCache implements ApplicationListener<ContextRe
                     String resourceId = ((LayerInfo) added).getResource().getId();
                     synchronized (resourceId) {
                         Set<LayerGroupSummary> containers =
-                                resourceContainmentCache.computeIfAbsent(
-                                        resourceId, CONCURRENT_SET_BUILDER);
+                                resourceContainmentCache.computeIfAbsent(resourceId, CONCURRENT_SET_BUILDER);
                         containers.add(groupSummary);
                     }
                 } else {

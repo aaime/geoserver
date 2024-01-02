@@ -47,8 +47,7 @@ public class APIRequestInfo {
     /**
      * Constructs a {@link APIRequestInfo} object, generating content based on the passed request.
      */
-    public APIRequestInfo(
-            HttpServletRequest request, HttpServletResponse response, APIDispatcher dispatcher) {
+    public APIRequestInfo(HttpServletRequest request, HttpServletResponse response, APIDispatcher dispatcher) {
         this.dispatcher = dispatcher;
         this.request = request;
         this.response = response;
@@ -82,8 +81,7 @@ public class APIRequestInfo {
     public static APIRequestInfo get() {
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         if (requestAttributes == null) return null;
-        return (APIRequestInfo)
-                requestAttributes.getAttribute(APIRequestInfo.KEY, RequestAttributes.SCOPE_REQUEST);
+        return (APIRequestInfo) requestAttributes.getAttribute(APIRequestInfo.KEY, RequestAttributes.SCOPE_REQUEST);
     }
 
     /**
@@ -118,8 +116,7 @@ public class APIRequestInfo {
         if (requestAttributes == null) {
             throw new IllegalStateException("Request attributes are not set");
         }
-        requestAttributes.setAttribute(
-                APIRequestInfo.KEY, requestInfo, RequestAttributes.SCOPE_REQUEST);
+        requestAttributes.setAttribute(APIRequestInfo.KEY, requestInfo, RequestAttributes.SCOPE_REQUEST);
     }
 
     /**
@@ -145,8 +142,7 @@ public class APIRequestInfo {
 
     /** Returns true if no indication was given as to what media type is to be returned */
     public boolean isAnyMediaTypeAccepted() {
-        return requestedMediaTypes == null
-                || ContentNegotiationManager.MEDIA_TYPE_ALL_LIST.equals(requestedMediaTypes);
+        return requestedMediaTypes == null || ContentNegotiationManager.MEDIA_TYPE_ALL_LIST.equals(requestedMediaTypes);
     }
 
     /** Returns true if the given format has been requested */
@@ -205,9 +201,8 @@ public class APIRequestInfo {
                 .map(c -> APIDispatcher.getApiServiceAnnotation(c))
                 .map(a -> a.landingPage())
                 .orElseThrow(
-                        () ->
-                                new RuntimeException(
-                                        "Could not find a service base URL at this stage, maybe the service has not been dispatched yet"));
+                        () -> new RuntimeException(
+                                "Could not find a service base URL at this stage, maybe the service has not been dispatched yet"));
     }
 
     /**

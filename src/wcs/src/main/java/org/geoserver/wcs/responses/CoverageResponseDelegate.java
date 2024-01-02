@@ -35,10 +35,7 @@ public interface CoverageResponseDelegate {
 
     /** Encodes the coverage in the specified output format onto the output stream */
     void encode(
-            GridCoverage2D coverage,
-            String outputFormat,
-            Map<String, String> econdingParameters,
-            OutputStream output)
+            GridCoverage2D coverage, String outputFormat, Map<String, String> econdingParameters, OutputStream output)
             throws ServiceException, IOException;
 
     /** Returns the list of output formats managed by this delegate */

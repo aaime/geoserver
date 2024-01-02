@@ -98,9 +98,7 @@ public abstract class AbstractReferenceDataSetup extends JDBCTestSetup {
                         // geopkg in the tests
                         if (fixtureId.equals("geopkg")) {
                             fixture.setProperty(
-                                    "url",
-                                    fixture.getProperty("url").substring(0, 11)
-                                            + geopkgDir.substring(4));
+                                    "url", fixture.getProperty("url").substring(0, 11) + geopkgDir.substring(4));
                         }
                         found.put(fixtureFile.getCanonicalPath(), true);
                         System.setProperty("app-schema.properties", fixtureFile.getPath());
@@ -110,8 +108,7 @@ public abstract class AbstractReferenceDataSetup extends JDBCTestSetup {
                         if (profile == null) {
                             Properties exampleFixture = createExampleFixture();
                             if (exampleFixture != null) {
-                                File exFixtureFile =
-                                        new File(fixtureFile.getAbsolutePath() + ".example");
+                                File exFixtureFile = new File(fixtureFile.getAbsolutePath() + ".example");
                                 if (!exFixtureFile.exists()) {
                                     createExampleFixture(exFixtureFile, exampleFixture);
                                 }

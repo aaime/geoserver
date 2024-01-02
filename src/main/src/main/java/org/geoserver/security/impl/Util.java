@@ -65,15 +65,10 @@ public class Util {
                 rawPassword = mEncoder.decode(user.getPassword());
                 encPassword = encoder.encodePassword(rawPassword, null);
             } catch (UnsupportedOperationException ex) {
-                LOGGER.warning(
-                        "Cannot recode user: "
-                                + user.getUsername()
-                                + " password: "
-                                + user.getPassword());
+                LOGGER.warning("Cannot recode user: " + user.getUsername() + " password: " + user.getPassword());
                 encPassword = user.getPassword();
             }
-            GeoServerUser newUser =
-                    store.createUserObject(user.getUsername(), encPassword, user.isEnabled());
+            GeoServerUser newUser = store.createUserObject(user.getUsername(), encPassword, user.isEnabled());
             for (Object key : user.getProperties().keySet()) {
                 newUser.getProperties().put(key, user.getProperties().get(key));
             }
@@ -81,8 +76,7 @@ public class Util {
             newUserDict.put(newUser.getUsername(), newUser);
         }
         for (GeoServerUserGroup group : service.getUserGroups()) {
-            GeoServerUserGroup newGroup =
-                    store.createGroupObject(group.getGroupname(), group.isEnabled());
+            GeoServerUserGroup newGroup = store.createGroupObject(group.getGroupname(), group.isEnabled());
             store.addGroup(newGroup);
             newGroupDict.put(newGroup.getGroupname(), newGroup);
         }
@@ -97,8 +91,7 @@ public class Util {
     }
 
     /** Deep copy of the whole role database */
-    public static void copyFrom(GeoServerRoleService service, GeoServerRoleStore store)
-            throws IOException {
+    public static void copyFrom(GeoServerRoleService service, GeoServerRoleStore store) throws IOException {
         store.clear();
         Map<String, GeoServerRole> newRoleDict = new HashMap<>();
 
@@ -114,8 +107,7 @@ public class Util {
         for (GeoServerRole role : service.getRoles()) {
             GeoServerRole parentRole = service.getParentRole(role);
             GeoServerRole newRole = newRoleDict.get(role.getAuthority());
-            GeoServerRole newParentRole =
-                    parentRole == null ? null : newRoleDict.get(parentRole.getAuthority());
+            GeoServerRole newParentRole = parentRole == null ? null : newRoleDict.get(parentRole.getAuthority());
             store.setParentRole(newRole, newParentRole);
         }
 
@@ -220,11 +212,7 @@ public class Util {
                     throw new RuntimeException("Never should reach this point", e);
                 }
             } catch (UnsupportedOperationException ex) {
-                LOGGER.warning(
-                        "Cannot recode user: "
-                                + user.getUsername()
-                                + " with password: "
-                                + user.getPassword());
+                LOGGER.warning("Cannot recode user: " + user.getUsername() + " with password: " + user.getPassword());
             }
         }
         store.store();

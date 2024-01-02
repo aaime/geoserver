@@ -35,8 +35,7 @@ public class GeoserverComplexFeatureSource extends DecoratingFeatureSource<Featu
     /** provided FeatureTypeInfo for getting the declared query and more */
     private final FeatureTypeInfo ftypeInfo;
 
-    public GeoserverComplexFeatureSource(
-            FeatureSource<FeatureType, Feature> delegate, FeatureTypeInfo ftypeInfo)
+    public GeoserverComplexFeatureSource(FeatureSource<FeatureType, Feature> delegate, FeatureTypeInfo ftypeInfo)
             throws DataSourceException {
         super(delegate);
         this.ftypeInfo = Objects.requireNonNull(ftypeInfo);
@@ -69,8 +68,7 @@ public class GeoserverComplexFeatureSource extends DecoratingFeatureSource<Featu
      * provided.
      */
     protected Query getDefaultQuery() throws DataSourceException {
-        return new Query(
-                ftypeInfo.getQualifiedNativeName().getLocalPart(), buildFilter(Filter.INCLUDE));
+        return new Query(ftypeInfo.getQualifiedNativeName().getLocalPart(), buildFilter(Filter.INCLUDE));
     }
 
     @Override

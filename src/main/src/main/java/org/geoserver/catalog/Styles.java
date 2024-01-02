@@ -46,8 +46,7 @@ public class Styles {
      * @param pretty Whether to format the style.
      * @return The encoded style.
      */
-    public static String string(
-            StyledLayerDescriptor sld, SLDHandler handler, Version ver, boolean pretty)
+    public static String string(StyledLayerDescriptor sld, SLDHandler handler, Version ver, boolean pretty)
             throws IOException {
 
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
@@ -155,22 +154,17 @@ public class Styles {
             return matches.get(0);
         }
 
-        List<String> handlerNames =
-                Lists.transform(
-                        matches,
-                        new Function<StyleHandler, String>() {
-                            @Nullable
-                            @Override
-                            public String apply(@Nullable StyleHandler styleHandler) {
-                                if (styleHandler == null) {
-                                    throw new RuntimeException(
-                                            "Got a null style handler, unexpected");
-                                }
-                                return styleHandler.getName();
-                            }
-                        });
-        throw new IllegalArgumentException(
-                "Multiple style handlers: " + handlerNames + " found for format: " + format);
+        List<String> handlerNames = Lists.transform(matches, new Function<StyleHandler, String>() {
+            @Nullable
+            @Override
+            public String apply(@Nullable StyleHandler styleHandler) {
+                if (styleHandler == null) {
+                    throw new RuntimeException("Got a null style handler, unexpected");
+                }
+                return styleHandler.getName();
+            }
+        });
+        throw new IllegalArgumentException("Multiple style handlers: " + handlerNames + " found for format: " + format);
     }
 
     /** Returns all registered style handlers. */

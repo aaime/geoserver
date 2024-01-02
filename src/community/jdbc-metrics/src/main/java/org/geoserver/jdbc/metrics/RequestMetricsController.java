@@ -29,19 +29,16 @@ import org.springframework.web.servlet.mvc.AbstractController;
  */
 public class RequestMetricsController extends AbstractController {
 
-    static Cache<String, Map<String, Object>> METRICS =
-            CacheBuilder.newBuilder()
-                    .expireAfterWrite(Long.getLong("jdbc-metrics.cacheExpiry", 1), TimeUnit.MINUTES)
-                    .maximumSize(Long.getLong("jdbc-metrics.cacheMaxSize", 2000))
-                    .build();
+    static Cache<String, Map<String, Object>> METRICS = CacheBuilder.newBuilder()
+            .expireAfterWrite(Long.getLong("jdbc-metrics.cacheExpiry", 1), TimeUnit.MINUTES)
+            .maximumSize(Long.getLong("jdbc-metrics.cacheMaxSize", 2000))
+            .build();
 
     @Override
-    protected ModelAndView handleRequestInternal(HttpServletRequest req, HttpServletResponse rsp)
-            throws Exception {
+    protected ModelAndView handleRequestInternal(HttpServletRequest req, HttpServletResponse rsp) throws Exception {
 
         String[] split = req.getPathInfo().split("/");
-        String reqId =
-                StringUtils.stripEnd(StringUtils.stripStart(split[split.length - 1], "/"), "/");
+        String reqId = StringUtils.stripEnd(StringUtils.stripStart(split[split.length - 1], "/"), "/");
 
         JSONObject obj = new JSONObject();
         obj.put("request", reqId);

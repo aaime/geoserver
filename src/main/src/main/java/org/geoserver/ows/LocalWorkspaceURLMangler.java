@@ -37,8 +37,7 @@ public class LocalWorkspaceURLMangler implements URLMangler {
     }
 
     @Override
-    public void mangleURL(
-            StringBuilder baseURL, StringBuilder path, Map<String, String> kvp, URLType type) {
+    public void mangleURL(StringBuilder baseURL, StringBuilder path, Map<String, String> kvp, URLType type) {
 
         if (type == URLType.SERVICE && stripRemainingPath(path.toString()).equalsIgnoreCase(ows)) {
             if (LocalWorkspace.get() != null) {

@@ -33,8 +33,7 @@ public abstract class AcceptFormatsKvpParser extends KvpParser {
 
         for (String v : values) {
             @SuppressWarnings("unchecked")
-            Collection<String> of =
-                    (Collection<String>) EMFUtils.get(acceptFormats, "outputFormat");
+            Collection<String> of = (Collection<String>) EMFUtils.get(acceptFormats, "outputFormat");
             of.add(v);
         }
 

@@ -108,21 +108,15 @@ public class PropertyType implements Comparable<PropertyType> {
     public int compareTo(PropertyType o) {
         int comparison = oid.compareTo(o.oid);
         if (comparison == 0) {
-            comparison =
-                    targetPropertyOid == null && o.targetPropertyOid != null
-                            ? -1
-                            : (o.targetPropertyOid == null
-                                    ? 1
-                                    : targetPropertyOid.compareTo(o.targetPropertyOid));
+            comparison = targetPropertyOid == null && o.targetPropertyOid != null
+                    ? -1
+                    : (o.targetPropertyOid == null ? 1 : targetPropertyOid.compareTo(o.targetPropertyOid));
             if (comparison == 0) {
                 comparison = objectTypeOid.compareTo(o.objectTypeOid);
                 if (comparison == 0) {
                     comparison = propertyName.compareTo(o.propertyName);
                     if (comparison == 0) {
-                        comparison =
-                                (collectionProperty == o.collectionProperty
-                                        ? 0
-                                        : (collectionProperty ? 1 : -1));
+                        comparison = (collectionProperty == o.collectionProperty ? 0 : (collectionProperty ? 1 : -1));
                     }
                 }
             }

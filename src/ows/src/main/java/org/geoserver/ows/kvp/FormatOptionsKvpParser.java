@@ -70,8 +70,7 @@ public class FormatOptionsKvpParser extends KvpParser implements ApplicationCont
 
             if (parsed == null) {
                 if (LOGGER.isLoggable(Level.FINER))
-                    LOGGER.finer(
-                            "Could not find kvp parser for: '" + key + "'. Storing as raw string.");
+                    LOGGER.finer("Could not find kvp parser for: '" + key + "'. Storing as raw string.");
                 parsed = raw;
             }
 

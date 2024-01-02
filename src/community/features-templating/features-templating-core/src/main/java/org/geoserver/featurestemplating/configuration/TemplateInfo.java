@@ -32,11 +32,7 @@ public class TemplateInfo implements Serializable, Comparable<TemplateInfo> {
     }
 
     public TemplateInfo(
-            String identifier,
-            String templateName,
-            String workspace,
-            String featureType,
-            String extension) {
+            String identifier, String templateName, String workspace, String featureType, String extension) {
         this.identifier = identifier;
         this.templateName = templateName;
         this.workspace = workspace;
@@ -135,8 +131,7 @@ public class TemplateInfo implements Serializable, Comparable<TemplateInfo> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(
-                identifier, templateName, description, workspace, featureType, extension);
+        return Objects.hash(identifier, templateName, description, workspace, featureType, extension);
     }
 
     @Override

@@ -70,9 +70,7 @@ public class ResourceConfigurationPage extends PublishedConfigurationPage<LayerI
         }
 
         if (layer == null) {
-            error(
-                    new ParamResourceModel("ResourceConfigurationPage.notFound", this, layerName)
-                            .getString());
+            error(new ParamResourceModel("ResourceConfigurationPage.notFound", this, layerName).getString());
             setResponsePage(returnPage);
             return;
         }
@@ -113,8 +111,7 @@ public class ResourceConfigurationPage extends PublishedConfigurationPage<LayerI
         myResourceModel = new CompoundPropertyModel<>(new ResourceModel(resource));
     }
 
-    private List<ResourceConfigurationPanelInfo> filterResourcePanels(
-            List<ResourceConfigurationPanelInfo> list) {
+    private List<ResourceConfigurationPanelInfo> filterResourcePanels(List<ResourceConfigurationPanelInfo> list) {
         for (int i = 0; i < list.size(); i++) {
             if (!list.get(i).canHandle(getResourceInfo())) {
                 list.remove(i);
@@ -134,10 +131,8 @@ public class ResourceConfigurationPage extends PublishedConfigurationPage<LayerI
 
         @Override
         protected ListView<ResourceConfigurationPanelInfo> createList(String id) {
-            List<ResourceConfigurationPanelInfo> dataPanels =
-                    filterResourcePanels(
-                            getGeoServerApplication()
-                                    .getBeansOfType(ResourceConfigurationPanelInfo.class));
+            List<ResourceConfigurationPanelInfo> dataPanels = filterResourcePanels(
+                    getGeoServerApplication().getBeansOfType(ResourceConfigurationPanelInfo.class));
             ListView<ResourceConfigurationPanelInfo> dataPanelList =
                     new ListView<ResourceConfigurationPanelInfo>(id, dataPanels) {
 
@@ -147,12 +142,10 @@ public class ResourceConfigurationPage extends PublishedConfigurationPage<LayerI
                         protected void populateItem(ListItem<ResourceConfigurationPanelInfo> item) {
                             ResourceConfigurationPanelInfo panelInfo = item.getModelObject();
                             try {
-                                final Class<ResourceConfigurationPanel> componentClass =
-                                        panelInfo.getComponentClass();
+                                final Class<ResourceConfigurationPanel> componentClass = panelInfo.getComponentClass();
                                 final Constructor<ResourceConfigurationPanel> constructor =
                                         componentClass.getConstructor(String.class, IModel.class);
-                                ResourceConfigurationPanel panel =
-                                        constructor.newInstance("content", myResourceModel);
+                                ResourceConfigurationPanel panel = constructor.newInstance("content", myResourceModel);
                                 item.add(panel);
                             } catch (Exception e) {
                                 throw new WicketRuntimeException(
@@ -182,14 +175,13 @@ public class ResourceConfigurationPage extends PublishedConfigurationPage<LayerI
     public void updateResource(ResourceInfo info, final AjaxRequestTarget target) {
         myResourceModel.setObject(info);
         updateResourceInLayerModel(info);
-        visitChildren(
-                (component, visit) -> {
-                    if (component instanceof ResourceConfigurationPanel) {
-                        ResourceConfigurationPanel rcp = (ResourceConfigurationPanel) component;
-                        rcp.resourceUpdated(target);
-                        visit.dontGoDeeper();
-                    }
-                });
+        visitChildren((component, visit) -> {
+            if (component instanceof ResourceConfigurationPanel) {
+                ResourceConfigurationPanel rcp = (ResourceConfigurationPanel) component;
+                rcp.resourceUpdated(target);
+                visit.dontGoDeeper();
+            }
+        });
     }
 
     @Override
@@ -203,20 +195,18 @@ public class ResourceConfigurationPage extends PublishedConfigurationPage<LayerI
         ResourceInfo resourceInfo = getResourceInfo();
         validateByChildren(resourceInfo);
         // allow panels to update the model in case they are not directly editing its properties
-        visitChildren(
-                (component, visit) -> {
-                    if (component instanceof ResourceConfigurationPanel) {
-                        ResourceConfigurationPanel rcp = (ResourceConfigurationPanel) component;
-                        rcp.onSave();
-                    }
-                });
-        visitChildren(
-                (component, visit) -> {
-                    if (component instanceof PublishedConfigurationPanel) {
-                        PublishedConfigurationPanel rcp = (PublishedConfigurationPanel) component;
-                        rcp.save();
-                    }
-                });
+        visitChildren((component, visit) -> {
+            if (component instanceof ResourceConfigurationPanel) {
+                ResourceConfigurationPanel rcp = (ResourceConfigurationPanel) component;
+                rcp.onSave();
+            }
+        });
+        visitChildren((component, visit) -> {
+            if (component instanceof PublishedConfigurationPanel) {
+                PublishedConfigurationPanel rcp = (PublishedConfigurationPanel) component;
+                rcp.save();
+            }
+        });
         if (isNew) {
             // updating grid if is a coverage
             if (resourceInfo instanceof CoverageInfo) {
@@ -224,22 +214,16 @@ public class ResourceConfigurationPage extends PublishedConfigurationPage<LayerI
                 // readers always return the bounds and in the proper CRS (afaik)
                 CoverageInfo cinfo = (CoverageInfo) resourceInfo;
                 GridCoverage2DReader reader =
-                        (GridCoverage2DReader)
-                                cinfo.getGridCoverageReader(null, GeoTools.getDefaultHints());
+                        (GridCoverage2DReader) cinfo.getGridCoverageReader(null, GeoTools.getDefaultHints());
 
                 // get bounds
-                final ReferencedEnvelope bounds =
-                        new ReferencedEnvelope(reader.getOriginalEnvelope());
+                final ReferencedEnvelope bounds = new ReferencedEnvelope(reader.getOriginalEnvelope());
                 // apply the bounds, taking into account the reprojection policy if need be
                 final ProjectionPolicy projectionPolicy = resourceInfo.getProjectionPolicy();
                 if (projectionPolicy != ProjectionPolicy.NONE && bounds != null) {
                     // we need to fix the registered grid for this coverage
                     final GridGeometry grid = cinfo.getGrid();
-                    cinfo.setGrid(
-                            new GridGeometry2D(
-                                    grid.getGridRange(),
-                                    grid.getGridToCRS(),
-                                    resourceInfo.getCRS()));
+                    cinfo.setGrid(new GridGeometry2D(grid.getGridRange(), grid.getGridToCRS(), resourceInfo.getCRS()));
                 }
             }
 
@@ -271,11 +255,10 @@ public class ResourceConfigurationPage extends PublishedConfigurationPage<LayerI
 
     private void validateByChildren(final ResourceInfo resourceInfo) {
         if (resourceInfo == null || resourceInfo.getMetadata() == null) return;
-        visitChildren(
-                (component, visitor) -> {
-                    if (component instanceof MetadataMapValidator) {
-                        ((MetadataMapValidator) component).validate(resourceInfo.getMetadata());
-                    }
-                });
+        visitChildren((component, visitor) -> {
+            if (component instanceof MetadataMapValidator) {
+                ((MetadataMapValidator) component).validate(resourceInfo.getMetadata());
+            }
+        });
     }
 }

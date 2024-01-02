@@ -15,13 +15,7 @@ import java.util.List;
 class SldServiceCapabilities {
 
     private final List<String> vectorClassifications =
-            Arrays.asList(
-                    "quantile",
-                    "jenks",
-                    "equalArea",
-                    "equalInterval",
-                    "uniqueInterval",
-                    "standardDeviation");
+            Arrays.asList("quantile", "jenks", "equalArea", "equalInterval", "uniqueInterval", "standardDeviation");
 
     private final List<String> rasterClassifications =
             Arrays.asList("quantile", "jenks", "equalArea", "equalInterval", "uniqueInterval");

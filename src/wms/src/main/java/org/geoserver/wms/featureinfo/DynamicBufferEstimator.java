@@ -80,16 +80,12 @@ public class DynamicBufferEstimator extends AbstractStyleVisitor {
                         // expand embedded cql expression
                         Expression expanded = ExpressionExtractor.extractCqlExpressions(location);
 
-                        Iterator<ExternalGraphicFactory> it =
-                                DynamicSymbolFactoryFinder.getExternalGraphicFactories();
+                        Iterator<ExternalGraphicFactory> it = DynamicSymbolFactoryFinder.getExternalGraphicFactories();
                         while (it.hasNext()) {
                             try {
                                 icon = it.next().getIcon(feature, expanded, eg.getFormat(), -1);
                             } catch (Exception e) {
-                                LOGGER.log(
-                                        Level.FINE,
-                                        "Error occurred evaluating external graphic",
-                                        e);
+                                LOGGER.log(Level.FINE, "Error occurred evaluating external graphic", e);
                             }
                         }
                     }
@@ -113,8 +109,7 @@ public class DynamicBufferEstimator extends AbstractStyleVisitor {
         } catch (Exception e) {
             LOGGER.log(
                     Level.INFO,
-                    "Error occured during the graphic size estimation, "
-                            + "meta buffer estimate cannot be performed",
+                    "Error occured during the graphic size estimation, " + "meta buffer estimate cannot be performed",
                     e);
         }
     }

@@ -18,8 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  *
  * @author vickdw Created on 10/23/18
  */
-public class JasyptPasswordEncoderWrapper extends AbstractGeoserverPasswordEncoder
-        implements PasswordEncoder {
+public class JasyptPasswordEncoderWrapper extends AbstractGeoserverPasswordEncoder implements PasswordEncoder {
 
     // The password encryptor or string digester to be internally used
     private PasswordEncryptor passwordEncryptor = null;

@@ -47,12 +47,10 @@ public class GeoServerRootAuthenticationProvider extends GeoServerAuthentication
     public Authentication authenticate(Authentication authentication, HttpServletRequest request)
             throws AuthenticationException {
 
-        UsernamePasswordAuthenticationToken token =
-                (UsernamePasswordAuthenticationToken) authentication;
+        UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) authentication;
 
         // check if name is root
-        if (GeoServerUser.ROOT_USERNAME.equals(SecurityUtils.getUsername(token.getPrincipal()))
-                == false) return null;
+        if (GeoServerUser.ROOT_USERNAME.equals(SecurityUtils.getUsername(token.getPrincipal())) == false) return null;
 
         // check password
         if (token.getCredentials() != null) {
@@ -61,8 +59,7 @@ public class GeoServerRootAuthenticationProvider extends GeoServerAuthentication
                 roles.add(GeoServerRole.ADMIN_ROLE);
 
                 UsernamePasswordAuthenticationToken result =
-                        new UsernamePasswordAuthenticationToken(
-                                GeoServerUser.ROOT_USERNAME, null, roles);
+                        new UsernamePasswordAuthenticationToken(GeoServerUser.ROOT_USERNAME, null, roles);
                 result.setDetails(token.getDetails());
                 return result;
             }

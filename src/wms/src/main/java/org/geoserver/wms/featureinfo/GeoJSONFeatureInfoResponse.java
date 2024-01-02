@@ -33,8 +33,7 @@ public class GeoJSONFeatureInfoResponse extends GetFeatureInfoOutputFormat {
         this.wms = wms;
         if (outputFormat.equals("application/json"))
             this.templateManager =
-                    new GeoJSONTemplateManager(
-                            FreeMarkerTemplateManager.OutputFormat.JSON, wms, resourceLoader);
+                    new GeoJSONTemplateManager(FreeMarkerTemplateManager.OutputFormat.JSON, wms, resourceLoader);
     }
 
     /** @throws Exception if outputFormat is not a valid json mime type */
@@ -50,8 +49,7 @@ public class GeoJSONFeatureInfoResponse extends GetFeatureInfoOutputFormat {
      *     OutputStream)}
      */
     @Override
-    public void write(
-            FeatureCollectionType features, GetFeatureInfoRequest fInfoReq, OutputStream out)
+    public void write(FeatureCollectionType features, GetFeatureInfoRequest fInfoReq, OutputStream out)
             throws IOException {
         boolean usedTemplates = false;
 
@@ -60,8 +58,7 @@ public class GeoJSONFeatureInfoResponse extends GetFeatureInfoOutputFormat {
             usedTemplates = templateManager.write(features, fInfoReq, out);
 
         if (!usedTemplates) {
-            GeoJSONGetFeatureResponse format =
-                    new GeoJSONGetFeatureResponse(wms.getGeoServer(), getContentType());
+            GeoJSONGetFeatureResponse format = new GeoJSONGetFeatureResponse(wms.getGeoServer(), getContentType());
             format.write(features, out, null);
         }
     }

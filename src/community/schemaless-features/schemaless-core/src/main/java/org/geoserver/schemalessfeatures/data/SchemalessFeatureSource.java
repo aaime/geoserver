@@ -32,15 +32,14 @@ public abstract class SchemalessFeatureSource extends ComplexFeatureSource {
             GeometryDescriptor descriptor = getGeometryDescriptor();
             List<PropertyDescriptor> descriptorList = new ArrayList<>();
             descriptorList.add(descriptor);
-            featureType =
-                    new DynamicFeatureType(
-                            name,
-                            descriptorList,
-                            descriptor,
-                            false,
-                            Collections.emptyList(),
-                            GMLSchema.ABSTRACTFEATURETYPE_TYPE,
-                            null);
+            featureType = new DynamicFeatureType(
+                    name,
+                    descriptorList,
+                    descriptor,
+                    false,
+                    Collections.emptyList(),
+                    GMLSchema.ABSTRACTFEATURETYPE_TYPE,
+                    null);
         }
         return featureType;
     }

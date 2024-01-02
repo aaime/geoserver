@@ -57,18 +57,14 @@ public class PostScriptTransform extends AbstractCommandLineTransform implements
         Resource resource = scripts.get(name);
         if (resource.getType() != Resource.Type.RESOURCE) {
             throw new ValidationException(
-                    "Script named '"
-                            + name
-                            + "' was not found in "
-                            + "$GEOSERVER_DATA_DIR/importer/scripts");
+                    "Script named '" + name + "' was not found in " + "$GEOSERVER_DATA_DIR/importer/scripts");
         }
         File executable = resource.file();
         if (!executable.canExecute()) {
-            throw new ValidationException(
-                    "Found file named '"
-                            + name
-                            + "' in "
-                            + "$GEOSERVER_DATA_DIR/importer/scripts, but it's not executable");
+            throw new ValidationException("Found file named '"
+                    + name
+                    + "' in "
+                    + "$GEOSERVER_DATA_DIR/importer/scripts, but it's not executable");
         }
         return executable;
     }
@@ -80,8 +76,7 @@ public class PostScriptTransform extends AbstractCommandLineTransform implements
             throw new ValidationException("Could not find importer/scripts in data directory");
         } else if (scripts.getType() == Resource.Type.RESOURCE) {
             throw new ValidationException(
-                    "Found importer/scripts in data directory, but it's a"
-                            + " file and was expecting a directory");
+                    "Found importer/scripts in data directory, but it's a" + " file and was expecting a directory");
         } else {
             return scripts;
         }

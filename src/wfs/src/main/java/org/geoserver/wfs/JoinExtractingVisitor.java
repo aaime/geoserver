@@ -119,22 +119,17 @@ public class JoinExtractingVisitor extends FilterVisitorSupport {
     private void checkValidJoinFilter(Filter filter) {
         Set<String> prefixes = getFilterPrefixes(filter);
         if (prefixes.size() > 2) {
-            throw new WFSException(
-                    "Not subfilter joins against more than one table "
-                            + prefixes
-                            + ", this kind of filter is not supported: "
-                            + filter);
+            throw new WFSException("Not subfilter joins against more than one table "
+                    + prefixes
+                    + ", this kind of filter is not supported: "
+                    + filter);
         }
     }
 
     @Override
     public Object visit(PropertyIsBetween filter, Object extraData) {
         return handle(
-                filter,
-                extraData,
-                filter.getLowerBoundary(),
-                filter.getUpperBoundary(),
-                filter.getUpperBoundary());
+                filter, extraData, filter.getLowerBoundary(), filter.getUpperBoundary(), filter.getUpperBoundary());
     }
 
     @Override
@@ -349,16 +344,15 @@ public class JoinExtractingVisitor extends FilterVisitorSupport {
             prefixes.remove(primaryName);
             prefixes.remove(primaryUnqualifiedName);
             if (prefixes.size() != 1) {
-                throw new WFSException(
-                        "Extracted invalid join filter "
-                                + filter
-                                + ", it joins more than "
-                                + "one secondary feature type + "
-                                + prefixes
-                                + " with the central join feature type "
-                                + primaryAlias
-                                + "/"
-                                + primaryName);
+                throw new WFSException("Extracted invalid join filter "
+                        + filter
+                        + ", it joins more than "
+                        + "one secondary feature type + "
+                        + prefixes
+                        + " with the central join feature type "
+                        + primaryAlias
+                        + "/"
+                        + primaryName);
             }
 
             Filter rewritten = (Filter) filter.accept(rewriter, null);
@@ -367,10 +361,7 @@ public class JoinExtractingVisitor extends FilterVisitorSupport {
             int idx = featureTypes.indexOf(ft);
             if (idx == -1) {
                 throw new WFSException(
-                        "Extracted invalid join filter "
-                                + filter
-                                + ", it uses the unkonwn alias/typename "
-                                + alias);
+                        "Extracted invalid join filter " + filter + ", it uses the unkonwn alias/typename " + alias);
             }
             updateFilter(sorted, idx + 1, rewritten);
         }
@@ -395,11 +386,10 @@ public class JoinExtractingVisitor extends FilterVisitorSupport {
                     if (namespaceSupport != null) {
                         String ns = namespaceSupport.getURI(localNsPrefix);
                         if (ns != null) {
-                            Optional<String> wsName =
-                                    featureTypes.stream()
-                                            .filter(ft -> matchesNamespace(ns, ft))
-                                            .map(ft -> ft.getStore().getWorkspace().getName())
-                                            .findFirst();
+                            Optional<String> wsName = featureTypes.stream()
+                                    .filter(ft -> matchesNamespace(ns, ft))
+                                    .map(ft -> ft.getStore().getWorkspace().getName())
+                                    .findFirst();
                             if (wsName.isPresent()) {
                                 prefix = wsName.get() + ":" + prefix.substring(idx + 1);
                             }
@@ -428,11 +418,10 @@ public class JoinExtractingVisitor extends FilterVisitorSupport {
             Set<String> prefixes = getFilterPrefixes(filter);
             prefixes.remove(primaryName);
             if (prefixes.size() != 1) {
-                throw new WFSException(
-                        "Extracted invalid join sub-filter "
-                                + filter
-                                + ", it users more than one feature type + "
-                                + prefixes);
+                throw new WFSException("Extracted invalid join sub-filter "
+                        + filter
+                        + ", it users more than one feature type + "
+                        + prefixes);
             }
 
             Filter rewritten = (Filter) filter.accept(rewriter, null);
@@ -444,11 +433,10 @@ public class JoinExtractingVisitor extends FilterVisitorSupport {
                 int idx = featureTypes.indexOf(ft);
                 if (idx == -1) {
 
-                    throw new WFSException(
-                            "Extracted invalid join filter "
-                                    + filter
-                                    + ", it uses the unkonwn alias/typename "
-                                    + alias);
+                    throw new WFSException("Extracted invalid join filter "
+                            + filter
+                            + ", it uses the unkonwn alias/typename "
+                            + alias);
                 }
                 updateFilter(sorted, idx + 1, rewritten);
             }
@@ -545,9 +533,8 @@ public class JoinExtractingVisitor extends FilterVisitorSupport {
         }
 
         if (connecteds.isEmpty()) {
-            throw new WFSException(
-                    "Cannot run this type of join, at the moment GeoServer only supports "
-                            + "joins having a single central feature type joined to all others");
+            throw new WFSException("Cannot run this type of join, at the moment GeoServer only supports "
+                    + "joins having a single central feature type joined to all others");
         } else {
             return connecteds.iterator().next();
         }

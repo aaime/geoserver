@@ -96,8 +96,7 @@ public class EditableUserDAO implements UserDetailsService {
      */
     private void createDefaultUser() {
         String name = (geoServer == null ? "admin" : geoServer.getGlobal().getAdminUsername());
-        String passwd =
-                (geoServer == null ? "geoserver" : geoServer.getGlobal().getAdminPassword());
+        String passwd = (geoServer == null ? "geoserver" : geoServer.getGlobal().getAdminPassword());
 
         Collection<GrantedAuthority> auths = new ArrayList<>();
         auths.add(new SimpleGrantedAuthority("ROLE_ADMINISTRATOR"));
@@ -127,8 +126,7 @@ public class EditableUserDAO implements UserDetailsService {
      *     created
      * @throws IOException if an error occurs while opening the user configuration file
      */
-    public void setUserDetails(String username, UserAttribute details)
-            throws IOException, ConfigurationException {
+    public void setUserDetails(String username, UserAttribute details) throws IOException, ConfigurationException {
         update();
         myDetailStorage.put(username, makeUser(username, details));
         syncChanges();
@@ -219,9 +217,7 @@ public class EditableUserDAO implements UserDetailsService {
         }
 
         try (OutputStream os = new BufferedOutputStream(getUserFile().out())) {
-            prop.store(
-                    os,
-                    "Geoserver user data. Format is username=password,role1,role2,...[enabled|disabled]");
+            prop.store(os, "Geoserver user data. Format is username=password,role1,role2,...[enabled|disabled]");
         }
     }
 

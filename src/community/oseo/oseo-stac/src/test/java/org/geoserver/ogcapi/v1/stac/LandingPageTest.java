@@ -75,9 +75,7 @@ public class LandingPageTest extends STACTestSupport {
         // System.out.println(yaml);
         DocumentContext json = convertYamlToJsonPath(yaml);
         assertJSONList(
-                json,
-                "links[?(@.type == 'application/x-yaml' && @.href =~ /.*ogc\\/stac\\/v1\\/\\?.*/)].rel",
-                "self");
+                json, "links[?(@.type == 'application/x-yaml' && @.href =~ /.*ogc\\/stac\\/v1\\/\\?.*/)].rel", "self");
         assertJSONList(
                 json,
                 "links[?(@.type != 'application/x-yaml' && @.href =~ /.*ogc\\/stac\\/v1\\/\\?.*/)].rel",
@@ -101,9 +99,7 @@ public class LandingPageTest extends STACTestSupport {
     void checkJSONLandingPage(DocumentContext json) throws IOException {
         // check landing page links
         assertJSONList(
-                json,
-                "links[?(@.type == 'application/json' && @.href =~ /.*ogc\\/stac\\/v1\\/\\?.*/)].rel",
-                "self");
+                json, "links[?(@.type == 'application/json' && @.href =~ /.*ogc\\/stac\\/v1\\/\\?.*/)].rel", "self");
         assertJSONList(
                 json,
                 "links[?(@.type != 'application/json' && @.href =~ /.*ogc\\/stac\\/v1\\/\\?.*/)].rel",
@@ -129,10 +125,7 @@ public class LandingPageTest extends STACTestSupport {
                 Link.REL_CONFORMANCE);
         // check collection links
         assertJSONList(
-                json,
-                "links[?(@.href =~ /.*ogc\\/stac\\/v1\\/collections\\?.*/)].rel",
-                Link.REL_DATA,
-                Link.REL_DATA);
+                json, "links[?(@.href =~ /.*ogc\\/stac\\/v1\\/collections\\?.*/)].rel", Link.REL_DATA, Link.REL_DATA);
         // check search links
         assertJSONList(
                 json,
@@ -154,15 +147,8 @@ public class LandingPageTest extends STACTestSupport {
                 json.read("links[?(@.method == 'POST' && @.rel == 'search')].type", List.class)
                         .get(0));
         assertJSONList(
-                json,
-                "links[?(@.href =~ /.*ogc\\/stac\\/v1\\/queryables.*/)].rel",
-                Queryables.REL,
-                Queryables.REL);
-        assertJSONList(
-                json,
-                "links[?(@.href =~ /.*ogc\\/stac\\/v1\\/sortables.*/)].rel",
-                Sortables.REL,
-                Sortables.REL);
+                json, "links[?(@.href =~ /.*ogc\\/stac\\/v1\\/queryables.*/)].rel", Queryables.REL, Queryables.REL);
+        assertJSONList(json, "links[?(@.href =~ /.*ogc\\/stac\\/v1\\/sortables.*/)].rel", Sortables.REL, Sortables.REL);
         // check title
         assertEquals(STAC_TITLE, json.read("title"));
         // check description
@@ -182,7 +168,8 @@ public class LandingPageTest extends STACTestSupport {
         OpenSearchAccess osa = getOpenSearchAccess();
         int collectionCount = osa.getCollectionSource().getCount(Query.ALL) - 1;
         assertEquals(
-                collectionCount, json.read("links[?(@.rel == 'child')].href", List.class).size());
+                collectionCount,
+                json.read("links[?(@.rel == 'child')].href", List.class).size());
         assertThat(
                 json.read("links[?(@.rel == 'child')].href"),
                 Matchers.containsInAnyOrder(

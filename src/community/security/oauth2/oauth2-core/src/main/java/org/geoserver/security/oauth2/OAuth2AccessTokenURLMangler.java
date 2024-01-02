@@ -47,8 +47,7 @@ public class OAuth2AccessTokenURLMangler implements URLMangler {
 
         this.oauth2SecurityConfiguration =
                 (GeoServerOAuth2SecurityConfiguration) context.getBean(oauth2SecurityConfiguration);
-        this.geoServerOauth2RestTemplate =
-                (OAuth2RestTemplate) context.getBean(geoServerOauth2RestTemplate);
+        this.geoServerOauth2RestTemplate = (OAuth2RestTemplate) context.getBean(geoServerOauth2RestTemplate);
     }
 
     public OAuth2AccessTokenURLMangler(
@@ -77,10 +76,8 @@ public class OAuth2AccessTokenURLMangler implements URLMangler {
     }
 
     @Override
-    public void mangleURL(
-            StringBuilder baseURL, StringBuilder path, Map<String, String> kvp, URLType type) {
-        Boolean OAUTH2_URL_MANGLER_ENABLED =
-                Boolean.valueOf(System.getProperty(ALLOW_OAUTH2_URL_MANGLER, "false"));
+    public void mangleURL(StringBuilder baseURL, StringBuilder path, Map<String, String> kvp, URLType type) {
+        Boolean OAUTH2_URL_MANGLER_ENABLED = Boolean.valueOf(System.getProperty(ALLOW_OAUTH2_URL_MANGLER, "false"));
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         try {

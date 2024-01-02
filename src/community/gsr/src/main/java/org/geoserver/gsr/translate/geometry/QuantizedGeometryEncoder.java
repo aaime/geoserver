@@ -52,8 +52,7 @@ public class QuantizedGeometryEncoder extends AbstractGeometryEncoder<Long> {
      *     the output geometry spatial reference, as supplied to {@link
      *     #toRepresentation(org.locationtech.jts.geom.Geometry, SpatialReference)}.
      */
-    public QuantizedGeometryEncoder(
-            Mode mode, OriginPosition originPosition, double tolerance, Envelope envelope) {
+    public QuantizedGeometryEncoder(Mode mode, OriginPosition originPosition, double tolerance, Envelope envelope) {
         super();
         this.mode = mode == null ? Mode.view : mode;
         this.originPosition = originPosition == null ? OriginPosition.upperLeft : originPosition;
@@ -95,21 +94,14 @@ public class QuantizedGeometryEncoder extends AbstractGeometryEncoder<Long> {
     @Override
     protected Long[] embeddedCoordinate(Coordinate coord) {
         // delta from origin
-        double[] transformedCoords =
-                new double[] {coord.x - originCoords[0], originCoords[1] - coord.y};
+        double[] transformedCoords = new double[] {coord.x - originCoords[0], originCoords[1] - coord.y};
 
         // divide by tolerance and round to nearest whole number
         Long[] longCoords =
-                new Long[] {
-                    Math.round(transformedCoords[0] / tolerance),
-                    Math.round(transformedCoords[1] / tolerance)
-                };
+                new Long[] {Math.round(transformedCoords[0] / tolerance), Math.round(transformedCoords[1] / tolerance)};
         if (startingCoords != null) {
             // return the delta from last point in the feature
-            Long[] deltaCoords =
-                    new Long[] {
-                        longCoords[0] - startingCoords[0], longCoords[1] - startingCoords[1]
-                    };
+            Long[] deltaCoords = new Long[] {longCoords[0] - startingCoords[0], longCoords[1] - startingCoords[1]};
             startingCoords = longCoords;
             return deltaCoords;
         }

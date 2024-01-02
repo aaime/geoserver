@@ -65,14 +65,12 @@ public class GeoServerMockTestSupport extends GeoServerBaseTestSupport<MockTestD
 
     /** Accessor for regular (weak encryption) pbe password encoder. */
     protected GeoServerPBEPasswordEncoder getPBEPasswordEncoder() {
-        return getSecurityManager()
-                .loadPasswordEncoder(GeoServerPBEPasswordEncoder.class, null, false);
+        return getSecurityManager().loadPasswordEncoder(GeoServerPBEPasswordEncoder.class, null, false);
     }
 
     /** Accessor for strong encryption pbe password encoder. */
     protected GeoServerPBEPasswordEncoder getStrongPBEPasswordEncoder() {
-        return getSecurityManager()
-                .loadPasswordEncoder(GeoServerPBEPasswordEncoder.class, null, true);
+        return getSecurityManager().loadPasswordEncoder(GeoServerPBEPasswordEncoder.class, null, true);
     }
 
     /** Forwards through to {@link MockTestData#setMockCreator(MockCreator)} */

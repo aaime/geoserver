@@ -53,12 +53,10 @@ public class GeoServerLogoutFilter extends GeoServerSecurityFilter {
         logoutHandler = new SecurityContextLogoutHandler();
         redirectUrl = ((LogoutFilterConfig) config).getRedirectURL();
         logoutSuccessHandler = new SimpleUrlLogoutSuccessHandler();
-        if (StringUtils.hasLength(redirectUrl))
-            logoutSuccessHandler.setDefaultTargetUrl(redirectUrl);
-        String formLogoutChain =
-                (((LogoutFilterConfig) config).getFormLogoutChain() != null
-                        ? ((LogoutFilterConfig) config).getFormLogoutChain()
-                        : GeoServerSecurityFilterChain.FORM_LOGOUT_CHAIN);
+        if (StringUtils.hasLength(redirectUrl)) logoutSuccessHandler.setDefaultTargetUrl(redirectUrl);
+        String formLogoutChain = (((LogoutFilterConfig) config).getFormLogoutChain() != null
+                ? ((LogoutFilterConfig) config).getFormLogoutChain()
+                : GeoServerSecurityFilterChain.FORM_LOGOUT_CHAIN);
         pathInfos = formLogoutChain.split(",");
     }
 
@@ -78,8 +76,7 @@ public class GeoServerLogoutFilter extends GeoServerSecurityFilter {
         if (doLogout) doLogout(request, response);
     }
 
-    public void doLogout(
-            HttpServletRequest request, HttpServletResponse response, String... skipHandlerName)
+    public void doLogout(HttpServletRequest request, HttpServletResponse response, String... skipHandlerName)
             throws IOException, ServletException {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -115,8 +112,7 @@ public class GeoServerLogoutFilter extends GeoServerSecurityFilter {
      * {@link #doLogout(HttpServletRequest, HttpServletResponse, String...)} without receiving an
      * unnecessary callback.
      */
-    List<LogoutHandler> calculateActiveLogoutHandlers(String... skipHandlerName)
-            throws IOException {
+    List<LogoutHandler> calculateActiveLogoutHandlers(String... skipHandlerName) throws IOException {
         List<LogoutHandler> result = new ArrayList<>();
         SortedSet<String> logoutFilterNames = getSecurityManager().listFilters(LogoutHandler.class);
         logoutFilterNames.removeAll(Arrays.asList(skipHandlerName));

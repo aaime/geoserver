@@ -38,8 +38,7 @@ import org.geotools.util.factory.GeoTools;
  */
 public abstract class AbstractJDBCService extends AbstractGeoServerSecurityService {
     /** logger */
-    static Logger LOGGER =
-            org.geotools.util.logging.Logging.getLogger("org.geoserver.security.jdbc");
+    static Logger LOGGER = org.geotools.util.logging.Logging.getLogger("org.geoserver.security.jdbc");
 
     protected Properties ddlProps, dmlProps;
     protected DataSource datasource;
@@ -115,8 +114,7 @@ public abstract class AbstractJDBCService extends AbstractGeoServerSecurityServi
     }
 
     /** get a prepared DML statement for a property key */
-    protected PreparedStatement getDMLStatement(String key, Connection con)
-            throws IOException, SQLException {
+    protected PreparedStatement getDMLStatement(String key, Connection con) throws IOException, SQLException {
         return getJDBCStatement(key, dmlProps, con);
     }
 
@@ -134,8 +132,7 @@ public abstract class AbstractJDBCService extends AbstractGeoServerSecurityServi
     }
 
     /** get a prepared DDL statement for a property key */
-    protected PreparedStatement getDDLStatement(String key, Connection con)
-            throws IOException, SQLException {
+    protected PreparedStatement getDDLStatement(String key, Connection con) throws IOException, SQLException {
         return getJDBCStatement(key, ddlProps, con);
     }
 
@@ -342,8 +339,8 @@ public abstract class AbstractJDBCService extends AbstractGeoServerSecurityServi
      * @param defaultResource the standard template
      * @return the file to use
      */
-    protected Resource checkORCreateJDBCPropertyFile(
-            String fileName, Resource namedRoot, String defaultResource) throws IOException {
+    protected Resource checkORCreateJDBCPropertyFile(String fileName, Resource namedRoot, String defaultResource)
+            throws IOException {
 
         Resource resource;
         fileName = fileName != null ? fileName : defaultResource;

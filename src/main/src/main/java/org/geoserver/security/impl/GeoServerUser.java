@@ -84,8 +84,7 @@ public class GeoServerUser implements UserDetails, CredentialsContainer, Compara
         this.accountNonLocked = other.isAccountNonLocked();
         this.credentialsNonExpired = other.isCredentialsNonExpired();
         this.enabled = other.isEnabled();
-        this.authorities =
-                other.getAuthorities() != null ? new ArrayList<>(other.getAuthorities()) : null;
+        this.authorities = other.getAuthorities() != null ? new ArrayList<>(other.getAuthorities()) : null;
     }
 
     /** The user name. */
@@ -238,8 +237,7 @@ public class GeoServerUser implements UserDetails, CredentialsContainer, Compara
         sb.append("CredentialsNonExpired: ").append(this.credentialsNonExpired).append("; ");
         sb.append("AccountNonLocked: ").append(this.accountNonLocked).append("; ");
         sb.append(" [ ");
-        if (authorities != null)
-            sb.append(StringUtils.collectionToCommaDelimitedString(authorities));
+        if (authorities != null) sb.append(StringUtils.collectionToCommaDelimitedString(authorities));
         sb.append(" ] ");
 
         return sb.toString();

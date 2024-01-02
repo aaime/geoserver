@@ -44,8 +44,7 @@ abstract class AggregationOp {
 
         if (value instanceof org.geotools.api.feature.ComplexAttribute) {
             Property simpleContent =
-                    ((org.geotools.api.feature.ComplexAttribute) value)
-                            .getProperty(new NameImpl("simpleContent"));
+                    ((org.geotools.api.feature.ComplexAttribute) value).getProperty(new NameImpl("simpleContent"));
             if (simpleContent == null) {
                 return null;
             } else {

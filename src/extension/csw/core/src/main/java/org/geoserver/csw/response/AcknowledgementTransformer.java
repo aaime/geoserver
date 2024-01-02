@@ -109,8 +109,7 @@ public class AcknowledgementTransformer extends AbstractCSWTransformer {
                 TreeWalker tw = new TreeWalker(contentHandler);
                 tw.traverse(document);
             } catch (Exception e) {
-                throw new ServiceException(
-                        "Failed to re-encode the original request in the Acknowledgement response");
+                throw new ServiceException("Failed to re-encode the original request in the Acknowledgement response");
             }
         }
 
@@ -127,9 +126,7 @@ public class AcknowledgementTransformer extends AbstractCSWTransformer {
                 return builder.parse(new InputSource(new StringReader(data)));
             } catch (Throwable t) {
                 throw new ServiceException(
-                        "Failed to parse the original request into XML, "
-                                + "this should never happen??",
-                        t);
+                        "Failed to parse the original request into XML, " + "this should never happen??", t);
             }
         }
     }

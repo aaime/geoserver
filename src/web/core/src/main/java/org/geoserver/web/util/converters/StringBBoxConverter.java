@@ -39,14 +39,13 @@ public class StringBBoxConverter implements Converter {
                 String text = (String) source;
                 String[] parsed = text.split("\\s*" + SEPARATOR + "\\s*");
                 try {
-                    return (T)
-                            (new ReferencedEnvelope(
-                                    new Envelope(
-                                            Double.valueOf(parsed[0]),
-                                            Double.valueOf(parsed[1]),
-                                            Double.valueOf(parsed[2]),
-                                            Double.valueOf(parsed[3])),
-                                    CRS.decode(parsed[4])));
+                    return (T) (new ReferencedEnvelope(
+                            new Envelope(
+                                    Double.valueOf(parsed[0]),
+                                    Double.valueOf(parsed[1]),
+                                    Double.valueOf(parsed[2]),
+                                    Double.valueOf(parsed[3])),
+                            CRS.decode(parsed[4])));
                 } catch (Exception e) {
                     return null;
                 }

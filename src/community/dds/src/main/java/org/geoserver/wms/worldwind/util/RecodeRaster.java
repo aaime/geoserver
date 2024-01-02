@@ -42,10 +42,7 @@ public class RecodeRaster extends PointOpImage {
     private final double destVal;
 
     public RecodeRaster(
-            final RenderedImage image,
-            final double srcVal,
-            final double destVal,
-            final RenderingHints hints) {
+            final RenderedImage image, final double srcVal, final double destVal, final RenderingHints hints) {
         super(image, (ImageLayout) hints.get(JAI.KEY_IMAGE_LAYOUT), hints, false);
 
         this.srcVal = srcVal;
@@ -54,16 +51,14 @@ public class RecodeRaster extends PointOpImage {
     }
 
     @Override
-    protected void computeRect(
-            final PlanarImage[] sources, final WritableRaster dest, final Rectangle destRect) {
+    protected void computeRect(final PlanarImage[] sources, final WritableRaster dest, final Rectangle destRect) {
         final PlanarImage source = sources[0];
         final Rectangle bounds = destRect.intersection(source.getBounds());
         if (!destRect.equals(bounds)) {
             // TODO: Check if this case occurs sometime, and fill pixel values if it does.
             //       If it happen to occurs, we will need to fix other GeoTools operations
             //       as well.
-            Logging.getLogger(TransformException.class)
-                    .warning("Bounds mismatch: " + destRect + " and " + bounds);
+            Logging.getLogger(TransformException.class).warning("Bounds mismatch: " + destRect + " and " + bounds);
         }
         WritableRectIter iterator = RectIterFactory.createWritable(dest, bounds);
 
@@ -156,14 +151,10 @@ public class RecodeRaster extends PointOpImage {
         final OperationRegistry registry = jai.getOperationRegistry();
         try {
             registry.registerDescriptor(new Descriptor());
-            registry.registerFactory(
-                    RenderedRegistryMode.MODE_NAME, OPERATION_NAME, "geotools.org", new CRIF());
+            registry.registerFactory(RenderedRegistryMode.MODE_NAME, OPERATION_NAME, "geotools.org", new CRIF());
         } catch (IllegalArgumentException exception) {
             final LogRecord record =
-                    Loggings.format(
-                            Level.SEVERE,
-                            LoggingKeys.CANT_REGISTER_JAI_OPERATION_$1,
-                            OPERATION_NAME);
+                    Loggings.format(Level.SEVERE, LoggingKeys.CANT_REGISTER_JAI_OPERATION_$1, OPERATION_NAME);
             record.setSourceMethodName("<classinit>");
             record.setThrown(exception);
             record.setLoggerName(LOGGER.getName());

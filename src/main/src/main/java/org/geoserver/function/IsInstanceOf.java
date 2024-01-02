@@ -30,10 +30,7 @@ public class IsInstanceOf implements VolatileFunction, Function {
 
     /** Function name and related parameters */
     public static FunctionName NAME =
-            new FunctionNameImpl(
-                    "isInstanceOf",
-                    Boolean.class,
-                    FunctionNameImpl.parameter("class", Class.class));
+            new FunctionNameImpl("isInstanceOf", Boolean.class, FunctionNameImpl.parameter("class", Class.class));
 
     /** Function parameters */
     private List<Expression> parameters;

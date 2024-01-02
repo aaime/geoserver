@@ -33,8 +33,7 @@ public class PrintingServletWrappingController extends ServletWrappingController
         String configProp = initParameters.getProperty("config");
 
         try {
-            GeoServerResourceLoader loader =
-                    GeoServerExtensions.bean(GeoServerResourceLoader.class);
+            GeoServerResourceLoader loader = GeoServerExtensions.bean(GeoServerResourceLoader.class);
             String configPath = Paths.path("printing", Paths.convert(configProp));
             Resource config = loader.get(configPath);
 
@@ -44,21 +43,18 @@ public class PrintingServletWrappingController extends ServletWrappingController
                 }
             }
             if (!Resources.canRead(config)) {
-                LOG.warning(
-                        "Printing module missing its configuration.  Any actions it takes will fail.");
+                LOG.warning("Printing module missing its configuration.  Any actions it takes will fail.");
                 return;
             }
             initParameters.setProperty("config", config.file().getAbsolutePath());
         } catch (java.io.IOException e) {
-            LOG.warning(
-                    "Unable to calcule canonical path for MapFish printing servlet. "
-                            + "Module will fail when run.  IO Exception is: "
-                            + e);
+            LOG.warning("Unable to calcule canonical path for MapFish printing servlet. "
+                    + "Module will fail when run.  IO Exception is: "
+                    + e);
         } catch (Exception e) {
-            LOG.warning(
-                    "Unable to access/create config directory for MapFish printing module."
-                            + "Module will fail when run. Config exception is: "
-                            + e);
+            LOG.warning("Unable to access/create config directory for MapFish printing module."
+                    + "Module will fail when run. Config exception is: "
+                    + e);
         }
         super.setInitParameters(initParameters);
     }

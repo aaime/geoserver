@@ -49,10 +49,7 @@ public class GdalWrapper extends AbstractToolWrapper {
 
             return formats;
         } catch (Exception e) {
-            LOGGER.log(
-                    Level.SEVERE,
-                    "Could not get the list of output formats supported by gdal_translate",
-                    e);
+            LOGGER.log(Level.SEVERE, "Could not get the list of output formats supported by gdal_translate", e);
             return Collections.emptySet();
         }
     }
@@ -63,8 +60,7 @@ public class GdalWrapper extends AbstractToolWrapper {
      * @param commands the command to run
      * @param formats the parsed formats will be added to this set
      */
-    private void addFormats(List<String> commands, Set<String> formats)
-            throws IOException, InterruptedException {
+    private void addFormats(List<String> commands, Set<String> formats) throws IOException, InterruptedException {
         StringBuilder sb = new StringBuilder();
         run(commands, sb);
 

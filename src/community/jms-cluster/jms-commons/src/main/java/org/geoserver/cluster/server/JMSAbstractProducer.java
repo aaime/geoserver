@@ -22,7 +22,8 @@ import org.springframework.jms.core.JmsTemplate;
  */
 public abstract class JMSAbstractProducer extends JMSApplicationListener {
 
-    @Autowired public JMSFactory jmsFactory;
+    @Autowired
+    public JMSFactory jmsFactory;
 
     /** @return the jmsTemplate */
     public final JmsTemplate getJmsTemplate() {

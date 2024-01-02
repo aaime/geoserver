@@ -34,9 +34,7 @@ public interface ComplexMetadataService {
      * priority.
      */
     void merge(
-            ComplexMetadataMap destination,
-            List<ComplexMetadataMap> sources,
-            Map<String, List<Integer>> derivedAtts);
+            ComplexMetadataMap destination, List<ComplexMetadataMap> sources, Map<String, List<Integer>> derivedAtts);
 
     /**
      * Copy from one submap to another
@@ -57,11 +55,7 @@ public interface ComplexMetadataService {
      * @param typeName the name of the type
      * @param ignoreUUID whether to ignore UUID's
      */
-    void copy(
-            ComplexMetadataMap source,
-            ComplexMetadataMap dest,
-            String typeName,
-            boolean ignoreUUID);
+    void copy(ComplexMetadataMap source, ComplexMetadataMap dest, String typeName, boolean ignoreUUID);
 
     /**
      * Tests if two submaps are equal to each other

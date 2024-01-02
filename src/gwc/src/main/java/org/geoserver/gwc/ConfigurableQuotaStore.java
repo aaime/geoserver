@@ -99,15 +99,13 @@ public class ConfigurableQuotaStore implements QuotaStore {
     }
 
     @Override
-    public void addToQuotaAndTileCounts(
-            TileSet tileSet, Quota quotaDiff, Collection<PageStatsPayload> tileCountDiffs)
+    public void addToQuotaAndTileCounts(TileSet tileSet, Quota quotaDiff, Collection<PageStatsPayload> tileCountDiffs)
             throws InterruptedException {
         delegate.addToQuotaAndTileCounts(tileSet, quotaDiff, tileCountDiffs);
     }
 
     @Override
-    public Future<List<PageStats>> addHitsAndSetAccesTime(
-            Collection<PageStatsPayload> statsUpdates) {
+    public Future<List<PageStats>> addHitsAndSetAccesTime(Collection<PageStatsPayload> statsUpdates) {
         return delegate.addHitsAndSetAccesTime(statsUpdates);
     }
 

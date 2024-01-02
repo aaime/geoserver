@@ -12,8 +12,7 @@ import org.geotools.util.Range;
  *
  * @param <T>
  */
-class ComparableRange<T extends Comparable<T>> extends Range<T>
-        implements Comparable<ComparableRange> {
+class ComparableRange<T extends Comparable<T>> extends Range<T> implements Comparable<ComparableRange> {
 
     ComparableRange(Class<T> elementClass, T value) {
         super(elementClass, value);
@@ -23,12 +22,7 @@ class ComparableRange<T extends Comparable<T>> extends Range<T>
         super(elementClass, minValue, maxValue);
     }
 
-    ComparableRange(
-            Class<T> elementClass,
-            T minValue,
-            boolean isMinIncluded,
-            T maxValue,
-            boolean isMaxIncluded) {
+    ComparableRange(Class<T> elementClass, T minValue, boolean isMinIncluded, T maxValue, boolean isMaxIncluded) {
         super(elementClass, minValue, isMinIncluded, maxValue, isMaxIncluded);
     }
 

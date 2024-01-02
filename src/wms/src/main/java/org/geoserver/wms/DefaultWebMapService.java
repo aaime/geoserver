@@ -55,8 +55,7 @@ import org.springframework.context.ApplicationContextAware;
  * @author Justin Deoliveira
  * @author Gabriel Roldan
  */
-public class DefaultWebMapService
-        implements WebMapService, ApplicationContextAware, DisposableBean {
+public class DefaultWebMapService implements WebMapService, ApplicationContextAware, DisposableBean {
     /** default for 'format' parameter. */
     public static String FORMAT = "image/png";
 
@@ -98,8 +97,7 @@ public class DefaultWebMapService
     private static Boolean OPTIMIZE_LINE_WIDTH = null;
 
     /** This variable is used to bypass direct raster rendering. */
-    private static boolean BYPASS_DIRECT =
-            Boolean.getBoolean("org.geoserver.render.raster.direct.disable");
+    private static boolean BYPASS_DIRECT = Boolean.getBoolean("org.geoserver.render.raster.direct.disable");
 
     /** Max number of rule filters to be used against the data source */
     private static Integer MAX_FILTER_RULES = null;
@@ -278,8 +276,7 @@ public class DefaultWebMapService
 
     @Override
     public WebMap kml(GetMapRequest getMap) {
-        throw new ServiceException(
-                "kml service is not available, please include a KML module in WEB-INF/lib");
+        throw new ServiceException("kml service is not available, please include a KML module in WEB-INF/lib");
     }
 
     /** @see WebMapService#reflect(GetMapRequest) */

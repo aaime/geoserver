@@ -170,9 +170,7 @@ public abstract class ProcessParameterIO {
 
         // do a two phase search, first try to match the identifier
         for (ProcessParameterIO ppio : l) {
-            if (ppio.getIdentifer() != null
-                    && ppio.getIdentifer().equals(p.key)
-                    && typeCompatible(p, ppio)) {
+            if (ppio.getIdentifer() != null && ppio.getIdentifer().equals(p.key) && typeCompatible(p, ppio)) {
                 matches.add(ppio);
             }
         }

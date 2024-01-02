@@ -26,8 +26,7 @@ import org.geoserver.security.impl.GeoServerRole;
  *
  * @author christian
  */
-public class LockingRoleService extends AbstractLockingService
-        implements GeoServerRoleService, RoleLoadedListener {
+public class LockingRoleService extends AbstractLockingService implements GeoServerRoleService, RoleLoadedListener {
 
     protected Set<RoleLoadedListener> listeners = Collections.synchronizedSet(new HashSet<>());
 
@@ -257,8 +256,7 @@ public class LockingRoleService extends AbstractLockingService
      */
     @Override
     public Properties personalizeRoleParams(
-            String roleName, Properties roleParams, String userName, Properties userProps)
-            throws IOException {
+            String roleName, Properties roleParams, String userName, Properties userProps) throws IOException {
 
         readLock();
         try {

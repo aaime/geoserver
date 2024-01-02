@@ -14,8 +14,7 @@ import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Objects;
 
-public class RelationshipClass
-        implements Comparable<RelationshipClass>, Serializable, RelationshipModel {
+public class RelationshipClass implements Comparable<RelationshipClass>, Serializable, RelationshipModel {
     private Long relationshipId;
     private String workspaceName;
     private String originTable;
@@ -196,8 +195,7 @@ public class RelationshipClass
      */
     @Override
     public int hashCode() {
-        return Objects.hash(
-                workspaceName, originTable, destinationTable, originPrimaryKey, originForeignKey);
+        return Objects.hash(workspaceName, originTable, destinationTable, originPrimaryKey, originForeignKey);
     }
 
     @Override

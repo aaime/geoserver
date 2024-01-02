@@ -34,8 +34,7 @@ public class MappingJackson2HttpMessageConverter
         // reading wise, the converters are called with simple types (not wrappers),
         // limit this to the OGC API controllers, while the REST ones handle all the
         // other classes, for backwards compatibility
-        if (contextClass != null
-                && !contextClass.getPackage().getName().startsWith("org.geoserver.ogcapi"))
+        if (contextClass != null && !contextClass.getPackage().getName().startsWith("org.geoserver.ogcapi"))
             return false;
 
         return super.canRead(type, contextClass, mediaType);

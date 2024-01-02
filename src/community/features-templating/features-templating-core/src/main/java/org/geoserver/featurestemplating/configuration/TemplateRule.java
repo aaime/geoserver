@@ -133,8 +133,7 @@ public class TemplateRule implements Serializable {
         TemplateIdentifier identifier = TemplateIdentifier.fromOutputFormat(outputFormat);
         if (identifier == null) return false;
         String nameIdentifier = identifier.name();
-        if (this.outputFormat.equals(SupportedFormat.GML.name()))
-            return nameIdentifier.startsWith(this.outputFormat);
+        if (this.outputFormat.equals(SupportedFormat.GML.name())) return nameIdentifier.startsWith(this.outputFormat);
         else if (this.outputFormat.equals(SupportedFormat.GEOJSON.name()))
             return nameIdentifier.equals(TemplateIdentifier.GEOJSON.name())
                     || nameIdentifier.equals(TemplateIdentifier.JSON.name());
@@ -177,8 +176,7 @@ public class TemplateRule implements Serializable {
         if (outputFormat == null)
             outputFormat = request.getKvp() != null ? (String) request.getKvp().get("f") : null;
         if (outputFormat == null)
-            outputFormat =
-                    request.getKvp() != null ? (String) request.getKvp().get("INFO_FORMAT") : null;
+            outputFormat = request.getKvp() != null ? (String) request.getKvp().get("INFO_FORMAT") : null;
         return outputFormat;
     }
 
@@ -230,8 +228,7 @@ public class TemplateRule implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(
-                templateIdentifier, templateName, outputFormat, service, cqlFilter, priority);
+        return Objects.hash(templateIdentifier, templateName, outputFormat, service, cqlFilter, priority);
     }
 
     /**

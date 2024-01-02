@@ -169,8 +169,7 @@ public class KeyStoreProviderImpl implements BeanNameAware, KeyStoreProvider {
     public SecretKey getSecretKey(String name) throws IOException {
         Key key = getKey(name);
         if (key == null) return null;
-        if ((key instanceof SecretKey) == false)
-            throw new IOException("Invalid key type for: " + name);
+        if ((key instanceof SecretKey) == false) throw new IOException("Invalid key type for: " + name);
         return (SecretKey) key;
     }
 
@@ -181,8 +180,7 @@ public class KeyStoreProviderImpl implements BeanNameAware, KeyStoreProvider {
     public PublicKey getPublicKey(String name) throws IOException {
         Key key = getKey(name);
         if (key == null) return null;
-        if ((key instanceof PublicKey) == false)
-            throw new IOException("Invalid key type for: " + name);
+        if ((key instanceof PublicKey) == false) throw new IOException("Invalid key type for: " + name);
         return (PublicKey) key;
     }
 
@@ -193,8 +191,7 @@ public class KeyStoreProviderImpl implements BeanNameAware, KeyStoreProvider {
     public PrivateKey getPrivateKey(String name) throws IOException {
         Key key = getKey(name);
         if (key == null) return null;
-        if ((key instanceof PrivateKey) == false)
-            throw new IOException("Invalid key type for: " + name);
+        if ((key instanceof PrivateKey) == false) throw new IOException("Invalid key type for: " + name);
         return (PrivateKey) key;
     }
 
@@ -330,8 +327,7 @@ public class KeyStoreProviderImpl implements BeanNameAware, KeyStoreProvider {
     /** Creates initial key entries auto generated keys {@link #CONFIGPASSWORDKEY} */
     protected void addInitialKeys() throws IOException {
         // TODO:scramble
-        RandomPasswordProvider randPasswdProvider =
-                getSecurityManager().getRandomPassworddProvider();
+        RandomPasswordProvider randPasswdProvider = getSecurityManager().getRandomPassworddProvider();
 
         char[] configKey = randPasswdProvider.getRandomPasswordWithDefaultLength();
         setSecretKey(CONFIGPASSWORDKEY, configKey);
@@ -341,8 +337,7 @@ public class KeyStoreProviderImpl implements BeanNameAware, KeyStoreProvider {
      * @see org.geoserver.security.password.KeystoreProvider#prepareForMasterPasswordChange(java.lang.String, java.lang.String)
      */
     @Override
-    public void prepareForMasterPasswordChange(char[] oldPassword, char[] newPassword)
-            throws IOException {
+    public void prepareForMasterPasswordChange(char[] oldPassword, char[] newPassword) throws IOException {
 
         Resource dir = getResource().parent();
         Resource newKSFile = dir.get(PREPARED_FILE_NAME);
@@ -358,8 +353,7 @@ public class KeyStoreProviderImpl implements BeanNameAware, KeyStoreProvider {
 
             KeyStore newKS = KeyStore.getInstance(KEYSTORETYPE);
             newKS.load(null, newPassword);
-            KeyStore.PasswordProtection protectionparam =
-                    new KeyStore.PasswordProtection(newPassword);
+            KeyStore.PasswordProtection protectionparam = new KeyStore.PasswordProtection(newPassword);
 
             Enumeration<String> enumeration = oldKS.aliases();
             while (enumeration.hasMoreElements()) {
@@ -368,17 +362,13 @@ public class KeyStoreProviderImpl implements BeanNameAware, KeyStoreProvider {
                 KeyStore.Entry entry = null;
                 if (key instanceof SecretKey) entry = new KeyStore.SecretKeyEntry((SecretKey) key);
                 if (key instanceof PrivateKey)
-                    entry =
-                            new KeyStore.PrivateKeyEntry(
-                                    (PrivateKey) key, oldKS.getCertificateChain(alias));
-                if (key instanceof PublicKey)
-                    entry = new KeyStore.TrustedCertificateEntry(oldKS.getCertificate(alias));
+                    entry = new KeyStore.PrivateKeyEntry((PrivateKey) key, oldKS.getCertificateChain(alias));
+                if (key instanceof PublicKey) entry = new KeyStore.TrustedCertificateEntry(oldKS.getCertificate(alias));
                 if (entry == null)
-                    LOGGER.warning(
-                            "Unknown key in store, alias: "
-                                    + alias
-                                    + " class: "
-                                    + key.getClass().getName());
+                    LOGGER.warning("Unknown key in store, alias: "
+                            + alias
+                            + " class: "
+                            + key.getClass().getName());
                 else newKS.setEntry(alias, entry, protectionparam);
             }
 

@@ -50,16 +50,14 @@ public class FeatureSizeEstimator implements ObjectSizeEstimator {
             } else if (Number.class.isAssignableFrom(type)) {
                 if (Double.class.isAssignableFrom(type) || Float.class.isAssignableFrom(type)) {
                     bytes += 8;
-                } else if (Float.class.isAssignableFrom(type)
-                        || Integer.class.isAssignableFrom(type)) {
+                } else if (Float.class.isAssignableFrom(type) || Integer.class.isAssignableFrom(type)) {
                     bytes += 4;
                 } else if (Short.class.isAssignableFrom(type)) {
                     bytes += 2;
                 } else if (Byte.class.isAssignableFrom(type)) {
                     bytes += 1;
                 }
-            } else if (Character.class.isAssignableFrom(type)
-                    || Boolean.class.isAssignableFrom(type)) {
+            } else if (Character.class.isAssignableFrom(type) || Boolean.class.isAssignableFrom(type)) {
                 bytes += 1;
             } else if (Date.class.isAssignableFrom(type)) {
                 bytes += 8;

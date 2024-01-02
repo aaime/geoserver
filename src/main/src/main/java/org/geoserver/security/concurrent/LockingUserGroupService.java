@@ -78,8 +78,7 @@ public class LockingUserGroupService extends AbstractLockingService
      *     java.lang.String, boolean)
      */
     @Override
-    public GeoServerUser createUserObject(String username, String password, boolean isEnabled)
-            throws IOException {
+    public GeoServerUser createUserObject(String username, String password, boolean isEnabled) throws IOException {
         readLock();
         try {
             return getService().createUserObject(username, password, isEnabled);
@@ -125,8 +124,7 @@ public class LockingUserGroupService extends AbstractLockingService
      *     boolean)
      */
     @Override
-    public GeoServerUserGroup createGroupObject(String groupname, boolean isEnabled)
-            throws IOException {
+    public GeoServerUserGroup createGroupObject(String groupname, boolean isEnabled) throws IOException {
         readLock();
         try {
             return getService().createGroupObject(groupname, isEnabled);
@@ -265,8 +263,7 @@ public class LockingUserGroupService extends AbstractLockingService
      *     org.springframework.security.core.userdetails.UserDetailsService#loadUserByUsername(java.lang.String)
      */
     @Override
-    public UserDetails loadUserByUsername(String username)
-            throws UsernameNotFoundException, DataAccessException {
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
         readLock();
         try {
             return getService().loadUserByUsername(username);
@@ -362,8 +359,7 @@ public class LockingUserGroupService extends AbstractLockingService
 
     /** READ_LOCK */
     @Override
-    public SortedSet<GeoServerUser> getUsersHavingPropertyValue(String propname, String propvalue)
-            throws IOException {
+    public SortedSet<GeoServerUser> getUsersHavingPropertyValue(String propname, String propvalue) throws IOException {
         readLock();
         try {
             return getService().getUsersHavingPropertyValue(propname, propvalue);
@@ -374,8 +370,7 @@ public class LockingUserGroupService extends AbstractLockingService
 
     /** READ_LOCK */
     @Override
-    public int getUserCountHavingPropertyValue(String propname, String propvalue)
-            throws IOException {
+    public int getUserCountHavingPropertyValue(String propname, String propvalue) throws IOException {
         readLock();
         try {
             return getService().getUserCountHavingPropertyValue(propname, propvalue);

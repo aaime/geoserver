@@ -100,8 +100,7 @@ public class JDBCUserGroupStore extends JDBCUserGroupService implements GeoServe
     }
 
     /** Helper method for inserting user properties */
-    protected void addUserProperties(GeoServerUser user, Connection con)
-            throws SQLException, IOException {
+    protected void addUserProperties(GeoServerUser user, Connection con) throws SQLException, IOException {
         if (user.getProperties().size() == 0) return; // nothing to do
 
         PreparedStatement ps = getDMLStatement("userprops.insert", con);
@@ -130,13 +129,10 @@ public class JDBCUserGroupStore extends JDBCUserGroupService implements GeoServe
 
         // we have a plain text password
         // validate it
-        getSecurityManager()
-                .loadPasswordValidator(getPasswordValidatorName())
-                .validatePassword(passwordArray);
+        getSecurityManager().loadPasswordValidator(getPasswordValidatorName()).validatePassword(passwordArray);
 
         // validation ok, initializer encoder and set encoded password
-        GeoServerPasswordEncoder enc =
-                getSecurityManager().loadPasswordEncoder(getPasswordEncoderName());
+        GeoServerPasswordEncoder enc = getSecurityManager().loadPasswordEncoder(getPasswordEncoderName());
 
         enc.initializeFor(this);
         user.setPassword(enc.encodePassword(user.getPassword(), null));
@@ -333,8 +329,7 @@ public class JDBCUserGroupStore extends JDBCUserGroupService implements GeoServe
      * @see org.geoserver.security.GeoserverUserGroupStore#associateUserToGroup(org.geoserver.security.impl.GeoserverUser, org.geoserver.security.impl.GeoserverUserGroup)
      */
     @Override
-    public void associateUserToGroup(GeoServerUser user, GeoServerUserGroup group)
-            throws IOException {
+    public void associateUserToGroup(GeoServerUser user, GeoServerUserGroup group) throws IOException {
 
         Connection con = null;
         PreparedStatement ps = null;
@@ -356,8 +351,7 @@ public class JDBCUserGroupStore extends JDBCUserGroupService implements GeoServe
      * @see org.geoserver.security.GeoserverUserGroupStore#disAssociateUserFromGroup(org.geoserver.security.impl.GeoserverUser, org.geoserver.security.impl.GeoserverUserGroup)
      */
     @Override
-    public void disAssociateUserFromGroup(GeoServerUser user, GeoServerUserGroup group)
-            throws IOException {
+    public void disAssociateUserFromGroup(GeoServerUser user, GeoServerUserGroup group) throws IOException {
 
         Connection con = null;
         PreparedStatement ps = null;
@@ -417,8 +411,7 @@ public class JDBCUserGroupStore extends JDBCUserGroupService implements GeoServe
     }
     /** Delegates to the {@link GeoServerUserGroupService} backend */
     @Override
-    public GeoServerUser createUserObject(String username, String password, boolean isEnabled)
-            throws IOException {
+    public GeoServerUser createUserObject(String username, String password, boolean isEnabled) throws IOException {
         return jdbcService.createUserObject(username, password, isEnabled);
     }
 }

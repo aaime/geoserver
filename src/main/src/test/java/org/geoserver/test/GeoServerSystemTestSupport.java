@@ -187,10 +187,7 @@ import org.xml.sax.SAXParseException;
  * @author Justin Deoliveira, OpenGeo
  */
 @TestSetup(run = TestSetupFrequency.ONCE)
-@SuppressWarnings({
-    "PMD.JUnit4TestShouldUseBeforeAnnotation",
-    "PMD.JUnit4TestShouldUseAfterAnnotation"
-})
+@SuppressWarnings({"PMD.JUnit4TestShouldUseBeforeAnnotation", "PMD.JUnit4TestShouldUseAfterAnnotation"})
 public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemTestData> {
 
     private MockHttpServletResponse lastResponse;
@@ -218,47 +215,44 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
      * In IDEs during development GeoTools sources can be in the classpath of GeoServer tests, this
      * resolver allows them to be resolved while blocking the rest
      */
-    public static final EntityResolver RESOLVE_DISABLED_PROVIDER_DEVMODE =
-            new PreventLocalEntityResolver() {
-                @Override
-                public InputSource resolveEntity(String publicId, String systemId)
-                        throws SAXException, IOException {
-                    if (isLocalGeoToolsSchema(null, systemId)) {
-                        return null;
-                    }
+    public static final EntityResolver RESOLVE_DISABLED_PROVIDER_DEVMODE = new PreventLocalEntityResolver() {
+        @Override
+        public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+            if (isLocalGeoToolsSchema(null, systemId)) {
+                return null;
+            }
 
-                    return super.resolveEntity(publicId, systemId);
-                }
+            return super.resolveEntity(publicId, systemId);
+        }
 
-                @Override
-                public InputSource resolveEntity(
-                        String name, String publicId, String baseURI, String systemId)
-                        throws SAXException, IOException {
-                    if (isLocalGeoToolsSchema(baseURI, systemId)) {
-                        return null;
-                    }
+        @Override
+        public InputSource resolveEntity(String name, String publicId, String baseURI, String systemId)
+                throws SAXException, IOException {
+            if (isLocalGeoToolsSchema(baseURI, systemId)) {
+                return null;
+            }
 
-                    return super.resolveEntity(name, publicId, baseURI, systemId);
-                }
+            return super.resolveEntity(name, publicId, baseURI, systemId);
+        }
 
-                private boolean isLocalGeoToolsSchema(String baseURI, String systemId) {
-                    if (systemId.startsWith("file:/")) {
-                        return isLocalGeotoolsSchema(systemId);
-                    } else if (!systemId.contains("://") && baseURI != null) {
-                        // location relative to a baseURI
-                        return isLocalGeotoolsSchema(baseURI);
-                    }
-                    return false;
-                }
+        private boolean isLocalGeoToolsSchema(String baseURI, String systemId) {
+            if (systemId.startsWith("file:/")) {
+                return isLocalGeotoolsSchema(systemId);
+            } else if (!systemId.contains("://") && baseURI != null) {
+                // location relative to a baseURI
+                return isLocalGeotoolsSchema(baseURI);
+            }
+            return false;
+        }
 
-                private boolean isLocalGeotoolsSchema(String path) {
-                    // Windows case insensitive filesystem work-around
-                    path = path.toLowerCase();
-                    // Match the GeoTools locations having schemas we resolve against
-                    return path.matches(".*modules[\\\\/]extension[\\\\/]xsd[\\\\/].*\\.xsd")
-                            || path.matches(".*modules[\\\\/]ogc[\\\\/].*\\.xsd");
-                }
-            };
+        private boolean isLocalGeotoolsSchema(String path) {
+            // Windows case insensitive filesystem work-around
+            path = path.toLowerCase();
+            // Match the GeoTools locations having schemas we resolve against
+            return path.matches(".*modules[\\\\/]extension[\\\\/]xsd[\\\\/].*\\.xsd")
+                    || path.matches(".*modules[\\\\/]ogc[\\\\/].*\\.xsd");
+        }
+    };
 
     @Override
     protected final void setUp(SystemTestData testData) throws Exception {
@@ -287,8 +281,7 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
         }
         System.setProperty(LoggingUtils.RELINQUISH_LOG4J_CONTROL, "true");
         Logging.ALL.setLoggerFactory("org.geotools.util.logging.Log4J2LoggerFactory");
-        GeoServerResourceLoader loader =
-                new GeoServerResourceLoader(testData.getDataDirectoryRoot());
+        GeoServerResourceLoader loader = new GeoServerResourceLoader(testData.getDataDirectoryRoot());
         LoggingUtils.initLogging(loader, getLogConfiguration(), false, true, null);
 
         setUpTestData(testData);
@@ -319,8 +312,7 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
             setUpSpring(contexts);
 
             applicationContext =
-                    new GeoServerTestApplicationContext(
-                            contexts.toArray(new String[contexts.size()]), servletContext);
+                    new GeoServerTestApplicationContext(contexts.toArray(new String[contexts.size()]), servletContext);
             applicationContext.setUseLegacyGeoServerLoader(false);
             applicationContext.refresh();
             applicationContext.publishEvent(new ContextLoadedEvent(applicationContext));
@@ -329,8 +321,7 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
             // wipes
             // out all parameters
             servletContext.setAttribute(
-                    WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE,
-                    applicationContext);
+                    WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, applicationContext);
 
             dispatcher = buildDispatcher();
 
@@ -484,14 +475,12 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
 
     /** Accessor for regular (weak encryption) pbe password encoder. */
     protected GeoServerPBEPasswordEncoder getPBEPasswordEncoder() {
-        return getSecurityManager()
-                .loadPasswordEncoder(GeoServerPBEPasswordEncoder.class, null, false);
+        return getSecurityManager().loadPasswordEncoder(GeoServerPBEPasswordEncoder.class, null, false);
     }
 
     /** Accessor for strong encryption pbe password encoder. */
     protected GeoServerPBEPasswordEncoder getStrongPBEPasswordEncoder() {
-        return getSecurityManager()
-                .loadPasswordEncoder(GeoServerPBEPasswordEncoder.class, null, true);
+        return getSecurityManager().loadPasswordEncoder(GeoServerPBEPasswordEncoder.class, null, true);
     }
 
     /** Accessor for global resource loader instance from the test application context. */
@@ -559,8 +548,7 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
      * @param typename the QName for the type
      */
     protected FeatureTypeInfo getFeatureTypeInfo(QName typename) {
-        return getCatalog()
-                .getFeatureTypeByName(typename.getNamespaceURI(), typename.getLocalPart());
+        return getCatalog().getFeatureTypeByName(typename.getNamespaceURI(), typename.getLocalPart());
     }
 
     /**
@@ -685,10 +673,7 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
     protected void removeStyle(String workspaceName, String name) throws IOException {
         Catalog cat = getCatalog();
 
-        StyleInfo s =
-                workspaceName != null
-                        ? cat.getStyleByName(workspaceName, name)
-                        : cat.getStyleByName(name);
+        StyleInfo s = workspaceName != null ? cat.getStyleByName(workspaceName, name) : cat.getStyleByName(name);
         if (s != null) {
             cat.remove(s);
 
@@ -696,11 +681,9 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
             cat.getResourcePool().deleteStyle(s, true);
         } else {
             // handle case of sld fiel still lying around
-            File sld =
-                    workspaceName != null
-                            ? cat.getResourceLoader()
-                                    .find("workspaces", workspaceName, "styles", name + ".sld")
-                            : cat.getResourceLoader().find("styles", name + ".sld");
+            File sld = workspaceName != null
+                    ? cat.getResourceLoader().find("workspaces", workspaceName, "styles", name + ".sld")
+                    : cat.getResourceLoader().find("styles", name + ".sld");
             if (sld != null) {
                 sld.delete();
             }
@@ -722,9 +705,7 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
         Catalog cat = getCatalog();
 
         LayerGroupInfo lg =
-                workspaceName != null
-                        ? cat.getLayerGroupByName(workspaceName, name)
-                        : cat.getLayerGroupByName(name);
+                workspaceName != null ? cat.getLayerGroupByName(workspaceName, name) : cat.getLayerGroupByName(name);
         if (lg != null) {
             cat.remove(lg);
         }
@@ -840,9 +821,7 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
                 .setAuthentication(new UsernamePasswordAuthenticationToken(username, password, l));
     }
 
-    protected void addUser(
-            String username, String password, List<String> groups, List<String> roles)
-            throws Exception {
+    protected void addUser(String username, String password, List<String> groups, List<String> roles) throws Exception {
         GeoServerSecurityManager secMgr = getSecurityManager();
         GeoServerUserGroupService ugService = secMgr.loadUserGroupService("default");
 
@@ -880,8 +859,8 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
         }
     }
 
-    protected void addLayerAccessRule(
-            String workspace, String layer, AccessMode mode, String... roles) throws IOException {
+    protected void addLayerAccessRule(String workspace, String layer, AccessMode mode, String... roles)
+            throws IOException {
         DataAccessRuleDAO dao = DataAccessRuleDAO.get();
         DataAccessRule rule = new DataAccessRule();
         rule.setRoot(workspace);
@@ -931,17 +910,14 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
         request.setServerName("localhost");
         request.setServerPort(8080);
         request.setContextPath("/geoserver");
-        request.setRequestURI(
-                ResponseUtils.stripQueryString(ResponseUtils.appendPath("/geoserver/", path)));
+        request.setRequestURI(ResponseUtils.stripQueryString(ResponseUtils.appendPath("/geoserver/", path)));
         // request.setRequestURL(ResponseUtils.appendPath("http://localhost:8080/geoserver", path )
         // );
         request.setQueryString(ResponseUtils.getQueryString(path));
         request.setRemoteAddr("127.0.0.1");
-        request.setServletPath(
-                ResponseUtils.makePathAbsolute(ResponseUtils.stripRemainingPath(path)));
+        request.setServletPath(ResponseUtils.makePathAbsolute(ResponseUtils.stripRemainingPath(path)));
         request.setPathInfo(
-                ResponseUtils.makePathAbsolute(
-                        ResponseUtils.stripBeginningPath(ResponseUtils.stripQueryString(path))));
+                ResponseUtils.makePathAbsolute(ResponseUtils.stripBeginningPath(ResponseUtils.stripQueryString(path))));
         request.addHeader("Host", "localhost:8080");
 
         // deal with authentication
@@ -950,8 +926,7 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
             if (password != null) {
                 token += password;
             }
-            request.addHeader(
-                    "Authorization", "Basic " + new String(Base64.encodeBase64(token.getBytes())));
+            request.addHeader("Authorization", "Basic " + new String(Base64.encodeBase64(token.getBytes())));
         }
 
         kvp(request, path);
@@ -1035,16 +1010,10 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
         if (responseCode != status) {
             String content = response.getContentAsString();
             if (content == null || content.length() == 0) {
-                throw new ServiceException(
-                        "expected status <" + responseCode + "> but was <" + status + ">");
+                throw new ServiceException("expected status <" + responseCode + "> but was <" + status + ">");
             } else {
                 throw new ServiceException(
-                        "expected status <"
-                                + responseCode
-                                + "> but was <"
-                                + status
-                                + ">:"
-                                + content);
+                        "expected status <" + responseCode + "> but was <" + status + ">:" + content);
             }
         }
         return new ByteArrayInputStream(response.getContentAsString().getBytes());
@@ -1069,8 +1038,7 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
      * @param charset The character set of the response.
      * @return the mock servlet response
      */
-    protected MockHttpServletResponse getAsServletResponse(String path, String charset)
-            throws Exception {
+    protected MockHttpServletResponse getAsServletResponse(String path, String charset) throws Exception {
         MockHttpServletRequest request = createRequest(path);
         request.setMethod("GET");
         request.setContent(new byte[] {});
@@ -1141,13 +1109,13 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
         return putAsServletResponse(path, new byte[] {}, "text/plain");
     }
 
-    protected MockHttpServletResponse putAsServletResponse(
-            String path, String body, String contentType) throws Exception {
+    protected MockHttpServletResponse putAsServletResponse(String path, String body, String contentType)
+            throws Exception {
         return putAsServletResponse(path, body != null ? body.getBytes() : null, contentType);
     }
 
-    protected MockHttpServletResponse putAsServletResponse(
-            String path, byte[] body, String contentType) throws Exception {
+    protected MockHttpServletResponse putAsServletResponse(String path, byte[] body, String contentType)
+            throws Exception {
 
         MockHttpServletRequest request = createRequest(path);
         request.setMethod("PUT");
@@ -1157,13 +1125,13 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
         return dispatch(request);
     }
 
-    protected MockHttpServletResponse patchAsServletResponse(
-            String path, String body, String contentType) throws Exception {
+    protected MockHttpServletResponse patchAsServletResponse(String path, String body, String contentType)
+            throws Exception {
         return patchAsServletResponse(path, body != null ? body.getBytes() : null, contentType);
     }
 
-    protected MockHttpServletResponse patchAsServletResponse(
-            String path, byte[] body, String contentType) throws Exception {
+    protected MockHttpServletResponse patchAsServletResponse(String path, byte[] body, String contentType)
+            throws Exception {
 
         MockHttpServletRequest request = createRequest(path);
         request.setMethod("PATCH");
@@ -1196,8 +1164,7 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
      * @param xml The body content, often xml for OGC services
      * @return the servlet response
      */
-    protected MockHttpServletResponse postAsServletResponse(String path, String xml)
-            throws Exception {
+    protected MockHttpServletResponse postAsServletResponse(String path, String xml) throws Exception {
 
         return postAsServletResponse(path, xml, "application/xml");
     }
@@ -1242,8 +1209,8 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
      * @param xml The body content, often xml for OGC services
      * @return the servlet response
      */
-    protected MockHttpServletResponse postAsServletResponse(
-            String path, String body, String contentType) throws Exception {
+    protected MockHttpServletResponse postAsServletResponse(String path, String body, String contentType)
+            throws Exception {
         MockHttpServletRequest request = createRequest(path);
         request.setMethod("POST");
         request.setContentType(contentType);
@@ -1261,8 +1228,8 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
         return dispatch(request, charset);
     }
 
-    protected MockHttpServletResponse postAsServletResponse(
-            String path, byte[] body, String contentType) throws Exception {
+    protected MockHttpServletResponse postAsServletResponse(String path, byte[] body, String contentType)
+            throws Exception {
 
         MockHttpServletRequest request = createRequest(path);
         request.setMethod("POST");
@@ -1337,28 +1304,23 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
         if (statusCode != status) {
             String content = response.getContentAsString();
             if (content == null || content.length() == 0) {
-                throw new ServiceException(
-                        "expected status <" + statusCode + "> but was <" + status + ">");
+                throw new ServiceException("expected status <" + statusCode + "> but was <" + status + ">");
             } else {
-                throw new ServiceException(
-                        "expected status <" + statusCode + "> but was <" + status + ">:" + content);
+                throw new ServiceException("expected status <" + statusCode + "> but was <" + status + ">:" + content);
             }
         }
         return json(response);
     }
 
-    private MockHttpServletResponse getAsServletResponse(String path, int statusCode)
-            throws Exception {
+    private MockHttpServletResponse getAsServletResponse(String path, int statusCode) throws Exception {
         MockHttpServletResponse response = getAsServletResponse(path);
         int status = response.getStatus();
         if (statusCode != status) {
             String content = response.getContentAsString();
             if (content == null || content.length() == 0) {
-                throw new ServiceException(
-                        "expected status <" + statusCode + "> but was <" + status + ">");
+                throw new ServiceException("expected status <" + statusCode + "> but was <" + status + ">");
             } else {
-                throw new ServiceException(
-                        "expected status <" + statusCode + "> but was <" + status + ">:" + content);
+                throw new ServiceException("expected status <" + statusCode + "> but was <" + status + ">:" + content);
             }
         }
         return response;
@@ -1457,8 +1419,7 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
      * @param encoding Overide for the encoding of the document.
      * @return A result of the request parsed into a dom.
      */
-    protected Document getAsDOM(final String path, final boolean skipDTD, String encoding)
-            throws Exception {
+    protected Document getAsDOM(final String path, final boolean skipDTD, String encoding) throws Exception {
         return dom(get(path, encoding), skipDTD, encoding);
     }
 
@@ -1523,8 +1484,7 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
      *     'wms'.
      * @return An input stream which is the result of the request.
      */
-    protected Document postAsDOM(String path, String xml, List<Exception> validationErrors)
-            throws Exception {
+    protected Document postAsDOM(String path, String xml, List<Exception> validationErrors) throws Exception {
         return dom(post(path, xml));
     }
 
@@ -1551,14 +1511,12 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
             return dom(input, skipSchemaValidation);
         } catch (Exception exception) {
             // something bad happen, since this is test code we just throw an exception
-            throw new RuntimeException(
-                    "Something bad happen when parsing response XML content.", exception);
+            throw new RuntimeException("Something bad happen when parsing response XML content.", exception);
         }
     }
 
     /** Parses a stream into a dom. */
-    protected Document dom(InputStream is)
-            throws ParserConfigurationException, SAXException, IOException {
+    protected Document dom(InputStream is) throws ParserConfigurationException, SAXException, IOException {
         return dom(is, true);
     }
 
@@ -1605,8 +1563,7 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
         return dispatch(request, (String) null);
     }
 
-    protected MockHttpServletResponse dispatch(HttpServletRequest request, String charset)
-            throws Exception {
+    protected MockHttpServletResponse dispatch(HttpServletRequest request, String charset) throws Exception {
 
         MockHttpServletResponse response = new MockHttpServletResponse();
 
@@ -1656,52 +1613,47 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
 
         DispatcherServlet dispatcher = new DispatcherServlet(applicationContext);
 
-        dispatcher.setContextConfigLocation(
-                GeoServerAbstractTestSupport.class
-                        .getResource("dispatcher-servlet.xml")
-                        .toString());
+        dispatcher.setContextConfigLocation(GeoServerAbstractTestSupport.class
+                .getResource("dispatcher-servlet.xml")
+                .toString());
         dispatcher.init(config);
 
         return dispatcher;
     }
 
-    private void dispatch(HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+    private void dispatch(HttpServletRequest request, HttpServletResponse response) throws Exception {
         final DispatcherServlet dispatcher = getDispatcher();
 
         // build a filter chain so that we can test with filters as well
-        HttpServlet servlet =
-                new HttpServlet() {
-                    @Override
-                    protected void service(HttpServletRequest request, HttpServletResponse response)
-                            throws ServletException, IOException {
-                        try {
-                            // excute the pre handler step
-                            Collection interceptors =
-                                    GeoServerExtensions.extensions(
-                                            HandlerInterceptor.class, applicationContext);
-                            for (Object value : interceptors) {
-                                HandlerInterceptor interceptor = (HandlerInterceptor) value;
-                                interceptor.preHandle(request, response, dispatcher);
-                            }
-
-                            // execute
-                            // dispatcher.handleRequest( request, response );
-                            dispatcher.service(request, response);
-
-                            // execute the post handler step
-                            for (Object o : interceptors) {
-                                HandlerInterceptor interceptor = (HandlerInterceptor) o;
-                                interceptor.postHandle(request, response, dispatcher, null);
-                            }
-                        } catch (RuntimeException | ServletException | IOException e) {
-                            throw e;
-                        } catch (Exception e) {
-                            throw (IOException)
-                                    new IOException("Failed to handle the request").initCause(e);
-                        }
+        HttpServlet servlet = new HttpServlet() {
+            @Override
+            protected void service(HttpServletRequest request, HttpServletResponse response)
+                    throws ServletException, IOException {
+                try {
+                    // excute the pre handler step
+                    Collection interceptors =
+                            GeoServerExtensions.extensions(HandlerInterceptor.class, applicationContext);
+                    for (Object value : interceptors) {
+                        HandlerInterceptor interceptor = (HandlerInterceptor) value;
+                        interceptor.preHandle(request, response, dispatcher);
                     }
-                };
+
+                    // execute
+                    // dispatcher.handleRequest( request, response );
+                    dispatcher.service(request, response);
+
+                    // execute the post handler step
+                    for (Object o : interceptors) {
+                        HandlerInterceptor interceptor = (HandlerInterceptor) o;
+                        interceptor.postHandle(request, response, dispatcher, null);
+                    }
+                } catch (RuntimeException | ServletException | IOException e) {
+                    throw e;
+                } catch (Exception e) {
+                    throw (IOException) new IOException("Failed to handle the request").initCause(e);
+                }
+            }
+        };
         List<Filter> filterList = getFilters();
         MockFilterChain chain;
         if (filterList != null) {
@@ -1753,8 +1705,7 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
      * @param type the mimetype to report for the body
      * @throws Exception on test failure
      */
-    protected void assertStatusCodeForPost(int code, String path, String body, String type)
-            throws Exception {
+    protected void assertStatusCodeForPost(int code, String path, String body, String type) throws Exception {
         assertStatusCodeForRequest(code, "POST", path, body, type);
     }
 
@@ -1769,8 +1720,7 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
      * @param type the mimetype to report for the body
      * @throws Exception on test failure
      */
-    protected void assertStatusCodeForPut(int code, String path, String body, String type)
-            throws Exception {
+    protected void assertStatusCodeForPut(int code, String path, String body, String type) throws Exception {
         assertStatusCodeForRequest(code, "PUT", path, body, type);
     }
 
@@ -1785,15 +1735,14 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
      * @param body the body for the request. May be empty, but must not be null.
      * @param type the mimetype for the request.
      */
-    protected void assertStatusCodeForRequest(
-            int code, String method, String path, String body, String type) throws Exception {
+    protected void assertStatusCodeForRequest(int code, String method, String path, String body, String type)
+            throws Exception {
         MockHttpServletRequest request = createRequest(path);
         request.setMethod(method);
         request.setContent(body.getBytes(UTF_8));
         request.setContentType(type);
 
-        CodeExpectingHttpServletResponse response =
-                new CodeExpectingHttpServletResponse(new MockHttpServletResponse());
+        CodeExpectingHttpServletResponse response = new CodeExpectingHttpServletResponse(new MockHttpServletResponse());
         dispatch(request, response);
         assertEquals(code, response.getErrorCode());
     }
@@ -1806,12 +1755,7 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
 
         Color actual;
         if (cm.hasAlpha()) {
-            actual =
-                    new Color(
-                            cm.getRed(pixel),
-                            cm.getGreen(pixel),
-                            cm.getBlue(pixel),
-                            cm.getAlpha(pixel));
+            actual = new Color(cm.getRed(pixel), cm.getGreen(pixel), cm.getBlue(pixel), cm.getAlpha(pixel));
         } else {
             actual = new Color(cm.getRed(pixel), cm.getGreen(pixel), cm.getBlue(pixel), 255);
         }
@@ -1881,8 +1825,7 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
             Double resolution,
             String units,
             String unitSymbol) {
-        setupRasterDimension(
-                layer, dimensionName, presentation, resolution, units, unitSymbol, false, null);
+        setupRasterDimension(layer, dimensionName, presentation, resolution, units, unitSymbol, false, null);
     }
 
     /**
@@ -1958,8 +1901,7 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
             boolean nearestMatch,
             String acceptableInterval,
             boolean rawNearestMatch) {
-        setupNearestMatch(
-                layer, dimensionName, nearestMatch, acceptableInterval, IGNORE, rawNearestMatch);
+        setupNearestMatch(layer, dimensionName, nearestMatch, acceptableInterval, IGNORE, rawNearestMatch);
     }
 
     /**
@@ -1994,8 +1936,7 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
      * @param startValue The startValue
      * @param endValue The endValue
      */
-    protected void setupVectorStartAndEndValues(
-            QName layer, String dimensionName, String startValue, String endValue) {
+    protected void setupVectorStartAndEndValues(QName layer, String dimensionName, String startValue, String endValue) {
         ResourceInfo info = getCatalog().getResourceByName(getLayerId(layer), ResourceInfo.class);
         DimensionInfo di = info.getMetadata().get(dimensionName, DimensionInfo.class);
         di.setStartValue(startValue);
@@ -2011,8 +1952,7 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
      * @param startValue The startValue
      * @param endValue The endValue
      */
-    protected void setupRasterStartAndEndValues(
-            QName layer, String dimensionName, String startValue, String endValue) {
+    protected void setupRasterStartAndEndValues(QName layer, String dimensionName, String startValue, String endValue) {
         CoverageInfo info = getCatalog().getCoverageByName(layer.getLocalPart());
         DimensionInfo di = info.getMetadata().get(dimensionName, DimensionInfo.class);
         di.setStartValue(startValue);
@@ -2065,12 +2005,11 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
             }
         }
 
-        LOGGER.fine(
-                testName
-                        + ": pixel count="
-                        + (image.getWidth() * image.getHeight())
-                        + " non bg pixels: "
-                        + pixelsDiffer);
+        LOGGER.fine(testName
+                + ": pixel count="
+                + (image.getWidth() * image.getHeight())
+                + " non bg pixels: "
+                + pixelsDiffer);
         return pixelsDiffer;
     }
 
@@ -2111,8 +2050,7 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
         }
     }
 
-    protected void checkValidationErorrs(Document dom, String schemaLocation)
-            throws SAXException, IOException {
+    protected void checkValidationErorrs(Document dom, String schemaLocation) throws SAXException, IOException {
         final SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         Schema schema = factory.newSchema(new File(schemaLocation));
         checkValidationErrors(dom, schema);
@@ -2122,28 +2060,26 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
      * Given a dom and a schema, checks that the dom validates against the schema of the validation
      * errors instead
      */
-    protected void checkValidationErrors(Document dom, Schema schema)
-            throws SAXException, IOException {
+    protected void checkValidationErrors(Document dom, Schema schema) throws SAXException, IOException {
         final Validator validator = schema.newValidator();
         final List<Exception> validationErrors = new ArrayList<>();
-        validator.setErrorHandler(
-                new ErrorHandler() {
+        validator.setErrorHandler(new ErrorHandler() {
 
-                    @Override
-                    public void warning(SAXParseException exception) throws SAXException {
-                        LOGGER.warning(exception.getMessage());
-                    }
+            @Override
+            public void warning(SAXParseException exception) throws SAXException {
+                LOGGER.warning(exception.getMessage());
+            }
 
-                    @Override
-                    public void fatalError(SAXParseException exception) throws SAXException {
-                        validationErrors.add(exception);
-                    }
+            @Override
+            public void fatalError(SAXParseException exception) throws SAXException {
+                validationErrors.add(exception);
+            }
 
-                    @Override
-                    public void error(SAXParseException exception) throws SAXException {
-                        validationErrors.add(exception);
-                    }
-                });
+            @Override
+            public void error(SAXParseException exception) throws SAXException {
+                validationErrors.add(exception);
+            }
+        });
         validator.validate(new DOMSource(dom));
         if (validationErrors != null && !validationErrors.isEmpty()) {
             StringBuilder sb = new StringBuilder();
@@ -2171,8 +2107,7 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
      * Performs basic checks a pre OWS 1.0 exception, to ensure it's well formed and ensuring that a
      * particular exceptionCode is used.
      */
-    protected String checkLegacyException(Document dom, String exceptionCode, String locator)
-            throws Exception {
+    protected String checkLegacyException(Document dom, String exceptionCode, String locator) throws Exception {
         Element root = dom.getDocumentElement();
         assertEquals("ServiceExceptionReport", root.getNodeName());
         assertEquals(1, dom.getElementsByTagName("ServiceException").getLength());
@@ -2191,8 +2126,7 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
      * Performs basic checks on an OWS 1.0 exception, to ensure it's well formed and ensuring that a
      * particular exceptionCode is used.
      */
-    protected void checkOws10Exception(Document dom, String exceptionCode, String locator)
-            throws Exception {
+    protected void checkOws10Exception(Document dom, String exceptionCode, String locator) throws Exception {
         Element root = dom.getDocumentElement();
         assertEquals("ows:ExceptionReport", root.getNodeName());
         assertEquals("1.0.0", root.getAttribute("version"));
@@ -2233,8 +2167,7 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
      *
      * @return The exception text contents, if found
      */
-    protected String checkOws11Exception(Document dom, String exceptionCode, String locator)
-            throws Exception {
+    protected String checkOws11Exception(Document dom, String exceptionCode, String locator) throws Exception {
         return checkOws11Exception(dom, "1.1.0", exceptionCode, locator);
     }
 
@@ -2244,8 +2177,8 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
      *
      * @return The exception text contents, if found
      */
-    protected String checkOws11Exception(
-            Document dom, String version, String exceptionCode, String locator) throws Exception {
+    protected String checkOws11Exception(Document dom, String version, String exceptionCode, String locator)
+            throws Exception {
         Element root = dom.getDocumentElement();
         assertEquals("ows:ExceptionReport", root.getNodeName());
         assertEquals(version, root.getAttribute("version"));
@@ -2277,8 +2210,7 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
      * @returns Returns the message of the inner exception.
      */
     protected String checkOws20Exception(
-            MockHttpServletResponse response, Integer status, String exceptionCode, String locator)
-            throws Exception {
+            MockHttpServletResponse response, Integer status, String exceptionCode, String locator) throws Exception {
         // check the http level
         assertEquals("application/xml", response.getContentType());
         if (status != null) {
@@ -2286,7 +2218,8 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
         }
 
         // check the returned xml
-        Document dom = dom(new ByteArrayInputStream(response.getContentAsString().getBytes()));
+        Document dom =
+                dom(new ByteArrayInputStream(response.getContentAsString().getBytes()));
         Element root = dom.getDocumentElement();
         assertEquals("ows:ExceptionReport", root.getNodeName());
         assertEquals("2.0.0", root.getAttribute("version"));
@@ -2316,8 +2249,7 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
      * configuration on disk.
      */
     protected void reloadCatalogAndConfiguration() throws Exception {
-        GeoServerLoaderProxy loader =
-                GeoServerExtensions.bean(GeoServerLoaderProxy.class, applicationContext);
+        GeoServerLoaderProxy loader = GeoServerExtensions.bean(GeoServerLoaderProxy.class, applicationContext);
         loader.reload();
     }
 
@@ -2427,8 +2359,8 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
      * @param document Document
      * @throws XpathException
      */
-    public static void assertXpathCoordinate(
-            Coordinate expected, String xpathExpression, Document document) throws XpathException {
+    public static void assertXpathCoordinate(Coordinate expected, String xpathExpression, Document document)
+            throws XpathException {
         XpathEngine simpleXpathEngine = XMLUnit.newXpathEngine();
         String value = simpleXpathEngine.evaluate(xpathExpression, document);
 
@@ -2474,8 +2406,7 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
      */
     protected void assertDeferredLoading(RenderedImage image) {
         if (image instanceof BufferedImage) {
-            fail(
-                    "Found a buffered image in the chain, the original image is not fully deferred loaded");
+            fail("Found a buffered image in the chain, the original image is not fully deferred loaded");
         } else {
             for (RenderedImage ri : image.getSources()) {
                 assertDeferredLoading(ri);
@@ -2625,8 +2556,7 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
         LayerGroupInfo layerGroup = getCatalog().getLayerGroupByName(layerGroupName);
         if (layerGroup == null) {
             // targeted layer group doesn't exists
-            throw new RuntimeException(
-                    String.format("Layer group '%s' doesn't exists.", layerGroupName));
+            throw new RuntimeException(String.format("Layer group '%s' doesn't exists.", layerGroupName));
         }
         layerGroup.getKeywords().addAll(keywords);
         getCatalog().save(layerGroup);
@@ -2639,8 +2569,7 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
      */
     protected LayerInfo cloneVectorLayerIntoWorkspace(
             WorkspaceInfo targetWorkspace, NamespaceInfo targetNameSpace, String layerName) {
-        return cloneVectorLayerIntoWorkspace(
-                targetWorkspace, targetNameSpace, layerName, layerName);
+        return cloneVectorLayerIntoWorkspace(targetWorkspace, targetNameSpace, layerName, layerName);
     }
 
     /**
@@ -2650,17 +2579,13 @@ public class GeoServerSystemTestSupport extends GeoServerBaseTestSupport<SystemT
      * should also exist.
      */
     protected LayerInfo cloneVectorLayerIntoWorkspace(
-            WorkspaceInfo targetWorkspace,
-            NamespaceInfo targetNameSpace,
-            String layerName,
-            String targetLayerName) {
+            WorkspaceInfo targetWorkspace, NamespaceInfo targetNameSpace, String layerName, String targetLayerName) {
         Catalog catalog = getCatalog();
         // get the original object from the catalog
         LayerInfo originalLayerInfo = catalog.getLayerByName(layerName);
         if (originalLayerInfo == null) {
             // layer don't exists
-            throw new RuntimeException(
-                    String.format("Could not retrieve a layer for name '%s'.", layerName));
+            throw new RuntimeException(String.format("Could not retrieve a layer for name '%s'.", layerName));
         }
         FeatureTypeInfo originalFeatureTypeInfo = (FeatureTypeInfo) originalLayerInfo.getResource();
         DataStoreInfo originalStoreInfo = originalFeatureTypeInfo.getStore();

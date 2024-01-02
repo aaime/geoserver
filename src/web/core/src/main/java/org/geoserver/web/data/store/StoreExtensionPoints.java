@@ -52,10 +52,7 @@ public class StoreExtensionPoints {
      *     a default one otherwise
      */
     public static StoreEditPanel getStoreEditPanel(
-            final String componentId,
-            final Form editForm,
-            final StoreInfo storeInfo,
-            final GeoServerApplication app) {
+            final String componentId, final Form editForm, final StoreInfo storeInfo, final GeoServerApplication app) {
 
         if (storeInfo == null) {
             throw new NullPointerException("storeInfo param");
@@ -78,8 +75,7 @@ public class StoreExtensionPoints {
         } catch (SecurityException e) {
             throw e;
         } catch (NoSuchMethodException e) {
-            throw new RuntimeException(
-                    componentClass.getName() + " does not provide the required constructor");
+            throw new RuntimeException(componentClass.getName() + " does not provide the required constructor");
         }
 
         final StoreEditPanel storeEditPanel;
@@ -88,16 +84,13 @@ public class StoreExtensionPoints {
         } catch (IllegalArgumentException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuntimeException(
-                    "Cannot instantiate extension point contributor " + componentClass.getName(),
-                    e);
+            throw new RuntimeException("Cannot instantiate extension point contributor " + componentClass.getName(), e);
         }
 
         return storeEditPanel;
     }
 
-    private static DataStorePanelInfo getDefaultPanelInfo(
-            StoreInfo storeInfo, GeoServerApplication app) {
+    private static DataStorePanelInfo getDefaultPanelInfo(StoreInfo storeInfo, GeoServerApplication app) {
 
         final List<DataStorePanelInfo> providers = app.getBeansOfType(DataStorePanelInfo.class);
 
@@ -107,8 +100,7 @@ public class StoreExtensionPoints {
             if (storeInfo instanceof DataStoreInfo && "defaultVector".equals(provider.getId())) {
                 panelInfo = provider;
                 break;
-            } else if (storeInfo instanceof CoverageStoreInfo
-                    && "defaultRaster".equals(provider.getId())) {
+            } else if (storeInfo instanceof CoverageStoreInfo && "defaultRaster".equals(provider.getId())) {
                 panelInfo = provider;
                 break;
             }
@@ -116,13 +108,11 @@ public class StoreExtensionPoints {
 
         if (panelInfo == null) {
             if (storeInfo instanceof DataStoreInfo) {
-                throw new IllegalStateException(
-                        "Bean of type DataStorePanelInfo named "
-                                + "'defaultDataStorePanel' not provided by application context");
+                throw new IllegalStateException("Bean of type DataStorePanelInfo named "
+                        + "'defaultDataStorePanel' not provided by application context");
             } else if (storeInfo instanceof CoverageStoreInfo) {
-                throw new IllegalStateException(
-                        "Bean of type DataStorePanelInfo named "
-                                + "'defaultCoverageStorePanel' not provided by application context");
+                throw new IllegalStateException("Bean of type DataStorePanelInfo named "
+                        + "'defaultCoverageStorePanel' not provided by application context");
             } else {
                 throw new IllegalArgumentException(
                         "Unknown store type: " + storeInfo.getClass().getName());
@@ -131,16 +121,12 @@ public class StoreExtensionPoints {
 
         if (panelInfo.getComponentClass() == null) {
             throw new IllegalStateException(
-                    "Default DataStorePanelInfo '"
-                            + panelInfo.getId()
-                            + "' does not define a componentClass property");
+                    "Default DataStorePanelInfo '" + panelInfo.getId() + "' does not define a componentClass property");
         }
 
         if (panelInfo.getIconBase() == null || panelInfo.getIcon() == null) {
             throw new IllegalStateException(
-                    "Default DataStorePanelInfo '"
-                            + panelInfo.getId()
-                            + "' does not define default icon");
+                    "Default DataStorePanelInfo '" + panelInfo.getId() + "' does not define default icon");
         }
 
         return panelInfo;
@@ -150,8 +136,7 @@ public class StoreExtensionPoints {
      * @return the extension point descriptor for the given storeInfo, or {@code null} if there's no
      *     contribution specific for the given storeInfo's type
      */
-    private static DataStorePanelInfo findPanelInfo(
-            final StoreInfo storeInfo, final GeoServerApplication app) {
+    private static DataStorePanelInfo findPanelInfo(final StoreInfo storeInfo, final GeoServerApplication app) {
 
         final Catalog catalog = storeInfo.getCatalog();
         final ResourcePool resourcePool = catalog.getResourcePool();
@@ -168,8 +153,7 @@ public class StoreExtensionPoints {
                 factoryClass = storeFactory.getClass();
             }
         } else if (storeInfo instanceof CoverageStoreInfo) {
-            AbstractGridFormat gridFormat =
-                    resourcePool.getGridCoverageFormat((CoverageStoreInfo) storeInfo);
+            AbstractGridFormat gridFormat = resourcePool.getGridCoverageFormat((CoverageStoreInfo) storeInfo);
             if (gridFormat != null) {
                 factoryClass = gridFormat.getClass();
             }
@@ -201,34 +185,26 @@ public class StoreExtensionPoints {
             return fallbacks.get(0);
         } else if (fallbacks.size() > 1) {
             // sort by class hierarchy, pick the closest match
-            Collections.sort(
-                    fallbacks,
-                    (o1, o2) -> {
-                        Class<?> c1 = o1.getFactoryClass();
-                        Class<?> c2 = o2.getFactoryClass();
+            Collections.sort(fallbacks, (o1, o2) -> {
+                Class<?> c1 = o1.getFactoryClass();
+                Class<?> c2 = o2.getFactoryClass();
 
-                        if (c1.equals(c2)) {
-                            return 0;
-                        }
+                if (c1.equals(c2)) {
+                    return 0;
+                }
 
-                        if (c1.isAssignableFrom(c2)) {
-                            return 1;
-                        }
+                if (c1.isAssignableFrom(c2)) {
+                    return 1;
+                }
 
-                        return -1;
-                    });
+                return -1;
+            });
             // check first two and make sure bindings are not equal
             DataStorePanelInfo f1 = fallbacks.get(0);
             DataStorePanelInfo f2 = fallbacks.get(1);
 
             if (f1.getFactoryClass().equals(f2.getFactoryClass())) {
-                String msg =
-                        "Multiple editor panels for : ("
-                                + f1.getFactoryClass()
-                                + "): "
-                                + f1
-                                + ", "
-                                + f2;
+                String msg = "Multiple editor panels for : (" + f1.getFactoryClass() + "): " + f1 + ", " + f2;
                 throw new RuntimeException(msg);
             }
 

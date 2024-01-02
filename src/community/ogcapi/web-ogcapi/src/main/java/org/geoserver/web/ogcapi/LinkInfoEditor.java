@@ -45,14 +45,11 @@ class LinkInfoEditor extends FormComponentPanel<List<LinkInfo>> {
     private static final Property<LinkInfo> TYPE = new GeoServerDataProvider.BeanProperty<>("type");
     private static final Property<LinkInfo> HREF = new GeoServerDataProvider.BeanProperty<>("href");
 
-    private static final Property<LinkInfo> TITLE =
-            new GeoServerDataProvider.BeanProperty<>("title");
+    private static final Property<LinkInfo> TITLE = new GeoServerDataProvider.BeanProperty<>("title");
 
-    private static final Property<LinkInfo> SERVICE =
-            new GeoServerDataProvider.BeanProperty<>("service");
+    private static final Property<LinkInfo> SERVICE = new GeoServerDataProvider.BeanProperty<>("service");
 
-    private static final Property<LinkInfo> REMOVE =
-            new GeoServerDataProvider.PropertyPlaceholder<>("remove");
+    private static final Property<LinkInfo> REMOVE = new GeoServerDataProvider.PropertyPlaceholder<>("remove");
 
     private final ReorderableTablePanel<LinkInfo> table;
     private final Component parent;
@@ -113,8 +110,7 @@ class LinkInfoEditor extends FormComponentPanel<List<LinkInfo>> {
             IModel model = property.getModel(itemModel);
             if (property == SERVICE) {
                 Fragment f = new Fragment(id, "service", getParent());
-                DropDownChoice<String> service =
-                        new DropDownChoice<>("service", model, getAPIServices());
+                DropDownChoice<String> service = new DropDownChoice<>("service", model, getAPIServices());
                 service.add(new UpdateModelBehavior());
                 f.add(service);
                 return f;
@@ -136,15 +132,14 @@ class LinkInfoEditor extends FormComponentPanel<List<LinkInfo>> {
                 final LinkInfo entry = itemModel.getObject();
                 PackageResourceReference icon =
                         new PackageResourceReference(getClass(), "../img/icons/silk/delete.png");
-                ImageAjaxLink<Object> link =
-                        new ImageAjaxLink<>(id, icon) {
+                ImageAjaxLink<Object> link = new ImageAjaxLink<>(id, icon) {
 
-                            @Override
-                            protected void onClick(AjaxRequestTarget target) {
-                                getItems().remove(entry);
-                                target.add(targetComponent);
-                            }
-                        };
+                    @Override
+                    protected void onClick(AjaxRequestTarget target) {
+                        getItems().remove(entry);
+                        target.add(targetComponent);
+                    }
+                };
                 return link;
             }
 

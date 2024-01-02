@@ -27,10 +27,10 @@ import org.springframework.web.util.WebUtils;
 public final class JMSConfiguration {
     public static final String DEFAULT_GROUP = "geoserver-cluster";
 
-    protected static final java.util.logging.Logger LOGGER =
-            Logging.getLogger(JMSConfiguration.class);
+    protected static final java.util.logging.Logger LOGGER = Logging.getLogger(JMSConfiguration.class);
 
-    @Autowired public List<JMSConfigurationExt> exts;
+    @Autowired
+    public List<JMSConfigurationExt> exts;
 
     public static final String INSTANCE_NAME_KEY = "instanceName";
 
@@ -80,8 +80,7 @@ public final class JMSConfiguration {
             String topicName = configuration.getProperty(TopicConfiguration.TOPIC_NAME_KEY);
             if (topicName.equalsIgnoreCase("VirtualTopic.>")) {
                 // override topic name with the default topic name
-                configuration.put(
-                        TopicConfiguration.TOPIC_NAME_KEY, TopicConfiguration.DEFAULT_TOPIC_NAME);
+                configuration.put(TopicConfiguration.TOPIC_NAME_KEY, TopicConfiguration.DEFAULT_TOPIC_NAME);
                 storeConfig();
             }
             // if configuration is changed (since last boot) store changes
@@ -181,10 +180,9 @@ public final class JMSConfiguration {
     }
 
     public static final File getTempDir() {
-        String tempPath =
-                (ApplicationProperties.getProperty(WebUtils.TEMP_DIR_CONTEXT_ATTRIBUTE) != null
-                        ? ApplicationProperties.getProperty(WebUtils.TEMP_DIR_CONTEXT_ATTRIBUTE)
-                        : System.getProperty("java.io.tmpdir"));
+        String tempPath = (ApplicationProperties.getProperty(WebUtils.TEMP_DIR_CONTEXT_ATTRIBUTE) != null
+                ? ApplicationProperties.getProperty(WebUtils.TEMP_DIR_CONTEXT_ATTRIBUTE)
+                : System.getProperty("java.io.tmpdir"));
         if (tempPath == null) {
             return null;
         }

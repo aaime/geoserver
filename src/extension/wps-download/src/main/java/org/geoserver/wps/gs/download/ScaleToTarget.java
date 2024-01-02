@@ -83,8 +83,7 @@ class ScaleToTarget {
         if (this.envelope == null) {
             this.envelope = reader.getOriginalEnvelope();
         }
-        this.interpolation =
-                (Interpolation) ImageUtilities.NN_INTERPOLATION_HINT.get(JAI.KEY_INTERPOLATION);
+        this.interpolation = (Interpolation) ImageUtilities.NN_INTERPOLATION_HINT.get(JAI.KEY_INTERPOLATION);
         this.overviewPolicy = OverviewPolicy.NEAREST;
     }
 
@@ -144,9 +143,7 @@ class ScaleToTarget {
             // target size was specified for a single axis: calculate target size along the other
             // axis preserving original aspect ratio
             MathTransform g2w = reader.getOriginalGridToWorld(PixelInCell.CELL_CENTER);
-            GridGeometry2D gg =
-                    new GridGeometry2D(
-                            PixelInCell.CELL_CENTER, g2w, envelope, GeoTools.getDefaultHints());
+            GridGeometry2D gg = new GridGeometry2D(PixelInCell.CELL_CENTER, g2w, envelope, GeoTools.getDefaultHints());
             double width = gg.getGridRange2D().getWidth();
             double height = gg.getGridRange2D().getHeight();
             double whRatio = width / height;
@@ -164,8 +161,7 @@ class ScaleToTarget {
     GridGeometry2D getGridGeometry() throws IOException {
         MathTransform gridToCRS = getGridToCRSTransform();
         GridGeometry2D gridGeometry =
-                new GridGeometry2D(
-                        PixelInCell.CELL_CENTER, gridToCRS, envelope, GeoTools.getDefaultHints());
+                new GridGeometry2D(PixelInCell.CELL_CENTER, gridToCRS, envelope, GeoTools.getDefaultHints());
 
         return gridGeometry;
     }
@@ -195,12 +191,11 @@ class ScaleToTarget {
         final ParameterValueGroup readParametersDescriptor = reader.getFormat().getReadParameters();
         final List<GeneralParameterDescriptor> parameterDescriptors =
                 readParametersDescriptor.getDescriptor().descriptors();
-        readParameters =
-                CoverageUtils.mergeParameter(
-                        parameterDescriptors,
-                        readParameters,
-                        getGridGeometry(),
-                        AbstractGridFormat.READ_GRIDGEOMETRY2D.getName().getCode());
+        readParameters = CoverageUtils.mergeParameter(
+                parameterDescriptors,
+                readParameters,
+                getGridGeometry(),
+                AbstractGridFormat.READ_GRIDGEOMETRY2D.getName().getCode());
 
         GridCoverage2D inputGC = reader.read(readParameters);
         return scale(inputGC);
@@ -247,16 +242,13 @@ class ScaleToTarget {
                 parameters.parameter("Source").setValue(sourceGC);
                 parameters
                         .parameter("warp")
-                        .setValue(
-                                new WarpAffine(AffineTransform.getScaleInstance(1, 1))); // identity
+                        .setValue(new WarpAffine(AffineTransform.getScaleInstance(1, 1))); // identity
                 parameters.parameter("interpolation").setValue(interpolation);
                 parameters
                         .parameter("backgroundValues")
-                        .setValue(
-                                CoverageUtilities.getBackgroundValues(sourceGC)); // TODO check and
+                        .setValue(CoverageUtilities.getBackgroundValues(sourceGC)); // TODO check and
                 // improve
-                return (GridCoverage2D)
-                        CoverageProcessor.getInstance().doOperation(parameters, hints);
+                return (GridCoverage2D) CoverageProcessor.getInstance().doOperation(parameters, hints);
             }
         }
 
@@ -266,16 +258,13 @@ class ScaleToTarget {
         final RenderedImage sourceImage = sourceGC.getRenderedImage();
         final int sourceMinX = sourceImage.getMinX();
         final int sourceMinY = sourceImage.getMinY();
-        final AffineTransform affineTransform =
-                new AffineTransform(
-                        scaleX,
-                        0,
-                        0,
-                        scaleY,
-                        sourceMinX - scaleX * sourceMinX, // preserve sourceImage.getMinX()
-                        sourceMinY
-                                - scaleY
-                                        * sourceMinY); // preserve sourceImage.getMinY() as per spec
+        final AffineTransform affineTransform = new AffineTransform(
+                scaleX,
+                0,
+                0,
+                scaleY,
+                sourceMinX - scaleX * sourceMinX, // preserve sourceImage.getMinX()
+                sourceMinY - scaleY * sourceMinY); // preserve sourceImage.getMinY() as per spec
         Warp warp;
         try {
             warp = new WarpAffine(affineTransform.createInverse());
@@ -284,8 +273,7 @@ class ScaleToTarget {
         }
         // impose final
         final ImageLayout2 layout =
-                new ImageLayout2(
-                        sourceMinX, sourceMinY, this.adjustedTargetSizeX, this.adjustedTargetSizeY);
+                new ImageLayout2(sourceMinX, sourceMinY, this.adjustedTargetSizeX, this.adjustedTargetSizeY);
         hints.add(new Hints(JAI.KEY_IMAGE_LAYOUT, layout));
         final Operation operation = CoverageProcessor.getInstance().getOperation("Warp");
         final ParameterValueGroup parameters = operation.getParameters();
@@ -294,10 +282,8 @@ class ScaleToTarget {
         parameters.parameter("interpolation").setValue(interpolation);
         parameters
                 .parameter("backgroundValues")
-                .setValue(
-                        CoverageUtilities.getBackgroundValues(sourceGC)); // TODO check and improve
-        GridCoverage2D gc =
-                (GridCoverage2D) CoverageProcessor.getInstance().doOperation(parameters, hints);
+                .setValue(CoverageUtilities.getBackgroundValues(sourceGC)); // TODO check and improve
+        GridCoverage2D gc = (GridCoverage2D) CoverageProcessor.getInstance().doOperation(parameters, hints);
         return gc;
     }
 
@@ -312,8 +298,7 @@ class ScaleToTarget {
         AffineTransform scaleTransform = getScaleTransform();
 
         // grid-to-world transformation
-        AffineTransform g2w =
-                (AffineTransform) reader.getOriginalGridToWorld(PixelInCell.CELL_CENTER);
+        AffineTransform g2w = (AffineTransform) reader.getOriginalGridToWorld(PixelInCell.CELL_CENTER);
 
         // final transformation: g2w + scaling
         AffineTransform finalTransform = new AffineTransform(g2w);
@@ -340,9 +325,7 @@ class ScaleToTarget {
 
         // setup a scaling to get the transformation to be used to access the specified overview
         AffineTransform scaleTransform = new AffineTransform();
-        double[] scaleFactors = {
-            readResolution[0] / nativeResolution[0], readResolution[1] / nativeResolution[1]
-        };
+        double[] scaleFactors = {readResolution[0] / nativeResolution[0], readResolution[1] / nativeResolution[1]};
         scaleTransform.scale(scaleFactors[0], scaleFactors[1]);
 
         return scaleTransform;
@@ -370,11 +353,8 @@ class ScaleToTarget {
         double[] requestedResolution = new double[2];
 
         // Getting the requested resolution (using envelope and requested scaleSize)
-        final GridToEnvelopeMapper mapper =
-                new GridToEnvelopeMapper(
-                        new GridEnvelope2D(
-                                0, 0, this.adjustedTargetSizeX, this.adjustedTargetSizeY),
-                        this.envelope);
+        final GridToEnvelopeMapper mapper = new GridToEnvelopeMapper(
+                new GridEnvelope2D(0, 0, this.adjustedTargetSizeX, this.adjustedTargetSizeY), this.envelope);
         AffineTransform scalingTransform = mapper.createAffineTransform();
         requestedResolution[0] = XAffineTransform.getScaleX0(scalingTransform);
         requestedResolution[1] = XAffineTransform.getScaleY0(scalingTransform);

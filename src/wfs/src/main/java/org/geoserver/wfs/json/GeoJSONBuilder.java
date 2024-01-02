@@ -85,8 +85,7 @@ public class GeoJSONBuilder extends JSONBuilder {
                     this.array();
 
                     for (int i = 0, n = geometry.getNumGeometries(); i < n; i++) {
-                        writeCoordinates(
-                                ((LineString) geometry.getGeometryN(i)).getCoordinateSequence());
+                        writeCoordinates(((LineString) geometry.getGeometryN(i)).getCoordinateSequence());
                     }
 
                     this.endArray();
@@ -316,8 +315,7 @@ public class GeoJSONBuilder extends JSONBuilder {
         } else if (geometry instanceof GeometryCollection) {
             return MULTIGEOMETRY;
         } else {
-            throw new IllegalArgumentException(
-                    "Unable to determine geometry type " + geometry.getClass());
+            throw new IllegalArgumentException("Unable to determine geometry type " + geometry.getClass());
         }
     }
 

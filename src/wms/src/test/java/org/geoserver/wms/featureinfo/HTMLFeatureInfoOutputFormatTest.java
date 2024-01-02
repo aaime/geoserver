@@ -77,33 +77,30 @@ public class HTMLFeatureInfoOutputFormatTest extends WMSTestSupport {
     @Before
     public void setUp() throws URISyntaxException, IOException {
         outputFormat =
-                new HTMLFeatureInfoOutputFormat(
-                        getWMS(), GeoServerExtensions.bean(GeoServerResourceLoader.class));
+                new HTMLFeatureInfoOutputFormat(getWMS(), GeoServerExtensions.bean(GeoServerResourceLoader.class));
 
         currentTemplate = "test_content.ftl";
         // configure template loader
-        GeoServerTemplateLoader templateLoader =
-                new GeoServerTemplateLoader(this.getClass(), getDataDirectory()) {
+        GeoServerTemplateLoader templateLoader = new GeoServerTemplateLoader(this.getClass(), getDataDirectory()) {
 
-                    @Override
-                    public Object findTemplateSource(String path) throws IOException {
-                        String templatePath;
-                        if (path.toLowerCase().contains("content")) {
-                            templatePath = currentTemplate;
+            @Override
+            public Object findTemplateSource(String path) throws IOException {
+                String templatePath;
+                if (path.toLowerCase().contains("content")) {
+                    templatePath = currentTemplate;
 
-                        } else {
-                            templatePath = "empty.ftl";
-                        }
-                        try {
-                            return new File(
-                                    this.getClass()
-                                            .getResource(templateFolder + templatePath)
-                                            .toURI());
-                        } catch (URISyntaxException e) {
-                            return null;
-                        }
-                    }
-                };
+                } else {
+                    templatePath = "empty.ftl";
+                }
+                try {
+                    return new File(this.getClass()
+                            .getResource(templateFolder + templatePath)
+                            .toURI());
+                } catch (URISyntaxException e) {
+                    return null;
+                }
+            }
+        };
         outputFormat.getTemplateManager().setTemplateLoader(templateLoader);
 
         // test request with some parameters to use in templates
@@ -160,8 +157,7 @@ public class HTMLFeatureInfoOutputFormatTest extends WMSTestSupport {
     public void testEnvironmentVariablesAreEvaluatedInTemplate() throws IOException {
         currentTemplate = "test_env_content.ftl";
         System.setProperty("TEST_PROPERTY", "MYVALUE");
-        MockServletContext servletContext =
-                (MockServletContext) applicationContext.getServletContext();
+        MockServletContext servletContext = (MockServletContext) applicationContext.getServletContext();
         servletContext.setInitParameter("TEST_INIT_PARAM", "MYPARAM");
         try {
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -182,8 +178,7 @@ public class HTMLFeatureInfoOutputFormatTest extends WMSTestSupport {
         builder.setName(toName(MockData.WORLD));
         SimpleFeatureType type = builder.buildFeatureType();
         Double[] values = new Double[0];
-        fcType.getFeature()
-                .set(0, DataUtilities.collection(SimpleFeatureBuilder.build(type, values, "")));
+        fcType.getFeature().set(0, DataUtilities.collection(SimpleFeatureBuilder.build(type, values, "")));
         ResourceInfo resource = getCatalog().getCoverageByName(toName(MockData.WORLD));
         resource.setTitle("Raster Title");
         resource.setAbstract("Raster Abstract");
@@ -219,14 +214,10 @@ public class HTMLFeatureInfoOutputFormatTest extends WMSTestSupport {
 
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
-        IOException e =
-                Assert.assertThrows(
-                        IOException.class,
-                        () -> outputFormat.write(fcType, getFeatureInfoRequest, outStream));
+        IOException e = Assert.assertThrows(
+                IOException.class, () -> outputFormat.write(fcType, getFeatureInfoRequest, outStream));
         assertThat(
-                e.getMessage(),
-                CoreMatchers.containsString(
-                        "Error occurred processing content template content.ftl"));
+                e.getMessage(), CoreMatchers.containsString("Error occurred processing content template content.ftl"));
     }
 
     /**
@@ -251,14 +242,13 @@ public class HTMLFeatureInfoOutputFormatTest extends WMSTestSupport {
     @Test
     public void testHTMLGetFeatureInfoCharset() throws Exception {
         String layer = getLayerId(MockData.FORESTS);
-        String request =
-                "wms?version=1.1.1&bbox=-0.002,-0.002,0.002,0.002&styles=&format=jpeg"
-                        + "&request=GetFeatureInfo&layers="
-                        + layer
-                        + "&query_layers="
-                        + layer
-                        + "&width=20&height=20&x=10&y=10"
-                        + "&info_format=text/html";
+        String request = "wms?version=1.1.1&bbox=-0.002,-0.002,0.002,0.002&styles=&format=jpeg"
+                + "&request=GetFeatureInfo&layers="
+                + layer
+                + "&query_layers="
+                + layer
+                + "&width=20&height=20&x=10&y=10"
+                + "&info_format=text/html";
 
         MockHttpServletResponse response = getAsServletResponse(request, "");
 
@@ -274,54 +264,45 @@ public class HTMLFeatureInfoOutputFormatTest extends WMSTestSupport {
     public void testConcurrentRequests() throws Exception {
         FeatureTypeInfo featureType1 = getFeatureTypeInfo(MockData.PRIMITIVEGEOFEATURE);
         List<MapLayerInfo> layers1 =
-                Collections.singletonList(
-                        new MapLayerInfo(getCatalog().getLayerByName(featureType1.prefixedName())));
+                Collections.singletonList(new MapLayerInfo(getCatalog().getLayerByName(featureType1.prefixedName())));
         FeatureCollectionType type1 = WfsFactory.eINSTANCE.createFeatureCollectionType();
         type1.getFeature().add(featureType1.getFeatureSource(null, null).getFeatures());
         final FeatureTypeInfo featureType2 = getFeatureTypeInfo(MockData.BASIC_POLYGONS);
         List<MapLayerInfo> layers2 =
-                Collections.singletonList(
-                        new MapLayerInfo(getCatalog().getLayerByName(featureType2.prefixedName())));
+                Collections.singletonList(new MapLayerInfo(getCatalog().getLayerByName(featureType2.prefixedName())));
         FeatureCollectionType type2 = WfsFactory.eINSTANCE.createFeatureCollectionType();
         type2.getFeature().add(featureType2.getFeatureSource(null, null).getFeatures());
         final HTMLFeatureInfoOutputFormat format =
-                new HTMLFeatureInfoOutputFormat(
-                        getWMS(), GeoServerExtensions.bean(GeoServerResourceLoader.class));
-        format.getTemplateManager()
-                .setTemplateLoader(
-                        new GeoServerTemplateLoader(getClass(), getDataDirectory()) {
-                            @Override
-                            public Object findTemplateSource(String path) throws IOException {
-                                String templatePath = "empty.ftl";
-                                if (path.toLowerCase().contains("content")
-                                        && (this.resource != null)
-                                        && this.resource
-                                                .prefixedName()
-                                                .equals(featureType2.prefixedName())) {
-                                    templatePath = "test_content.ftl";
-                                }
-                                try {
-                                    return new File(
-                                            this.getClass()
-                                                    .getResource(templateFolder + templatePath)
-                                                    .toURI());
-                                } catch (URISyntaxException e) {
-                                    return null;
-                                }
-                            }
-                        });
+                new HTMLFeatureInfoOutputFormat(getWMS(), GeoServerExtensions.bean(GeoServerResourceLoader.class));
+        format.getTemplateManager().setTemplateLoader(new GeoServerTemplateLoader(getClass(), getDataDirectory()) {
+            @Override
+            public Object findTemplateSource(String path) throws IOException {
+                String templatePath = "empty.ftl";
+                if (path.toLowerCase().contains("content")
+                        && (this.resource != null)
+                        && this.resource.prefixedName().equals(featureType2.prefixedName())) {
+                    templatePath = "test_content.ftl";
+                }
+                try {
+                    return new File(this.getClass()
+                            .getResource(templateFolder + templatePath)
+                            .toURI());
+                } catch (URISyntaxException e) {
+                    return null;
+                }
+            }
+        });
         int numRequests = 50;
         List<Callable<String>> tasks = new ArrayList<>(numRequests);
         for (int i = 0; i < numRequests; i++) {
             final GetFeatureInfoRequest request = new GetFeatureInfoRequest();
             request.setQueryLayers(((i % 2) == 0) ? layers1 : layers2);
             final FeatureCollectionType type = (((i % 2) == 0) ? type1 : type2);
-            tasks.add(
-                    () -> {
-                        ByteArrayOutputStream output = new ByteArrayOutputStream();
-                        format.write(type, request, output);
-                        return new String(output.toByteArray());
-                    });
+            tasks.add(() -> {
+                ByteArrayOutputStream output = new ByteArrayOutputStream();
+                format.write(type, request, output);
+                return new String(output.toByteArray());
+            });
         }
         ExecutorService executor = Executors.newFixedThreadPool(8);
         try {
@@ -399,8 +380,7 @@ public class HTMLFeatureInfoOutputFormatTest extends WMSTestSupport {
         // given: further featureType and feature instance
         SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
         builder.setName(toName(MockData.WORLD));
-        SimpleFeature feature =
-                SimpleFeatureBuilder.build(builder.buildFeatureType(), new Double[0], "");
+        SimpleFeature feature = SimpleFeatureBuilder.build(builder.buildFeatureType(), new Double[0], "");
 
         // given: further featureCollection in result data
         fcType.getFeature().add(DataUtilities.collection(feature));

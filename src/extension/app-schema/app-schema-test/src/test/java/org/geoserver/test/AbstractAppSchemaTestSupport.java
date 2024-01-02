@@ -93,18 +93,17 @@ public abstract class AbstractAppSchemaTestSupport extends GeoServerSystemTestSu
 
     /** WFS namespaces, for use by XMLUnit. A seen in WFSTestSupport, plus xlink. */
     @SuppressWarnings("serial")
-    private final Map<String, String> WFS_NAMESPACES =
-            Map.ofEntries(
-                    entry("wfs", "http://www.opengis.net/wfs"),
-                    entry("ows", "http://www.opengis.net/ows"),
-                    entry("ogc", "http://www.opengis.net/ogc"),
-                    entry("xs", "http://www.w3.org/2001/XMLSchema"),
-                    entry("xsd", "http://www.w3.org/2001/XMLSchema"),
-                    entry("gml", "http://www.opengis.net/gml"),
-                    entry("xlink", "http://www.w3.org/1999/xlink"),
-                    entry("xsi", "http://www.w3.org/2001/XMLSchema-instance"),
-                    entry("wms", "http://www.opengis.net/wms") // NC - wms added for wms tests
-                    );
+    private final Map<String, String> WFS_NAMESPACES = Map.ofEntries(
+            entry("wfs", "http://www.opengis.net/wfs"),
+            entry("ows", "http://www.opengis.net/ows"),
+            entry("ogc", "http://www.opengis.net/ogc"),
+            entry("xs", "http://www.w3.org/2001/XMLSchema"),
+            entry("xsd", "http://www.w3.org/2001/XMLSchema"),
+            entry("gml", "http://www.opengis.net/gml"),
+            entry("xlink", "http://www.w3.org/1999/xlink"),
+            entry("xsi", "http://www.w3.org/2001/XMLSchema-instance"),
+            entry("wms", "http://www.opengis.net/wms") // NC - wms added for wms tests
+            );
 
     /** The XpathEngine to be used for this namespace context. */
     private XpathEngine xpathEngine;
@@ -605,8 +604,7 @@ public abstract class AbstractAppSchemaTestSupport extends GeoServerSystemTestSu
      * @return the content of the resource as text
      */
     protected String readResource(String resourcePath) {
-        try (InputStream input =
-                NormalizedMultiValuesTest.class.getResourceAsStream(resourcePath)) {
+        try (InputStream input = NormalizedMultiValuesTest.class.getResourceAsStream(resourcePath)) {
             return IOUtils.toString(input);
         } catch (Exception exception) {
             throw new RuntimeException(String.format("Error reading resource '%s'.", resourcePath));

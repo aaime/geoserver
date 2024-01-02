@@ -49,12 +49,7 @@ public class GeoServerWicketOnlineTestSupport {
 
         // Log in via /j_spring_security_check
         String body = "username=" + username + "&password=" + password;
-        huc =
-                preparePost(
-                        "j_spring_security_check",
-                        body.length(),
-                        "application/x-www-form-urlencoded",
-                        jsessionid);
+        huc = preparePost("j_spring_security_check", body.length(), "application/x-www-form-urlencoded", jsessionid);
 
         // Follow redirects to get the new JSESSIONID for the authenticated session
         huc.setInstanceFollowRedirects(false);
@@ -124,8 +119,7 @@ public class GeoServerWicketOnlineTestSupport {
      * @return The open HttpUrlConnection resulting from the GET. Callers must read the response and
      *     {@link HttpURLConnection#disconnect()} from the connection.
      */
-    protected HttpURLConnection get(String url, String jsessionid, String accept)
-            throws IOException {
+    protected HttpURLConnection get(String url, String jsessionid, String accept) throws IOException {
         return doGet(prepareGet(url, jsessionid, accept));
     }
 
@@ -139,8 +133,7 @@ public class GeoServerWicketOnlineTestSupport {
      * @return The prepared HttpUrlConnection. Callers may add headers or other properties before
      *     calling {@link HttpURLConnection#connect()} and reading the response.
      */
-    protected HttpURLConnection prepareGet(String url, String jsessionid, String accept)
-            throws IOException {
+    protected HttpURLConnection prepareGet(String url, String jsessionid, String accept) throws IOException {
         URL u = new URL(GEOSERVER_BASE_URL + "/" + url);
         HttpURLConnection huc = (HttpURLConnection) u.openConnection();
         if (accept != null) {
@@ -193,8 +186,7 @@ public class GeoServerWicketOnlineTestSupport {
      * @return The prepared HttpUrlConnection. Callers may add headers or other properties before
      *     calling {@link HttpURLConnection#connect()}, sending the body, and reading the response.
      */
-    protected HttpURLConnection preparePost(
-            String url, int contentLength, String contentType, String jsessionid)
+    protected HttpURLConnection preparePost(String url, int contentLength, String contentType, String jsessionid)
             throws IOException {
         URL u = new URL(GEOSERVER_BASE_URL + "/" + url);
         HttpURLConnection huc = (HttpURLConnection) u.openConnection();

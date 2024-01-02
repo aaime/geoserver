@@ -37,10 +37,7 @@ import javax.xml.bind.annotation.XmlType;
         propOrder = {"geometryContent"})
 public class GeometryContent {
 
-    @XmlElementRef(
-            name = "GeometryContent",
-            type = JAXBElement.class,
-            namespace = "http://www.w3.org/1999/xhtml")
+    @XmlElementRef(name = "GeometryContent", type = JAXBElement.class, namespace = "http://www.w3.org/1999/xhtml")
     protected JAXBElement<?> geometryContent;
 
     /**

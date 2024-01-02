@@ -59,14 +59,10 @@ public class ModifiedTiles {
                 CRS.decode("EPSG:" + gridSet.getSRS().getNumber(), true);
         List<ReferencedEnvelope> bboxesInGridsetCrs = transformBounds(boundingBoxes, gridsetCrs);
 
-        this.zoomStart =
-                scaleDenominatorRange == null
-                        ? 0
-                        : getMinZoom(gridSet, scaleDenominatorRange.getMaximum());
-        this.zoomEnd =
-                scaleDenominatorRange == null
-                        ? gridSet.getZoomStop()
-                        : getMaxZoom(gridSet, scaleDenominatorRange.getMinimum());
+        this.zoomStart = scaleDenominatorRange == null ? 0 : getMinZoom(gridSet, scaleDenominatorRange.getMaximum());
+        this.zoomEnd = scaleDenominatorRange == null
+                ? gridSet.getZoomStop()
+                : getMaxZoom(gridSet, scaleDenominatorRange.getMinimum());
 
         fillGridSubsets(gridSet, changes, gridsetCrs, bboxesInGridsetCrs);
     }
@@ -83,29 +79,23 @@ public class ModifiedTiles {
                 new FeatureVisitor() {
                     @Override
                     public void visit(Feature feature) {
-                        Geometry geometry =
-                                (Geometry) ((SimpleFeature) feature).getDefaultGeometry();
+                        Geometry geometry = (Geometry) ((SimpleFeature) feature).getDefaultGeometry();
 
                         try {
                             Geometry transformed = JTS.transform(geometry, changesToGridset);
                             if (bboxesInGridsetCrs == null || bboxesInGridsetCrs.isEmpty()) {
-                                subsets.add(
-                                        toGridSubset(
-                                                gridSubset.getGridSet(),
-                                                transformed.getEnvelopeInternal(),
-                                                zoomStart,
-                                                zoomEnd));
+                                subsets.add(toGridSubset(
+                                        gridSubset.getGridSet(),
+                                        transformed.getEnvelopeInternal(),
+                                        zoomStart,
+                                        zoomEnd));
                             } else {
                                 for (ReferencedEnvelope bbox : bboxesInGridsetCrs) {
                                     ReferencedEnvelope intersection =
                                             bbox.intersection(transformed.getEnvelopeInternal());
                                     if (!intersection.isEmpty()) {
-                                        subsets.add(
-                                                toGridSubset(
-                                                        gridSubset.getGridSet(),
-                                                        intersection,
-                                                        zoomStart,
-                                                        zoomEnd));
+                                        subsets.add(toGridSubset(
+                                                gridSubset.getGridSet(), intersection, zoomStart, zoomEnd));
                                     }
                                 }
                             }
@@ -155,29 +145,23 @@ public class ModifiedTiles {
         }
 
         return Stream.of(boundingBoxes)
-                .map(
-                        b -> {
-                            try {
-                                return b.transform(crs, true);
-                            } catch (Exception e) {
-                                throw new APIException(
-                                        "InternalError",
-                                        "Failed to transform requested bbox in native CRS: " + crs,
-                                        HttpStatus.INTERNAL_SERVER_ERROR,
-                                        e);
-                            }
-                        })
+                .map(b -> {
+                    try {
+                        return b.transform(crs, true);
+                    } catch (Exception e) {
+                        throw new APIException(
+                                "InternalError",
+                                "Failed to transform requested bbox in native CRS: " + crs,
+                                HttpStatus.INTERNAL_SERVER_ERROR,
+                                e);
+                    }
+                })
                 .collect(Collectors.toList());
     }
 
-    private GridSubset toGridSubset(
-            GridSet gridSet, Envelope envelope, int zoomStart, int zoomEnd) {
+    private GridSubset toGridSubset(GridSet gridSet, Envelope envelope, int zoomStart, int zoomEnd) {
         BoundingBox bbox =
-                new BoundingBox(
-                        envelope.getMinX(),
-                        envelope.getMinY(),
-                        envelope.getMaxX(),
-                        envelope.getMaxY());
+                new BoundingBox(envelope.getMinX(), envelope.getMinY(), envelope.getMaxX(), envelope.getMaxY());
         return GridSubsetFactory.createGridSubSet(gridSet, bbox, zoomStart, zoomEnd);
     }
 

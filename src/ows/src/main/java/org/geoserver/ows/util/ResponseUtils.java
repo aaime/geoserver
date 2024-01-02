@@ -379,8 +379,7 @@ public class ResponseUtils {
      * @param kvp the GET request parameters
      * @param type URL type
      */
-    public static String buildURL(
-            String baseURL, String path, Map<String, String> kvp, URLType type) {
+    public static String buildURL(String baseURL, String path, Map<String, String> kvp, URLType type) {
         // prepare modifiable parameters
         StringBuilder baseURLBuffer = new StringBuilder(baseURL);
         StringBuilder pathBuffer = new StringBuilder(path != null ? path : "");
@@ -447,9 +446,8 @@ public class ResponseUtils {
     public static Map<String, String> params(String... parameters) {
         Map<String, String> result = new LinkedHashMap<>();
         if (parameters.length % 2 != 0)
-            throw new IllegalArgumentException(
-                    "The parameters sequence should be "
-                            + "composed of key/value pairs, but the params passed are odd in number");
+            throw new IllegalArgumentException("The parameters sequence should be "
+                    + "composed of key/value pairs, but the params passed are odd in number");
 
         for (int i = 0; i < parameters.length; ) {
             String key = parameters[i++];

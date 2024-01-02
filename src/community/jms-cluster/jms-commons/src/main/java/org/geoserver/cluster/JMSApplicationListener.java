@@ -43,7 +43,8 @@ public class JMSApplicationListener implements ApplicationListener<ApplicationEv
      */
     private volatile Boolean status = false;
 
-    @Autowired public JMSConfiguration config;
+    @Autowired
+    public JMSConfiguration config;
 
     public JMSApplicationListener(ToggleType type) {
         this.type = type;

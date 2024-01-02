@@ -34,9 +34,7 @@ public class DefaultDataAccessManagerTreeTest extends AbstractAuthorizationTest 
     private SecureTreeNode buildTree(String propertyFile) throws Exception {
         Properties props = new Properties();
         props.load(getClass().getResourceAsStream(propertyFile));
-        return new DefaultResourceAccessManager(
-                        new MemoryDataAccessRuleDAO(catalog, props), catalog)
-                .root;
+        return new DefaultResourceAccessManager(new MemoryDataAccessRuleDAO(catalog, props), catalog).root;
     }
 
     @Test

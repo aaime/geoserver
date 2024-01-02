@@ -44,8 +44,7 @@ import org.geoserver.platform.resource.Resource.Type;
  */
 class PALFileLoader {
     protected static final Logger LOGGER =
-            org.geotools.util.logging.Logging.getLogger(
-                    "it.geosolutions.inversecolormap.PALFileLoader");
+            org.geotools.util.logging.Logging.getLogger("it.geosolutions.inversecolormap.PALFileLoader");
 
     /** Size of the color map we'll use. */
     protected int mapsize;
@@ -63,8 +62,7 @@ class PALFileLoader {
      * @param file the palette file.
      */
     public PALFileLoader(Resource file) {
-        if (file.getType() != Type.RESOURCE)
-            throw new IllegalArgumentException("The provided file does not exist.");
+        if (file.getType() != Type.RESOURCE) throw new IllegalArgumentException("The provided file does not exist.");
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.in()))) {
             // header
             boolean loadNext = false;
@@ -111,12 +109,10 @@ class PALFileLoader {
                         if (numComponents >= 3)
                             throw new IllegalArgumentException(
                                     "The number of components in one the color is greater than 3!");
-                        colorMap[numComponents++][i] =
-                                (byte) Integer.parseInt(tokenizer.nextToken());
+                        colorMap[numComponents++][i] = (byte) Integer.parseInt(tokenizer.nextToken());
                     }
                     if (numComponents != 3)
-                        throw new IllegalArgumentException(
-                                "The number of components in one the color is invalid!");
+                        throw new IllegalArgumentException("The number of components in one the color is invalid!");
                 }
             }
 
@@ -128,11 +124,8 @@ class PALFileLoader {
             ////
             if (mapsize < 256)
                 this.indexColorModel =
-                        new IndexColorModel(
-                                8, mapsize + 1, colorMap[0], colorMap[1], colorMap[2], mapsize);
-            else
-                this.indexColorModel =
-                        new IndexColorModel(8, mapsize, colorMap[0], colorMap[1], colorMap[2]);
+                        new IndexColorModel(8, mapsize + 1, colorMap[0], colorMap[1], colorMap[2], mapsize);
+            else this.indexColorModel = new IndexColorModel(8, mapsize, colorMap[0], colorMap[1], colorMap[2]);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, e.getLocalizedMessage(), e);
         }

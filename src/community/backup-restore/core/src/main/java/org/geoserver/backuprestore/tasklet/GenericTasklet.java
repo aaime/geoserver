@@ -32,21 +32,18 @@ public final class GenericTasklet extends AbstractCatalogBackupRestoreTasklet {
     }
 
     @Override
-    public RepeatStatus doExecute(
-            StepContribution contribution, ChunkContext chunkContext, JobExecution jobExecution)
+    public RepeatStatus doExecute(StepContribution contribution, ChunkContext chunkContext, JobExecution jobExecution)
             throws Exception {
         // get the available generic handlers or the continuable ones
         List<GenericTaskletHandler> handlers = getHandlers(jobExecution);
         List<GenericTaskletHandler> continuable = new ArrayList<>();
         // execute each handler and store the continuable ones
-        handlers.forEach(
-                handler -> {
-                    RepeatStatus status =
-                            handler.handle(contribution, chunkContext, jobExecution, this);
-                    if (status == RepeatStatus.CONTINUABLE) {
-                        continuable.add(handler);
-                    }
-                });
+        handlers.forEach(handler -> {
+            RepeatStatus status = handler.handle(contribution, chunkContext, jobExecution, this);
+            if (status == RepeatStatus.CONTINUABLE) {
+                continuable.add(handler);
+            }
+        });
         // register the continuable ones overriding the existing ones
         putContinuableHandlers(jobExecution, continuable);
         if (continuable.isEmpty()) {
@@ -60,8 +57,7 @@ public final class GenericTasklet extends AbstractCatalogBackupRestoreTasklet {
     /**
      * Put the provided continuable jobs in the job execution context overriding any existing ones.
      */
-    private void putContinuableHandlers(
-            JobExecution jobExecution, List<GenericTaskletHandler> handlers) {
+    private void putContinuableHandlers(JobExecution jobExecution, List<GenericTaskletHandler> handlers) {
         jobExecution.getExecutionContext().put(GENERIC_CONTINUABLE_HANDLERS_KEY, handlers);
     }
 

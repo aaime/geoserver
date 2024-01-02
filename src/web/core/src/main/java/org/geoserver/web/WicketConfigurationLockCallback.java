@@ -44,8 +44,7 @@ public class WicketConfigurationLockCallback implements WicketCallback {
     }
 
     @Override
-    public void onRequestTargetSet(
-            RequestCycle cycle, Class<? extends IRequestablePage> requestTarget) {
+    public void onRequestTargetSet(RequestCycle cycle, Class<? extends IRequestablePage> requestTarget) {
 
         if (!GeoServerUnlockablePage.class.isAssignableFrom(requestTarget)) {
             LockType type = locker.getCurrentLock();

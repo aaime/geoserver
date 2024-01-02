@@ -29,8 +29,8 @@ public class AlternativesResponseStream extends ServletOutputStream {
     Logger logger = org.geotools.util.logging.Logging.getLogger("org.geoserver.filters");
     int contentLength;
 
-    public AlternativesResponseStream(
-            HttpServletResponse response, Set compressible, int contentLength) throws IOException {
+    public AlternativesResponseStream(HttpServletResponse response, Set compressible, int contentLength)
+            throws IOException {
         super();
         myResponse = response;
         myCompressibleTypes = compressible;

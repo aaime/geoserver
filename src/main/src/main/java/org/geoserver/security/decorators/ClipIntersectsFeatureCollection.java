@@ -25,10 +25,7 @@ class ClipIntersectsFeatureCollection extends ClippedFeatureCollection {
      * @param preserveZ flag to set to true if the clipping process should preserve the z dimension
      */
     ClipIntersectsFeatureCollection(
-            SimpleFeatureCollection delegate,
-            Geometry clip,
-            Geometry intersects,
-            boolean preserveZ) {
+            SimpleFeatureCollection delegate, Geometry clip, Geometry intersects, boolean preserveZ) {
         super(delegate, clip, preserveZ);
         this.intersects = intersects;
     }
@@ -38,8 +35,7 @@ class ClipIntersectsFeatureCollection extends ClippedFeatureCollection {
      * @param clip the geometry to be used to clip (crop features).
      * @param intersects the geometry to be used to intersects features.
      */
-    ClipIntersectsFeatureCollection(
-            SimpleFeatureCollection delegate, Geometry clip, Geometry intersects) {
+    ClipIntersectsFeatureCollection(SimpleFeatureCollection delegate, Geometry clip, Geometry intersects) {
         super(delegate, clip, false);
         this.intersects = intersects;
     }
@@ -51,8 +47,7 @@ class ClipIntersectsFeatureCollection extends ClippedFeatureCollection {
 
     @Override
     public SimpleFeatureIterator features() {
-        return new ClipIntersectsFeatureIterator(
-                delegate.features(), clip, intersects, getSchema(), preserveZ);
+        return new ClipIntersectsFeatureIterator(delegate.features(), clip, intersects, getSchema(), preserveZ);
     }
 
     @Override

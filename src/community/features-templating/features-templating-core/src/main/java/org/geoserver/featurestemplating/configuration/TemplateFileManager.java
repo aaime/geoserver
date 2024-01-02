@@ -101,10 +101,7 @@ public class TemplateFileManager {
     public void saveTemplateFile(TemplateInfo templateInfo, String rawTemplate) {
         File destDir = getTemplateLocation(templateInfo);
         try {
-            File file =
-                    new File(
-                            destDir,
-                            templateInfo.getTemplateName() + "." + templateInfo.getExtension());
+            File file = new File(destDir, templateInfo.getTemplateName() + "." + templateInfo.getExtension());
             if (!file.exists()) file.createNewFile();
             synchronized (this) {
                 try (FileOutputStream fos = new FileOutputStream(file, false)) {

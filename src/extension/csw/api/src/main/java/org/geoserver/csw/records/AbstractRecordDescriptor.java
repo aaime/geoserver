@@ -36,8 +36,7 @@ public abstract class AbstractRecordDescriptor implements RecordDescriptor {
         try {
             DEFAULT_CRS = CRS.decode(DEFAULT_CRS_NAME);
         } catch (Exception e) {
-            throw new RuntimeException(
-                    "Failed to decode the default CRS, this should never happen!", e);
+            throw new RuntimeException("Failed to decode the default CRS, this should never happen!", e);
         }
     }
 

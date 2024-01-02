@@ -22,13 +22,10 @@ import org.geoserver.test.GeoServerSystemTestSupport;
  */
 public abstract class RegionatingTestSupport extends GeoServerSystemTestSupport {
 
-    public static QName STACKED_FEATURES =
-            new QName(MockData.SF_URI, "Stacked", MockData.SF_PREFIX);
-    public static QName DISPERSED_FEATURES =
-            new QName(MockData.SF_URI, "Dispersed", MockData.SF_PREFIX);
+    public static QName STACKED_FEATURES = new QName(MockData.SF_URI, "Stacked", MockData.SF_PREFIX);
+    public static QName DISPERSED_FEATURES = new QName(MockData.SF_URI, "Dispersed", MockData.SF_PREFIX);
     public static QName TILE_TESTS = new QName(MockData.SF_URI, "Tiles", MockData.SF_PREFIX);
-    public static QName CENTERED_POLY =
-            new QName(MockData.SF_URI, "CenteredPoly", MockData.SF_PREFIX);
+    public static QName CENTERED_POLY = new QName(MockData.SF_URI, "CenteredPoly", MockData.SF_PREFIX);
 
     @Override
     protected void setUpTestData(SystemTestData data) throws Exception {

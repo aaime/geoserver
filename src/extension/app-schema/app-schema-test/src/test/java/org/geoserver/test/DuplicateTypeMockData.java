@@ -18,10 +18,7 @@ public class DuplicateTypeMockData extends AbstractAppSchemaMockData {
     public void addContent() {
         // these two types are the same as for FeatureChainingWfsTest
         addFeatureType(
-                GSML_PREFIX,
-                "MappedFeature",
-                "MappedFeaturePropertyfile.xml",
-                "MappedFeaturePropertyfile.properties");
+                GSML_PREFIX, "MappedFeature", "MappedFeaturePropertyfile.xml", "MappedFeaturePropertyfile.properties");
         addFeatureType(
                 GSML_PREFIX,
                 "GeologicUnit",

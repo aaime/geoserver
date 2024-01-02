@@ -30,8 +30,7 @@ public class Icon extends Panel {
      * Constructs an icon from a resource reference for the image and resource model for the "title"
      * attribute to apply to the rendered "&lt;img>" tag.
      */
-    public Icon(
-            String id, PackageResourceReference PackageResourceReference, IModel<String> title) {
+    public Icon(String id, PackageResourceReference PackageResourceReference, IModel<String> title) {
         this(id, new Model<>(PackageResourceReference), title);
     }
 

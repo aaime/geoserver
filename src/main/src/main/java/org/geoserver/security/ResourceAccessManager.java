@@ -69,6 +69,5 @@ public interface ResourceAccessManager {
      * null} in which case the caller is responsible for building a filter based on calls to the
      * manager's other methods.
      */
-    public @Nullable Filter getSecurityFilter(
-            Authentication user, final Class<? extends CatalogInfo> clazz);
+    public @Nullable Filter getSecurityFilter(Authentication user, final Class<? extends CatalogInfo> clazz);
 }

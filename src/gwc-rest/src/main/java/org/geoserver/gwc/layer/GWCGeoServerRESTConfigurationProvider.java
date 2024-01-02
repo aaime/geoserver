@@ -76,13 +76,11 @@ public class GWCGeoServerRESTConfigurationProvider implements ContextualConfigur
         }
 
         @Override
-        public GeoServerTileLayer unmarshal(
-                HierarchicalStreamReader reader, UnmarshallingContext context) {
+        public GeoServerTileLayer unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
 
             Object current = new GeoServerTileLayerInfoImpl();
             Class<?> type = GeoServerTileLayerInfo.class;
-            GeoServerTileLayerInfo info =
-                    (GeoServerTileLayerInfo) context.convertAnother(current, type);
+            GeoServerTileLayerInfo info = (GeoServerTileLayerInfo) context.convertAnother(current, type);
             String id = info.getId();
             String name = info.getName();
             if (id != null && id.length() == 0) {
@@ -102,8 +100,7 @@ public class GWCGeoServerRESTConfigurationProvider implements ContextualConfigur
                     layerGroup = catalog.getLayerGroup(id);
                     if (layerGroup == null) {
                         throw new RestException(
-                                "No GeoServer Layer or LayerGroup exists with id '" + id + "'",
-                                HttpStatus.BAD_REQUEST);
+                                "No GeoServer Layer or LayerGroup exists with id '" + id + "'", HttpStatus.BAD_REQUEST);
                     }
                 }
             } else {
@@ -112,25 +109,17 @@ public class GWCGeoServerRESTConfigurationProvider implements ContextualConfigur
                     layerGroup = catalog.getLayerGroupByName(name);
                     if (layerGroup == null) {
                         throw new RestException(
-                                "GeoServer Layer or LayerGroup '" + name + "' not found",
-                                HttpStatus.NOT_FOUND);
+                                "GeoServer Layer or LayerGroup '" + name + "' not found", HttpStatus.NOT_FOUND);
                     }
                 }
             }
 
             final String actualId = layer != null ? layer.getId() : layerGroup.getId();
-            final String actualName =
-                    layer != null ? GWC.tileLayerName(layer) : GWC.tileLayerName(layerGroup);
+            final String actualName = layer != null ? GWC.tileLayerName(layer) : GWC.tileLayerName(layerGroup);
 
             if (id != null && !name.equals(actualName)) {
                 throw new RestException(
-                        "Layer with id '"
-                                + id
-                                + "' found but name does not match: '"
-                                + name
-                                + "'/'"
-                                + actualName
-                                + "'",
+                        "Layer with id '" + id + "' found but name does not match: '" + name + "'/'" + actualName + "'",
                         HttpStatus.BAD_REQUEST);
             }
 
@@ -149,9 +138,7 @@ public class GWCGeoServerRESTConfigurationProvider implements ContextualConfigur
 
         @Override
         public void marshal(
-                /* GeoServerTileLayer */ Object source,
-                HierarchicalStreamWriter writer,
-                MarshallingContext context) {
+                /* GeoServerTileLayer */ Object source, HierarchicalStreamWriter writer, MarshallingContext context) {
             GeoServerTileLayer tileLayer = (GeoServerTileLayer) source;
             GeoServerTileLayerInfo info = tileLayer.getInfo();
             context.convertAnother(info);

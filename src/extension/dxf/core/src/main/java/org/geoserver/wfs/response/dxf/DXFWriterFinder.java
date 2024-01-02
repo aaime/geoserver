@@ -30,8 +30,7 @@ import org.geotools.util.factory.FactoryRegistry;
  */
 public final class DXFWriterFinder {
     protected static final Logger LOGGER =
-            org.geotools.util.logging.Logging.getLogger(
-                    "org.geoserver.wfs.response.dxf.DXFWriterFinder");
+            org.geotools.util.logging.Logging.getLogger("org.geoserver.wfs.response.dxf.DXFWriterFinder");
 
     /** The service registry for this manager. Will be initialized only when first needed. */
     private static FactoryRegistry registry;

@@ -95,12 +95,7 @@ public class EncodingHints extends HashMap<String, Object> {
      */
     public static boolean isSingleFeatureRequest() {
         return Optional.ofNullable(RequestContextHolder.getRequestAttributes())
-                .map(
-                        att ->
-                                (String)
-                                        att.getAttribute(
-                                                "OGCFeatures:ItemId",
-                                                RequestAttributes.SCOPE_REQUEST))
+                .map(att -> (String) att.getAttribute("OGCFeatures:ItemId", RequestAttributes.SCOPE_REQUEST))
                 .isPresent();
     }
 }

@@ -55,66 +55,51 @@ import org.springframework.web.context.request.RequestContextListener;
 public class OpenIdConnectIntegrationTest extends GeoServerSystemTestSupport {
 
     private static final String CLIENT_ID = "kbyuFDidLLm280LIwVFiazOqjO3ty8KH";
-    private static final String CLIENT_SECRET =
-            "60Op4HFM0I8ajz0WdiStAbziZ-VFQttXuxixHHs2R7r7-CW8GR79l-mmLqMhc-Sa";
+    private static final String CLIENT_SECRET = "60Op4HFM0I8ajz0WdiStAbziZ-VFQttXuxixHHs2R7r7-CW8GR79l-mmLqMhc-Sa";
     private static final String CODE = "R-2CqM7H1agwc7Cx";
     private static WireMockServer openIdService;
     private static String authService;
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        openIdService =
-                new WireMockServer(
-                        wireMockConfig()
-                                .dynamicPort()
-                                // uncomment the following to get wiremock logging
-                                .notifier(new ConsoleNotifier(true)));
+        openIdService = new WireMockServer(wireMockConfig()
+                .dynamicPort()
+                // uncomment the following to get wiremock logging
+                .notifier(new ConsoleNotifier(true)));
         openIdService.start();
 
-        openIdService.stubFor(
-                WireMock.get(urlEqualTo(".well-known/jwks.json"))
-                        .willReturn(
-                                aResponse()
-                                        .withStatus(200)
-                                        .withHeader(
-                                                "Content-Type", MediaType.APPLICATION_JSON_VALUE)
-                                        .withBodyFile("jkws.json")));
+        openIdService.stubFor(WireMock.get(urlEqualTo(".well-known/jwks.json"))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                        .withBodyFile("jkws.json")));
 
-        openIdService.stubFor(
-                WireMock.post(urlPathEqualTo("/token"))
-                        .withRequestBody(containing("grant_type=authorization_code"))
-                        .withRequestBody(containing("client_id=" + CLIENT_ID))
-                        //                        .withQueryParam("client_secret",
-                        // equalTo(CLIENT_SECRET))
-                        .withRequestBody(containing("code=" + CODE))
-                        .willReturn(
-                                aResponse()
-                                        .withStatus(200)
-                                        .withHeader(
-                                                "Content-Type", MediaType.APPLICATION_JSON_VALUE)
-                                        .withBodyFile("token_response.json")));
-        openIdService.stubFor(
-                WireMock.post(urlPathEqualTo("/token"))
-                        .withRequestBody(containing("grant_type=authorization_code"))
-                        .withRequestBody(containing("client_id=" + CLIENT_ID))
-                        .withRequestBody(containing("client_secret=" + CLIENT_SECRET))
-                        .withRequestBody(containing("code=" + CODE))
-                        .willReturn(
-                                aResponse()
-                                        .withStatus(200)
-                                        .withHeader(
-                                                "Content-Type", MediaType.APPLICATION_JSON_VALUE)
-                                        .withBodyFile("token_response_with_secret.json")));
-        openIdService.stubFor(
-                WireMock.get(WireMock.urlMatching(".*/userinfo")) // disallow query parameters
-                        /*.withHeader(
-                        "Authorization", equalTo("Bearer CPURR33RUz-gGhjwODTd9zXo5JkQx4wS"))*/
-                        .willReturn(
-                                aResponse()
-                                        .withStatus(200)
-                                        .withHeader(
-                                                "Content-Type", MediaType.APPLICATION_JSON_VALUE)
-                                        .withBodyFile("userinfo.json")));
+        openIdService.stubFor(WireMock.post(urlPathEqualTo("/token"))
+                .withRequestBody(containing("grant_type=authorization_code"))
+                .withRequestBody(containing("client_id=" + CLIENT_ID))
+                //                        .withQueryParam("client_secret",
+                // equalTo(CLIENT_SECRET))
+                .withRequestBody(containing("code=" + CODE))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                        .withBodyFile("token_response.json")));
+        openIdService.stubFor(WireMock.post(urlPathEqualTo("/token"))
+                .withRequestBody(containing("grant_type=authorization_code"))
+                .withRequestBody(containing("client_id=" + CLIENT_ID))
+                .withRequestBody(containing("client_secret=" + CLIENT_SECRET))
+                .withRequestBody(containing("code=" + CODE))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                        .withBodyFile("token_response_with_secret.json")));
+        openIdService.stubFor(WireMock.get(WireMock.urlMatching(".*/userinfo")) // disallow query parameters
+                /*.withHeader(
+                "Authorization", equalTo("Bearer CPURR33RUz-gGhjwODTd9zXo5JkQx4wS"))*/
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                        .withBodyFile("userinfo.json")));
     }
 
     @AfterClass
@@ -202,25 +187,21 @@ public class OpenIdConnectIntegrationTest extends GeoServerSystemTestSupport {
         MockHttpServletResponse codeResponse = executeOnSecurityFilters(codeRequest);
 
         // should have authenticated and given roles, and they have been saved in the session
-        SecurityContext context =
-                new HttpSessionSecurityContextRepository()
-                        .loadContext(new HttpRequestResponseHolder(codeRequest, codeResponse));
+        SecurityContext context = new HttpSessionSecurityContextRepository()
+                .loadContext(new HttpRequestResponseHolder(codeRequest, codeResponse));
         Authentication auth = context.getAuthentication();
         assertNotNull(auth);
         assertEquals("andrea.aime@gmail.com", auth.getPrincipal());
 
         assertThat(
-                auth.getAuthorities().stream()
-                        .map(a -> a.getAuthority())
-                        .collect(Collectors.toList()),
+                auth.getAuthorities().stream().map(a -> a.getAuthority()).collect(Collectors.toList()),
                 CoreMatchers.hasItems("R1", "R2", "ROLE_AUTHENTICATED"));
     }
 
     @Test
     public void testClientConfidential() throws Exception {
         GeoServerSecurityManager manager = getSecurityManager();
-        OpenIdConnectFilterConfig config =
-                (OpenIdConnectFilterConfig) manager.loadFilterConfig("openidconnect");
+        OpenIdConnectFilterConfig config = (OpenIdConnectFilterConfig) manager.loadFilterConfig("openidconnect");
         config.setSendClientSecret(true);
         manager.saveFilter(config);
 
@@ -229,13 +210,11 @@ public class OpenIdConnectIntegrationTest extends GeoServerSystemTestSupport {
         MockHttpServletResponse codeResponse = executeOnSecurityFilters(codeRequest);
 
         // should have authenticated and given roles, and they have been saved in the session
-        SecurityContext context =
-                new HttpSessionSecurityContextRepository()
-                        .loadContext(new HttpRequestResponseHolder(codeRequest, codeResponse));
+        SecurityContext context = new HttpSessionSecurityContextRepository()
+                .loadContext(new HttpRequestResponseHolder(codeRequest, codeResponse));
         Authentication auth = context.getAuthentication();
         OAuth2ClientContext oauth2Context =
-                GeoServerExtensions.bean(ValidatingOAuth2RestTemplate.class)
-                        .getOAuth2ClientContext();
+                GeoServerExtensions.bean(ValidatingOAuth2RestTemplate.class).getOAuth2ClientContext();
         assertEquals("CPURR33RUz-secret", oauth2Context.getAccessToken().getValue());
         assertNotNull(auth);
         assertEquals("andrea.aime@gmail.com", auth.getPrincipal());
@@ -244,8 +223,7 @@ public class OpenIdConnectIntegrationTest extends GeoServerSystemTestSupport {
     @Test
     public void testIdTokenHintInEndSessionURI() throws Exception {
         GeoServerSecurityManager manager = getSecurityManager();
-        OpenIdConnectFilterConfig config =
-                (OpenIdConnectFilterConfig) manager.loadFilterConfig("openidconnect");
+        OpenIdConnectFilterConfig config = (OpenIdConnectFilterConfig) manager.loadFilterConfig("openidconnect");
         config.setSendClientSecret(true);
         config.setPostLogoutRedirectUri(null);
         manager.saveFilter(config);
@@ -255,32 +233,28 @@ public class OpenIdConnectIntegrationTest extends GeoServerSystemTestSupport {
         MockHttpServletResponse codeResponse = executeOnSecurityFilters(codeRequest);
 
         // should have authenticated and given roles, and they have been saved in the session
-        SecurityContext context =
-                new HttpSessionSecurityContextRepository()
-                        .loadContext(new HttpRequestResponseHolder(codeRequest, codeResponse));
+        SecurityContext context = new HttpSessionSecurityContextRepository()
+                .loadContext(new HttpRequestResponseHolder(codeRequest, codeResponse));
         Authentication auth = context.getAuthentication();
         OAuth2ClientContext oauth2Context =
-                GeoServerExtensions.bean(ValidatingOAuth2RestTemplate.class)
-                        .getOAuth2ClientContext();
+                GeoServerExtensions.bean(ValidatingOAuth2RestTemplate.class).getOAuth2ClientContext();
         assertEquals("CPURR33RUz-secret", oauth2Context.getAccessToken().getValue());
         assertNotNull(auth);
         assertEquals("andrea.aime@gmail.com", auth.getPrincipal());
         assertNotNull(oauth2Context.getAccessToken().getAdditionalInformation());
         assertNotNull(oauth2Context.getAccessToken().getAdditionalInformation().get("id_token"));
 
-        final String idToken =
-                (String) oauth2Context.getAccessToken().getAdditionalInformation().get("id_token");
+        final String idToken = (String)
+                oauth2Context.getAccessToken().getAdditionalInformation().get("id_token");
 
         assertEquals(
-                config.buildEndSessionUrl(idToken).toString(),
-                config.getLogoutUri() + "?id_token_hint=" + idToken);
+                config.buildEndSessionUrl(idToken).toString(), config.getLogoutUri() + "?id_token_hint=" + idToken);
     }
 
     private MockHttpServletResponse executeOnSecurityFilters(MockHttpServletRequest request)
             throws IOException, javax.servlet.ServletException {
         // for session local support in Spring
-        new RequestContextListener()
-                .requestInitialized(new ServletRequestEvent(request.getServletContext(), request));
+        new RequestContextListener().requestInitialized(new ServletRequestEvent(request.getServletContext(), request));
 
         // run on the
         MockFilterChain chain = new MockFilterChain();

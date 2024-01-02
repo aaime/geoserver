@@ -131,8 +131,7 @@ public class GetFeatureInfoKvpReader extends KvpRequestReader {
 
         List<MapLayerInfo> getMapLayers = getMapPart.getLayers();
 
-        if ((getMapPart.getSldBody() != null || getMapPart.getSld() != null)
-                && wms.isDynamicStylingDisabled()) {
+        if ((getMapPart.getSldBody() != null || getMapPart.getSld() != null) && wms.isDynamicStylingDisabled()) {
             throw new ServiceException("Dynamic style usage is forbidden");
         }
 
@@ -141,9 +140,8 @@ public class GetFeatureInfoKvpReader extends KvpRequestReader {
             // in this case we assume all layers in SLD body are to be queried (GS own extension)(
             request.setQueryLayers(getMapLayers);
         } else {
-            request.setQueryLayers(
-                    new GetFeatureInfoKvpParser("QUERY_LAYERS", wms, (String) rawKvp.get("STYLES"))
-                            .parse((String) rawKvp.get("QUERY_LAYERS")));
+            request.setQueryLayers(new GetFeatureInfoKvpParser("QUERY_LAYERS", wms, (String) rawKvp.get("STYLES"))
+                    .parse((String) rawKvp.get("QUERY_LAYERS")));
         }
 
         if (request.getQueryLayers().isEmpty()) {
@@ -179,9 +177,8 @@ public class GetFeatureInfoKvpReader extends KvpRequestReader {
         if (!queryLayers.isEmpty()) {
             // we've already expanded base layers so let's avoid list the names, they are not
             // the original ones anymore
-            throw new ServiceException(
-                    "QUERY_LAYERS contains layers not cited in LAYERS. "
-                            + "It should be a proper subset of those instead");
+            throw new ServiceException("QUERY_LAYERS contains layers not cited in LAYERS. "
+                    + "It should be a proper subset of those instead");
         }
 
         String format = (String) (kvp.containsKey("INFO_FORMAT") ? kvp.get("INFO_FORMAT") : null);
@@ -223,9 +220,7 @@ public class GetFeatureInfoKvpReader extends KvpRequestReader {
             rowPixel = "J";
 
             if (!kvp.containsKey(colPixel) && !kvp.containsKey(rowPixel)) {
-                if (!wms.getServiceInfo().isCiteCompliant()
-                        && kvp.containsKey("X")
-                        && kvp.containsKey("Y")) {
+                if (!wms.getServiceInfo().isCiteCompliant() && kvp.containsKey("X") && kvp.containsKey("Y")) {
                     colPixel = "X";
                     rowPixel = "Y";
                 }
@@ -257,10 +252,7 @@ public class GetFeatureInfoKvpReader extends KvpRequestReader {
         }
 
         String excludeNodata =
-                (String)
-                        (kvp.containsKey("EXCLUDE_NODATA_RESULT")
-                                ? kvp.get("EXCLUDE_NODATA_RESULT")
-                                : null);
+                (String) (kvp.containsKey("EXCLUDE_NODATA_RESULT") ? kvp.get("EXCLUDE_NODATA_RESULT") : null);
         if (excludeNodata != null) {
             boolean excludeNodataResults = Boolean.parseBoolean(excludeNodata);
             request.setExcludeNodataResults(excludeNodataResults);

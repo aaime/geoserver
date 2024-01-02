@@ -21,8 +21,7 @@ import org.geotools.util.factory.Hints;
  * populate from an external properties file provided within the
  * GEOSERVER_DATA_DIR/user_projections/netcdf.projections.properties file.
  */
-public class NetCDFCRSOverridingAuthorityFactory extends NetCDFCRSAuthorityFactory
-        implements CRSAuthorityFactory {
+public class NetCDFCRSOverridingAuthorityFactory extends NetCDFCRSAuthorityFactory implements CRSAuthorityFactory {
 
     public NetCDFCRSOverridingAuthorityFactory() {
         this(null);
@@ -42,8 +41,7 @@ public class NetCDFCRSOverridingAuthorityFactory extends NetCDFCRSAuthorityFacto
     protected URL getDefinitionsURL() {
         String cust_proj_file = System.getProperty(SYSTEM_DEFAULT_USER_PROJ_FILE);
         if (cust_proj_file == null) {
-            GeoServerResourceLoader loader =
-                    GeoServerExtensions.bean(GeoServerResourceLoader.class);
+            GeoServerResourceLoader loader = GeoServerExtensions.bean(GeoServerResourceLoader.class);
             if (loader != null) { // Not available for SystemTestData
                 Resource custom_proj = loader.get("user_projections/netcdf.projections.properties");
                 if (custom_proj.getType() == Type.RESOURCE) {
@@ -60,8 +58,7 @@ public class NetCDFCRSOverridingAuthorityFactory extends NetCDFCRSAuthorityFacto
                 if (url != null) {
                     return url;
                 } else {
-                    LOGGER.log(
-                            Level.SEVERE, "Had troubles converting " + cust_proj_file + " to URL");
+                    LOGGER.log(Level.SEVERE, "Had troubles converting " + cust_proj_file + " to URL");
                 }
             }
         }

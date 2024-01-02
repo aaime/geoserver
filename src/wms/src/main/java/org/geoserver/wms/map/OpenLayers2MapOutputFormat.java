@@ -28,8 +28,7 @@ public class OpenLayers2MapOutputFormat extends AbstractOpenLayersMapOutputForma
     public static final String MIME_TYPE = "text/html; subtype=openlayers2";
 
     /** The formats accepted in a GetMap request for this producer and stated in getcaps */
-    private static final Set<String> OUTPUT_FORMATS =
-            new HashSet<>(Arrays.asList(OL2_FORMAT, MIME_TYPE));
+    private static final Set<String> OUTPUT_FORMATS = new HashSet<>(Arrays.asList(OL2_FORMAT, MIME_TYPE));
 
     public OpenLayers2MapOutputFormat(WMS wms) {
         super(wms);
@@ -66,8 +65,7 @@ public class OpenLayers2MapOutputFormat extends AbstractOpenLayersMapOutputForma
             // use the unicode escape sequence for the degree sign so its not
             // screwed up by different local encodings
             final String degreeSign = "\u00B0";
-            if (degreeSign.equals(unit) || "degrees".equals(unit) || "dd".equals(unit))
-                result = "degrees";
+            if (degreeSign.equals(unit) || "degrees".equals(unit) || "dd".equals(unit)) result = "degrees";
             else if ("m".equals(unit) || "meters".equals(unit)) result = "m";
             else if ("km".equals(unit) || "kilometers".equals(unit)) result = "mi";
             else if ("in".equals(unit) || "inches".equals(unit)) result = "inches";

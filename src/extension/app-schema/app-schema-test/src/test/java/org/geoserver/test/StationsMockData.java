@@ -69,8 +69,7 @@ public class StationsMockData extends AbstractAppSchemaMockData {
     }
 
     /** Helper method that builds a xpath engine that will use the provided GML namespaces. */
-    public static XpathEngine buildXpathEngine(
-            Map<String, String> baseNamespaces, String... namespaces) {
+    public static XpathEngine buildXpathEngine(Map<String, String> baseNamespaces, String... namespaces) {
         // build xpath engine
         XpathEngine xpathEngine = XMLUnit.newXpathEngine();
         Map<String, String> finalNamespaces = new HashMap<>();
@@ -129,49 +128,35 @@ public class StationsMockData extends AbstractAppSchemaMockData {
         gml31Parameters.put("GML_NAMESPACE", "http://www.opengis.net/gml");
         gml31Parameters.put("GML_LOCATION", "http://schemas.opengis.net/gml/3.1.1/base/gml.xsd");
         addMeasurementFeatureType(
-                MEASUREMENTS_PREFIX_GML31,
-                "gml31",
-                "measurements",
-                "base/measurements.xml",
-                gml31Parameters);
-        addStationFeatureType(
-                STATIONS_PREFIX_GML31, "gml31", "stations", "base/stations.xml", gml31Parameters);
+                MEASUREMENTS_PREFIX_GML31, "gml31", "measurements", "base/measurements.xml", gml31Parameters);
+        addStationFeatureType(STATIONS_PREFIX_GML31, "gml31", "stations", "base/stations.xml", gml31Parameters);
         // add GML 3.2 feature type
         Map<String, String> gml32Parameters = new HashMap<>();
         gml32Parameters.put("GML_PREFIX", "gml32");
         gml32Parameters.put("GML_NAMESPACE", "http://www.opengis.net/gml/3.2");
         gml32Parameters.put("GML_LOCATION", "http://schemas.opengis.net/gml/3.2.1/gml.xsd");
         addMeasurementFeatureType(
-                MEASUREMENTS_PREFIX_GML32,
-                "gml32",
-                "measurements",
-                "base/measurements.xml",
-                gml32Parameters);
-        addStationFeatureType(
-                STATIONS_PREFIX_GML32, "gml32", "stations", "base/stations.xml", gml32Parameters);
+                MEASUREMENTS_PREFIX_GML32, "gml32", "measurements", "base/measurements.xml", gml32Parameters);
+        addStationFeatureType(STATIONS_PREFIX_GML32, "gml32", "stations", "base/stations.xml", gml32Parameters);
     }
 
     /**
      * Helper method that reads a resource to a string, performs the parameterization and writes the
      * result to the provided new file.
      */
-    protected static void substituteParameters(
-            String resourceName, Map<String, String> parameters, File newFile) {
+    protected static void substituteParameters(String resourceName, Map<String, String> parameters, File newFile) {
         // read the resource content
         String resourceContent = resourceToString(resourceName);
         for (Map.Entry<String, String> parameter : parameters.entrySet()) {
             // substitute the parameter on the resource content
-            resourceContent =
-                    resourceContent.replace(
-                            String.format("${%s}", parameter.getKey()), parameter.getValue());
+            resourceContent = resourceContent.replace(String.format("${%s}", parameter.getKey()), parameter.getValue());
         }
         try {
             // write the final resource content to the provided location
             Files.write(newFile.toPath(), resourceContent.getBytes());
         } catch (Exception exception) {
             throw new RuntimeException(
-                    String.format("Error writing content to file '%s'.", newFile.getAbsolutePath()),
-                    exception);
+                    String.format("Error writing content to file '%s'.", newFile.getAbsolutePath()), exception);
         }
     }
 
@@ -180,8 +165,7 @@ public class StationsMockData extends AbstractAppSchemaMockData {
         try (InputStream input = NamespacesWfsTest.class.getResourceAsStream(resourceName)) {
             return IOUtils.toString(input);
         } catch (Exception exception) {
-            throw new RuntimeException(
-                    String.format("Error reading resource '%s' content.", resourceName), exception);
+            throw new RuntimeException(String.format("Error reading resource '%s' content.", resourceName), exception);
         }
     }
 
@@ -199,21 +183,13 @@ public class StationsMockData extends AbstractAppSchemaMockData {
         File gmlDirectory = getDirectoryForGmlPrefix(gmlPrefix);
         gmlDirectory.mkdirs();
         // add the necessary files
-        File measurementsMappings =
-                new File(gmlDirectory, String.format("%s_%s.xml", mappingsName, gmlPrefix));
-        File measurementsProperties =
-                new File(gmlDirectory, String.format("measurements_%s.properties", gmlPrefix));
-        File measurementsSchema =
-                new File(gmlDirectory, String.format("measurements_%s.xsd", gmlPrefix));
+        File measurementsMappings = new File(gmlDirectory, String.format("%s_%s.xml", mappingsName, gmlPrefix));
+        File measurementsProperties = new File(gmlDirectory, String.format("measurements_%s.properties", gmlPrefix));
+        File measurementsSchema = new File(gmlDirectory, String.format("measurements_%s.xsd", gmlPrefix));
         // perform the parameterization
-        substituteParameters(
-                "/test-data/stations/" + mappingsPath, parameters, measurementsMappings);
-        substituteParameters(
-                "/test-data/stations/base/measurements.properties",
-                parameters,
-                measurementsProperties);
-        substituteParameters(
-                "/test-data/stations/base/measurements.xsd", parameters, measurementsSchema);
+        substituteParameters("/test-data/stations/" + mappingsPath, parameters, measurementsMappings);
+        substituteParameters("/test-data/stations/base/measurements.properties", parameters, measurementsProperties);
+        substituteParameters("/test-data/stations/base/measurements.xsd", parameters, measurementsSchema);
         // add extra features
         addMeasurementFeatures(measurementsProperties);
         // create measurements feature type
@@ -239,20 +215,15 @@ public class StationsMockData extends AbstractAppSchemaMockData {
         File gmlDirectory = getDirectoryForGmlPrefix(gmlPrefix);
         gmlDirectory.mkdirs();
         // add the necessary files
-        File stationsMappings =
-                new File(gmlDirectory, String.format("%s_%s.xml", mappingsName, gmlPrefix));
-        File stationsProperties =
-                new File(gmlDirectory, String.format("stations_%s.properties", gmlPrefix));
+        File stationsMappings = new File(gmlDirectory, String.format("%s_%s.xml", mappingsName, gmlPrefix));
+        File stationsProperties = new File(gmlDirectory, String.format("stations_%s.properties", gmlPrefix));
         File stationsSchema = new File(gmlDirectory, String.format("stations_%s.xsd", gmlPrefix));
-        File measurementsSchema =
-                new File(gmlDirectory, String.format("measurements_%s.xsd", gmlPrefix));
+        File measurementsSchema = new File(gmlDirectory, String.format("measurements_%s.xsd", gmlPrefix));
         // perform the parameterization
         substituteParameters("/test-data/stations/" + mappingsPath, parameters, stationsMappings);
-        substituteParameters(
-                "/test-data/stations/base/stations.properties", parameters, stationsProperties);
+        substituteParameters("/test-data/stations/base/stations.properties", parameters, stationsProperties);
         substituteParameters("/test-data/stations/base/stations.xsd", parameters, stationsSchema);
-        substituteParameters(
-                "/test-data/stations/base/measurements.xsd", parameters, measurementsSchema);
+        substituteParameters("/test-data/stations/base/measurements.xsd", parameters, measurementsSchema);
         // extra features to add:
         addStationFeatures(stationsProperties);
         // create station feature type
@@ -281,31 +252,19 @@ public class StationsMockData extends AbstractAppSchemaMockData {
         File gmlDirectory = getDirectoryForGmlPrefix(gmlPrefix);
         gmlDirectory.mkdirs();
         // add the necessary files
-        File stationsMappings =
-                new File(gmlDirectory, String.format("%s_%s.xml", stationsMappingsName, gmlPrefix));
+        File stationsMappings = new File(gmlDirectory, String.format("%s_%s.xml", stationsMappingsName, gmlPrefix));
         File measurementsMappings =
-                new File(
-                        gmlDirectory,
-                        String.format("%s_%s.xml", measurementsMappingsName, gmlPrefix));
-        File stationsProperties =
-                new File(gmlDirectory, String.format("stations_%s.properties", gmlPrefix));
+                new File(gmlDirectory, String.format("%s_%s.xml", measurementsMappingsName, gmlPrefix));
+        File stationsProperties = new File(gmlDirectory, String.format("stations_%s.properties", gmlPrefix));
         File stationsSchema = new File(gmlDirectory, String.format("stations_%s.xsd", gmlPrefix));
-        File measurementsProperties =
-                new File(gmlDirectory, String.format("measurements_%s.properties", gmlPrefix));
-        File measurementsSchema =
-                new File(gmlDirectory, String.format("measurements_%s.xsd", gmlPrefix));
+        File measurementsProperties = new File(gmlDirectory, String.format("measurements_%s.properties", gmlPrefix));
+        File measurementsSchema = new File(gmlDirectory, String.format("measurements_%s.xsd", gmlPrefix));
         // perform the parameterization
-        substituteParameters(
-                "/test-data/stations/" + stationsMappingsPath, parameters, stationsMappings);
-        substituteParameters(
-                "/test-data/stations/" + measurementsMappingsPath,
-                parameters,
-                measurementsMappings);
-        substituteParameters(
-                "/test-data/stations/base/stations.properties", parameters, stationsProperties);
+        substituteParameters("/test-data/stations/" + stationsMappingsPath, parameters, stationsMappings);
+        substituteParameters("/test-data/stations/" + measurementsMappingsPath, parameters, measurementsMappings);
+        substituteParameters("/test-data/stations/base/stations.properties", parameters, stationsProperties);
         substituteParameters("/test-data/stations/base/stations.xsd", parameters, stationsSchema);
-        substituteParameters(
-                "/test-data/stations/base/measurements.xsd", parameters, measurementsSchema);
+        substituteParameters("/test-data/stations/base/measurements.xsd", parameters, measurementsSchema);
         // extra features to add:
         addStationFeatures(stationsProperties);
         // create station feature type
@@ -346,11 +305,7 @@ public class StationsMockData extends AbstractAppSchemaMockData {
             otherResourcesFiles[i + 1] = targetFile.getAbsolutePath();
         }
         // create station feature type
-        addFeatureType(
-                namespacePrefix,
-                typeName,
-                targetMappingsFile.getAbsolutePath(),
-                otherResourcesFiles);
+        addFeatureType(namespacePrefix, typeName, targetMappingsFile.getAbsolutePath(), otherResourcesFiles);
     }
 
     /** Helper method that */
@@ -362,8 +317,7 @@ public class StationsMockData extends AbstractAppSchemaMockData {
         String name = resource.substring(index + 1);
         index = name.lastIndexOf(".");
         if (index < 0) {
-            throw new RuntimeException(
-                    String.format("Invalid resource name '%s' of resource '%s'.", name, resource));
+            throw new RuntimeException(String.format("Invalid resource name '%s' of resource '%s'.", name, resource));
         }
         String extension = name.substring(index);
         name = name.substring(0, index);
@@ -400,19 +354,15 @@ public class StationsMockData extends AbstractAppSchemaMockData {
     }
 
     private void addStationFeatures(File file) {
-        extraStationFeatures()
-                .ifPresent(
-                        content -> {
-                            addTextToFile(file, content);
-                        });
+        extraStationFeatures().ifPresent(content -> {
+            addTextToFile(file, content);
+        });
     }
 
     private void addMeasurementFeatures(File file) {
-        extraMeasurementFeatures()
-                .ifPresent(
-                        content -> {
-                            addTextToFile(file, content);
-                        });
+        extraMeasurementFeatures().ifPresent(content -> {
+            addTextToFile(file, content);
+        });
     }
 
     /**
@@ -444,9 +394,7 @@ public class StationsMockData extends AbstractAppSchemaMockData {
             // something bad happen, just log the exception and move on
             LOGGER.log(
                     Level.WARNING,
-                    String.format(
-                            "Error removing tests root directory '%s'.",
-                            testRootDirectory.getAbsolutePath()),
+                    String.format("Error removing tests root directory '%s'.", testRootDirectory.getAbsolutePath()),
                     exception);
         }
     }

@@ -13,8 +13,7 @@ import org.geoserver.config.util.XStreamPersister;
  */
 public class RootStartupListener implements GeoServerLoaderListener {
 
-    private static volatile GeoServerLoaderListener delegate =
-            GeoServerLoaderListener.EMPTY_LISTENER;
+    private static volatile GeoServerLoaderListener delegate = GeoServerLoaderListener.EMPTY_LISTENER;
 
     @Override
     public void loadCatalog(Catalog catalog, XStreamPersister xp) {

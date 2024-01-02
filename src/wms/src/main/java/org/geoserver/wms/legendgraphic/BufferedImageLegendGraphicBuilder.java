@@ -119,8 +119,7 @@ public class BufferedImageLegendGraphicBuilder extends LegendGraphicBuilder {
      *     FeatureType <code>request</code> returns as the required layer (which should not occur).
      */
     @Override
-    public BufferedImage buildLegendGraphic(GetLegendGraphicRequest request)
-            throws ServiceException {
+    public BufferedImage buildLegendGraphic(GetLegendGraphicRequest request) throws ServiceException {
         // list of images to be rendered for the layers (more than one if
         // a layer group is given)
         setup(request);
@@ -154,10 +153,9 @@ public class BufferedImageLegendGraphicBuilder extends LegendGraphicBuilder {
 
             checkForRenderingTransformations(gt2Style);
 
-            final boolean buildRasterLegend =
-                    (!strict && layer == null && LegendUtils.checkRasterSymbolizer(gt2Style))
-                            || (LegendUtils.checkGridLayer(layer) && !hasVectorTransformation)
-                            || hasRasterTransformation;
+            final boolean buildRasterLegend = (!strict && layer == null && LegendUtils.checkRasterSymbolizer(gt2Style))
+                    || (LegendUtils.checkGridLayer(layer) && !hasVectorTransformation)
+                    || hasRasterTransformation;
 
             // Just checks LegendInfo currently, should check gtStyle
             final boolean useProvidedLegend = layer != null && legend.getLayerInfo() != null;
@@ -165,8 +163,7 @@ public class BufferedImageLegendGraphicBuilder extends LegendGraphicBuilder {
             BufferedImage legendImage = null;
             if (useProvidedLegend || legend instanceof CascadedLegendRequest) {
                 boolean forceResize = !(legend instanceof CascadedLegendRequest);
-                legendImage =
-                        getLayerLegend(legend, w, h, transparent, forceResize, request, titleImage);
+                legendImage = getLayerLegend(legend, w, h, transparent, forceResize, request, titleImage);
             }
 
             if (useProvidedLegend && legendImage != null) {
@@ -195,16 +192,14 @@ public class BufferedImageLegendGraphicBuilder extends LegendGraphicBuilder {
                 } else {
                     sampleFeature = createSampleFeature(layer);
                 }
-                final FeatureTypeStyle[] ftStyles =
-                        gt2Style.featureTypeStyles().toArray(new FeatureTypeStyle[0]);
+                final FeatureTypeStyle[] ftStyles = gt2Style.featureTypeStyles().toArray(new FeatureTypeStyle[0]);
                 final double scaleDenominator = request.getScale();
 
                 Rule[] applicableRules;
                 if (ruleName != null) {
                     Rule rule = LegendUtils.getRule(ftStyles, ruleName);
                     if (rule == null) {
-                        throw new ServiceException(
-                                "Specified style does not contains a rule named " + ruleName);
+                        throw new ServiceException("Specified style does not contains a rule named " + ruleName);
                     }
                     applicableRules = new Rule[] {rule};
                 } else {
@@ -216,8 +211,7 @@ public class BufferedImageLegendGraphicBuilder extends LegendGraphicBuilder {
                     applicableRules = updateRuleTitles(countProcessor, legend, applicableRules);
                 }
 
-                final NumberRange<Double> scaleRange =
-                        NumberRange.create(scaleDenominator, scaleDenominator);
+                final NumberRange<Double> scaleRange = NumberRange.create(scaleDenominator, scaleDenominator);
                 final int ruleCount = applicableRules.length;
 
                 final SLDStyleFactory styleFactory = new SLDStyleFactory();
@@ -230,36 +224,24 @@ public class BufferedImageLegendGraphicBuilder extends LegendGraphicBuilder {
                     try {
                         minimumSymbolSize = Double.parseDouble(minSymbolSizeOpt);
                     } catch (NumberFormatException e) {
-                        throw new IllegalArgumentException(
-                                "Invalid minSymbolSize value: should be a number");
+                        throw new IllegalArgumentException("Invalid minSymbolSize value: should be a number");
                     }
                 }
                 // calculate the symbols rescaling factor necessary for them to be
                 // drawn inside the icon box
                 int defaultSize = Math.min(w, h);
-                double[] minMax =
-                        calcSymbolSize(
-                                defaultSize,
-                                minimumSymbolSize,
-                                layer,
-                                sampleFeature,
-                                applicableRules);
+                double[] minMax = calcSymbolSize(defaultSize, minimumSymbolSize, layer, sampleFeature, applicableRules);
                 double actualMin = minMax[0];
                 double actualMax = minMax[1];
-                boolean rescalingRequired =
-                        actualMin < minimumSymbolSize || actualMax > defaultSize;
+                boolean rescalingRequired = actualMin < minimumSymbolSize || actualMax > defaultSize;
                 java.util.function.Function<Double, Double> rescaler = null;
-                if (actualMax == actualMin
-                        || ((actualMin / actualMax) * defaultSize) > minimumSymbolSize) {
+                if (actualMax == actualMin || ((actualMin / actualMax) * defaultSize) > minimumSymbolSize) {
                     rescaler = size -> (size / actualMax) * defaultSize;
                 } else {
                     double finalMinimumSymbolSize = minimumSymbolSize;
-                    rescaler =
-                            size ->
-                                    (size - actualMin)
-                                                    / (actualMax - actualMin)
-                                                    * (defaultSize - finalMinimumSymbolSize)
-                                            + finalMinimumSymbolSize;
+                    rescaler = size ->
+                            (size - actualMin) / (actualMax - actualMin) * (defaultSize - finalMinimumSymbolSize)
+                                    + finalMinimumSymbolSize;
                 }
 
                 renderRules(
@@ -284,16 +266,14 @@ public class BufferedImageLegendGraphicBuilder extends LegendGraphicBuilder {
         }
         // all legend graphics are merged if we have a layer group
         BufferedImage finalLegend =
-                mergeGroups(
-                        layersImages, null, request, forceLabelsOn, forceLabelsOff, forceTitlesOff);
+                mergeGroups(layersImages, null, request, forceLabelsOn, forceLabelsOff, forceTitlesOff);
 
         // final checks
         if (finalLegend == null) throw new IllegalArgumentException("no legend passed");
         int maxMemory = layersImages.getTally().getMaxMemory();
         if (maxMemory != Tally.UNLIMITED && Tally.computeImageSize(finalLegend) > maxMemory)
             throw new ServiceException(
-                    LegendGraphicBuilder.MEMORY_USAGE_EXCEEDED,
-                    ServiceException.MAX_MEMORY_EXCEEDED);
+                    LegendGraphicBuilder.MEMORY_USAGE_EXCEEDED, ServiceException.MAX_MEMORY_EXCEEDED);
 
         return finalLegend;
     }
@@ -323,11 +303,9 @@ public class BufferedImageLegendGraphicBuilder extends LegendGraphicBuilder {
 
             final BufferedImage image = ImageUtils.createImage(w, h, null, transparent);
             final Map<RenderingHints.Key, Object> hintsMap = new HashMap<>();
-            final Graphics2D graphics =
-                    ImageUtils.prepareTransparency(
-                            transparent, LegendUtils.getBackgroundColor(request), image, hintsMap);
-            graphics.setRenderingHint(
-                    RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            final Graphics2D graphics = ImageUtils.prepareTransparency(
+                    transparent, LegendUtils.getBackgroundColor(request), image, hintsMap);
+            graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
             Feature sample = getSampleFeatureForRule(layer, sampleFeature, applicableRules[i]);
 
@@ -340,8 +318,7 @@ public class BufferedImageLegendGraphicBuilder extends LegendGraphicBuilder {
                     Coordinate coord = new Coordinate(w / 2, h / 2);
 
                     try {
-                        this.samplePoint =
-                                new LiteShape2(geomFac.createPoint(coord), null, null, false);
+                        this.samplePoint = new LiteShape2(geomFac.createPoint(coord), null, null, false);
                     } catch (Exception e) {
                         this.samplePoint = null;
                     }
@@ -355,10 +332,8 @@ public class BufferedImageLegendGraphicBuilder extends LegendGraphicBuilder {
                         // rescale symbols if needed
                         LiteShape2 shape = getSampleShape(symbolizer, w, h, w, h);
                         if (rescalingRequired
-                                && (symbolizer instanceof PointSymbolizer
-                                        || symbolizer instanceof LineSymbolizer)) {
-                            double size =
-                                    getSymbolizerSize(estimator, symbolizer, Math.min(w, h) - 4);
+                                && (symbolizer instanceof PointSymbolizer || symbolizer instanceof LineSymbolizer)) {
+                            double size = getSymbolizerSize(estimator, symbolizer, Math.min(w, h) - 4);
                             double newSize = rescaler.apply(size);
                             symbolizer = rescaleSymbolizer(symbolizer, size, newSize);
                         } else if (symbolizer instanceof PolygonSymbolizer) {
@@ -388,21 +363,13 @@ public class BufferedImageLegendGraphicBuilder extends LegendGraphicBuilder {
         }
         int labelMargin = 3;
         if (request.getLegendOptions().get("labelMargin") != null
-                && StringUtils.hasText(request.getLegendOptions().get("labelMargin").toString())) {
-            labelMargin =
-                    Integer.parseInt(request.getLegendOptions().get("labelMargin").toString());
+                && StringUtils.hasText(
+                        request.getLegendOptions().get("labelMargin").toString())) {
+            labelMargin = Integer.parseInt(
+                    request.getLegendOptions().get("labelMargin").toString());
         }
-        LegendMerger.MergeOptions options =
-                LegendMerger.MergeOptions.createFromRequest(
-                        legendsStack,
-                        0,
-                        0,
-                        0,
-                        labelMargin,
-                        request,
-                        forceLabelsOn,
-                        forceLabelsOff,
-                        forceTitlesOff);
+        LegendMerger.MergeOptions options = LegendMerger.MergeOptions.createFromRequest(
+                legendsStack, 0, 0, 0, labelMargin, request, forceLabelsOn, forceLabelsOff, forceTitlesOff);
         if (ruleCount > 0) {
             BufferedImage image = LegendMerger.mergeLegends(applicableRules, request, options);
 
@@ -420,20 +387,19 @@ public class BufferedImageLegendGraphicBuilder extends LegendGraphicBuilder {
     public Symbolizer rescaleSymbolizer(Symbolizer symbolizer, double size, double newSize) {
         // perform a unit-less rescale
         double scaleFactor = newSize / size;
-        RescaleStyleVisitor rescaleVisitor =
-                new RescaleStyleVisitor(scaleFactor) {
-                    @Override
-                    protected Expression rescale(Expression expr) {
-                        if (expr == null) {
-                            return null;
-                        } else if (expr instanceof Literal) {
-                            Double value = expr.evaluate(null, Double.class);
-                            return ff.literal(value * scaleFactor);
-                        } else {
-                            return ff.multiply(expr, ff.literal(scaleFactor));
-                        }
-                    }
-                };
+        RescaleStyleVisitor rescaleVisitor = new RescaleStyleVisitor(scaleFactor) {
+            @Override
+            protected Expression rescale(Expression expr) {
+                if (expr == null) {
+                    return null;
+                } else if (expr instanceof Literal) {
+                    Double value = expr.evaluate(null, Double.class);
+                    return ff.literal(value * scaleFactor);
+                } else {
+                    return ff.multiply(expr, ff.literal(scaleFactor));
+                }
+            }
+        };
         symbolizer.accept(rescaleVisitor);
         symbolizer = (Symbolizer) rescaleVisitor.getCopy();
         return symbolizer;
@@ -450,11 +416,7 @@ public class BufferedImageLegendGraphicBuilder extends LegendGraphicBuilder {
      * @return image with the title
      */
     private BufferedImage getLayerTitle(
-            LegendRequest legend,
-            int w,
-            int h,
-            boolean transparent,
-            GetLegendGraphicRequest request) {
+            LegendRequest legend, int w, int h, boolean transparent, GetLegendGraphicRequest request) {
         String title = legend.getTitle();
         final BufferedImage image = ImageUtils.createImage(w, h, null, transparent);
         return LegendMerger.getRenderedLabel(image, title, request);
@@ -500,14 +462,9 @@ public class BufferedImageLegendGraphicBuilder extends LegendGraphicBuilder {
                 return image;
             }
 
-            image =
-                    rescaleBufferedImage(
-                            image,
-                            titleImage != null
-                                    ? titleImage
-                                    : getLayerTitle(legend, w, h, transparent, request));
-            final BufferedImage rescale =
-                    ImageUtils.createImage(image.getWidth(), image.getHeight(), null, true);
+            image = rescaleBufferedImage(
+                    image, titleImage != null ? titleImage : getLayerTitle(legend, w, h, transparent, request));
+            final BufferedImage rescale = ImageUtils.createImage(image.getWidth(), image.getHeight(), null, true);
 
             Graphics2D g = (Graphics2D) rescale.getGraphics();
             g.setColor(new Color(255, 255, 255, 0));
@@ -541,15 +498,13 @@ public class BufferedImageLegendGraphicBuilder extends LegendGraphicBuilder {
             boolean forceLabelsOn,
             boolean forceLabelsOff,
             boolean forceTitlesOff) {
-        LegendMerger.MergeOptions options =
-                LegendMerger.MergeOptions.createFromRequest(
-                        imageStack, 0, 0, 0, 0, req, forceLabelsOn, forceLabelsOff, forceTitlesOff);
+        LegendMerger.MergeOptions options = LegendMerger.MergeOptions.createFromRequest(
+                imageStack, 0, 0, 0, 0, req, forceLabelsOn, forceLabelsOff, forceTitlesOff);
         options.setLayout(LegendUtils.getGroupLayout(req));
         return LegendMerger.mergeGroups(rules, options);
     }
 
-    protected Rule[] updateRuleTitles(
-            FeatureCountProcessor processor, LegendRequest legend, Rule[] applicableRules) {
+    protected Rule[] updateRuleTitles(FeatureCountProcessor processor, LegendRequest legend, Rule[] applicableRules) {
         return processor.preProcessRules(legend, applicableRules);
     }
 
@@ -572,8 +527,7 @@ public class BufferedImageLegendGraphicBuilder extends LegendGraphicBuilder {
         if (result instanceof BufferedImage) return (BufferedImage) result;
         else {
             BufferedImage bufResult =
-                    new BufferedImage(
-                            image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                    new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
             Graphics g = bufResult.getGraphics();
             g.drawImage(result, 0, 0, null);
             g.dispose();

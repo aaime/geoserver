@@ -68,8 +68,7 @@ class CatalogInfoLookup<T extends CatalogInfo> {
     // contains LayerInfoImpl (extracted from the values) but the container is parameterized
     // by LayerInfo. I suppose it could be solved by having a mapping function going from class
     // to key class (LayerInfoImpl to LayerInfo) and use it consistently across the lookup?
-    protected <K> Map<K, T> getMapForValue(
-            ConcurrentHashMap<Class<T>, Map<K, T>> maps, Class<?> vc) {
+    protected <K> Map<K, T> getMapForValue(ConcurrentHashMap<Class<T>, Map<K, T>> maps, Class<?> vc) {
         Map<K, T> vcMap = maps.get(vc);
         if (vcMap == null) {
             @SuppressWarnings("unchecked")
@@ -235,10 +234,7 @@ class CatalogInfoLookup<T extends CatalogInfo> {
                             try {
                                 setter.invoke(v, catalog);
                             } catch (Exception e) {
-                                LOGGER.log(
-                                        Level.FINE,
-                                        "Failed to switch CatalogInfo to new catalog impl",
-                                        e);
+                                LOGGER.log(Level.FINE, "Failed to switch CatalogInfo to new catalog impl", e);
                             }
                         }
                     }

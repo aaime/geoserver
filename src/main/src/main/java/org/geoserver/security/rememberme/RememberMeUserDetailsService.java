@@ -53,8 +53,7 @@ public class RememberMeUserDetailsService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username)
-            throws UsernameNotFoundException, DataAccessException {
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
         Matcher m = TOKEN_PATTERN.matcher(username);
         if (!m.matches()) {
             throw new UsernameNotFoundException("No delimiter '@' found in username: " + username);

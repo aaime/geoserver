@@ -27,11 +27,9 @@ public class LanguageURLMangler implements URLMangler {
     private final Predicate<Object> filterEmtpyString = language -> !((String) language).isEmpty();
 
     @Override
-    public void mangleURL(
-            StringBuilder baseURL, StringBuilder path, Map<String, String> kvp, URLType type) {
+    public void mangleURL(StringBuilder baseURL, StringBuilder path, Map<String, String> kvp, URLType type) {
         if (URLType.SERVICE.equals(type)) {
-            processLanguageParam()
-                    .ifPresent(maybeLanguage -> kvp.put(LANGUAGE, (String) maybeLanguage));
+            processLanguageParam().ifPresent(maybeLanguage -> kvp.put(LANGUAGE, (String) maybeLanguage));
         }
     }
 
@@ -43,7 +41,8 @@ public class LanguageURLMangler implements URLMangler {
     protected Optional<Object> processLanguageParam() {
         return Optional.ofNullable(Dispatcher.REQUEST.get())
                 .map(Request::getRawKvp)
-                .map(rawKvp -> getLanguage(rawKvp).orElse(getAcceptLanguages(rawKvp).orElse("")))
+                .map(rawKvp ->
+                        getLanguage(rawKvp).orElse(getAcceptLanguages(rawKvp).orElse("")))
                 .filter(filterEmtpyString);
     }
 
@@ -66,10 +65,8 @@ public class LanguageURLMangler implements URLMangler {
      */
     protected Optional<String> getAcceptLanguages(Map<String, Object> rawKvp) {
         return Optional.ofNullable(rawKvp.get(ACCEPT_LANGUAGES))
-                .flatMap(
-                        value ->
-                                Arrays.stream(((String) value).split("[\\s,]+"))
-                                        .findFirst()
-                                        .filter(language -> !language.isEmpty()));
+                .flatMap(value -> Arrays.stream(((String) value).split("[\\s,]+"))
+                        .findFirst()
+                        .filter(language -> !language.isEmpty()));
     }
 }

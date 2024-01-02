@@ -35,8 +35,8 @@ import org.locationtech.jts.geom.Polygon;
  * @version $Id$
  */
 class SVGWriter extends OutputStreamWriter {
-    private static final Logger LOGGER =
-            org.geotools.util.logging.Logging.getLogger(SVGWriter.class.getPackage().getName());
+    private static final Logger LOGGER = org.geotools.util.logging.Logging.getLogger(
+            SVGWriter.class.getPackage().getName());
 
     /**
      * a number formatter setted up to write SVG legible numbers ('.' as decimal separator, no group
@@ -195,8 +195,7 @@ class SVGWriter extends OutputStreamWriter {
         super.write('\n');
     }
 
-    public void writeFeatures(
-            SimpleFeatureType featureType, SimpleFeatureIterator reader, String style)
+    public void writeFeatures(SimpleFeatureType featureType, SimpleFeatureIterator reader, String style)
             throws IOException {
         SimpleFeature ft;
 
@@ -235,8 +234,7 @@ class SVGWriter extends OutputStreamWriter {
         }
     }
 
-    private void setUpWriterHandler(SimpleFeatureType featureType, boolean doCollect)
-            throws IOException {
+    private void setUpWriterHandler(SimpleFeatureType featureType, boolean doCollect) throws IOException {
         if (doCollect) {
             this.writerHandler = new CollectSVGHandler(featureWriter);
             LOGGER.finer("Established a collecting features writer handler");
@@ -277,28 +275,23 @@ class SVGWriter extends OutputStreamWriter {
     }
 
     public class SVGFeatureWriterHandler {
-        public void startFeature(SVGFeatureWriter featureWriter, SimpleFeature ft)
-                throws IOException {
+        public void startFeature(SVGFeatureWriter featureWriter, SimpleFeature ft) throws IOException {
             featureWriter.startElement(ft);
         }
 
-        public void endFeature(SVGFeatureWriter featureWriter, SimpleFeature ft)
-                throws IOException {
+        public void endFeature(SVGFeatureWriter featureWriter, SimpleFeature ft) throws IOException {
             featureWriter.endElement(ft);
         }
 
-        public void startGeometry(SVGFeatureWriter featureWriter, SimpleFeature ft)
-                throws IOException {
+        public void startGeometry(SVGFeatureWriter featureWriter, SimpleFeature ft) throws IOException {
             featureWriter.startGeometry((Geometry) ft.getDefaultGeometry());
         }
 
-        public void writeGeometry(SVGFeatureWriter featureWriter, SimpleFeature ft)
-                throws IOException {
+        public void writeGeometry(SVGFeatureWriter featureWriter, SimpleFeature ft) throws IOException {
             featureWriter.writeGeometry((Geometry) ft.getDefaultGeometry());
         }
 
-        public void endGeometry(SVGFeatureWriter featureWriter, SimpleFeature ft)
-                throws IOException {
+        public void endGeometry(SVGFeatureWriter featureWriter, SimpleFeature ft) throws IOException {
             featureWriter.endGeometry((Geometry) ft.getDefaultGeometry());
         }
     }
@@ -329,8 +322,7 @@ class SVGWriter extends OutputStreamWriter {
         }
 
         @Override
-        public void startFeature(SVGFeatureWriter featureWriter, SimpleFeature ft)
-                throws IOException {
+        public void startFeature(SVGFeatureWriter featureWriter, SimpleFeature ft) throws IOException {
             handler.startFeature(featureWriter, ft);
             write(" id=\"");
 
@@ -355,8 +347,7 @@ class SVGWriter extends OutputStreamWriter {
         }
 
         @Override
-        public void startFeature(SVGFeatureWriter featureWriter, SimpleFeature ft)
-                throws IOException {
+        public void startFeature(SVGFeatureWriter featureWriter, SimpleFeature ft) throws IOException {
             handler.startFeature(featureWriter, ft);
 
             Geometry geom = (Geometry) ft.getDefaultGeometry();
@@ -383,8 +374,7 @@ class SVGWriter extends OutputStreamWriter {
         }
 
         @Override
-        public void startFeature(SVGFeatureWriter featureWriter, SimpleFeature ft)
-                throws IOException {
+        public void startFeature(SVGFeatureWriter featureWriter, SimpleFeature ft) throws IOException {
             handler.startFeature(featureWriter, ft);
 
             SimpleFeatureType type = ft.getFeatureType();

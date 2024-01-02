@@ -32,8 +32,7 @@ public class RenderingTimeoutEnforcer {
         this(timeout, renderer, graphics, false);
     }
 
-    public RenderingTimeoutEnforcer(
-            long timeout, GTRenderer renderer, Graphics graphics, boolean saveMap) {
+    public RenderingTimeoutEnforcer(long timeout, GTRenderer renderer, Graphics graphics, boolean saveMap) {
         this.timeout = timeout;
         this.renderer = renderer;
         this.graphics = graphics;
@@ -48,8 +47,7 @@ public class RenderingTimeoutEnforcer {
 
     /** Starts checking the rendering timeout (if timeout is positive, does nothing otherwise) */
     public void start() {
-        if (timer != null)
-            throw new IllegalStateException("The timeout enforcer has already been started");
+        if (timer != null) throw new IllegalStateException("The timeout enforcer has already been started");
 
         if (timeout > 0) {
             timedOut = false;

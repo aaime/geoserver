@@ -132,11 +132,9 @@ public class CascadeDeleteVisitor implements CatalogVisitor {
 
         // uses contains instead of equals predicate because the result of the PropertyName
         // is a List of List and would cause the filter to fail the test.
-        Filter groupStyleContainsLayer =
-                Predicates.contains("layerGroupStyle.layers.id", layer.getId());
+        Filter groupStyleContainsLayer = Predicates.contains("layerGroupStyle.layers.id", layer.getId());
         Filter orFilter = Predicates.or(groupContainsLayer, groupStyleContainsLayer);
-        try (CloseableIterator<LayerGroupInfo> groups =
-                catalog.list(LayerGroupInfo.class, orFilter)) {
+        try (CloseableIterator<LayerGroupInfo> groups = catalog.list(LayerGroupInfo.class, orFilter)) {
             while (groups.hasNext()) {
                 LayerGroupInfo group = groups.next();
 
@@ -199,10 +197,9 @@ public class CascadeDeleteVisitor implements CatalogVisitor {
                 toRemove.add(gs.getId());
             }
         }
-        List<LayerGroupStyle> groupStyleList =
-                group.getLayerGroupStyles().stream()
-                        .filter(lgs -> !toRemove.contains(lgs.getId()))
-                        .collect(Collectors.toList());
+        List<LayerGroupStyle> groupStyleList = group.getLayerGroupStyles().stream()
+                .filter(lgs -> !toRemove.contains(lgs.getId()))
+                .collect(Collectors.toList());
         group.setLayerGroupStyles(groupStyleList);
     }
 
@@ -214,9 +211,7 @@ public class CascadeDeleteVisitor implements CatalogVisitor {
             // we fall back on the default style (since we cannot roll back the
             // entire operation, no transactions in the catalog)
             LOGGER.log(
-                    Level.WARNING,
-                    "Could not find default style for resource " + resource + ", using Point style",
-                    e);
+                    Level.WARNING, "Could not find default style for resource " + resource + ", using Point style", e);
         }
 
         if (style == null || style.equals(removedStyle)) {
@@ -260,8 +255,7 @@ public class CascadeDeleteVisitor implements CatalogVisitor {
 
         // root layer style
         if (style.equals(group.getRootLayerStyle())) {
-            group.setRootLayerStyle(
-                    getResourceDefaultStyle(group.getRootLayer().getResource(), style));
+            group.setRootLayerStyle(getResourceDefaultStyle(group.getRootLayer().getResource(), style));
             dirty = true;
         }
 
@@ -315,8 +309,7 @@ public class CascadeDeleteVisitor implements CatalogVisitor {
     public void visit(StyleInfo style) {
         // find the layers having this style as primary or secondary
         Filter anyStyle = Predicates.equal("styles.id", style.getId(), MatchAction.ANY);
-        Filter layersAssociated =
-                Predicates.or(Predicates.equal("defaultStyle.id", style.getId()), anyStyle);
+        Filter layersAssociated = Predicates.or(Predicates.equal("defaultStyle.id", style.getId()), anyStyle);
 
         // remove style references in layers
         try (CloseableIterator<LayerInfo> it = catalog.list(LayerInfo.class, layersAssociated)) {
@@ -327,16 +320,13 @@ public class CascadeDeleteVisitor implements CatalogVisitor {
         }
         // groups can also refer to style, reset each reference to the
         // associated layer default style
-        Filter groupAssociated =
-                Predicates.or(Predicates.equal("rootLayerStyle.id", style.getId()), anyStyle);
+        Filter groupAssociated = Predicates.or(Predicates.equal("rootLayerStyle.id", style.getId()), anyStyle);
 
         // uses contains instead of equals predicate because the result of the PropertyName
         // is a List of List and would cause the filter to fail the test.
-        Filter groupStylesAssociated =
-                Predicates.contains("layerGroupStyles.styles.id", style.getId());
+        Filter groupStylesAssociated = Predicates.contains("layerGroupStyles.styles.id", style.getId());
         Filter allAssociated = Predicates.or(groupAssociated, groupStylesAssociated);
-        try (CloseableIterator<LayerGroupInfo> it =
-                catalog.list(LayerGroupInfo.class, allAssociated)) {
+        try (CloseableIterator<LayerGroupInfo> it = catalog.list(LayerGroupInfo.class, allAssociated)) {
             while (it.hasNext()) {
                 LayerGroupInfo group = it.next();
                 removeStyleInLayerGroup(group, style);
@@ -350,10 +340,8 @@ public class CascadeDeleteVisitor implements CatalogVisitor {
     @Override
     public void visit(LayerGroupInfo layerGroupToRemove) {
         // remove layerGroupToRemove references from other groups
-        Filter associatedTo =
-                Predicates.equal("layers.id", layerGroupToRemove.getId(), MatchAction.ANY);
-        Filter stylesAssociated =
-                Predicates.equal("layerGroupStyles.layers.id", layerGroupToRemove.getId());
+        Filter associatedTo = Predicates.equal("layers.id", layerGroupToRemove.getId(), MatchAction.ANY);
+        Filter stylesAssociated = Predicates.equal("layerGroupStyles.layers.id", layerGroupToRemove.getId());
         Filter or = Predicates.or(associatedTo, stylesAssociated);
         try (CloseableIterator<LayerGroupInfo> it = catalog.list(LayerGroupInfo.class, or)) {
             while (it.hasNext()) {

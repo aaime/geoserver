@@ -17,8 +17,7 @@ import org.geoserver.security.impl.ReadOnlyUGService;
  * @author Justin Deoliveira, OpenGeo
  */
 public class ReadOnlyUserGroupServicePanelInfo
-        extends UserGroupServicePanelInfo<
-                MemoryUserGroupServiceConfigImpl, ReadOnlyUserGroupServicePanel> {
+        extends UserGroupServicePanelInfo<MemoryUserGroupServiceConfigImpl, ReadOnlyUserGroupServicePanel> {
 
     public ReadOnlyUserGroupServicePanelInfo() {
         setComponentClass(ReadOnlyUserGroupServicePanel.class);

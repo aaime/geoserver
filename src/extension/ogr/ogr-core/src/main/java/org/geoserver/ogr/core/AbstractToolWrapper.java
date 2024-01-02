@@ -51,11 +51,7 @@ public abstract class AbstractToolWrapper implements ToolWrapper {
 
     @Override
     public File convert(
-            File inputData,
-            File outputDirectory,
-            String typeName,
-            Format format,
-            CoordinateReferenceSystem crs)
+            File inputData, File outputDirectory, String typeName, Format format, CoordinateReferenceSystem crs)
             throws IOException, InterruptedException {
         // build the command line
         List<String> cmd = new ArrayList<>();
@@ -87,14 +83,13 @@ public abstract class AbstractToolWrapper implements ToolWrapper {
         }
 
         if (exitCode != 0)
-            throw new IOException(
-                    executable
-                            + " did not terminate successfully, exit code "
-                            + exitCode
-                            + ". Was trying to run: "
-                            + cmd
-                            + "\nResulted in:\n"
-                            + sb);
+            throw new IOException(executable
+                    + " did not terminate successfully, exit code "
+                    + exitCode
+                    + ". Was trying to run: "
+                    + cmd
+                    + "\nResulted in:\n"
+                    + sb);
 
         // output may be a directory, handle that case gracefully
         File output = new File(outputDirectory, outFileName);
@@ -121,11 +116,7 @@ public abstract class AbstractToolWrapper implements ToolWrapper {
      * @return the name of the (main) output file
      */
     protected String setInputOutput(
-            List<String> cmd,
-            File inputData,
-            File outputDirectory,
-            String typeName,
-            Format format) {
+            List<String> cmd, File inputData, File outputDirectory, String typeName, Format format) {
         String outFileName = typeName;
 
         if (format.getFileExtension() != null) outFileName += format.getFileExtension();
@@ -145,8 +136,7 @@ public abstract class AbstractToolWrapper implements ToolWrapper {
      *
      * @return the temp file containing the CRS definition in WKT format
      */
-    protected static File dumpCrs(File parentDir, CoordinateReferenceSystem crs)
-            throws IOException {
+    protected static File dumpCrs(File parentDir, CoordinateReferenceSystem crs) throws IOException {
         File crsFile = null;
         if (crs != null) {
             // we don't use an EPSG code since there is no guarantee we'll be able to reverse
@@ -211,8 +201,7 @@ public abstract class AbstractToolWrapper implements ToolWrapper {
         if (environment != null) builder.environment().putAll(environment);
         builder.redirectErrorStream(true);
         Process p = builder.start();
-        try (BufferedReader reader =
-                new BufferedReader(new InputStreamReader(p.getInputStream()))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
             String line = null;
             while ((line = reader.readLine()) != null) {
                 if (sb != null) {

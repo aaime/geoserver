@@ -118,8 +118,7 @@ final class ROIManager {
      * @param targetCRS a valid instance of {@link CoordinateReferenceSystem}
      * @throws IOException in case something bad happens.
      */
-    public void useTargetCRS(final CoordinateReferenceSystem targetCRS)
-            throws IOException, FactoryException {
+    public void useTargetCRS(final CoordinateReferenceSystem targetCRS) throws IOException, FactoryException {
         if (targetCRS == null) {
             throw new IllegalArgumentException("The provided targetCRS is null");
         }
@@ -145,9 +144,7 @@ final class ROIManager {
 
             // Back to the minimal roiInTargetCrs for future clipping if needed.
             roiInTargetCRS =
-                    roiCrsEqualsTargetCrs
-                            ? originalRoi
-                            : DownloadUtilities.transformGeometry(originalRoi, targetCRS);
+                    roiCrsEqualsTargetCrs ? originalRoi : DownloadUtilities.transformGeometry(originalRoi, targetCRS);
 
             // touch safeRoiInNativeCRS
             safeRoiInNativeCRS = DownloadUtilities.transformGeometry(safeRoiInTargetCRS, nativeCRS);

@@ -23,8 +23,7 @@ public abstract class LiveCollectionModel<S, T extends Collection<S>> implements
     IModel<? extends Collection<S>> wrapped;
 
     public LiveCollectionModel(IModel<? extends Collection<S>> wrapped) {
-        if (wrapped == null)
-            throw new NullPointerException("Live list model cannot wrap a null model");
+        if (wrapped == null) throw new NullPointerException("Live list model cannot wrap a null model");
         this.wrapped = wrapped;
     }
 
@@ -43,8 +42,7 @@ public abstract class LiveCollectionModel<S, T extends Collection<S>> implements
     }
 
     /** Returns a model for live lists */
-    public static <S> LiveCollectionModel<S, List<S>> list(
-            IModel<? extends Collection<S>> wrapped) {
+    public static <S> LiveCollectionModel<S, List<S>> list(IModel<? extends Collection<S>> wrapped) {
         return new LiveCollectionModel<S, List<S>>(wrapped) {
 
             private static final long serialVersionUID = 3182237972594668864L;

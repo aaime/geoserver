@@ -40,8 +40,7 @@ public class DateField extends DateTextField {
      * @param dateTimeSep the character separating date and time in the format. Will be ignored if
      *     only date format is used.
      */
-    public DateField(
-            String id, IModel<Date> model, boolean dateTime, String format, String dateTimeSep) {
+    public DateField(String id, IModel<Date> model, boolean dateTime, String format, String dateTimeSep) {
         super(id, model);
         this.dateTime = dateTime;
         this.dateTimeSep = dateTimeSep == null ? " " : dateTimeSep;
@@ -50,16 +49,15 @@ public class DateField extends DateTextField {
             else format = DEF_DATE_FORMAT;
         }
         this.format = format;
-        this.dateConverter =
-                new DateConverter() {
-                    @Override
-                    public DateFormat getDateFormat(Locale locale) {
-                        if (locale == null) {
-                            locale = Locale.getDefault(Locale.Category.FORMAT);
-                        }
-                        return new SimpleDateFormat(DateField.this.format, locale);
-                    }
-                };
+        this.dateConverter = new DateConverter() {
+            @Override
+            public DateFormat getDateFormat(Locale locale) {
+                if (locale == null) {
+                    locale = Locale.getDefault(Locale.Category.FORMAT);
+                }
+                return new SimpleDateFormat(DateField.this.format, locale);
+            }
+        };
     }
 
     /**
@@ -91,36 +89,20 @@ public class DateField extends DateTextField {
         // if component is disabled we don't have to load the JQueryUI datepicker
         if (!isEnabledInHierarchy()) return;
         // add bundled JQuery
-        JavaScriptLibrarySettings javaScriptSettings =
-                getApplication().getJavaScriptLibrarySettings();
+        JavaScriptLibrarySettings javaScriptSettings = getApplication().getJavaScriptLibrarySettings();
         response.render(JavaScriptHeaderItem.forReference(javaScriptSettings.getJQueryReference()));
         // add package resources
-        response.render(
-                JavaScriptHeaderItem.forReference(
-                        new PackageResourceReference(getClass(), "js/datepicker/moment.min.js")));
-        response.render(
-                JavaScriptHeaderItem.forReference(
-                        new PackageResourceReference(
-                                getClass(), "js/datepicker/jquery.datetimepicker.full.min.js")));
-        response.render(
-                CssHeaderItem.forReference(
-                        new PackageResourceReference(
-                                getClass(), "js/datepicker/jquery.datetimepicker.min.css")));
+        response.render(JavaScriptHeaderItem.forReference(
+                new PackageResourceReference(getClass(), "js/datepicker/moment.min.js")));
+        response.render(JavaScriptHeaderItem.forReference(
+                new PackageResourceReference(getClass(), "js/datepicker/jquery.datetimepicker.full.min.js")));
+        response.render(CssHeaderItem.forReference(
+                new PackageResourceReference(getClass(), "js/datepicker/jquery.datetimepicker.min.css")));
         // add custom file JQDatePicker.js. Reference JQDatePickerRef is a static field
-        response.render(
-                JavaScriptHeaderItem.forReference(
-                        new PackageResourceReference(getClass(), "DatePicker.js")));
+        response.render(JavaScriptHeaderItem.forReference(new PackageResourceReference(getClass(), "DatePicker.js")));
 
         String initScript =
-                ";initJQDatepicker('"
-                        + getMarkupId()
-                        + "',"
-                        + dateTime
-                        + ",'"
-                        + format
-                        + "','"
-                        + dateTimeSep
-                        + "');";
+                ";initJQDatepicker('" + getMarkupId() + "'," + dateTime + ",'" + format + "','" + dateTimeSep + "');";
         response.render(OnLoadHeaderItem.forScript(initScript));
     }
 }

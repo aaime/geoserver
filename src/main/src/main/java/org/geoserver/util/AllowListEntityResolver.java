@@ -72,18 +72,10 @@ public class AllowListEntityResolver implements EntityResolver2, Serializable {
     public AllowListEntityResolver(GeoServer geoServer, String baseURL) {
         this.geoServer = geoServer;
         this.baseURL = baseURL;
-        if (EntityResolverProvider.ALLOW_LIST == null
-                || EntityResolverProvider.ALLOW_LIST.length == 0) {
+        if (EntityResolverProvider.ALLOW_LIST == null || EntityResolverProvider.ALLOW_LIST.length == 0) {
             // Restrict using the built-in allow list
             ALLOWED_URIS =
-                    Pattern.compile(
-                            "(?i)(http|https)://("
-                                    + W3C
-                                    + "|"
-                                    + OGC
-                                    + "|"
-                                    + INSPIRE
-                                    + ")/[^?#;]*\\.xsd");
+                    Pattern.compile("(?i)(http|https)://(" + W3C + "|" + OGC + "|" + INSPIRE + ")/[^?#;]*\\.xsd");
         } else {
             StringBuilder pattern = new StringBuilder("(?i)(http|https)://(");
             pattern.append(W3C).append('|');
@@ -101,14 +93,12 @@ public class AllowListEntityResolver implements EntityResolver2, Serializable {
     }
 
     @Override
-    public InputSource resolveEntity(String publicId, String systemId)
-            throws SAXException, IOException {
+    public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
         return resolveEntity(null, publicId, null, systemId);
     }
 
     @Override
-    public InputSource getExternalSubset(String name, String baseURI)
-            throws SAXException, IOException {
+    public InputSource getExternalSubset(String name, String baseURI) throws SAXException, IOException {
         return resolveEntity(name, null, baseURI, null);
     }
 
@@ -116,10 +106,9 @@ public class AllowListEntityResolver implements EntityResolver2, Serializable {
     public InputSource resolveEntity(String name, String publicId, String baseURI, String systemId)
             throws SAXException, IOException {
         if (LOGGER.isLoggable(Level.FINEST)) {
-            LOGGER.finest(
-                    String.format(
-                            "resolveEntity request: name=%s, publicId=%s, baseURI=%s, systemId=%s",
-                            name, publicId, baseURI, systemId));
+            LOGGER.finest(String.format(
+                    "resolveEntity request: name=%s, publicId=%s, baseURI=%s, systemId=%s",
+                    name, publicId, baseURI, systemId));
         }
 
         try {
@@ -131,8 +120,7 @@ public class AllowListEntityResolver implements EntityResolver2, Serializable {
                 if (baseURI == null) {
                     throw new SAXException(ERROR_MESSAGE_BASE + systemId);
                 }
-                if ((baseURI.endsWith(".xsd") || baseURI.endsWith(".XSD"))
-                        && baseURI.lastIndexOf('/') != -1) {
+                if ((baseURI.endsWith(".xsd") || baseURI.endsWith(".XSD")) && baseURI.lastIndexOf('/') != -1) {
                     uri = baseURI.substring(0, baseURI.lastIndexOf('/')) + '/' + systemId;
                 } else {
                     uri = baseURI + '/' + systemId;

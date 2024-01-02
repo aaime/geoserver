@@ -47,8 +47,7 @@ final class BalancedRequestTester implements DispatcherCallback {
     }
 
     @Override
-    public Response responseDispatched(
-            Request request, Operation operation, Object result, Response response) {
+    public Response responseDispatched(Request request, Operation operation, Object result, Response response) {
         assertEquals(request, requestStack.peek());
         return response;
     }

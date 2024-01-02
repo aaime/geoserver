@@ -29,8 +29,7 @@ public class WCSStorageCleaner extends TimerTask {
     public void run() {
         try {
             // first check that temp/wcs is really there in the data dir
-            GeoServerResourceLoader loader =
-                    GeoServerExtensions.bean(GeoServerResourceLoader.class);
+            GeoServerResourceLoader loader = GeoServerExtensions.bean(GeoServerResourceLoader.class);
             Resource wcs = loader.get("temp/wcs");
 
             if (wcs.getType() != Type.DIRECTORY) {
@@ -46,9 +45,7 @@ public class WCSStorageCleaner extends TimerTask {
             }
         } catch (Exception e) {
             LOGGER.log(
-                    Level.WARNING,
-                    "Error occurred while trying to clean up " + "old coverages from temp storage",
-                    e);
+                    Level.WARNING, "Error occurred while trying to clean up " + "old coverages from temp storage", e);
         }
     }
 

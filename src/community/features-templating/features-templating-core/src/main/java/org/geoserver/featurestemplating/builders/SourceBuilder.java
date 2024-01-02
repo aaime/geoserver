@@ -100,9 +100,11 @@ public abstract class SourceBuilder extends AbstractTemplateBuilder {
     public String getStrSource() {
         if (source == null) return null;
 
-        if (source instanceof AttributeExpressionImpl)
-            return ((AttributeExpressionImpl) source).getPropertyName();
-        else return Optional.ofNullable(source.evaluate(null)).map(o -> o.toString()).orElse(null);
+        if (source instanceof AttributeExpressionImpl) return ((AttributeExpressionImpl) source).getPropertyName();
+        else
+            return Optional.ofNullable(source.evaluate(null))
+                    .map(o -> o.toString())
+                    .orElse(null);
     }
 
     /**
@@ -114,8 +116,7 @@ public abstract class SourceBuilder extends AbstractTemplateBuilder {
         TemplateCQLManager cqlManager = new TemplateCQLManager(source, namespaces);
         Expression sourceExpr = cqlManager.getExpressionFromString();
         if (sourceExpr instanceof Literal)
-            this.source =
-                    new AttributeExpressionImpl(sourceExpr.evaluate(null).toString(), namespaces);
+            this.source = new AttributeExpressionImpl(sourceExpr.evaluate(null).toString(), namespaces);
         else this.source = sourceExpr;
     }
 

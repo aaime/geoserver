@@ -44,8 +44,7 @@ public class TreeSetConverter extends CollectionConverter {
     }
 
     @Override
-    public void marshal(
-            Object source, HierarchicalStreamWriter writer, MarshallingContext context) {
+    public void marshal(Object source, HierarchicalStreamWriter writer, MarshallingContext context) {
         SortedSet sortedSet = (SortedSet) source;
         TreeMapConverter.marshalComparator(mapper(), sortedSet.comparator(), writer, context);
         super.marshal(source, writer, context);
@@ -54,8 +53,7 @@ public class TreeSetConverter extends CollectionConverter {
     @Override
     @SuppressWarnings("unchecked")
     public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
-        Comparator unmarshalledComparator =
-                TreeMapConverter.unmarshalComparator(mapper(), reader, context, null);
+        Comparator unmarshalledComparator = TreeMapConverter.unmarshalComparator(mapper(), reader, context, null);
         boolean inFirstElement = unmarshalledComparator instanceof Mapper.Null;
         Comparator comparator = inFirstElement ? null : unmarshalledComparator;
         final PresortedSet set = new PresortedSet(comparator);

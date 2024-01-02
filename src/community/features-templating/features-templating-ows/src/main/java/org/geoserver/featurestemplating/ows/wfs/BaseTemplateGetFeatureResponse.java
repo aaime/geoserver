@@ -41,8 +41,7 @@ public abstract class BaseTemplateGetFeatureResponse extends WFSGetFeatureOutput
 
     protected boolean hasGeometry;
 
-    public BaseTemplateGetFeatureResponse(
-            GeoServer gs, TemplateLoader configuration, TemplateIdentifier identifier) {
+    public BaseTemplateGetFeatureResponse(GeoServer gs, TemplateLoader configuration, TemplateIdentifier identifier) {
         super(gs, identifier.getOutputFormat());
         this.configuration = configuration;
         this.helper = new TemplateGetFeatureResponseHelper(gs.getCatalog(), identifier);
@@ -50,8 +49,7 @@ public abstract class BaseTemplateGetFeatureResponse extends WFSGetFeatureOutput
     }
 
     @Override
-    protected void write(
-            FeatureCollectionResponse featureCollection, OutputStream output, Operation getFeature)
+    protected void write(FeatureCollectionResponse featureCollection, OutputStream output, Operation getFeature)
             throws ServiceException {
 
         try (TemplateOutputWriter writer = helper.getOutputWriter(output)) {
@@ -73,9 +71,7 @@ public abstract class BaseTemplateGetFeatureResponse extends WFSGetFeatureOutput
      * @throws ExecutionException
      */
     protected void iterateFeatureCollection(
-            TemplateOutputWriter writer,
-            FeatureCollectionResponse featureCollection,
-            Operation operation)
+            TemplateOutputWriter writer, FeatureCollectionResponse featureCollection, Operation operation)
             throws IOException, ExecutionException {
         List<FeatureCollection> collectionList = featureCollection.getFeature();
 
@@ -87,8 +83,7 @@ public abstract class BaseTemplateGetFeatureResponse extends WFSGetFeatureOutput
         }
     }
 
-    protected void iterateFeatureCollection(
-            TemplateOutputWriter writer, FeatureCollectionResponse featureCollection)
+    protected void iterateFeatureCollection(TemplateOutputWriter writer, FeatureCollectionResponse featureCollection)
             throws IOException, ExecutionException {
         iterateFeatureCollection(writer, featureCollection, null);
     }
@@ -101,8 +96,7 @@ public abstract class BaseTemplateGetFeatureResponse extends WFSGetFeatureOutput
      * @param collection the feature collection to be evaluated
      * @throws IOException
      */
-    protected void iterateFeatures(
-            RootBuilder rootBuilder, TemplateOutputWriter writer, FeatureCollection collection)
+    protected void iterateFeatures(RootBuilder rootBuilder, TemplateOutputWriter writer, FeatureCollection collection)
             throws IOException {
         FeatureIterator iterator = collection.features();
         try {
@@ -134,8 +128,7 @@ public abstract class BaseTemplateGetFeatureResponse extends WFSGetFeatureOutput
      * @param root the current RootBuilder
      * @param feature the feature being evaluated by the builders' tree
      */
-    protected void beforeEvaluation(TemplateOutputWriter writer, RootBuilder root, Feature feature)
-            throws IOException {
+    protected void beforeEvaluation(TemplateOutputWriter writer, RootBuilder root, Feature feature) throws IOException {
         writer.incrementNumberReturned();
         if (!hasGeometry) {
             GeometryDescriptor descriptor = feature.getType().getGeometryDescriptor();
@@ -143,8 +136,7 @@ public abstract class BaseTemplateGetFeatureResponse extends WFSGetFeatureOutput
                 Property geometry = feature.getProperty(descriptor.getName());
                 hasGeometry = geometry != null;
                 if (writer.getCrs() == null) {
-                    CoordinateReferenceSystem featureCrs =
-                            descriptor.getCoordinateReferenceSystem();
+                    CoordinateReferenceSystem featureCrs = descriptor.getCoordinateReferenceSystem();
                     writer.setCrs(featureCrs);
                     writer.setAxisOrder(CRS.getAxisOrder(featureCrs));
                 }
@@ -152,8 +144,7 @@ public abstract class BaseTemplateGetFeatureResponse extends WFSGetFeatureOutput
         }
     }
 
-    protected void afterEvaluation(TemplateOutputWriter writer, RootBuilder root, Feature feature)
-            throws IOException {}
+    protected void afterEvaluation(TemplateOutputWriter writer, RootBuilder root, Feature feature) throws IOException {}
 
     /**
      * Method that trigger the encoding of a FeatureCollection additional infos like numberReturned,
@@ -166,21 +157,16 @@ public abstract class BaseTemplateGetFeatureResponse extends WFSGetFeatureOutput
      * @throws IOException
      */
     protected void writeAdditionalFields(
-            TemplateOutputWriter writer,
-            FeatureCollectionResponse featureCollection,
-            Operation getFeature)
+            TemplateOutputWriter writer, FeatureCollectionResponse featureCollection, Operation getFeature)
             throws IOException {
         BigInteger totalNumberOfFeatures = featureCollection.getTotalNumberOfFeatures();
         BigInteger featureCount =
-                (totalNumberOfFeatures != null && totalNumberOfFeatures.longValue() < 0)
-                        ? null
-                        : totalNumberOfFeatures;
+                (totalNumberOfFeatures != null && totalNumberOfFeatures.longValue() < 0) ? null : totalNumberOfFeatures;
         boolean isFeatureBounding = getInfo().isFeatureBounding();
 
         ReferencedEnvelope featuresBounds =
                 getBoundsFromFeatureCollections(featureCollection.getFeature(), isFeatureBounding);
-        writeAdditionalFieldsInternal(
-                writer, featureCollection, getFeature, featureCount, featuresBounds);
+        writeAdditionalFieldsInternal(writer, featureCollection, getFeature, featureCount, featuresBounds);
     }
 
     private ReferencedEnvelope getBoundsFromFeatureCollections(

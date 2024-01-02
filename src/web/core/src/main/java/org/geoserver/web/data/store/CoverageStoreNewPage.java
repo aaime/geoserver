@@ -72,10 +72,7 @@ public class CoverageStoreNewPage extends AbstractCoverageStorePage {
     }
 
     protected void onSuccessfulSave(
-            final CoverageStoreInfo info,
-            final Catalog catalog,
-            CoverageStoreInfo savedStore,
-            boolean doReturn) {
+            final CoverageStoreInfo info, final Catalog catalog, CoverageStoreInfo savedStore, boolean doReturn) {
         if (doReturn) {
             // the StoreInfo save succeeded... try to present the list of coverages (well, _the_
             // coverage while the getotools coverage api does not allow for more than one
@@ -85,10 +82,7 @@ public class CoverageStoreNewPage extends AbstractCoverageStorePage {
                 // The ID is assigned by the catalog and therefore cannot be cloned
                 layerChooserPage = new NewLayerPage(savedStore.getId());
             } catch (RuntimeException e) {
-                LOGGER.log(
-                        Level.INFO,
-                        "Getting list of coverages for saved store " + info.getURL(),
-                        e);
+                LOGGER.log(Level.INFO, "Getting list of coverages for saved store " + info.getURL(), e);
                 // doh, can't present the list of coverages, means saving the StoreInfo is
                 // meaningless.
                 try { // be extra cautious

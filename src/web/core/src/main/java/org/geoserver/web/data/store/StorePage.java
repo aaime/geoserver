@@ -32,14 +32,13 @@ public class StorePage extends GeoServerSecuredPage {
 
     public StorePage() {
         // the table, and wire up selection change
-        table =
-                new StorePanel("table", provider, true) {
-                    @Override
-                    protected void onSelectionUpdate(AjaxRequestTarget target) {
-                        removal.setEnabled(table.getSelection().size() > 0);
-                        target.add(removal);
-                    }
-                };
+        table = new StorePanel("table", provider, true) {
+            @Override
+            protected void onSelectionUpdate(AjaxRequestTarget target) {
+                removal.setEnabled(table.getSelection().size() > 0);
+                target.add(removal);
+            }
+        };
         table.setOutputMarkupId(true);
         add(table);
 

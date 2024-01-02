@@ -52,22 +52,15 @@ public class ImagesCollectionDocument extends AbstractCollectionDocument<Coverag
         addSelfLinks("ogc/images/v1/collections/" + id);
 
         // add links to the images resource
-        Collection<MediaType> imagesFormats =
-                APIRequestInfo.get().getProducibleMediaTypes(ImagesResponse.class, true);
+        Collection<MediaType> imagesFormats = APIRequestInfo.get().getProducibleMediaTypes(ImagesResponse.class, true);
         for (MediaType format : imagesFormats) {
-            String metadataURL =
-                    buildURL(
-                            baseURL,
-                            "ogc/images/v1/collections/" + ResponseUtils.urlEncode(id) + "/images",
-                            Collections.singletonMap("f", format.toString()),
-                            URLMangler.URLType.SERVICE);
+            String metadataURL = buildURL(
+                    baseURL,
+                    "ogc/images/v1/collections/" + ResponseUtils.urlEncode(id) + "/images",
+                    Collections.singletonMap("f", format.toString()),
+                    URLMangler.URLType.SERVICE);
 
-            Link link =
-                    new Link(
-                            metadataURL,
-                            "images",
-                            format.toString(),
-                            "The images metadata as " + format);
+            Link link = new Link(metadataURL, "images", format.toString(), "The images metadata as " + format);
             addLink(link);
         }
     }

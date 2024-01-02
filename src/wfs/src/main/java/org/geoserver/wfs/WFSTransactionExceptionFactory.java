@@ -27,8 +27,7 @@ class WFSTransactionExceptionFactory {
         this.settings = settings;
     }
 
-    public WFSTransactionException newWFSTransactionException(
-            final String errorMessage, final Throwable cause) {
+    public WFSTransactionException newWFSTransactionException(final String errorMessage, final Throwable cause) {
         return new WFSTransactionException(getFinalMessage(errorMessage, cause), cause);
     }
 
@@ -43,8 +42,7 @@ class WFSTransactionExceptionFactory {
             final String code,
             final String locator,
             final String handle) {
-        return new WFSTransactionException(
-                getFinalMessage(errorMessage, cause), cause, code, locator, handle);
+        return new WFSTransactionException(getFinalMessage(errorMessage, cause), cause, code, locator, handle);
     }
 
     private String getFinalMessage(final String errorMessage, final Throwable cause) {
@@ -57,8 +55,7 @@ class WFSTransactionExceptionFactory {
         return finalMessage;
     }
 
-    private String decorateMessageWithUnderlyingCause(
-            final String errorMessage, final Throwable cause) {
+    private String decorateMessageWithUnderlyingCause(final String errorMessage, final Throwable cause) {
         if (errorMessage == null || cause == null) {
             return errorMessage;
         }

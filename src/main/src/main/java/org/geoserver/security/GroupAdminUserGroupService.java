@@ -76,10 +76,8 @@ public class GroupAdminUserGroupService extends AuthorizingUserGroupService {
 
         for (GeoServerUserGroup userGroup : userGroups) {
             if (!groups.contains(userGroup.getGroupname())) {
-                String msg =
-                        new UserGroupServiceException(
-                                        USER_IN_OTHER_GROUP_NOT_MODIFIABLE_$1, new Object[] {user})
-                                .getMessage();
+                String msg = new UserGroupServiceException(USER_IN_OTHER_GROUP_NOT_MODIFIABLE_$1, new Object[] {user})
+                        .getMessage();
                 throw new IOException(msg);
             }
         }

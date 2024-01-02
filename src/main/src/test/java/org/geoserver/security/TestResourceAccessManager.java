@@ -31,8 +31,7 @@ public class TestResourceAccessManager extends AbstractResourceAccessManager {
         return defaultWorkspaceAccessLimits;
     }
 
-    public void setDefaultWorkspaceAccessLimits(
-            WorkspaceAccessLimits defaultWorkspaceAccessLimits) {
+    public void setDefaultWorkspaceAccessLimits(WorkspaceAccessLimits defaultWorkspaceAccessLimits) {
         this.defaultWorkspaceAccessLimits = defaultWorkspaceAccessLimits;
     }
 

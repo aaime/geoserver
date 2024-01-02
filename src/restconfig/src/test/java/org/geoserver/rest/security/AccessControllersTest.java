@@ -94,14 +94,13 @@ public class AccessControllersTest extends SecurityRESTTestSupport {
                 dom.getDocumentElement()
                         .getElementsByTagName(RuleMapXMLConverter.RULEELEMENT)
                         .getLength());
-        String pattern =
-                "/"
-                        + RuleMapXMLConverter.ROOTELEMENT
-                        + "/"
-                        + RuleMapXMLConverter.RULEELEMENT
-                        + "[@"
-                        + RuleMapXMLConverter.RESOURCEATTR
-                        + "='XXX']";
+        String pattern = "/"
+                + RuleMapXMLConverter.ROOTELEMENT
+                + "/"
+                + RuleMapXMLConverter.RULEELEMENT
+                + "[@"
+                + RuleMapXMLConverter.RESOURCEATTR
+                + "='XXX']";
         for (String[] rule : rules) {
             String exp = pattern.replace("XXX", rule[0]);
             String roles = xp.evaluate(exp, dom);
@@ -186,15 +185,20 @@ public class AccessControllersTest extends SecurityRESTTestSupport {
 
         String[][] layerRules = getDefaultLayerRules();
 
-        assertEquals(200, deleteAsServletResponse(DATA_URI + "/" + layerRules[0][0]).getStatus());
-        assertEquals(404, deleteAsServletResponse(DATA_URI + "/" + layerRules[0][0]).getStatus());
+        assertEquals(
+                200, deleteAsServletResponse(DATA_URI + "/" + layerRules[0][0]).getStatus());
+        assertEquals(
+                404, deleteAsServletResponse(DATA_URI + "/" + layerRules[0][0]).getStatus());
 
-        assertEquals(404, deleteAsServletResponse(SERVICE_URI + "/wfs.getFeature").getStatus());
+        assertEquals(
+                404, deleteAsServletResponse(SERVICE_URI + "/wfs.getFeature").getStatus());
 
         String[][] restRules = getDefaultRestRulesForDelete();
 
-        assertEquals(200, deleteAsServletResponse(REST_URI + "/" + restRules[0][0]).getStatus());
-        assertEquals(404, deleteAsServletResponse(REST_URI + "/" + restRules[0][0]).getStatus());
+        assertEquals(
+                200, deleteAsServletResponse(REST_URI + "/" + restRules[0][0]).getStatus());
+        assertEquals(
+                404, deleteAsServletResponse(REST_URI + "/" + restRules[0][0]).getStatus());
     }
 
     @Test
@@ -256,10 +260,7 @@ public class AccessControllersTest extends SecurityRESTTestSupport {
         checkXMLResponse(dom, rules);
 
         // add
-        toBeAdded2 =
-                new String[][] {
-                    {"/myworkspace/**:PUT,POST", TEST_ROLE1}, {"/myworkspace/**:GET", TEST_ROLELIST}
-                };
+        toBeAdded2 = new String[][] {{"/myworkspace/**:PUT,POST", TEST_ROLE1}, {"/myworkspace/**:GET", TEST_ROLELIST}};
         expected = new String[][] {rules[0], rules[1], toBeAdded2[0], toBeAdded2[1]};
         assertEquals(
                 200,
@@ -329,10 +330,7 @@ public class AccessControllersTest extends SecurityRESTTestSupport {
         checkJSONResponse(json, rules);
 
         // add
-        toBeAdded2 =
-                new String[][] {
-                    {"/myworkspace/**:PUT,POST", TEST_ROLE1}, {"/myworkspace/**:GET", TEST_ROLELIST}
-                };
+        toBeAdded2 = new String[][] {{"/myworkspace/**:PUT,POST", TEST_ROLE1}, {"/myworkspace/**:GET", TEST_ROLELIST}};
         expected = new String[][] {rules[0], rules[1], toBeAdded2[0], toBeAdded2[1]};
         assertEquals(
                 200,
@@ -371,10 +369,7 @@ public class AccessControllersTest extends SecurityRESTTestSupport {
         // service rules
 
         rules = getDefaultServiceRules();
-        toBeModified2 =
-                new String[][] {
-                    {"ws.*", TEST_ROLE1}, {"ws2.GetFeature", TEST_ROLELIST}
-                }; // conflict
+        toBeModified2 = new String[][] {{"ws.*", TEST_ROLE1}, {"ws2.GetFeature", TEST_ROLELIST}}; // conflict
         assertEquals(
                 409,
                 putAsServletResponse(SERVICE_URI_JSON, createJSONBody(toBeModified2), "text/json")
@@ -385,15 +380,13 @@ public class AccessControllersTest extends SecurityRESTTestSupport {
 
         assertEquals(
                 200,
-                putAsServletResponse(
-                                SERVICE_URI_JSON, createJSONBody(new String[][] {}), "text/json")
+                putAsServletResponse(SERVICE_URI_JSON, createJSONBody(new String[][] {}), "text/json")
                         .getStatus());
 
         // REST rules
 
         rules = getDefaultRestRules();
-        toBeModified =
-                new String[][] {rules[0], {"/myworkspace/**:GET", TEST_ROLELIST}}; // conflict
+        toBeModified = new String[][] {rules[0], {"/myworkspace/**:GET", TEST_ROLELIST}}; // conflict
         assertEquals(
                 409,
                 putAsServletResponse(REST_URI_JSON, createJSONBody(toBeModified), "text/json")
@@ -442,10 +435,7 @@ public class AccessControllersTest extends SecurityRESTTestSupport {
         // service rules
 
         rules = getDefaultServiceRules();
-        toBeModified2 =
-                new String[][] {
-                    {"ws.*", TEST_ROLE1}, {"ws2.GetFeature", TEST_ROLELIST}
-                }; // conflict
+        toBeModified2 = new String[][] {{"ws.*", TEST_ROLE1}, {"ws2.GetFeature", TEST_ROLELIST}}; // conflict
         assertEquals(
                 409,
                 putAsServletResponse(SERVICE_URI_XML, createXMLBody(toBeModified2), "text/xml")
@@ -462,8 +452,7 @@ public class AccessControllersTest extends SecurityRESTTestSupport {
         // REST rules
 
         rules = getDefaultRestRules();
-        toBeModified =
-                new String[][] {rules[0], {"/myworkspace/**:GET", TEST_ROLELIST}}; // conflict
+        toBeModified = new String[][] {rules[0], {"/myworkspace/**:GET", TEST_ROLELIST}}; // conflict
         assertEquals(
                 409,
                 putAsServletResponse(REST_URI_XML, createXMLBody(toBeModified), "text/xml")
@@ -492,7 +481,8 @@ public class AccessControllersTest extends SecurityRESTTestSupport {
 
         Document dom = getAsDOM(CATALOG_URI_XML);
         print(dom);
-        assertEquals(CatalogModeController.XML_ROOT_ELEM, dom.getDocumentElement().getNodeName());
+        assertEquals(
+                CatalogModeController.XML_ROOT_ELEM, dom.getDocumentElement().getNodeName());
         NodeList nl = dom.getElementsByTagName(CatalogModeController.MODE_ELEMENT);
         assertEquals(1, nl.getLength());
         mode = nl.item(0).getTextContent();
@@ -510,17 +500,11 @@ public class AccessControllersTest extends SecurityRESTTestSupport {
                         .getStatus());
         assertEquals(
                 422,
-                putAsServletResponse(
-                                CATALOG_URI_JSON,
-                                MessageFormat.format(jsonTemplate, "ABC"),
-                                "text/json")
+                putAsServletResponse(CATALOG_URI_JSON, MessageFormat.format(jsonTemplate, "ABC"), "text/json")
                         .getStatus());
         assertEquals(
                 422,
-                putAsServletResponse(
-                                CATALOG_URI_XML,
-                                MessageFormat.format(xmlTemplate, "ABC"),
-                                "text/xml")
+                putAsServletResponse(CATALOG_URI_XML, MessageFormat.format(xmlTemplate, "ABC"), "text/xml")
                         .getStatus());
 
         assertEquals(
@@ -715,8 +699,11 @@ public class AccessControllersTest extends SecurityRESTTestSupport {
         assertEquals(403, getAsServletResponse(CATALOG_URI_XML).getStatus());
         assertEquals(403, getAsServletResponse(CATALOG_URI_JSON).getStatus());
         assertEquals(
-                403, putAsServletResponse(CATALOG_URI_XML, xmlTemplate, "text/xml").getStatus());
+                403,
+                putAsServletResponse(CATALOG_URI_XML, xmlTemplate, "text/xml").getStatus());
         assertEquals(
-                403, putAsServletResponse(CATALOG_URI_JSON, jsonTemplate, "text/json").getStatus());
+                403,
+                putAsServletResponse(CATALOG_URI_JSON, jsonTemplate, "text/json")
+                        .getStatus());
     }
 }

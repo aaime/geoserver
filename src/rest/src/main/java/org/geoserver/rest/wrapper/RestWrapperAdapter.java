@@ -18,16 +18,12 @@ public class RestWrapperAdapter<T> implements RestWrapper<T> {
     Template template;
     RestBaseController controller;
 
-    public RestWrapperAdapter(
-            Object object, Class<T> advertisedClass, RestBaseController controller) {
+    public RestWrapperAdapter(Object object, Class<T> advertisedClass, RestBaseController controller) {
         this(object, advertisedClass, controller, null);
     }
 
     public RestWrapperAdapter(
-            Object object,
-            Class<T> advertisedClass,
-            RestBaseController controller,
-            Template template) {
+            Object object, Class<T> advertisedClass, RestBaseController controller, Template template) {
         this.object = object;
         this.clazz = advertisedClass;
         this.template = template;

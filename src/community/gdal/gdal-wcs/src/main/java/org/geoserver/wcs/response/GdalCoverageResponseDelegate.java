@@ -276,10 +276,7 @@ public class GdalCoverageResponseDelegate implements CoverageResponseDelegate, F
 
     @Override
     public void encode(
-            GridCoverage2D coverage,
-            String outputFormat,
-            Map<String, String> econdingParameters,
-            OutputStream output)
+            GridCoverage2D coverage, String outputFormat, Map<String, String> econdingParameters, OutputStream output)
             throws ServiceException, IOException {
         Utilities.ensureNonNull("sourceCoverage", coverage);
 
@@ -296,8 +293,7 @@ public class GdalCoverageResponseDelegate implements CoverageResponseDelegate, F
         File tempGDAL = IOUtils.createTempDirectory("gdaltmpout");
 
         // build the gdal wrapper used to run the gdal_translate commands
-        ToolWrapper wrapper =
-                gdalWrapperFactory.createWrapper(gdalTranslateExecutable, environment);
+        ToolWrapper wrapper = gdalWrapperFactory.createWrapper(gdalTranslateExecutable, environment);
 
         // actually export the coverage
         try {
@@ -309,8 +305,7 @@ public class GdalCoverageResponseDelegate implements CoverageResponseDelegate, F
             // convert with gdal_translate
             final CoordinateReferenceSystem crs = coverage.getCoordinateReferenceSystem();
             outputFile =
-                    wrapper.convert(
-                            intermediate, tempGDAL, coverage.getName().toString(), format, crs);
+                    wrapper.convert(intermediate, tempGDAL, coverage.getName().toString(), format, crs);
 
             // wipe out the input dir contents
             IOUtils.emptyDirectory(tempGS);
@@ -352,7 +347,8 @@ public class GdalCoverageResponseDelegate implements CoverageResponseDelegate, F
 
             final ParameterValueGroup writerParams = GEOTIF_FORMAT.getWriteParameters();
             writerParams
-                    .parameter(AbstractGridFormat.GEOTOOLS_WRITE_PARAMS.getName().toString())
+                    .parameter(
+                            AbstractGridFormat.GEOTOOLS_WRITE_PARAMS.getName().toString())
                     .setValue(wp);
 
             WCSInfo wcsService = geoServer.getService(WCSInfo.class);
@@ -364,10 +360,8 @@ public class GdalCoverageResponseDelegate implements CoverageResponseDelegate, F
 
             // write down
             if (writer != null)
-                writer.write(
-                        coverage,
-                        (GeneralParameterValue[])
-                                writerParams.values().toArray(new GeneralParameterValue[1]));
+                writer.write(coverage, (GeneralParameterValue[])
+                        writerParams.values().toArray(new GeneralParameterValue[1]));
         } finally {
             try {
                 if (writer != null) writer.dispose();

@@ -50,8 +50,7 @@ public class PlainFolderIteratorFactory extends AbstractFolderIteratorFactory {
                 // do we use a KML placemark dump, or a ground overlay?
                 if (useVectorOutput(context)) {
                     List<Feature> features =
-                            new IteratorList<>(
-                                    new FeatureIteratorFactory(context, (FeatureLayer) layer));
+                            new IteratorList<>(new FeatureIteratorFactory(context, (FeatureLayer) layer));
                     context.addFeatures(folder, features);
                 } else {
                     addGroundOverlay(folder, layer);
@@ -73,13 +72,10 @@ public class PlainFolderIteratorFactory extends AbstractFolderIteratorFactory {
          */
         private void addFeatureCentroids(Layer layer, Folder folder) {
             SimpleFeatureCollection centroids =
-                    new KMLCentroidFeatureCollection(
-                            context.getCurrentFeatureCollection(), context);
+                    new KMLCentroidFeatureCollection(context.getCurrentFeatureCollection(), context);
             context.setCurrentFeatureCollection(centroids);
-            FeatureLayer centroidsLayer =
-                    new FeatureLayer(centroids, layer.getStyle(), layer.getTitle());
-            List<Feature> features =
-                    new IteratorList<>(new FeatureIteratorFactory(context, centroidsLayer));
+            FeatureLayer centroidsLayer = new FeatureLayer(centroids, layer.getStyle(), layer.getTitle());
+            List<Feature> features = new IteratorList<>(new FeatureIteratorFactory(context, centroidsLayer));
             context.addFeatures(folder, features);
         }
 
@@ -97,16 +93,13 @@ public class PlainFolderIteratorFactory extends AbstractFolderIteratorFactory {
 
             ReferencedEnvelope box =
                     new ReferencedEnvelope(context.getMapContent().getRenderingArea());
-            boolean reprojectBBox =
-                    (box.getCoordinateReferenceSystem() != null)
-                            && !CRS.equalsIgnoreMetadata(
-                                    box.getCoordinateReferenceSystem(), DefaultGeographicCRS.WGS84);
+            boolean reprojectBBox = (box.getCoordinateReferenceSystem() != null)
+                    && !CRS.equalsIgnoreMetadata(box.getCoordinateReferenceSystem(), DefaultGeographicCRS.WGS84);
             if (reprojectBBox) {
                 try {
                     box = box.transform(DefaultGeographicCRS.WGS84, true);
                 } catch (Exception e) {
-                    throw new ServiceException(
-                            "Could not transform bbox to WGS84", e, "ReprojectionError", "");
+                    throw new ServiceException("Could not transform bbox to WGS84", e, "ReprojectionError", "");
                 }
             }
 
@@ -128,11 +121,9 @@ public class PlainFolderIteratorFactory extends AbstractFolderIteratorFactory {
             } else {
                 // refer to a GetMap request
                 return WMSRequests.getGetMapUrl(
-                        mapContent.getRequest(),
-                        layer,
-                        0,
-                        mapContent.getRenderingArea(),
-                        new String[] {"format", "image/png", "transparent", "true"});
+                        mapContent.getRequest(), layer, 0, mapContent.getRenderingArea(), new String[] {
+                            "format", "image/png", "transparent", "true"
+                        });
             }
         }
 

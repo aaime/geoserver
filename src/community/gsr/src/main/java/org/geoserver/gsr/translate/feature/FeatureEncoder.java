@@ -36,8 +36,7 @@ public class FeatureEncoder {
     public static final String OBJECTID_FIELD_NAME = "objectid";
 
     private FeatureEncoder() {
-        throw new RuntimeException(
-                "Feature encoder has only static methods, no need to instantiate it.");
+        throw new RuntimeException("Feature encoder has only static methods, no need to instantiate it.");
     }
 
     /**
@@ -53,8 +52,7 @@ public class FeatureEncoder {
         Map<String, Object> attributes = new HashMap<>();
         for (Property prop : feature.getProperties()) {
             if (prop.getValue() != null
-                    && (geometryAttribute == null
-                            || !prop.getName().equals(geometryAttribute.getName()))) {
+                    && (geometryAttribute == null || !prop.getName().equals(geometryAttribute.getName()))) {
                 final Object value;
                 if (prop.getValue() instanceof java.util.Date) {
                     value = ((java.util.Date) prop.getValue()).getTime();
@@ -78,7 +76,8 @@ public class FeatureEncoder {
         }
 
         if (objectIdFieldName != null) {
-            attributes.put(objectIdFieldName, toGSRObjectId(feature.getIdentifier().getID()));
+            attributes.put(
+                    objectIdFieldName, toGSRObjectId(feature.getIdentifier().getID()));
         }
 
         return attributes;
@@ -97,11 +96,8 @@ public class FeatureEncoder {
     }
 
     public static Feature feature(
-            org.geotools.api.feature.Feature feature,
-            boolean returnGeometry,
-            SpatialReference spatialReference) {
-        return feature(
-                feature, returnGeometry, spatialReference, FeatureEncoder.OBJECTID_FIELD_NAME);
+            org.geotools.api.feature.Feature feature, boolean returnGeometry, SpatialReference spatialReference) {
+        return feature(feature, returnGeometry, spatialReference, FeatureEncoder.OBJECTID_FIELD_NAME);
     }
 
     public static Feature feature(
@@ -109,12 +105,7 @@ public class FeatureEncoder {
             boolean returnGeometry,
             SpatialReference spatialReference,
             String objectIdFieldName) {
-        return feature(
-                feature,
-                returnGeometry,
-                spatialReference,
-                objectIdFieldName,
-                new GeometryEncoder());
+        return feature(feature, returnGeometry, spatialReference, objectIdFieldName, new GeometryEncoder());
     }
 
     public static Feature feature(
@@ -128,8 +119,7 @@ public class FeatureEncoder {
         if (returnGeometry) {
             return new Feature(
                     geometryEncoder.toRepresentation(
-                            (org.locationtech.jts.geom.Geometry) geometryAttribute.getValue(),
-                            spatialReference),
+                            (org.locationtech.jts.geom.Geometry) geometryAttribute.getValue(), spatialReference),
                     attributes,
                     feature.getIdentifier().getID());
         } else {
@@ -173,8 +163,8 @@ public class FeatureEncoder {
                 field.isNillable());
     }
 
-    public static <T extends FeatureType, F extends org.geotools.api.feature.Feature>
-            FeatureIdSet objectIds(FeatureCollection<T, F> features) {
+    public static <T extends FeatureType, F extends org.geotools.api.feature.Feature> FeatureIdSet objectIds(
+            FeatureCollection<T, F> features) {
 
         // TODO: Advertise "real" identifier property
 
@@ -228,8 +218,7 @@ public class FeatureEncoder {
      * @return
      * @throws IOException
      */
-    public static String toGeotoolsFeatureId(Long objectId, FeatureTypeInfo targetFeature)
-            throws IOException {
+    public static String toGeotoolsFeatureId(Long objectId, FeatureTypeInfo targetFeature) throws IOException {
         return toGeotoolsFeatureId(objectId, calculateFeatureIdPrefix(targetFeature));
     }
 
@@ -240,8 +229,7 @@ public class FeatureEncoder {
      * @return
      * @throws IOException
      */
-    public static String calculateFeatureIdPrefix(FeatureTypeInfo targetFeature)
-            throws IOException {
+    public static String calculateFeatureIdPrefix(FeatureTypeInfo targetFeature) throws IOException {
         org.geotools.api.feature.Feature sampleFeature = null;
         String featureIdPrefix = "";
         try (FeatureIterator i =

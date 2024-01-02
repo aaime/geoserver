@@ -27,8 +27,7 @@ public class GZipFilterTest {
 
     @Test
     public void testRetrieveSameOutputStream() throws Exception {
-        MockHttpServletRequest request =
-                new MockHttpServletRequest("GET", "http://www.geoserver.org");
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "http://www.geoserver.org");
         request.addHeader("accept-encoding", "gzip");
         MockHttpServletResponse response = new MockHttpServletResponse();
         response.setContentType("text/plain");
@@ -40,28 +39,22 @@ public class GZipFilterTest {
         config.addInitParameter("compressed-types", "text/plain");
         filter.init(config);
 
-        MockFilterChain chain =
-                new MockFilterChain() {
-                    @Override
-                    @SuppressWarnings("PMD.CloseResource")
-                    public void doFilter(ServletRequest request, ServletResponse response)
-                            throws IOException, ServletException {
-                        AlternativesResponseStream alternatives =
-                                (AlternativesResponseStream) response.getOutputStream();
-                        GZIPResponseStream gzipStream =
-                                (GZIPResponseStream) alternatives.getStream();
-                        assertThat(
-                                gzipStream.delegateStream,
-                                CoreMatchers.instanceOf(DelegatingServletOutputStream.class));
-                    }
-                };
+        MockFilterChain chain = new MockFilterChain() {
+            @Override
+            @SuppressWarnings("PMD.CloseResource")
+            public void doFilter(ServletRequest request, ServletResponse response)
+                    throws IOException, ServletException {
+                AlternativesResponseStream alternatives = (AlternativesResponseStream) response.getOutputStream();
+                GZIPResponseStream gzipStream = (GZIPResponseStream) alternatives.getStream();
+                assertThat(gzipStream.delegateStream, CoreMatchers.instanceOf(DelegatingServletOutputStream.class));
+            }
+        };
         filter.doFilter(request, response, chain);
     }
 
     @Test
     public void testGZipRemovesContentLength() throws Exception {
-        MockHttpServletRequest request =
-                new MockHttpServletRequest("GET", "http://www.geoserver.org");
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "http://www.geoserver.org");
         request.addHeader("accept-encoding", "gzip");
         MockHttpServletResponse response = new MockHttpServletResponse();
         response.setContentType("text/plain");
@@ -74,27 +67,24 @@ public class GZipFilterTest {
         config.addInitParameter("compressed-types", "text/plain");
         filter.init(config);
 
-        MockFilterChain chain =
-                new MockFilterChain() {
-                    @Override
-                    @SuppressWarnings("PMD.CloseResource")
-                    public void doFilter(ServletRequest request, ServletResponse response)
-                            throws IOException, ServletException {
-                        response.setContentLength(1000);
-                        AlternativesResponseStream alternatives =
-                                (AlternativesResponseStream) response.getOutputStream();
-                        ServletOutputStream gzipStream = alternatives.getStream();
-                        gzipStream.write(1);
-                    }
-                };
+        MockFilterChain chain = new MockFilterChain() {
+            @Override
+            @SuppressWarnings("PMD.CloseResource")
+            public void doFilter(ServletRequest request, ServletResponse response)
+                    throws IOException, ServletException {
+                response.setContentLength(1000);
+                AlternativesResponseStream alternatives = (AlternativesResponseStream) response.getOutputStream();
+                ServletOutputStream gzipStream = alternatives.getStream();
+                gzipStream.write(1);
+            }
+        };
         filter.doFilter(request, response, chain);
         assertFalse(response.containsHeader("Content-Length"));
     }
 
     @Test
     public void testNotGZippedMantainsContentLength() throws Exception {
-        MockHttpServletRequest request =
-                new MockHttpServletRequest("GET", "http://www.geoserver.org");
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "http://www.geoserver.org");
         request.addHeader("accept-encoding", "gzip");
         MockHttpServletResponse response = new MockHttpServletResponse();
         response.setContentType("text/css");
@@ -106,20 +96,18 @@ public class GZipFilterTest {
         MockFilterConfig config = new MockFilterConfig(context);
         filter.init(config);
 
-        MockFilterChain chain =
-                new MockFilterChain() {
-                    @Override
-                    @SuppressWarnings("PMD.CloseResource")
-                    public void doFilter(ServletRequest request, ServletResponse response)
-                            throws IOException, ServletException {
-                        response.setContentLength(1000);
-                        AlternativesResponseStream alternatives =
-                                (AlternativesResponseStream) response.getOutputStream();
+        MockFilterChain chain = new MockFilterChain() {
+            @Override
+            @SuppressWarnings("PMD.CloseResource")
+            public void doFilter(ServletRequest request, ServletResponse response)
+                    throws IOException, ServletException {
+                response.setContentLength(1000);
+                AlternativesResponseStream alternatives = (AlternativesResponseStream) response.getOutputStream();
 
-                        ServletOutputStream gzipStream = alternatives.getStream();
-                        gzipStream.write(1);
-                    }
-                };
+                ServletOutputStream gzipStream = alternatives.getStream();
+                gzipStream.write(1);
+            }
+        };
         filter.doFilter(request, response, chain);
         assertTrue(response.containsHeader("Content-Length"));
         assertEquals("1000", response.getHeader("Content-Length"));
@@ -128,8 +116,7 @@ public class GZipFilterTest {
     @Test
     public void testFlushAfterClose() throws ServletException, IOException {
         // prepare request, response, and chain
-        MockHttpServletRequest request =
-                new MockHttpServletRequest("GET", "http://www.geoserver.org");
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "http://www.geoserver.org");
         request.addHeader("accept-encoding", "gzip");
         MockHttpServletResponse response = new MockHttpServletResponse();
         response.setContentType("text/plain");
@@ -142,23 +129,21 @@ public class GZipFilterTest {
         config.addInitParameter("compressed-types", "text/plain");
         filter.init(config);
 
-        MockFilterChain chain =
-                new MockFilterChain() {
-                    @Override
-                    @SuppressWarnings("PMD.CloseResource")
-                    public void doFilter(ServletRequest request, ServletResponse response)
-                            throws IOException, ServletException {
-                        response.setContentLength(1000);
-                        AlternativesResponseStream alternatives =
-                                (AlternativesResponseStream) response.getOutputStream();
+        MockFilterChain chain = new MockFilterChain() {
+            @Override
+            @SuppressWarnings("PMD.CloseResource")
+            public void doFilter(ServletRequest request, ServletResponse response)
+                    throws IOException, ServletException {
+                response.setContentLength(1000);
+                AlternativesResponseStream alternatives = (AlternativesResponseStream) response.getOutputStream();
 
-                        ServletOutputStream gzipStream = alternatives.getStream();
-                        gzipStream.write(1);
-                        gzipStream.close();
-                        // ka-blam! (or not?)
-                        gzipStream.flush();
-                    }
-                };
+                ServletOutputStream gzipStream = alternatives.getStream();
+                gzipStream.write(1);
+                gzipStream.close();
+                // ka-blam! (or not?)
+                gzipStream.flush();
+            }
+        };
         filter.doFilter(request, response, chain);
         assertFalse(response.containsHeader("Content-Length"));
     }

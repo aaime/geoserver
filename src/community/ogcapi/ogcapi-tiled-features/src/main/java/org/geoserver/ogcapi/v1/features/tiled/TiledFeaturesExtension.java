@@ -61,8 +61,7 @@ public class TiledFeaturesExtension
     }
 
     @Override
-    public String getExtension(
-            Request dr, Map<String, Object> model, Charset charset, List htmlExtensionArguments)
+    public String getExtension(Request dr, Map<String, Object> model, Charset charset, List htmlExtensionArguments)
             throws IOException {
         if (dr.getService().equals(FEATURES)) {
             if (dr.getRequest().equals(REQ_LANDING)) {
@@ -153,12 +152,10 @@ public class TiledFeaturesExtension
     public void extendConformanceClasses(ConformanceDocument conformance) {
         conformance.getConformsTo().add(ConformanceClass.CORE);
         ConformanceDocument cd = tilesService.conformance();
-        cd.getConformsTo()
-                .forEach(
-                        c -> {
-                            if (!conformance.getConformsTo().contains(c))
-                                conformance.getConformsTo().add(c);
-                        });
+        cd.getConformsTo().forEach(c -> {
+            if (!conformance.getConformsTo().contains(c))
+                conformance.getConformsTo().add(c);
+        });
     }
 
     private void extendCollectionDocument(CollectionDocument collection) {

@@ -26,43 +26,40 @@ class ThreadLocalTransferExecutor extends ThreadPoolExecutor {
     @Override
     public Future<?> submit(Runnable task) {
         ThreadLocalsTransfer threadLocalTransfer = new ThreadLocalsTransfer();
-        return super.submit(
-                () -> {
-                    threadLocalTransfer.apply();
-                    try {
-                        task.run();
-                    } finally {
-                        threadLocalTransfer.cleanup();
-                    }
-                });
+        return super.submit(() -> {
+            threadLocalTransfer.apply();
+            try {
+                task.run();
+            } finally {
+                threadLocalTransfer.cleanup();
+            }
+        });
     }
 
     @Override
     public <T> Future<T> submit(Callable<T> task) {
         ThreadLocalsTransfer threadLocalTransfer = new ThreadLocalsTransfer();
-        return super.submit(
-                () -> {
-                    threadLocalTransfer.apply();
-                    try {
-                        return task.call();
-                    } finally {
-                        threadLocalTransfer.cleanup();
-                    }
-                });
+        return super.submit(() -> {
+            threadLocalTransfer.apply();
+            try {
+                return task.call();
+            } finally {
+                threadLocalTransfer.cleanup();
+            }
+        });
     }
 
     @Override
     public <T> Future<T> submit(Runnable task, T result) {
         ThreadLocalsTransfer threadLocalTransfer = new ThreadLocalsTransfer();
-        return super.submit(
-                () -> {
-                    threadLocalTransfer.apply();
-                    try {
-                        task.run();
-                        return result;
-                    } finally {
-                        threadLocalTransfer.cleanup();
-                    }
-                });
+        return super.submit(() -> {
+            threadLocalTransfer.apply();
+            try {
+                task.run();
+                return result;
+            } finally {
+                threadLocalTransfer.cleanup();
+            }
+        });
     }
 }

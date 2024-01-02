@@ -103,8 +103,7 @@ public abstract class AbstractMappingStore implements FeatureStore<FeatureType, 
 
     private Transaction transaction;
 
-    public AbstractMappingStore(
-            JDBCOpenSearchAccess openSearchAccess, FeatureType collectionFeatureType)
+    public AbstractMappingStore(JDBCOpenSearchAccess openSearchAccess, FeatureType collectionFeatureType)
             throws IOException {
         this.openSearchAccess = openSearchAccess;
         this.schema = collectionFeatureType;
@@ -115,8 +114,7 @@ public abstract class AbstractMappingStore implements FeatureStore<FeatureType, 
     }
 
     protected SimpleFeatureType buildCollectionLayerFeatureType() throws IOException {
-        SimpleFeatureType source =
-                openSearchAccess.getDelegateStore().getSchema("collection_layer");
+        SimpleFeatureType source = openSearchAccess.getDelegateStore().getSchema("collection_layer");
         try {
             SimpleFeatureTypeBuilder b = new SimpleFeatureTypeBuilder();
             for (AttributeDescriptor ad : source.getAttributeDescriptors()) {
@@ -150,9 +148,7 @@ public abstract class AbstractMappingStore implements FeatureStore<FeatureType, 
     protected SortBy[] buildDefaultSort(FeatureType schema) {
         String timeStart = propertyMapper.getSourceName("timeStart");
         String identifier = propertyMapper.getSourceName("identifier");
-        return new SortBy[] {
-            FF.sort(timeStart, SortOrder.DESCENDING), FF.sort(identifier, SortOrder.ASCENDING)
-        };
+        return new SortBy[] {FF.sort(timeStart, SortOrder.DESCENDING), FF.sort(identifier, SortOrder.ASCENDING)};
     }
 
     @Override
@@ -199,19 +195,18 @@ public abstract class AbstractMappingStore implements FeatureStore<FeatureType, 
 
     @Override
     public QueryCapabilities getQueryCapabilities() {
-        QueryCapabilities result =
-                new QueryCapabilities() {
-                    @Override
-                    public boolean isOffsetSupported() {
-                        return true;
-                    }
+        QueryCapabilities result = new QueryCapabilities() {
+            @Override
+            public boolean isOffsetSupported() {
+                return true;
+            }
 
-                    @Override
-                    public boolean isReliableFIDSupported() {
-                        // the delegate store should have a primary key on collections
-                        return true;
-                    }
-                };
+            @Override
+            public boolean isReliableFIDSupported() {
+                // the delegate store should have a primary key on collections
+                return true;
+            }
+        };
         return result;
     }
 
@@ -277,11 +272,10 @@ public abstract class AbstractMappingStore implements FeatureStore<FeatureType, 
             result.setFilter(mappedFilter);
         }
         if (query.getPropertyNames() != null && query.getPropertyNames().length > 0) {
-            String[] mappedPropertyNames =
-                    Arrays.stream(query.getPropertyNames())
-                            .map(name -> propertyMapper.getSourceName(name))
-                            .filter(name -> name != null)
-                            .toArray(size -> new String[size]);
+            String[] mappedPropertyNames = Arrays.stream(query.getPropertyNames())
+                    .map(name -> propertyMapper.getSourceName(name))
+                    .filter(name -> name != null)
+                    .toArray(size -> new String[size]);
             if (mappedPropertyNames.length == 0) {
                 result.setPropertyNames(Query.ALL_NAMES);
             } else {
@@ -289,24 +283,20 @@ public abstract class AbstractMappingStore implements FeatureStore<FeatureType, 
             }
         }
         if (query.getSortBy() != null && query.getSortBy().length > 0) {
-            SortBy[] mappedSortBy =
-                    Arrays.stream(query.getSortBy())
-                            .map(
-                                    sb -> {
-                                        if (sb == SortBy.NATURAL_ORDER
-                                                || sb == SortBy.REVERSE_ORDER) {
-                                            return sb;
-                                        } else {
-                                            String name = sb.getPropertyName().getPropertyName();
-                                            String mappedName = propertyMapper.getSourceName(name);
-                                            if (mappedName == null) {
-                                                throw new IllegalArgumentException(
-                                                        "Cannot sort on " + name);
-                                            }
-                                            return FF.sort(mappedName, sb.getSortOrder());
-                                        }
-                                    })
-                            .toArray(size -> new SortBy[size]);
+            SortBy[] mappedSortBy = Arrays.stream(query.getSortBy())
+                    .map(sb -> {
+                        if (sb == SortBy.NATURAL_ORDER || sb == SortBy.REVERSE_ORDER) {
+                            return sb;
+                        } else {
+                            String name = sb.getPropertyName().getPropertyName();
+                            String mappedName = propertyMapper.getSourceName(name);
+                            if (mappedName == null) {
+                                throw new IllegalArgumentException("Cannot sort on " + name);
+                            }
+                            return FF.sort(mappedName, sb.getSortOrder());
+                        }
+                    })
+                    .toArray(size -> new SortBy[size]);
             result.setSortBy(mappedSortBy);
         } else {
             // get stable results for paging
@@ -329,8 +319,7 @@ public abstract class AbstractMappingStore implements FeatureStore<FeatureType, 
             if (hasOutputProperty(query, OGC_LINKS_PROPERTY_NAME, true)) {
                 final String linkTable = getLinkTable();
                 final String linkForeignKey = getLinkForeignKey();
-                Filter filter =
-                        FF.equal(FF.property("id"), FF.property("link." + linkForeignKey), true);
+                Filter filter = FF.equal(FF.property("id"), FF.property("link." + linkForeignKey), true);
                 Join join = new Join(linkTable, filter);
                 join.setAlias("link");
                 join.setType(Type.OUTER);
@@ -466,8 +455,7 @@ public abstract class AbstractMappingStore implements FeatureStore<FeatureType, 
         }
 
         for (SimpleFeature link : links) {
-            SimpleFeature linkFeature =
-                    SimpleFeatureBuilder.retype((SimpleFeature) link, linkFeatureType);
+            SimpleFeature linkFeature = SimpleFeatureBuilder.retype((SimpleFeature) link, linkFeatureType);
             builder.append(OGC_LINKS_PROPERTY_NAME, linkFeature);
         }
 
@@ -548,8 +536,7 @@ public abstract class AbstractMappingStore implements FeatureStore<FeatureType, 
     }
 
     @Override
-    public List<FeatureId> addFeatures(FeatureCollection<FeatureType, Feature> featureCollection)
-            throws IOException {
+    public List<FeatureId> addFeatures(FeatureCollection<FeatureType, Feature> featureCollection) throws IOException {
         // silly implementation assuming there will be only one insert at a time (which is
         // indeed the case for the current REST API), needs to be turned into a streaming
         // approach in case we want to handle larger data volumes
@@ -565,12 +552,10 @@ public abstract class AbstractMappingStore implements FeatureStore<FeatureType, 
 
             List<SimpleFeature> simpleFeatures = mapToSecondarySimpleFeatures(feature);
             for (SimpleFeature sf : simpleFeatures) {
-                SimpleFeatureStore fs =
-                        (SimpleFeatureStore)
-                                delegateStore.getFeatureSource(sf.getType().getTypeName());
+                SimpleFeatureStore fs = (SimpleFeatureStore)
+                        delegateStore.getFeatureSource(sf.getType().getTypeName());
                 if (fs == null) {
-                    throw new IOException(
-                            "Could not find a delegate feature store for unmapped feature " + sf);
+                    throw new IOException("Could not find a delegate feature store for unmapped feature " + sf);
                 }
                 fs.setTransaction(getTransaction());
                 fs.addFeatures(DataUtilities.collection(sf));
@@ -600,18 +585,11 @@ public abstract class AbstractMappingStore implements FeatureStore<FeatureType, 
      * Removes the child features associated to a given main feature, the subclasses can override to
      * customize
      */
-    protected void removeChildFeatures(final List<String> collectionIdentifiers)
-            throws IOException {
+    protected void removeChildFeatures(final List<String> collectionIdentifiers) throws IOException {
         // remove all related OGC links
-        List<Filter> filters =
-                collectionIdentifiers.stream()
-                        .map(
-                                id ->
-                                        FF.equal(
-                                                FF.property(getLinkForeignKey()),
-                                                FF.literal(id),
-                                                false))
-                        .collect(Collectors.toList());
+        List<Filter> filters = collectionIdentifiers.stream()
+                .map(id -> FF.equal(FF.property(getLinkForeignKey()), FF.literal(id), false))
+                .collect(Collectors.toList());
         Filter linksFilter = FF.or(filters);
         SimpleFeatureStore linkStore = getFeatureStoreForTable(getLinkTable());
         linkStore.setTransaction(getTransaction());
@@ -619,14 +597,12 @@ public abstract class AbstractMappingStore implements FeatureStore<FeatureType, 
     }
 
     @Override
-    public void modifyFeatures(Name attributeName, Object attributeValue, Filter filter)
-            throws IOException {
+    public void modifyFeatures(Name attributeName, Object attributeValue, Filter filter) throws IOException {
         modifyFeatures(new Name[] {attributeName}, new Object[] {attributeValue}, filter);
     }
 
     @Override
-    public void modifyFeatures(Name[] attributeNames, Object[] attributeValues, Filter filter)
-            throws IOException {
+    public void modifyFeatures(Name[] attributeNames, Object[] attributeValues, Filter filter) throws IOException {
         Filter mappedFilter = mapFilterToDelegateSchema(filter);
 
         // map names to local simple feature, store out the delegate ones
@@ -644,8 +620,7 @@ public abstract class AbstractMappingStore implements FeatureStore<FeatureType, 
                         tableName,
                         id -> FF.id(FF.featureId(tableName + "." + id)),
                         (id, secondaryStore) -> {
-                            SimpleFeatureBuilder fb =
-                                    new SimpleFeatureBuilder(secondaryStore.getSchema());
+                            SimpleFeatureBuilder fb = new SimpleFeatureBuilder(secondaryStore.getSchema());
                             fb.set("tid", id);
                             fb.set("thumb", value);
                             SimpleFeature thumbnailFeature = fb.buildFeature(tableName + "." + id);
@@ -665,30 +640,25 @@ public abstract class AbstractMappingStore implements FeatureStore<FeatureType, 
                         id -> FF.equal(FF.property("cid"), FF.literal(id), false),
                         (id, layersStore) -> {
                             SimpleFeatureCollection layers = (SimpleFeatureCollection) value;
-                            SimpleFeatureBuilder fb =
-                                    new SimpleFeatureBuilder(layersStore.getSchema());
+                            SimpleFeatureBuilder fb = new SimpleFeatureBuilder(layersStore.getSchema());
 
-                            ListFeatureCollection mappedLayers =
-                                    new ListFeatureCollection(layersStore.getSchema());
+                            ListFeatureCollection mappedLayers = new ListFeatureCollection(layersStore.getSchema());
                             layers.accepts(
                                     f -> {
                                         SimpleFeature sf = (SimpleFeature) f;
                                         for (Property p : sf.getProperties()) {
                                             String attributeName = p.getName().getLocalPart();
                                             Object attributeValue = p.getValue();
-                                            if (("bands".equals(attributeName)
-                                                            || "browseBands".equals(attributeName))
+                                            if (("bands".equals(attributeName) || "browseBands".equals(attributeName))
                                                     && attributeValue instanceof String[]) {
                                                 final String[] array = (String[]) attributeValue;
                                                 attributeValue =
-                                                        Arrays.stream(array)
-                                                                .collect(Collectors.joining(","));
+                                                        Arrays.stream(array).collect(Collectors.joining(","));
                                             }
                                             fb.set(attributeName, attributeValue);
                                         }
                                         fb.set("cid", id);
-                                        SimpleFeature layerFeature =
-                                                fb.buildFeature(tableName + "." + id);
+                                        SimpleFeature layerFeature = fb.buildFeature(tableName + "." + id);
                                         mappedLayers.add(layerFeature);
                                     },
                                     null);
@@ -707,20 +677,15 @@ public abstract class AbstractMappingStore implements FeatureStore<FeatureType, 
                         id -> FF.equal(FF.property(getLinkForeignKey()), FF.literal(id), true),
                         (id, linksStore) -> {
                             SimpleFeatureCollection links = (SimpleFeatureCollection) value;
-                            SimpleFeatureBuilder fb =
-                                    new SimpleFeatureBuilder(linksStore.getSchema());
-                            ListFeatureCollection mappedLinks =
-                                    new ListFeatureCollection(linksStore.getSchema());
+                            SimpleFeatureBuilder fb = new SimpleFeatureBuilder(linksStore.getSchema());
+                            ListFeatureCollection mappedLinks = new ListFeatureCollection(linksStore.getSchema());
                             links.accepts(
                                     f -> {
                                         SimpleFeature sf = (SimpleFeature) f;
                                         for (AttributeDescriptor ad :
                                                 linksStore.getSchema().getAttributeDescriptors()) {
-                                            if (sf.getFeatureType().getDescriptor(ad.getLocalName())
-                                                    != null) {
-                                                fb.set(
-                                                        ad.getLocalName(),
-                                                        sf.getAttribute(ad.getLocalName()));
+                                            if (sf.getFeatureType().getDescriptor(ad.getLocalName()) != null) {
+                                                fb.set(ad.getLocalName(), sf.getAttribute(ad.getLocalName()));
                                             }
                                         }
                                         fb.set(getLinkForeignKey(), id);
@@ -740,14 +705,11 @@ public abstract class AbstractMappingStore implements FeatureStore<FeatureType, 
 
             PropertyDescriptor descriptor = schema.getDescriptor(name);
             if (!(descriptor instanceof AttributeDescriptor)) {
-                throw new IllegalArgumentException(
-                        "Did not expect modification on attribute " + name);
+                throw new IllegalArgumentException("Did not expect modification on attribute " + name);
             }
-            String localName =
-                    (String) descriptor.getUserData().get(JDBCOpenSearchAccess.SOURCE_ATTRIBUTE);
+            String localName = (String) descriptor.getUserData().get(JDBCOpenSearchAccess.SOURCE_ATTRIBUTE);
             if (localName == null) {
-                throw new IllegalArgumentException(
-                        "Did not expect modification on attribute " + name);
+                throw new IllegalArgumentException("Did not expect modification on attribute " + name);
             }
             localNames.add(localName);
             localValues.add(value);
@@ -770,8 +732,7 @@ public abstract class AbstractMappingStore implements FeatureStore<FeatureType, 
     protected void featuresModified() {}
 
     /** Allows subclasses to handle other attributes mapped in secondary tables */
-    protected boolean modifySecondaryAttribute(Name name, Object value, Filter mappedFilter)
-            throws IOException {
+    protected boolean modifySecondaryAttribute(Name name, Object value, Filter mappedFilter) throws IOException {
         return false;
     }
 

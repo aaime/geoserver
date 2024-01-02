@@ -42,14 +42,11 @@ public class WebServiceAuthenticationKeyMapper extends AbstractAuthenticationKey
     /** Thread local holding the current response */
     public static final ThreadLocal<String> RECORDED_RESPONSE = new ThreadLocal<>();
 
-    public static final String AUTH_KEY_WEBSERVICE_PLACEHOLDER_REQUIRED =
-            "AUTH_KEY_WEBSERVICE_PLACEHOLDER_REQUIRED";
+    public static final String AUTH_KEY_WEBSERVICE_PLACEHOLDER_REQUIRED = "AUTH_KEY_WEBSERVICE_PLACEHOLDER_REQUIRED";
 
-    public static final String AUTH_KEY_WEBSERVICE_MALFORMED_REGEX =
-            "AUTH_KEY_WEBSERVICE_MALFORMED_REGEX";
+    public static final String AUTH_KEY_WEBSERVICE_MALFORMED_REGEX = "AUTH_KEY_WEBSERVICE_MALFORMED_REGEX";
 
-    public static final String AUTH_KEY_WEBSERVICE_WRONG_TIMEOUT =
-            "AUTH_KEY_WEBSERVICE_WRONG_TIMEOUT";
+    public static final String AUTH_KEY_WEBSERVICE_WRONG_TIMEOUT = "AUTH_KEY_WEBSERVICE_WRONG_TIMEOUT";
 
     // web service url (must contain the {key} placeholder for the authkey parameter)
     private String webServiceUrl;
@@ -203,10 +200,7 @@ public class WebServiceAuthenticationKeyMapper extends AbstractAuthenticationKey
 
         LOGGER.log(
                 Level.WARNING,
-                "No User Group Service configured for webservice url ["
-                        + webServiceUrl
-                        + "] with authkey: "
-                        + key);
+                "No User Group Service configured for webservice url [" + webServiceUrl + "] with authkey: " + key);
         return null;
     }
 
@@ -224,30 +218,22 @@ public class WebServiceAuthenticationKeyMapper extends AbstractAuthenticationKey
             LOGGER.log(Level.FINE, "Issuing request to authkey webservice: " + url);
             HTTPResponse response = client.get(new URL(url));
             try (InputStream responseStream = response.getResponseStream();
-                    BufferedReader reader =
-                            new BufferedReader(new InputStreamReader(responseStream))) {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(responseStream))) {
                 StringBuilder result = new StringBuilder();
 
                 String line = null;
                 while ((line = reader.readLine()) != null) {
                     result.append(line);
                 }
-                LOGGER.log(
-                        Level.FINE,
-                        "Response received from authkey webservice: " + result.toString());
+                LOGGER.log(Level.FINE, "Response received from authkey webservice: " + result.toString());
                 return result.toString();
             }
         } catch (MalformedURLException e) {
             LOGGER.log(
-                    Level.SEVERE,
-                    "Error in WebServiceAuthenticationKeyMapper, web service url is invalid: "
-                            + url,
-                    e);
+                    Level.SEVERE, "Error in WebServiceAuthenticationKeyMapper, web service url is invalid: " + url, e);
         } catch (IOException e) {
             LOGGER.log(
-                    Level.SEVERE,
-                    "Error in WebServiceAuthenticationKeyMapper, error in web service communication",
-                    e);
+                    Level.SEVERE, "Error in WebServiceAuthenticationKeyMapper, error in web service communication", e);
         }
         return null;
     }
@@ -267,20 +253,14 @@ public class WebServiceAuthenticationKeyMapper extends AbstractAuthenticationKey
                 try {
                     connectTimeout = Integer.parseInt(mapperParams.get("connectTimeout"));
                 } catch (NumberFormatException e) {
-                    LOGGER.log(
-                            Level.SEVERE,
-                            "WebServiceAuthenticationKeyMapper connectTimeout wrong format",
-                            e);
+                    LOGGER.log(Level.SEVERE, "WebServiceAuthenticationKeyMapper connectTimeout wrong format", e);
                 }
             }
             if (mapperParams.containsKey("readTimeout")) {
                 try {
                     readTimeout = Integer.parseInt(mapperParams.get("readTimeout"));
                 } catch (NumberFormatException e) {
-                    LOGGER.log(
-                            Level.SEVERE,
-                            "WebServiceAuthenticationKeyMapper readTimeout wrong format",
-                            e);
+                    LOGGER.log(Level.SEVERE, "WebServiceAuthenticationKeyMapper readTimeout wrong format", e);
                 }
             }
         }
@@ -288,8 +268,7 @@ public class WebServiceAuthenticationKeyMapper extends AbstractAuthenticationKey
 
     @Override
     public Set<String> getAvailableParameters() {
-        return new HashSet<>(
-                Arrays.asList("webServiceUrl", "searchUser", "connectTimeout", "readTimeout"));
+        return new HashSet<>(Arrays.asList("webServiceUrl", "searchUser", "connectTimeout", "readTimeout"));
     }
 
     @Override

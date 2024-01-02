@@ -20,16 +20,14 @@ import org.geoserver.platform.ExtensionPriority;
  *
  * @author Nicola Lagomarsini Geosolutions S.A.S.
  */
-public class RESTUploadExternalPathMapper extends RESTUploadPathMapperImpl
-        implements ExtensionPriority {
+public class RESTUploadExternalPathMapper extends RESTUploadPathMapperImpl implements ExtensionPriority {
 
     public RESTUploadExternalPathMapper(Catalog catalog) {
         super(catalog);
     }
 
     @Override
-    public void mapStorePath(
-            StringBuilder rootDir, String workspace, String store, Map<String, String> storeParams)
+    public void mapStorePath(StringBuilder rootDir, String workspace, String store, Map<String, String> storeParams)
             throws IOException {
         // Get the external root definition from the settings
         String externalRoot = RESTUtils.getRootDirectory(workspace, store, catalog);

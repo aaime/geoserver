@@ -58,8 +58,7 @@ public abstract class GetFeatureInfoOutputFormat {
         this.contentType = contentType;
     }
 
-    public abstract void write(
-            FeatureCollectionType results, GetFeatureInfoRequest request, OutputStream out)
+    public abstract void write(FeatureCollectionType results, GetFeatureInfoRequest request, OutputStream out)
             throws ServiceException, IOException;
 
     /**

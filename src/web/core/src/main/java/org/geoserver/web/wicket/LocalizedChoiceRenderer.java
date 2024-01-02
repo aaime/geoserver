@@ -34,10 +34,7 @@ public class LocalizedChoiceRenderer extends ChoiceRenderer<String> {
             ParamResourceModel rm = new ParamResourceModel(object, reference);
             return rm.getString();
         } catch (Exception e) {
-            LOGGER.log(
-                    Level.FINE,
-                    "Failed to locate resource string " + object + " with context: " + reference,
-                    e);
+            LOGGER.log(Level.FINE, "Failed to locate resource string " + object + " with context: " + reference, e);
             return object;
         }
     }

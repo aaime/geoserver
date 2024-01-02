@@ -70,10 +70,7 @@ public interface ExtendedStylesApi extends ApiClient.Api {
         "Accept: application/json",
     })
     void uploadStyleMapbox(
-            @Param("workspace") String workspace,
-            @Param("style") String style,
-            byte[] body,
-            @Param("raw") Boolean raw);
+            @Param("workspace") String workspace, @Param("style") String style, byte[] body, @Param("raw") Boolean raw);
 
     /**
      * @param style Name of the style to retrieve. (required)
@@ -109,10 +106,7 @@ public interface ExtendedStylesApi extends ApiClient.Api {
         "Accept: application/json",
     })
     void uploadStyleSLD(
-            @Param("workspace") String workspace,
-            @Param("style") String style,
-            byte[] body,
-            @Param("raw") Boolean raw);
+            @Param("workspace") String workspace, @Param("style") String style, byte[] body, @Param("raw") Boolean raw);
 
     @RequestLine("PUT /styles/{style}")
     @Headers({
@@ -126,10 +120,7 @@ public interface ExtendedStylesApi extends ApiClient.Api {
         "Content-Type: application/json",
         "Accept: application/json",
     })
-    void update(
-            @Param("workspace") String workspace,
-            @Param("style") String style,
-            StyleInfoWrapper info);
+    void update(@Param("workspace") String workspace, @Param("style") String style, StyleInfoWrapper info);
     /////////////////// methods copied from generated StylesApi.java
     /////////////////// ///////////////////////////
 
@@ -149,9 +140,7 @@ public interface ExtendedStylesApi extends ApiClient.Api {
         "Accept: application/json",
     })
     void addStyleToLayer(
-            @Param("layer") String layer,
-            StyleInfoPost styleInfoPost,
-            @Param("_default") Boolean _default);
+            @Param("layer") String layer, StyleInfoPost styleInfoPost, @Param("_default") Boolean _default);
 
     /**
      * Add a new style Adds a new style entry to the layer. The style named in styleBody must alread
@@ -250,9 +239,7 @@ public interface ExtendedStylesApi extends ApiClient.Api {
         "Content-Type: application/json",
         "Accept: text/plain",
     })
-    String createStyle(
-            StyleInfoWrapper styleInfoWrapper,
-            @QueryMap(encoded = true) Map<String, Object> queryParams);
+    String createStyle(StyleInfoWrapper styleInfoWrapper, @QueryMap(encoded = true) Map<String, Object> queryParams);
 
     /**
      * A convenience class for generating query parameters for the <code>createStyle</code> method
@@ -292,9 +279,7 @@ public interface ExtendedStylesApi extends ApiClient.Api {
         "Accept: text/plain",
     })
     String createStyleByWorkspace(
-            @Param("workspace") String workspace,
-            StyleInfoWrapper styleInfoWrapper,
-            @Param("name") String name);
+            @Param("workspace") String workspace, StyleInfoWrapper styleInfoWrapper, @Param("name") String name);
 
     /**
      * Add a new style to a given workspace Adds a new style entry to the server. Using POST with
@@ -360,10 +345,7 @@ public interface ExtendedStylesApi extends ApiClient.Api {
     @Headers({
         "Accept: application/json",
     })
-    void deleteStyle(
-            @Param("style") String style,
-            @Param("purge") Boolean purge,
-            @Param("recurse") Boolean recurse);
+    void deleteStyle(@Param("style") String style, @Param("purge") Boolean purge, @Param("recurse") Boolean recurse);
 
     /**
      * Delete style Deletes a style. Note, this is equivalent to the other <code>deleteStyle</code>
@@ -385,9 +367,7 @@ public interface ExtendedStylesApi extends ApiClient.Api {
     @Headers({
         "Accept: application/json",
     })
-    void deleteStyle(
-            @Param("style") String style,
-            @QueryMap(encoded = true) Map<String, Object> queryParams);
+    void deleteStyle(@Param("style") String style, @QueryMap(encoded = true) Map<String, Object> queryParams);
 
     /**
      * A convenience class for generating query parameters for the <code>deleteStyle</code> method
@@ -519,8 +499,7 @@ public interface ExtendedStylesApi extends ApiClient.Api {
     @Headers({
         "Accept: application/json",
     })
-    StyleInfoWrapper getStyleByWorkspace(
-            @Param("workspace") String workspace, @Param("style") String style);
+    StyleInfoWrapper getStyleByWorkspace(@Param("workspace") String workspace, @Param("style") String style);
 
     /**
      * Get a list of styles Displays a list of all styles on the server.

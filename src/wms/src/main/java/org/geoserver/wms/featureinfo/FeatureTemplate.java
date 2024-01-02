@@ -228,8 +228,7 @@ public class FeatureTemplate {
      * @param template The template name.
      * @param lookup The class to lookup the template relative to.
      */
-    public void template(SimpleFeature feature, Writer writer, String template, Class<?> lookup)
-            throws IOException {
+    public void template(SimpleFeature feature, Writer writer, String template, Class<?> lookup) throws IOException {
         execute(feature, feature.getFeatureType(), writer, template, lookup);
     }
 
@@ -246,8 +245,7 @@ public class FeatureTemplate {
      * @param template The template name.
      * @param lookup The class to lookup the template relative to.
      */
-    public void template(
-            SimpleFeature feature, OutputStream output, String template, Class<?> lookup)
+    public void template(SimpleFeature feature, OutputStream output, String template, Class<?> lookup)
             throws IOException {
         template(feature, new OutputStreamWriter(output), template, lookup);
     }
@@ -264,8 +262,7 @@ public class FeatureTemplate {
      * @param template The template name.
      * @param lookup The class to lookup the template relative to.
      */
-    public String template(SimpleFeature feature, String template, Class<?> lookup)
-            throws IOException {
+    public String template(SimpleFeature feature, String template, Class<?> lookup) throws IOException {
         caw.reset();
         template(feature, caw, template, lookup);
         return caw.toString();
@@ -275,12 +272,7 @@ public class FeatureTemplate {
      * Internal helper method to exceute the template against feature or
      * feature collection.
      */
-    private void execute(
-            Object feature,
-            SimpleFeatureType featureType,
-            Writer writer,
-            String template,
-            Class<?> lookup)
+    private void execute(Object feature, SimpleFeatureType featureType, Writer writer, String template, Class<?> lookup)
             throws IOException {
 
         Template t = lookupTemplate(featureType, template, lookup);
@@ -306,10 +298,8 @@ public class FeatureTemplate {
         if (t != null) return t;
 
         // otherwise, build a loader and do the lookup
-        GeoServerTemplateLoader templateLoader =
-                new GeoServerTemplateLoader(
-                        lookup != null ? lookup : getClass(),
-                        GeoServerExtensions.bean(GeoServerResourceLoader.class));
+        GeoServerTemplateLoader templateLoader = new GeoServerTemplateLoader(
+                lookup != null ? lookup : getClass(), GeoServerExtensions.bean(GeoServerResourceLoader.class));
         Catalog catalog = (Catalog) GeoServerExtensions.bean("catalog");
         templateLoader.setFeatureType(catalog.getFeatureTypeByName(featureType.getName()));
 
@@ -324,10 +314,7 @@ public class FeatureTemplate {
 
     /** Returns true if the required template is empty or has its default content */
     public boolean isTemplateEmpty(
-            SimpleFeatureType featureType,
-            String template,
-            Class<FeatureTemplate> lookup,
-            String defaultContent)
+            SimpleFeatureType featureType, String template, Class<FeatureTemplate> lookup, String defaultContent)
             throws IOException {
         Template t = lookupTemplate(featureType, template, lookup);
         if (t == null) {
@@ -338,8 +325,7 @@ public class FeatureTemplate {
         t.dump(sw);
         // an empty template canonical form is "0\n".. weird!
         String templateText = sw.toString();
-        return "".equals(templateText)
-                || (defaultContent != null && defaultContent.equals(templateText));
+        return "".equals(templateText) || (defaultContent != null && defaultContent.equals(templateText));
     }
 
     private static class TemplateKey {

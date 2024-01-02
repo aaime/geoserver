@@ -36,8 +36,7 @@ class ConfigureCachedLayerAjaxLink extends SimpleAjaxLink<TileLayer> {
      * @param returnPage which page to instruct the LayerInfo or LayerGroupInfo edit page to return
      *     to
      */
-    public ConfigureCachedLayerAjaxLink(
-            String id, IModel<TileLayer> itemModel, Class<? extends Page> returnPage) {
+    public ConfigureCachedLayerAjaxLink(String id, IModel<TileLayer> itemModel, Class<? extends Page> returnPage) {
         super(id, itemModel, new PropertyModel<String>(itemModel, "name"));
         this.returnPage = returnPage;
     }

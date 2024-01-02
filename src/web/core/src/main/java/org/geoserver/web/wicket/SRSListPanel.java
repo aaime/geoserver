@@ -60,32 +60,30 @@ public abstract class SRSListPanel extends Panel {
     public SRSListPanel(String id, SRSProvider srsProvider) {
         super(id);
 
-        table =
-                new GeoServerTablePanel<SRS>("table", srsProvider) {
+        table = new GeoServerTablePanel<SRS>("table", srsProvider) {
 
-                    private static final long serialVersionUID = 6182776235846912573L;
+            private static final long serialVersionUID = 6182776235846912573L;
 
-                    @Override
-                    protected Component getComponentForProperty(
-                            String id, IModel<SRS> itemModel, Property<SRS> property) {
+            @Override
+            protected Component getComponentForProperty(String id, IModel<SRS> itemModel, Property<SRS> property) {
 
-                        SRS srs = itemModel.getObject();
+                SRS srs = itemModel.getObject();
 
-                        if (SRSProvider.IDENTIFIER.equals(property)) {
+                if (SRSProvider.IDENTIFIER.equals(property)) {
 
-                            Component linkForCode = createLinkForCode(id, itemModel);
+                    Component linkForCode = createLinkForCode(id, itemModel);
 
-                            return linkForCode;
+                    return linkForCode;
 
-                        } else if (SRSProvider.DESCRIPTION.equals(property)) {
-                            String description = srs.getDescription();
-                            return new Label(id, description.trim());
+                } else if (SRSProvider.DESCRIPTION.equals(property)) {
+                    String description = srs.getDescription();
+                    return new Label(id, description.trim());
 
-                        } else {
-                            throw new IllegalArgumentException("Unknown property: " + property);
-                        }
-                    }
-                };
+                } else {
+                    throw new IllegalArgumentException("Unknown property: " + property);
+                }
+            }
+        };
 
         add(table);
     }
@@ -109,8 +107,7 @@ public abstract class SRSListPanel extends Panel {
      */
     @SuppressWarnings("unchecked")
     protected Component createLinkForCode(String linkId, IModel<SRS> itemModel) {
-        return new SimpleAjaxLink<Object>(
-                linkId, (IModel<Object>) SRSProvider.IDENTIFIER.getModel(itemModel)) {
+        return new SimpleAjaxLink<Object>(linkId, (IModel<Object>) SRSProvider.IDENTIFIER.getModel(itemModel)) {
 
             private static final long serialVersionUID = -1330723116026268069L;
 

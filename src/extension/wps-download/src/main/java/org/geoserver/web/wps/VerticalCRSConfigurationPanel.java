@@ -67,16 +67,13 @@ public class VerticalCRSConfigurationPanel extends ResourceConfigurationPanel {
         }
 
         CRSPanel verticalCRSPanel =
-                new CRSPanel(
-                        "verticalCRS",
-                        new SRSToCRSModel(new PropertyModel<>(this, "verticalCRS"))) {
+                new CRSPanel("verticalCRS", new SRSToCRSModel(new PropertyModel<>(this, "verticalCRS"))) {
                     @Override
                     protected void onSRSUpdated(String srs, AjaxRequestTarget target) {
                         verticalCRS = srs;
                         if (verticalCRS != null) {
 
-                            final PropertyModel<MetadataMap> metadata =
-                                    new PropertyModel<>(model, "metadata");
+                            final PropertyModel<MetadataMap> metadata = new PropertyModel<>(model, "metadata");
                             if (metadata.getObject() == null) {
                                 metadata.setObject(new MetadataMap());
                             }

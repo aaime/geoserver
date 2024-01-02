@@ -135,17 +135,11 @@ public class DataDirectoryGeoServerLoader extends GeoServerLoader {
         }
         GeoServerImpl loaded = loader.loadGeoServer(rawCatalog);
 
-        LOGGER.log(
-                Level.CONFIG,
-                "GeoServer config (settings and services) loaded in {0}",
-                stopWatch.stop());
+        LOGGER.log(Level.CONFIG, "GeoServer config (settings and services) loaded in {0}", stopWatch.stop());
 
         stopWatch.reset().start();
         transferContents(loaded, geoServer, xp);
-        LOGGER.log(
-                Level.CONFIG,
-                "Transferred GeoServer config to actual service bean in {0}",
-                stopWatch.stop());
+        LOGGER.log(Level.CONFIG, "Transferred GeoServer config to actual service bean in {0}", stopWatch.stop());
 
         getLoaderListener().loadGeoServer(geoServer, xp);
     }
@@ -169,27 +163,22 @@ public class DataDirectoryGeoServerLoader extends GeoServerLoader {
 
         List<WorkspaceInfo> workspaces = target.getCatalog().getWorkspaces();
 
-        workspaces.stream()
-                .parallel()
-                .forEach(
-                        ws -> {
-                            SettingsInfo settings = source.getSettings(ws);
-                            Collection<? extends ServiceInfo> services = source.getServices(ws);
-                            if (null != settings) target.add(unwrap(settings));
-                            for (ServiceInfo service : services) target.add(unwrap(service));
-                        });
+        workspaces.stream().parallel().forEach(ws -> {
+            SettingsInfo settings = source.getSettings(ws);
+            Collection<? extends ServiceInfo> services = source.getServices(ws);
+            if (null != settings) target.add(unwrap(settings));
+            for (ServiceInfo service : services) target.add(unwrap(service));
+        });
     }
 
     private void clear(GeoServer target) {
         target.getServices().forEach(target::remove);
 
-        target.getCatalog().getWorkspaces().stream()
-                .forEach(
-                        ws -> {
-                            SettingsInfo settings = target.getSettings(ws);
-                            if (null != settings) target.remove(settings);
-                            target.getServices(ws).forEach(target::remove);
-                        });
+        target.getCatalog().getWorkspaces().stream().forEach(ws -> {
+            SettingsInfo settings = target.getSettings(ws);
+            if (null != settings) target.remove(settings);
+            target.getServices(ws).forEach(target::remove);
+        });
     }
 
     private void removePersisterListeners(GeoServer geoServer) {
@@ -224,15 +213,11 @@ public class DataDirectoryGeoServerLoader extends GeoServerLoader {
         ConfigurationPasswordEncryptionHelper helper;
         helper = securityManager.getConfigPasswordEncryptionHelper();
 
-        catalog.getDataStores().stream()
-                .filter(this::shouldTryDecrypt)
-                .forEach(
-                        store -> {
-                            helper.decode(store);
-                            ModificationProxy h =
-                                    (ModificationProxy) Proxy.getInvocationHandler(store);
-                            h.commit();
-                        });
+        catalog.getDataStores().stream().filter(this::shouldTryDecrypt).forEach(store -> {
+            helper.decode(store);
+            ModificationProxy h = (ModificationProxy) Proxy.getInvocationHandler(store);
+            h.commit();
+        });
     }
 
     /**
@@ -243,9 +228,7 @@ public class DataDirectoryGeoServerLoader extends GeoServerLoader {
      * GeoTools#getInitialContext()}.
      */
     private boolean shouldTryDecrypt(DataStoreInfo ds) {
-        return null != ds.getType()
-                && !"Shapefile".equals(ds.getType())
-                && !"OGR".equals(ds.getType());
+        return null != ds.getType() && !"Shapefile".equals(ds.getType()) && !"OGR".equals(ds.getType());
     }
 
     /**
@@ -273,9 +256,8 @@ public class DataDirectoryGeoServerLoader extends GeoServerLoader {
     private FileSystemResourceStore resolveResourceStore(GeoServerResourceLoader resourceLoader) {
         ResourceStore resourceStore = resourceLoader.getResourceStore();
         if (!(resourceStore instanceof FileSystemResourceStore)) {
-            throw new IllegalArgumentException(
-                    "Expected ResourceStore to be FileSystemResourceStore, got "
-                            + resourceStore.getClass().getName());
+            throw new IllegalArgumentException("Expected ResourceStore to be FileSystemResourceStore, got "
+                    + resourceStore.getClass().getName());
         }
         return (FileSystemResourceStore) resourceStore;
     }
@@ -285,10 +267,7 @@ public class DataDirectoryGeoServerLoader extends GeoServerLoader {
 
         Stopwatch stopWatch = Stopwatch.createStarted();
         sync(source, target);
-        LOGGER.log(
-                Level.CONFIG,
-                "Transferred Catalog config to actual service bean in {0}",
-                stopWatch.stop());
+        LOGGER.log(Level.CONFIG, "Transferred Catalog config to actual service bean in {0}", stopWatch.stop());
 
         restoreListeners(target, preservedListeners, xp);
     }
@@ -312,8 +291,7 @@ public class DataDirectoryGeoServerLoader extends GeoServerLoader {
         }
     }
 
-    private void restoreListeners(
-            Catalog target, List<CatalogListener> preservedListeners, XStreamPersister xp) {
+    private void restoreListeners(Catalog target, List<CatalogListener> preservedListeners, XStreamPersister xp) {
         // attach back the old listeners
         preservedListeners.forEach(target::addListener);
 
@@ -346,28 +324,26 @@ public class DataDirectoryGeoServerLoader extends GeoServerLoader {
 
     private void logStop(Stopwatch stoppedSw, final Catalog catalog) {
         LOGGER.log(Level.INFO, "Read catalog {0}", stoppedSw);
-        LOGGER.config(
-                () -> {
-                    String msg =
-                            "Loaded Catalog contents: "
-                                    + "workspaces: %,d, "
-                                    + "namespaces: %,d, "
-                                    + "styles: %,d, "
-                                    + "stores: %,d, "
-                                    + "resources: %,d, "
-                                    + "layers: %,d, "
-                                    + "layer groups: %,d.";
+        LOGGER.config(() -> {
+            String msg = "Loaded Catalog contents: "
+                    + "workspaces: %,d, "
+                    + "namespaces: %,d, "
+                    + "styles: %,d, "
+                    + "stores: %,d, "
+                    + "resources: %,d, "
+                    + "layers: %,d, "
+                    + "layer groups: %,d.";
 
-                    final IncludeFilter all = Filter.INCLUDE;
-                    return String.format(
-                            msg,
-                            catalog.count(WorkspaceInfo.class, all),
-                            catalog.count(NamespaceInfo.class, all),
-                            catalog.count(StyleInfo.class, all),
-                            catalog.count(StoreInfo.class, all),
-                            catalog.count(ResourceInfo.class, all),
-                            catalog.count(LayerInfo.class, all),
-                            catalog.count(LayerGroupInfo.class, all));
-                });
+            final IncludeFilter all = Filter.INCLUDE;
+            return String.format(
+                    msg,
+                    catalog.count(WorkspaceInfo.class, all),
+                    catalog.count(NamespaceInfo.class, all),
+                    catalog.count(StyleInfo.class, all),
+                    catalog.count(StoreInfo.class, all),
+                    catalog.count(ResourceInfo.class, all),
+                    catalog.count(LayerInfo.class, all),
+                    catalog.count(LayerGroupInfo.class, all));
+        });
     }
 }

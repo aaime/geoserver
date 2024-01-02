@@ -35,25 +35,15 @@ public class HttpHeaderPriorityProvider implements PriorityProvider {
             try {
                 int priority = Integer.parseInt(priorityString);
                 if (LOGGER.isLoggable(Level.FINE)) {
-                    LOGGER.fine(
-                            "Found priority header "
-                                    + headerName
-                                    + " in request with value "
-                                    + priority);
+                    LOGGER.fine("Found priority header " + headerName + " in request with value " + priority);
                 }
                 return priority;
             } catch (NumberFormatException e) {
-                LOGGER.log(
-                        Level.INFO,
-                        "Priority header found, but did not have a valid integer value",
-                        e);
+                LOGGER.log(Level.INFO, "Priority header found, but did not have a valid integer value", e);
             }
         } else {
             if (LOGGER.isLoggable(Level.FINE)) {
-                LOGGER.fine(
-                        "Did not find priority header "
-                                + headerName
-                                + " in request, using default priorirty");
+                LOGGER.fine("Did not find priority header " + headerName + " in request, using default priorirty");
             }
         }
 

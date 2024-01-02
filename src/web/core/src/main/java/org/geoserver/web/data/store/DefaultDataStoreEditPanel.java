@@ -114,28 +114,25 @@ public class DefaultDataStoreEditPanel extends StoreEditPanel {
         }
 
         final List<String> keys = new ArrayList<>(paramsMetadata.keySet());
-        final IModel<Map<String, Serializable>> paramsModel =
-                new PropertyModel<>(model, "connectionParameters");
+        final IModel<Map<String, Serializable>> paramsModel = new PropertyModel<>(model, "connectionParameters");
 
-        ListView<String> paramsList =
-                new ListView<String>("parameters", keys) {
-                    private static final long serialVersionUID = 1L;
+        ListView<String> paramsList = new ListView<String>("parameters", keys) {
+            private static final long serialVersionUID = 1L;
 
-                    @Override
-                    protected void populateItem(ListItem<String> item) {
-                        String paramName = item.getDefaultModelObjectAsString();
-                        ParamInfo paramMetadata = paramsMetadata.get(paramName);
+            @Override
+            protected void populateItem(ListItem<String> item) {
+                String paramName = item.getDefaultModelObjectAsString();
+                ParamInfo paramMetadata = paramsMetadata.get(paramName);
 
-                        Component inputComponent =
-                                getInputComponent("parameterPanel", paramsModel, paramMetadata);
+                Component inputComponent = getInputComponent("parameterPanel", paramsModel, paramMetadata);
 
-                        String description = paramMetadata.getTitle();
-                        if (description != null) {
-                            inputComponent.add(AttributeModifier.replace("title", description));
-                        }
-                        item.add(inputComponent);
-                    }
-                };
+                String description = paramMetadata.getTitle();
+                if (description != null) {
+                    inputComponent.add(AttributeModifier.replace("title", description));
+                }
+                item.add(inputComponent);
+            }
+        };
         // needed for form components not to loose state
         paramsList.setReuseItems(true);
 
@@ -151,8 +148,7 @@ public class DefaultDataStoreEditPanel extends StoreEditPanel {
             final IModel<Map<String, Serializable>> paramsModel,
             final ParamInfo paramMetadata) {
 
-        final GeoServerEnvironment gsEnvironment =
-                GeoServerExtensions.bean(GeoServerEnvironment.class);
+        final GeoServerEnvironment gsEnvironment = GeoServerExtensions.bean(GeoServerEnvironment.class);
 
         final String paramName = paramMetadata.getName();
         final String paramLabel = paramMetadata.getName();
@@ -173,33 +169,26 @@ public class DefaultDataStoreEditPanel extends StoreEditPanel {
                 valueModel = adaptEnumeration(binding, valueModel);
             }
             IModel<String> labelModel = new ResourceModel(paramLabel, paramLabel);
-            parameterPanel =
-                    new DropDownChoiceParamPanel(
-                            componentId, valueModel, labelModel, options, required);
+            parameterPanel = new DropDownChoiceParamPanel(componentId, valueModel, labelModel, options, required);
 
         } else if (Boolean.class == binding) {
             // TODO Add prefix for better i18n?
-            parameterPanel =
-                    new CheckBoxParamPanel(
-                            componentId,
-                            new MapModel<>(paramsModel, paramName),
-                            new ResourceModel(paramLabel, paramLabel));
+            parameterPanel = new CheckBoxParamPanel(
+                    componentId, new MapModel<>(paramsModel, paramName), new ResourceModel(paramLabel, paramLabel));
 
         } else if (File.class == binding) {
-            parameterPanel =
-                    new FileParamPanel(
-                            componentId,
-                            new MapModel<>(paramsModel, paramName),
-                            new ResourceModel(paramLabel, paramLabel),
-                            required);
+            parameterPanel = new FileParamPanel(
+                    componentId,
+                    new MapModel<>(paramsModel, paramName),
+                    new ResourceModel(paramLabel, paramLabel),
+                    required);
 
         } else if (String.class == binding && paramMetadata.isPassword()) {
-            parameterPanel =
-                    new PasswordParamPanel(
-                            componentId,
-                            new MapModel<>(paramsModel, paramName),
-                            new ResourceModel(paramLabel, paramLabel),
-                            required);
+            parameterPanel = new PasswordParamPanel(
+                    componentId,
+                    new MapModel<>(paramsModel, paramName),
+                    new ResourceModel(paramLabel, paramLabel),
+                    required);
         } else {
             IModel<String> model;
             if ("url".equalsIgnoreCase(paramName)) {
@@ -210,19 +199,9 @@ public class DefaultDataStoreEditPanel extends StoreEditPanel {
 
             Panel tp;
             if (paramMetadata.isLargeText()) {
-                tp =
-                        new TextAreaParamPanel(
-                                componentId,
-                                model,
-                                new ResourceModel(paramLabel, paramLabel),
-                                required);
+                tp = new TextAreaParamPanel(componentId, model, new ResourceModel(paramLabel, paramLabel), required);
             } else {
-                tp =
-                        new TextParamPanel<>(
-                                componentId,
-                                model,
-                                new ResourceModel(paramLabel, paramLabel),
-                                required);
+                tp = new TextParamPanel<>(componentId, model, new ResourceModel(paramLabel, paramLabel), required);
             }
 
             // if it can be a reference to the local filesystem make sure it's valid
@@ -255,9 +234,8 @@ public class DefaultDataStoreEditPanel extends StoreEditPanel {
         }
 
         Object parameterValue = parameterPanel.getDefaultModelObject();
-        boolean visible =
-                !(deprecated && isEmpty(parameterValue))
-                        && !paramMetadata.getLevel().equals("program");
+        boolean visible = !(deprecated && isEmpty(parameterValue))
+                && !paramMetadata.getLevel().equals("program");
         parameterPanel.setVisible(visible);
         parameterPanel.setVisibilityAllowed(visible);
 
@@ -265,8 +243,7 @@ public class DefaultDataStoreEditPanel extends StoreEditPanel {
     }
 
     @SuppressWarnings("unchecked")
-    private IModel<Serializable> adaptEnumeration(
-            Class<?> binding, IModel<Serializable> valueModel) {
+    private IModel<Serializable> adaptEnumeration(Class<?> binding, IModel<Serializable> valueModel) {
         return new EnumAdapterModel(valueModel, binding);
     }
 

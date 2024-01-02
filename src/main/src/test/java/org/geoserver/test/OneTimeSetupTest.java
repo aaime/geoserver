@@ -92,9 +92,8 @@ public abstract class OneTimeSetupTest {
     @Before
     public final void setUp() throws Exception {
         if (inSetup)
-            throw new RuntimeException(
-                    "setUpInternal seems to call back to super.setUp(). "
-                            + "It should call super.setUpInternal instead");
+            throw new RuntimeException("setUpInternal seems to call back to super.setUp(). "
+                    + "It should call super.setUpInternal instead");
         try {
             inSetup = true;
 
@@ -118,9 +117,8 @@ public abstract class OneTimeSetupTest {
     @After
     public final void tearDown() throws Exception {
         if (inTearDown)
-            throw new RuntimeException(
-                    "tearDownInternal seems to call back to super.tearDown(). "
-                            + "It should call super.tearDownInternal instead");
+            throw new RuntimeException("tearDownInternal seems to call back to super.tearDown(). "
+                    + "It should call super.tearDownInternal instead");
 
         try {
             inTearDown = true;
