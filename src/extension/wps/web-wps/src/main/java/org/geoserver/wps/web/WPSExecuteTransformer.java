@@ -13,9 +13,12 @@ import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.xml.serializer.TreeWalker;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.sax.SAXResult;
 import org.geoserver.catalog.Catalog;
 import org.geoserver.catalog.NamespaceInfo;
+import org.geoserver.catalog.ResourcePool;
 import org.geoserver.wps.web.InputParameterValues.ParameterType;
 import org.geoserver.wps.web.InputParameterValues.ParameterValue;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
@@ -24,7 +27,6 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.gml2.bindings.GML2EncodingUtils;
 import org.geotools.gml3.GML;
 import org.geotools.ows.v1_1.OWS;
-import org.geotools.referencing.CRS;
 import org.geotools.util.Converters;
 import org.geotools.util.logging.Logging;
 import org.geotools.wps.WPS;
@@ -175,7 +177,7 @@ class WPSExecuteTransformer extends TransformerBase {
                         CoordinateReferenceSystem crs = env.getCoordinateReferenceSystem();
                         if (crs != null) {
                             try {
-                                crsId = CRS.lookupIdentifier(crs, false);
+                                crsId = ResourcePool.lookupIdentifier(crs, false);
                             } catch (Exception e) {
                                 LOGGER.log(Level.WARNING, "Could not get EPSG code for " + crsId);
                             }
@@ -229,7 +231,7 @@ class WPSExecuteTransformer extends TransformerBase {
             try {
                 start("wps:Data");
                 final CoordinateReferenceSystem crs = (CoordinateReferenceSystem) value.value;
-                element("wps:LiteralData", CRS.lookupIdentifier(crs, false));
+                element("wps:LiteralData", ResourcePool.lookupIdentifier(crs, false));
                 end("wps:Data");
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -378,21 +380,26 @@ class WPSExecuteTransformer extends TransformerBase {
 
         private void dumpAsXML(Document document) {
             try {
-                TreeWalker tw = new TreeWalker(contentHandler);
-                tw.traverse(document);
+                TransformerFactory.newInstance()
+                        .newTransformer()
+                        .transform(new DOMSource(document), new SAXResult(contentHandler));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
 
         private Document parseAsXML(String data) {
+            if (!data.matches("\\s*<.+/.*>\\s*")) {
+                // crude regex to check for potentially parseable XML strings
+                return null;
+            }
             try {
                 DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
                 factory.setNamespaceAware(true);
                 DocumentBuilder builder = factory.newDocumentBuilder();
                 builder.setEntityResolver(entityResolver);
                 if (!data.startsWith("<?xml")) {
-                    data = "<?xml version=\"1.0\" encoding=\"UTF-16\"?>\n" + data;
+                    data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + data;
                 }
                 return builder.parse(new ByteArrayInputStream(data.getBytes()));
             } catch (IOException | ParserConfigurationException | SAXException t) {

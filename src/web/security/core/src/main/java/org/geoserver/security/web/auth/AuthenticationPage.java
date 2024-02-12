@@ -105,7 +105,7 @@ public class AuthenticationPage extends AbstractSecurityPage {
                     (LogoutFilterConfig)
                             getSecurityManager()
                                     .loadFilterConfig(
-                                            GeoServerSecurityFilterChain.FORM_LOGOUT_FILTER);
+                                            GeoServerSecurityFilterChain.FORM_LOGOUT_FILTER, true);
         } catch (IOException e1) {
             throw new RuntimeException(e1);
         }
@@ -118,7 +118,8 @@ public class AuthenticationPage extends AbstractSecurityPage {
             sslFilterConfig =
                     (SSLFilterConfig)
                             getSecurityManager()
-                                    .loadFilterConfig(GeoServerSecurityFilterChain.SSL_FILTER);
+                                    .loadFilterConfig(
+                                            GeoServerSecurityFilterChain.SSL_FILTER, true);
         } catch (IOException e1) {
             throw new RuntimeException(e1);
         }
