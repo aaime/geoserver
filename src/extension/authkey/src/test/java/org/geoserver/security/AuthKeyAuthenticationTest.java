@@ -183,6 +183,44 @@ public class AuthKeyAuthenticationTest extends AbstractAuthenticationProviderTes
     }
 
     @Test
+    public void testMapperParametersFromEnvWhenDisabled() throws Exception {
+        String authKeyUrlParam = "myAuthKeyParams";
+        String filterName = "testAuthKeyParams3";
+
+        AuthenticationKeyFilterConfig config = new AuthenticationKeyFilterConfig();
+        config.setClassName(GeoServerAuthenticationKeyFilter.class.getName());
+        config.setName(filterName);
+        config.setUserGroupServiceName("ug1");
+        config.setAuthKeyParamName(authKeyUrlParam);
+        config.setAuthKeyMapperName("fakeMapper");
+
+        System.setProperty("authkey_param1", "value1");
+        System.setProperty("authkey_param2", "value2");
+        System.setProperty("ALLOW_ENV_PARAMETRIZATION", "false");
+        GeoServerEnvironment.reloadAllowEnvParametrization();
+        try {
+            Map<String, String> mapperParams = new HashMap<>();
+            mapperParams.put("param1", "${authkey_param1}");
+            mapperParams.put("param2", "${authkey_param2}");
+            config.setMapperParameters(mapperParams);
+
+            getSecurityManager().saveFilter(config);
+
+            GeoServerAuthenticationKeyFilter filter =
+                    (GeoServerAuthenticationKeyFilter) getSecurityManager().loadFilter(filterName);
+            assertTrue(filter.getMapper() instanceof FakeMapper);
+            FakeMapper fakeMapper = (FakeMapper) filter.getMapper();
+            assertEquals("${authkey_param1}", fakeMapper.getMapperParameter("param1"));
+            assertEquals("${authkey_param2}", fakeMapper.getMapperParameter("param2"));
+        } finally {
+            System.clearProperty("authkey_param1");
+            System.clearProperty("authkey_param2");
+            System.setProperty("ALLOW_ENV_PARAMETRIZATION", "true");
+            GeoServerEnvironment.reloadAllowEnvParametrization();
+        }
+    }
+
+    @Test
     public void testMapperParamsFilterConfigValidation() throws Exception {
 
         AuthenticationKeyFilterConfigValidator validator =
@@ -653,6 +691,45 @@ public class AuthKeyAuthenticationTest extends AbstractAuthenticationProviderTes
 
         assertNull(propMapper.getUser(user2KeyA));
         assertNull(userpropMapper.getUser(user2KeyB));
+    }
+
+    @Test
+    public void testAuthKeyMapperAutoSynchronize() throws Exception {
+        String authKeyUrlParam = "myAuthKey";
+        String filterName = "testAuthKeyFilterAuto1";
+
+        AuthenticationKeyFilterConfig config = new AuthenticationKeyFilterConfig();
+        config.setClassName(GeoServerAuthenticationKeyFilter.class.getName());
+        config.setName(filterName);
+        config.setAllowMapperKeysAutoSync(true);
+        config.setUserGroupServiceName("ug1");
+        config.setAuthKeyParamName(authKeyUrlParam);
+        config.setAuthKeyMapperName("propertyMapper");
+
+        getSecurityManager().saveFilter(config);
+
+        // File Property Mapper
+        File authKeyFile = new File(getSecurityManager().userGroup().dir(), "testAuthKey");
+        authKeyFile = new File(authKeyFile, "authkeys.properties");
+
+        GeoServerAuthenticationKeyProvider geoServerAuthenticationKeyProvider =
+                new GeoServerAuthenticationKeyProvider(getSecurityManager(), 2);
+        assertNotNull(geoServerAuthenticationKeyProvider.getScheduler());
+        assertFalse(geoServerAuthenticationKeyProvider.getScheduler().isTerminated());
+        assertFalse(geoServerAuthenticationKeyProvider.getScheduler().isShutdown());
+        assertEquals(2, geoServerAuthenticationKeyProvider.getAutoSyncDelaySeconds());
+
+        // Wait up to 10 seconds for the executor to be ready for the next reload.
+        Properties props = new Properties();
+        for (int i = 0; i < 400 && props.isEmpty(); i++) {
+            try {
+                Thread.sleep(25);
+                loadPropFile(authKeyFile, props);
+            } catch (InterruptedException e) {
+            }
+        }
+        assertTrue(authKeyFile.exists());
+        assertFalse(props.isEmpty());
     }
 
     @Test
