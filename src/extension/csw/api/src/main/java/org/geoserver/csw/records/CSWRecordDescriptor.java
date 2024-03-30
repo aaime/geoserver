@@ -10,6 +10,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.net.URI;
 import java.net.URL;
+import java.util.Collections;
 import java.util.List;
 import net.opengis.cat.csw20.ElementSetType;
 import org.geoserver.csw.util.NamespaceQualifier;
@@ -261,6 +262,7 @@ public class CSWRecordDescriptor extends AbstractRecordDescriptor {
 
     @Override
     public Query adaptQuery(Query query) {
+        query = new Query(query);
         Filter filter = query.getFilter();
         if (filter != null && !Filter.INCLUDE.equals(filter)) {
             Filter qualified = (Filter) filter.accept(NSS_QUALIFIER, null);
@@ -268,11 +270,12 @@ public class CSWRecordDescriptor extends AbstractRecordDescriptor {
             query.setFilter(extended);
         }
 
-        SortBy[] sortBy = query.getSortBy();
-        if (sortBy != null && sortBy.length > 0) {
-            CSWPropertyPathExtender extender = new CSWPropertyPathExtender();
+        CSWPropertyPathExtender extender = new CSWPropertyPathExtender();
+
+        if (query.getSortBy() != null && query.getSortBy().length > 0) {
+            SortBy[] sortBy = new SortBy[query.getSortBy().length];
             for (int i = 0; i < sortBy.length; i++) {
-                SortBy sb = sortBy[i];
+                SortBy sb = query.getSortBy()[i];
                 if (!SortBy.NATURAL_ORDER.equals(sb) && !SortBy.REVERSE_ORDER.equals(sb)) {
                     PropertyName name = sb.getPropertyName();
                     PropertyName extended = extender.extendProperty(name, FF, NAMESPACES);
@@ -306,9 +309,10 @@ public class CSWRecordDescriptor extends AbstractRecordDescriptor {
     }
 
     @Override
-    public PropertyName translateProperty(Name name) {
-        return new CSWPropertyPathExtender()
-                .extendProperty(buildPropertyName(NAMESPACES, name), FF, NAMESPACES);
+    public List<PropertyName> translateProperty(Name name) {
+        return Collections.singletonList(
+                new CSWPropertyPathExtender()
+                        .extendProperty(buildPropertyName(NAMESPACES, name), FF, NAMESPACES));
     }
 
     @Override

@@ -19,6 +19,7 @@ import org.geotools.api.filter.Filter;
 import org.geotools.api.filter.expression.PropertyName;
 import org.geotools.api.filter.identity.FeatureId;
 import org.geotools.feature.FeatureCollection;
+import org.geotools.util.factory.Hints;
 
 /**
  * Interfaces to a storage for CSW record objects. By default it has to provide support for CSW
@@ -28,6 +29,14 @@ import org.geotools.feature.FeatureCollection;
  * @author Andrea Aime - GeoSolutions
  */
 public interface CatalogStore {
+
+    /**
+     * This query hint specifies that the query has not yet been prepared (adapted and verified). It
+     * is necessary when we use multiple queryables mappings so that the query must be prepared
+     * separately for each mapping; but for backwards compatibility of the API this flag was
+     * created.
+     */
+    public static final Hints.Key KEY_UNPREPARED = new Hints.Key(Boolean.class);
 
     /** Returns the supported record types */
     RecordDescriptor[] getRecordDescriptors() throws IOException;
@@ -90,6 +99,16 @@ public interface CatalogStore {
     /** Returns the store capabilities */
     CatalogStoreCapabilities getCapabilities();
 
-    /** Maps a qualified name to it's equivalent property name for the backend store. */
-    PropertyName translateProperty(RecordDescriptor rd, Name name);
+    /**
+     * Maps a qualified name to it's equivalent property names for the backend store. @Deprecated
+     * Use translateToPropertyNames(RecordDescriptor, Name)
+     */
+    @Deprecated
+    default PropertyName translateProperty(RecordDescriptor rd, Name name) {
+        List<PropertyName> propNames = translateToPropertyNames(rd, name);
+        return propNames != null && !propNames.isEmpty() ? propNames.get(0) : null;
+    }
+
+    /** Maps a qualified name to its equivalent property names for the backend store. */
+    List<PropertyName> translateToPropertyNames(RecordDescriptor rd, Name name);
 }

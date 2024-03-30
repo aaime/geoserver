@@ -10,7 +10,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -20,6 +19,7 @@ import org.geoserver.catalog.util.CloseableIterator;
 import org.geoserver.catalog.util.CloseableIteratorAdapter;
 import org.geoserver.csw.records.AbstractRecordDescriptor;
 import org.geoserver.csw.records.CSWRecordDescriptor;
+import org.geoserver.csw.records.QueryablesMapping;
 import org.geoserver.csw.records.RecordDescriptor;
 import org.geotools.api.data.Query;
 import org.geotools.api.data.Transaction;
@@ -60,30 +60,32 @@ public abstract class AbstractCatalogStore implements CatalogStore {
         if (rd == null) {
             throw new IOException(typeName + " is not a supported type");
         }
+        final List<PropertyName> properties = rd.translateProperty(attributeName);
 
-        // do we have such attribute?
-        final PropertyName property = rd.translateProperty(attributeName);
-        AttributeDescriptor ad = (AttributeDescriptor) property.evaluate(rd.getFeatureType());
-        if (ad == null) {
+        // do we have these properties?
+        if (!hasProperties(rd.getFeatureType(), properties)) {
             return new CloseableIteratorAdapter<>(new ArrayList<String>().iterator());
         }
 
         // build the query against csw:record
         Query q = new Query(typeName.getLocalPart());
 
-        q.setProperties(Arrays.asList(translateProperty(rd, attributeName)));
+        q.setProperties(translateToPropertyNames(rd, attributeName));
 
         // collect the values without duplicates
         final Set<String> values = new HashSet<>();
         getRecords(q, Transaction.AUTO_COMMIT, rd)
                 .accepts(
                         feature -> {
-                            Property prop = (Property) property.evaluate(feature);
-                            if (prop != null) {
-                                values.add(
-                                        new String(
-                                                ((String) prop.getValue()).getBytes(ISO_8859_1),
-                                                UTF_8));
+                            for (PropertyName property : properties) {
+                                Property prop = (Property) property.evaluate(feature);
+                                if (prop != null) {
+                                    values.add(
+                                            new String(
+                                                    ((String) prop.getValue()).getBytes(ISO_8859_1),
+                                                    UTF_8));
+                                    break;
+                                }
                             }
                         },
                         null);
@@ -92,6 +94,29 @@ public abstract class AbstractCatalogStore implements CatalogStore {
         List<String> result = new ArrayList<>(values);
         Collections.sort(result);
         return new CloseableIteratorAdapter<>(result.iterator());
+    }
+
+    protected boolean hasProperties(FeatureType featureType, List<PropertyName> properties) {
+        boolean hasProperty = false;
+        for (PropertyName property : properties) {
+            AttributeDescriptor ad = (AttributeDescriptor) property.evaluate(featureType);
+            hasProperty |= ad != null;
+        }
+        return hasProperty;
+    }
+
+    protected Query prepareQuery(Query q, RecordDescriptor rd, QueryablesMapping qm) {
+        if (Boolean.TRUE.equals(q.getHints().get(KEY_UNPREPARED))) {
+            q = qm.adaptQuery(q);
+
+            // the specification demands that we throw an error if a spatial operator
+            // is used against a non spatial property
+            if (q.getFilter() != null) {
+                rd.verifySpatialFilters(q.getFilter());
+            }
+        }
+
+        return q;
     }
 
     @Override
@@ -160,7 +185,8 @@ public abstract class AbstractCatalogStore implements CatalogStore {
     }
 
     @Override
-    public PropertyName translateProperty(RecordDescriptor rd, Name name) {
-        return AbstractRecordDescriptor.buildPropertyName(rd.getNamespaceSupport(), name);
+    public List<PropertyName> translateToPropertyNames(RecordDescriptor rd, Name name) {
+        return Collections.singletonList(
+                AbstractRecordDescriptor.buildPropertyName(rd.getNamespaceSupport(), name));
     }
 }
