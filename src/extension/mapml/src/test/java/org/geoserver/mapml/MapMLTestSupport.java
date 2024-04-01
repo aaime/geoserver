@@ -44,7 +44,17 @@ public class MapMLTestSupport extends WMSTestSupport {
             throws Exception {
         MockHttpServletRequest request =
                 getMapMLWMSRequest(
-                        name, kvp, locale, bbox, srs, styles, cqlFilter, isFeatureRepresentation);
+                        name,
+                        kvp,
+                        locale,
+                        bbox,
+                        srs,
+                        styles,
+                        cqlFilter,
+                        null,
+                        null,
+                        null,
+                        isFeatureRepresentation);
         MockHttpServletResponse response = dispatch(request);
         return mapml(response);
     }
@@ -61,7 +71,17 @@ public class MapMLTestSupport extends WMSTestSupport {
             throws Exception {
         MockHttpServletRequest request =
                 getMapMLWMSRequest(
-                        name, kvp, locale, bbox, srs, styles, cqlFilter, isFeatureRepresentation);
+                        name,
+                        kvp,
+                        locale,
+                        bbox,
+                        srs,
+                        styles,
+                        cqlFilter,
+                        null,
+                        null,
+                        null,
+                        isFeatureRepresentation);
         MockHttpServletResponse response = dispatch(request);
         return response.getContentAsString();
     }
@@ -109,6 +129,10 @@ public class MapMLTestSupport extends WMSTestSupport {
      * @param srs the SRS
      * @param styles the styles
      * @param cql the CQL filter
+     * @param width the width
+     * @param height the height
+     * @param format the mime format
+     * @param isFeatureRepresentation true if the response is a feature representation
      * @return the request
      * @throws Exception if an error occurs
      */
@@ -120,6 +144,9 @@ public class MapMLTestSupport extends WMSTestSupport {
             String srs,
             String styles,
             String cql,
+            String width,
+            String height,
+            String format,
             boolean isFeatureRepresentation)
             throws Exception {
         String path = null;
@@ -139,15 +166,17 @@ public class MapMLTestSupport extends WMSTestSupport {
                             + "&STYLES="
                             + (styles != null ? styles : "")
                             + "&FORMAT="
-                            + MapMLConstants.MAPML_MIME_TYPE
+                            + (format != null ? format : MapMLConstants.MAPML_MIME_TYPE)
                             + "&SERVICE=WMS&VERSION=1.3.0"
                             + "&REQUEST=GetMap"
                             + "&SRS="
                             + srs
                             + "&BBOX="
                             + (bbox != null ? bbox : "0,0,1,1")
-                            + "&WIDTH=150"
-                            + "&HEIGHT=150"
+                            + "&WIDTH="
+                            + (width != null ? width : "150")
+                            + "&HEIGHT="
+                            + (height != null ? height : "150")
                             + "&cql_filter="
                             + cql
                             + "&format_options="

@@ -129,6 +129,8 @@ public class MapMLWMSTest extends MapMLTestSupport {
                 .put(
                         MapMLDocumentBuilder.MAPML_MULTILAYER_AS_MULTIEXTENT,
                         MapMLDocumentBuilder.MAPML_MULTILAYER_AS_MULTIEXTENT_DEFAULT);
+        // restore default max request memory
+        wms.setMaxRequestMemory(0);
         geoServer.save(wms);
         Catalog cat = getCatalog();
         LayerInfo li = cat.getLayerByName(MockData.POLYGONS.getLocalPart());
@@ -276,6 +278,92 @@ public class MapMLWMSTest extends MapMLTestSupport {
         expectedInternationalTitle = lgi.getInternationalTitle().toString(Locale.CANADA_FRENCH);
         assertTrue("Le titre français".equalsIgnoreCase(expectedInternationalTitle));
         assertTrue(title.equalsIgnoreCase(expectedInternationalTitle));
+    }
+
+    @Test
+    public void testMapMLMaxImageWidthHeight() throws Exception {
+        GeoServer geoServer = getGeoServer();
+        WMSInfo wms = geoServer.getService(WMSInfo.class);
+        wms.setMaxRequestMemory(0);
+        geoServer.save(wms);
+
+        Mapml mapmlOneNotFeatures =
+                getWMSAsMapML(
+                        MockData.POLYGONS.getLocalPart() + "," + MockData.LINES.getLocalPart(),
+                        null,
+                        null,
+                        null,
+                        "EPSG:3857",
+                        null,
+                        null,
+                        false);
+        List<Input> inputs =
+                getTypeFromInputOrDataListOrLink(
+                        mapmlOneNotFeatures
+                                .getBody()
+                                .getExtents()
+                                .get(0)
+                                .getInputOrDatalistOrLink(),
+                        Input.class);
+        List<Input> heightInputsSingleLayer = getInputByType(inputs, InputType.HEIGHT);
+        List<Input> widthInputsSingleLayer = getInputByType(inputs, InputType.WIDTH);
+        assertNull(
+                "Height input max should be null when max request memory is zero",
+                heightInputsSingleLayer.get(0).getMax());
+        assertNull(
+                "Width input max should be null when max request memory is zero",
+                widthInputsSingleLayer.get(0).getMax());
+
+        wms.setMaxRequestMemory(100);
+        geoServer.save(wms);
+        mapmlOneNotFeatures =
+                getWMSAsMapML(
+                        MockData.POLYGONS.getLocalPart() + "," + MockData.LINES.getLocalPart(),
+                        null,
+                        null,
+                        null,
+                        "EPSG:3857",
+                        null,
+                        null,
+                        false);
+        inputs =
+                getTypeFromInputOrDataListOrLink(
+                        mapmlOneNotFeatures
+                                .getBody()
+                                .getExtents()
+                                .get(0)
+                                .getInputOrDatalistOrLink(),
+                        Input.class);
+        heightInputsSingleLayer = getInputByType(inputs, InputType.HEIGHT);
+        widthInputsSingleLayer = getInputByType(inputs, InputType.WIDTH);
+        assertEquals(
+                "Height input max should be 160 pixels when max memory is 100",
+                "160",
+                heightInputsSingleLayer.get(0).getMax());
+        assertEquals(
+                "Width input max should be 160 pixels when max memory is 100",
+                "160",
+                widthInputsSingleLayer.get(0).getMax());
+
+        String maxHeight = heightInputsSingleLayer.get(0).getMax();
+        String maxWidth = widthInputsSingleLayer.get(0).getMax();
+        MockHttpServletRequest request =
+                getMapMLWMSRequest(
+                        MockData.POLYGONS.getLocalPart(),
+                        null,
+                        null,
+                        null,
+                        "EPSG:3857",
+                        null,
+                        null,
+                        maxWidth,
+                        maxHeight,
+                        "image/png",
+                        false);
+        MockHttpServletResponse response = dispatch(request);
+        assertFalse(
+                "Response should not contain a ServiceException",
+                response.getContentAsString().contains("ServiceException"));
     }
 
     @Test
