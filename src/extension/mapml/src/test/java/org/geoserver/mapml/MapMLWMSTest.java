@@ -288,15 +288,13 @@ public class MapMLWMSTest extends MapMLTestSupport {
         geoServer.save(wms);
 
         Mapml mapmlOneNotFeatures =
-                getWMSAsMapML(
-                        MockData.POLYGONS.getLocalPart() + "," + MockData.LINES.getLocalPart(),
-                        null,
-                        null,
-                        null,
-                        "EPSG:3857",
-                        null,
-                        null,
-                        false);
+                new MapMLWMSRequest()
+                        .name(
+                                MockData.POLYGONS.getLocalPart()
+                                        + ","
+                                        + MockData.LINES.getLocalPart())
+                        .srs("EPSG:3857")
+                        .getAsMapML();
         List<Input> inputs =
                 getTypeFromInputOrDataListOrLink(
                         mapmlOneNotFeatures
@@ -317,15 +315,13 @@ public class MapMLWMSTest extends MapMLTestSupport {
         wms.setMaxRequestMemory(100);
         geoServer.save(wms);
         mapmlOneNotFeatures =
-                getWMSAsMapML(
-                        MockData.POLYGONS.getLocalPart() + "," + MockData.LINES.getLocalPart(),
-                        null,
-                        null,
-                        null,
-                        "EPSG:3857",
-                        null,
-                        null,
-                        false);
+                new MapMLWMSRequest()
+                        .name(
+                                MockData.POLYGONS.getLocalPart()
+                                        + ","
+                                        + MockData.LINES.getLocalPart())
+                        .srs("EPSG:3857")
+                        .getAsMapML();
         inputs =
                 getTypeFromInputOrDataListOrLink(
                         mapmlOneNotFeatures
@@ -348,18 +344,13 @@ public class MapMLWMSTest extends MapMLTestSupport {
         String maxHeight = heightInputsSingleLayer.get(0).getMax();
         String maxWidth = widthInputsSingleLayer.get(0).getMax();
         MockHttpServletRequest request =
-                getMapMLWMSRequest(
-                        MockData.POLYGONS.getLocalPart(),
-                        null,
-                        null,
-                        null,
-                        "EPSG:3857",
-                        null,
-                        null,
-                        maxWidth,
-                        maxHeight,
-                        "image/png",
-                        false);
+                new MapMLWMSRequest()
+                        .name(MockData.POLYGONS.getLocalPart())
+                        .srs("EPSG:3857")
+                        .width(maxWidth)
+                        .height(maxHeight)
+                        .format("image/png")
+                        .toHttpRequest();
         MockHttpServletResponse response = dispatch(request);
         assertFalse(
                 "Response should not contain a ServiceException",
@@ -390,15 +381,14 @@ public class MapMLWMSTest extends MapMLTestSupport {
         cat.save(li3);
 
         Mapml mapmlExtent =
-                getWMSAsMapML(
-                        MockData.POLYGONS.getLocalPart() + "," + MockData.LINES.getLocalPart(),
-                        null,
-                        null,
-                        null,
-                        "EPSG:3857",
-                        null,
-                        "id%3D%27t0002%27;INCLUDE",
-                        false);
+                new MapMLWMSRequest()
+                        .name(
+                                MockData.POLYGONS.getLocalPart()
+                                        + ","
+                                        + MockData.LINES.getLocalPart())
+                        .srs("EPSG:3857")
+                        .cql("id%3D%27t0002%27;INCLUDE")
+                        .getAsMapML();
 
         List<Link> extentLinks =
                 getTypeFromInputOrDataListOrLink(
@@ -419,15 +409,13 @@ public class MapMLWMSTest extends MapMLTestSupport {
         li.getResource().getMetadata().put(MAPML_USE_FEATURES, false);
         cat.save(li);
         Mapml mapmlOneNotFeatures =
-                getWMSAsMapML(
-                        MockData.POLYGONS.getLocalPart() + "," + MockData.LINES.getLocalPart(),
-                        null,
-                        null,
-                        null,
-                        "EPSG:3857",
-                        null,
-                        null,
-                        false);
+                new MapMLWMSRequest()
+                        .name(
+                                MockData.POLYGONS.getLocalPart()
+                                        + ","
+                                        + MockData.LINES.getLocalPart())
+                        .srs("EPSG:3857")
+                        .getAsMapML();
 
         List<Link> extentLinksOneNotFeatures =
                 getTypeFromInputOrDataListOrLink(
@@ -475,19 +463,15 @@ public class MapMLWMSTest extends MapMLTestSupport {
         li.getResource().getMetadata().put(MAPML_USE_FEATURES, true);
         cat.save(li);
         Mapml mapmlOneRaster =
-                getWMSAsMapML(
-                        "layerGroup"
-                                + ","
-                                + MockData.POLYGONS.getLocalPart()
-                                + ","
-                                + MockData.WORLD.getLocalPart(),
-                        null,
-                        null,
-                        null,
-                        "EPSG:3857",
-                        null,
-                        null,
-                        false);
+                new MapMLWMSRequest()
+                        .name(
+                                "layerGroup"
+                                        + ","
+                                        + MockData.POLYGONS.getLocalPart()
+                                        + ","
+                                        + MockData.WORLD.getLocalPart())
+                        .srs("EPSG:3857")
+                        .getAsMapML();
 
         List<Link> extentLinksOneRaster =
                 getTypeFromInputOrDataListOrLink(
@@ -514,15 +498,11 @@ public class MapMLWMSTest extends MapMLTestSupport {
         cat.save(li);
 
         Mapml mapmlExtent =
-                getWMSAsMapML(
-                        MockData.POLYGONS.getLocalPart(),
-                        null,
-                        null,
-                        null,
-                        "EPSG:3857",
-                        null,
-                        "id%3D%27t0002%27;INCLUDE",
-                        false);
+                new MapMLWMSRequest()
+                        .name(MockData.POLYGONS.getLocalPart())
+                        .srs("EPSG:3857")
+                        .cql("id%3D%27t0002%27;INCLUDE")
+                        .getAsMapML();
 
         List<Link> extentLinks =
                 getTypeFromInputOrDataListOrLink(
@@ -548,15 +528,11 @@ public class MapMLWMSTest extends MapMLTestSupport {
         enableTileCaching(MockData.POLYGONS, cat);
 
         Mapml mapmlExtent =
-                getWMSAsMapML(
-                        MockData.POLYGONS.getLocalPart(),
-                        null,
-                        null,
-                        null,
-                        "EPSG:3857",
-                        null,
-                        "id%3D%27t0002%27;INCLUDE",
-                        false);
+                new MapMLWMSRequest()
+                        .name(MockData.POLYGONS.getLocalPart())
+                        .srs("EPSG:3857")
+                        .cql("id%3D%27t0002%27;INCLUDE")
+                        .getAsMapML();
 
         List<Link> extentLinks =
                 getTypeFromInputOrDataListOrLink(
@@ -588,15 +564,11 @@ public class MapMLWMSTest extends MapMLTestSupport {
         cat.save(lgi);
 
         Mapml mapmlSingleExtent =
-                getWMSAsMapML(
-                        "layerGroup" + "," + MockData.POLYGONS.getLocalPart(),
-                        null,
-                        null,
-                        "-20000000,-20000000,20000000,20000000",
-                        "EPSG:3857",
-                        null,
-                        null,
-                        false);
+                new MapMLWMSRequest()
+                        .name("layerGroup" + "," + MockData.POLYGONS.getLocalPart())
+                        .bbox("-20000000,-20000000,20000000,20000000")
+                        .srs("EPSG:3857")
+                        .getAsMapML();
 
         List<Link> selfStyleLinksForSingle =
                 getLinkByRelType(mapmlSingleExtent.getHead().getLinks(), RelType.SELF_STYLE);
@@ -673,15 +645,10 @@ public class MapMLWMSTest extends MapMLTestSupport {
         geoServer.save(wms);
 
         Mapml mapmlMultiExtent =
-                getWMSAsMapML(
-                        "layerGroup" + "," + MockData.POLYGONS.getLocalPart(),
-                        null,
-                        null,
-                        null,
-                        "EPSG:3857",
-                        null,
-                        null,
-                        false);
+                new MapMLWMSRequest()
+                        .name("layerGroup" + "," + MockData.POLYGONS.getLocalPart())
+                        .srs("EPSG:3857")
+                        .getAsMapML();
 
         List<Link> selfStyleLinksForMulti =
                 getLinkByRelType(mapmlMultiExtent.getHead().getLinks(), RelType.SELF_STYLE);
@@ -736,15 +703,10 @@ public class MapMLWMSTest extends MapMLTestSupport {
                 inputNamesMultiExtent.containsAll(
                         List.of("z", "tymin", "txmax", "tymax", "txmin", "i", "j")));
         String mapmlString =
-                getWMSAsMapMLString(
-                        "layerGroup" + "," + MockData.POLYGONS.getLocalPart(),
-                        null,
-                        null,
-                        null,
-                        "EPSG:3857",
-                        null,
-                        null,
-                        false);
+                new MapMLWMSRequest()
+                        .name("layerGroup" + "," + MockData.POLYGONS.getLocalPart())
+                        .srs("EPSG:3857")
+                        .getAsString();
         assertFalse(
                 "For multi-extent, the extent hidden attribute should be excluded",
                 mapmlString.contains("hidden"));
@@ -752,15 +714,11 @@ public class MapMLWMSTest extends MapMLTestSupport {
         li.getStyles().add(styleInfo);
         cat.save(li);
         Mapml mapmlMultiExtentWithMultiStyles =
-                getWMSAsMapML(
-                        MockData.POLYGONS.getLocalPart() + "," + "layerGroup",
-                        null,
-                        null,
-                        null,
-                        "EPSG:3857",
-                        "BasicPolygons,",
-                        null,
-                        false);
+                new MapMLWMSRequest()
+                        .name(MockData.POLYGONS.getLocalPart() + "," + "layerGroup")
+                        .srs("EPSG:3857")
+                        .styles("BasicPolygons,")
+                        .getAsMapML();
 
         assertTrue(
                 "Can handle multiple styles, with the last style left as blank",
@@ -784,15 +742,11 @@ public class MapMLWMSTest extends MapMLTestSupport {
         cat.save(layerMeta);
 
         Mapml mapmlSingleLayer =
-                getWMSAsMapML(
-                        MockData.POLYGONS.getLocalPart(),
-                        null,
-                        null,
-                        null,
-                        "EPSG:4326",
-                        "scaleRange",
-                        null,
-                        false);
+                new MapMLWMSRequest()
+                        .name(MockData.POLYGONS.getLocalPart())
+                        .srs("EPSG:4326")
+                        .styles("scaleRange")
+                        .getAsMapML();
 
         List<Input> inputs =
                 getTypeFromInputOrDataListOrLink(
@@ -813,15 +767,11 @@ public class MapMLWMSTest extends MapMLTestSupport {
         li.setDefaultStyle(cat.getStyleByName("scaleRangeNoMax"));
         cat.save(li);
         Mapml mapmlSingleLayerNoMax =
-                getWMSAsMapML(
-                        MockData.POLYGONS.getLocalPart(),
-                        null,
-                        null,
-                        null,
-                        "EPSG:4326",
-                        "scaleRangeNoMax",
-                        null,
-                        false);
+                new MapMLWMSRequest()
+                        .name(MockData.POLYGONS.getLocalPart())
+                        .srs("EPSG:4326")
+                        .styles("scaleRangeNoMax")
+                        .getAsMapML();
 
         List<Input> inputsNoMax =
                 getTypeFromInputOrDataListOrLink(
@@ -845,15 +795,11 @@ public class MapMLWMSTest extends MapMLTestSupport {
         li.getStyles().add(cat.getStyleByName("scaleRangeExtremes"));
         cat.save(li);
         Mapml mapmlSingleLayerExtremes =
-                getWMSAsMapML(
-                        MockData.POLYGONS.getLocalPart(),
-                        null,
-                        null,
-                        null,
-                        "EPSG:4326",
-                        "scaleRangeExtremes",
-                        null,
-                        false);
+                new MapMLWMSRequest()
+                        .name(MockData.POLYGONS.getLocalPart())
+                        .srs("EPSG:4326")
+                        .styles("scaleRangeExtremes")
+                        .getAsMapML();
 
         List<Input> inputsExtremes =
                 getTypeFromInputOrDataListOrLink(
@@ -883,15 +829,11 @@ public class MapMLWMSTest extends MapMLTestSupport {
         wms.getMetadata().put(MapMLDocumentBuilder.MAPML_MULTILAYER_AS_MULTIEXTENT, Boolean.TRUE);
         geoServer.save(wms);
         Mapml mapmlMultiExtentWithMultiStyles =
-                getWMSAsMapML(
-                        MockData.POLYGONS.getLocalPart() + "," + "layerGroup",
-                        null,
-                        null,
-                        null,
-                        "EPSG:4326",
-                        "scaleRange,",
-                        null,
-                        false);
+                new MapMLWMSRequest()
+                        .name(MockData.POLYGONS.getLocalPart() + "," + "layerGroup")
+                        .srs("EPSG:4326")
+                        .styles("scaleRange,")
+                        .getAsMapML();
 
         List<Input> inputsMultiExtent =
                 getTypeFromInputOrDataListOrLink(
@@ -916,15 +858,11 @@ public class MapMLWMSTest extends MapMLTestSupport {
         wms.getMetadata().put(MapMLDocumentBuilder.MAPML_MULTILAYER_AS_MULTIEXTENT, Boolean.FALSE);
         geoServer.save(wms);
         Mapml mapmlSingleExtentWithMultiStyles =
-                getWMSAsMapML(
-                        MockData.POLYGONS.getLocalPart() + "," + "layerGroup",
-                        null,
-                        null,
-                        null,
-                        "EPSG:4326",
-                        "scaleRange,",
-                        null,
-                        false);
+                new MapMLWMSRequest()
+                        .name(MockData.POLYGONS.getLocalPart() + "," + "layerGroup")
+                        .srs("EPSG:4326")
+                        .styles("scaleRange,")
+                        .getAsMapML();
 
         List<Input> inputsSingleExtent =
                 getTypeFromInputOrDataListOrLink(
@@ -968,9 +906,7 @@ public class MapMLWMSTest extends MapMLTestSupport {
 
     @Test
     public void testNonExistentLayer() throws Exception {
-        String response =
-                getWMSAsMapMLString(
-                        "nonexistent", null, null, null, "EPSG:3857", null, null, false);
+        String response = new MapMLWMSRequest().name("nonexistent").srs("EPSG:3857").getAsString();
 
         assertTrue(
                 response.contains(
@@ -979,8 +915,7 @@ public class MapMLWMSTest extends MapMLTestSupport {
 
     @Test
     public void testNonExistentProjection() throws Exception {
-        String response =
-                getWMSAsMapMLString("Polgons", null, null, null, "EPSG:9999", null, null, false);
+        String response = new MapMLWMSRequest().name("Polgons").srs("EPSG:9999").getAsString();
 
         assertTrue(
                 response.contains(
