@@ -6,21 +6,27 @@
   <includeBaseDirectory>false</includeBaseDirectory>
   <fileSets>
     <fileSet>
-      <directory>release/target/dependency</directory>
+      <directory>cog/target/dependency</directory>
       <outputDirectory></outputDirectory>
       <includes>
         <include>annotations-2.*.jar</include>
         <include>auth-2.*.jar</include>
         <include>aws-*-2.*.jar</include>
         <include>azure-storage*.jar</include>
+        <include>checksums-*2*.jar</include>
         <include>client-runtime*.jar</include>
+        <include>crt-core-*-2*.jar</include>
+        <include>endpoints-spi-2*.jar</include>
         <include>gs-cog*.jar</include>
+        <include>http-auth-*2*.jar</include>
         <include>http-client-spi-2*.jar</include>
         <include>http*-osgi*.jar</include>
         <include>imageio-ext-*rangereader*.jar</include>
+        <include>identity-spi*.jar</include>
         <include>jackson-datatype*.jar</include>
         <include>jackson-module*.jar</include>
         <include>kotlin-stdlib*.jar</include>
+        <include>metrics-spi-2.*.jar</include>
         <include>*netty*.jar</include>
         <include>okhttp*.jar</include>
         <include>okio*.jar</include>
@@ -32,6 +38,13 @@
         <include>s3-2.*.jar</include>
         <include>sdk-core-2.*.jar</include>
         <include>utils-2.*.jar</include>
+      </includes>
+    </fileSet>
+    <fileSet>
+      <directory>cog/target</directory>
+      <outputDirectory></outputDirectory>
+      <includes>
+        <include>gs-cog*.jar</include>
       </includes>
     </fileSet>
   </fileSets>
