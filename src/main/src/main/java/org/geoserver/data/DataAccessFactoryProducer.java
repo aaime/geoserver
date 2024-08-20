@@ -6,6 +6,7 @@
 package org.geoserver.data;
 
 import java.util.List;
+import org.geoserver.platform.ExtensionPriority;
 import org.geotools.api.data.DataAccessFactory;
 
 /**
@@ -16,8 +17,13 @@ import org.geotools.api.data.DataAccessFactory;
  *
  * @author Justin Deoliveira, OpenGeo
  */
-public interface DataAccessFactoryProducer {
+public interface DataAccessFactoryProducer extends ExtensionPriority {
 
     /** Returns the list of factories. */
     List<DataAccessFactory> getDataStoreFactories();
+
+    @Override
+    default int getPriority() {
+        return LOWEST;
+    }
 }

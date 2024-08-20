@@ -41,7 +41,6 @@ import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -60,6 +59,7 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import org.easymock.Capture;
 import org.easymock.CaptureType;
 import org.easymock.EasyMock;
+import org.geoserver.catalog.ResourcePoolTest.TestDirectoryStoreFactorySpi.TestDirectoryStore;
 import org.geoserver.catalog.impl.DataStoreInfoImpl;
 import org.geoserver.catalog.impl.StyleInfoImpl;
 import org.geoserver.catalog.impl.WMSStoreInfoImpl;
@@ -67,19 +67,21 @@ import org.geoserver.catalog.util.ReaderUtils;
 import org.geoserver.config.GeoServer;
 import org.geoserver.config.GeoServerDataDirectory;
 import org.geoserver.config.GeoServerInfo;
+import org.geoserver.data.DataAccessFactoryProducer;
 import org.geoserver.data.test.MockData;
 import org.geoserver.data.test.SystemTestData;
 import org.geoserver.data.test.TestData;
 import org.geoserver.platform.GeoServerEnvironment;
 import org.geoserver.platform.GeoServerExtensions;
+import org.geoserver.platform.GeoServerExtensionsHelper;
 import org.geoserver.test.GeoServerSystemTestSupport;
 import org.geoserver.test.RunTestSetup;
 import org.geoserver.test.SystemTest;
 import org.geotools.api.coverage.grid.GridCoverageReader;
 import org.geotools.api.data.DataAccess;
+import org.geotools.api.data.DataAccessFactory;
 import org.geotools.api.data.DataStore;
 import org.geotools.api.data.DataStoreFactorySpi;
-import org.geotools.api.data.DataStoreFinder;
 import org.geotools.api.data.FeatureSource;
 import org.geotools.api.data.Query;
 import org.geotools.api.data.SimpleFeatureLocking;
@@ -106,6 +108,7 @@ import org.geotools.coverage.grid.io.GridCoverage2DReader;
 import org.geotools.coverage.grid.io.StructuredGridCoverage2DReader;
 import org.geotools.coverage.util.CoverageUtilities;
 import org.geotools.data.directory.DirectoryDataStore;
+import org.geotools.data.memory.MemoryDataStore;
 import org.geotools.data.shapefile.ShapefileDirectoryFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.wfs.WFSDataStoreFactory;
@@ -126,7 +129,6 @@ import org.geotools.styling.AbstractStyleVisitor;
 import org.geotools.util.SoftValueHashMap;
 import org.geotools.util.URLs;
 import org.geotools.util.Version;
-import org.geotools.util.factory.FactoryRegistry;
 import org.geotools.util.factory.GeoTools;
 import org.geotools.util.factory.Hints;
 import org.hamcrest.Matchers;
@@ -135,7 +137,6 @@ import org.junit.Assume;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.locationtech.jts.geom.Point;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
@@ -1540,41 +1541,98 @@ public class ResourcePoolTest extends GeoServerSystemTestSupport {
 
     @Test
     public void testAcceptAllStore() throws Exception {
-        // check we have both the shapefile directory and test store accepting URL without a dbtype
-        ShapefileDirectoryFactory shapeDirectorFactory = null;
-        TestDirectoryStoreFactorySpi testDirectoryFactory = null;
-        Iterator<DataStoreFactorySpi> factoryIterator = DataStoreFinder.getAllDataStores();
-        while (factoryIterator.hasNext()) {
-            DataStoreFactorySpi spi = factoryIterator.next();
-            if (spi instanceof TestDirectoryStoreFactorySpi)
-                testDirectoryFactory = (TestDirectoryStoreFactorySpi) spi;
-            else if (spi instanceof ShapefileDirectoryFactory)
-                shapeDirectorFactory = (ShapefileDirectoryFactory) spi;
+
+        DataAccessFactoryProducer testFactoryProducer =
+                new DataAccessFactoryProducer() {
+                    @Override
+                    public int getPriority() {
+                        return HIGHEST;
+                    }
+
+                    @Override
+                    public List<DataAccessFactory> getDataStoreFactories() {
+                        return List.of(
+                                new TestDirectoryStoreFactorySpi(),
+                                new ShapefileDirectoryFactory());
+                    }
+                };
+        GeoServerExtensionsHelper.singleton(
+                "testDataAccessFactoryProducer",
+                testFactoryProducer,
+                DataAccessFactoryProducer.class);
+
+        try {
+            // now create a store that would be caught by the test factory, if it wasn't for the
+            // type
+            // being used to lookup the shape factory
+            Catalog catalog = getCatalog();
+            CatalogBuilder cb = new CatalogBuilder(catalog);
+            DataStoreInfo dataStoreInfo = cb.buildDataStore("mini-states-dir");
+            dataStoreInfo.setType("Directory of spatial files (shapefiles)");
+            dataStoreInfo.getConnectionParameters().put("url", "file:data/mini-states");
+            catalog.add(dataStoreInfo);
+
+            // check this is the right type of store
+            DataStore ds = (DataStore) dataStoreInfo.getDataStore(null);
+            assertThat(ds, Matchers.instanceOf(DirectoryDataStore.class));
+
+            DataStoreInfo testDsInfo = cb.buildDataStore("test-ds");
+            testDsInfo.setType(TestDirectoryStoreFactorySpi.DISPLAY_NAME);
+            dataStoreInfo.getConnectionParameters().put("url", "file:data/fake");
+            DataStore testDs = (DataStore) testDsInfo.getDataStore(null);
+            assertThat(testDs, Matchers.instanceOf(TestDirectoryStore.class));
+        } finally {
+            GeoServerExtensionsHelper.clear();
         }
-        assertNotNull(shapeDirectorFactory);
-        assertNotNull(testDirectoryFactory);
+    }
 
-        // Using reflection to grab the registry. The synchronization is there because the method
-        // is using assertions to check it's being called in a synchronized block (assertions
-        // are enabled when running tests with Maven)
-        FactoryRegistry registry;
-        synchronized (DataStoreFinder.class) {
-            registry =
-                    ReflectionTestUtils.invokeMethod(DataStoreFinder.class, "getServiceRegistry");
+    /**
+     * A fake store that returns nothing, used to similate the FGB store interaction with directory
+     * data store
+     */
+    static class TestDirectoryStoreFactorySpi implements DataStoreFactorySpi {
+
+        static final String DISPLAY_NAME = "Test store accepting a simple URL";
+        static final Param URL_PARAM =
+                new Param("url", URL.class, "A file or directory", true, null);
+
+        @Override
+        public DataStore createDataStore(Map<String, ?> params) throws IOException {
+            return new TestDirectoryStore();
         }
-        registry.setOrdering(DataStoreFactorySpi.class, testDirectoryFactory, shapeDirectorFactory);
 
-        // now create a store that would be caught by the test factory, if it wasn't for the type
-        // being used to lookup the shape factory
-        Catalog catalog = getCatalog();
-        CatalogBuilder cb = new CatalogBuilder(catalog);
-        DataStoreInfo dataStoreInfo = cb.buildDataStore("mini-states-dir");
-        dataStoreInfo.setType("Directory of spatial files (shapefiles)");
-        dataStoreInfo.getConnectionParameters().put("url", "file:data/mini-states");
-        catalog.add(dataStoreInfo);
+        @Override
+        public String getDisplayName() {
+            return DISPLAY_NAME;
+        }
 
-        // check this is the right type of store
-        DataStore ds = (DataStore) dataStoreInfo.getDataStore(null);
-        assertThat(ds, Matchers.instanceOf(DirectoryDataStore.class));
+        @Override
+        public String getDescription() {
+            return "A test factory with no parameters and one fixed data type";
+        }
+
+        @Override
+        public Param[] getParametersInfo() {
+            return new Param[] {URL_PARAM};
+        }
+
+        @Override
+        public boolean isAvailable() {
+            return true;
+        }
+
+        @Override
+        public DataStore createNewDataStore(Map<String, ?> params) throws IOException {
+            return createDataStore(params);
+        }
+
+        /**
+         * Empty subclass, just to have a clearer name on test failures, e.g., "failed to cast to
+         * TestDirectoryStore" is better than "failed to case to MemoryDataStore", e.g., it would
+         * lead immediately to this file. In case you're seeing this, it's likely that you created a
+         * DataStoreInfo without setting the "type" attribute to the desired data store factory
+         * displayName.
+         */
+        public static class TestDirectoryStore extends MemoryDataStore {}
     }
 }

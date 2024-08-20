@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -23,12 +22,12 @@ import org.geoserver.catalog.WMSLayerInfo;
 import org.geoserver.catalog.WMTSLayerInfo;
 import org.geoserver.data.DataAccessFactoryProducer;
 import org.geoserver.data.DataStoreFactoryInitializer;
+import org.geoserver.data.DefaultDataAccessFactoryProducer;
 import org.geoserver.feature.retype.RetypingDataStore;
 import org.geoserver.platform.GeoServerExtensions;
 import org.geotools.api.data.DataAccess;
 import org.geotools.api.data.DataAccessFactory;
 import org.geotools.api.data.DataAccessFactory.Param;
-import org.geotools.api.data.DataAccessFinder;
 import org.geotools.api.data.DataStore;
 import org.geotools.api.feature.Feature;
 import org.geotools.api.feature.type.FeatureType;
@@ -252,13 +251,11 @@ public abstract class DataStoreUtils {
 
     public static Collection<DataAccessFactory> getAvailableDataStoreFactories() {
         List<DataAccessFactory> factories = new ArrayList<>();
-        Iterator<DataAccessFactory> it = DataAccessFinder.getAvailableDataStores();
-        while (it.hasNext()) {
-            factories.add(it.next());
-        }
 
-        for (DataAccessFactoryProducer producer :
-                GeoServerExtensions.extensions(DataAccessFactoryProducer.class)) {
+        List<DataAccessFactoryProducer> producers =
+                GeoServerExtensions.extensions(DataAccessFactoryProducer.class);
+        if (producers.isEmpty()) producers = List.of(new DefaultDataAccessFactoryProducer());
+        for (DataAccessFactoryProducer producer : producers) {
             try {
                 factories.addAll(producer.getDataStoreFactories());
             } catch (Throwable t) {

@@ -358,4 +358,5 @@
   <bean id="xmlViewParamsFormatParser" class="org.geoserver.ows.kvp.XMLViewParamsFormatParser">
   </bean>
 
+  <bean id="defaultDataAccessFactoryProducer" class="org.geoserver.data.DefaultDataAccessFactoryProducer"/>
 </beans>
