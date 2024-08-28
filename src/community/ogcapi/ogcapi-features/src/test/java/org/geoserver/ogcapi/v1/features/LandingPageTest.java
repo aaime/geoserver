@@ -11,9 +11,12 @@ import static org.junit.Assert.assertNotNull;
 
 import com.jayway.jsonpath.DocumentContext;
 import java.util.List;
+
+import org.geoserver.config.GeoServer;
 import org.geoserver.ogcapi.Link;
 import org.geoserver.ogcapi.OpenAPIMessageConverter;
 import org.geoserver.platform.Service;
+import org.geoserver.wfs.WFSInfo;
 import org.geotools.util.Version;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
@@ -183,5 +186,19 @@ public class LandingPageTest extends FeaturesTestSupport {
                 hasItems(
                         "<http://localhost:8080/geoserver/ogc/features/v1/?f=application%2Fx-yaml>; rel=\"alternate\"; type=\"application/x-yaml\"; title=\"This document as application/x-yaml\"",
                         "<http://localhost:8080/geoserver/ogc/features/v1/?f=application%2Fjson>; rel=\"self\"; type=\"application/json\"; title=\"This document\""));
+    }
+    
+    @Test
+    public void testDisabledService() throws Exception {
+        GeoServer gs = getGeoServer();
+        WFSInfo service = gs.getService(WFSInfo.class);
+        service.setEnabled(false);
+        gs.save(service);
+        try {
+            DocumentContext json = getAsJSONPath("ogc/features/v1", 200);
+        } finally {
+            service.setEnabled(true);
+            gs.save(service);
+        }
     }
 }
