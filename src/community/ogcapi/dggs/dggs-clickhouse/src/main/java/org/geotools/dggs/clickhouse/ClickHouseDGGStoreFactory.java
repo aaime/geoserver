@@ -14,12 +14,13 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geootols.dggs.clickhouse;
+package org.geotools.dggs.clickhouse;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
+import javax.sql.DataSource;
 import org.geotools.api.data.DataStore;
 import org.geotools.api.data.DataStoreFactorySpi;
 import org.geotools.dggs.DGGSFactoryFinder;
@@ -36,7 +37,7 @@ import org.geotools.jdbc.JDBCDataStoreFactory;
 // service level, and propagated down to the store as a Hint?
 public class ClickHouseDGGStoreFactory implements DataStoreFactorySpi {
 
-    ClickHouseJDBCDataStoreFactory delegate = new ClickHouseJDBCDataStoreFactory();
+    JDBCDataStoreFactory delegate = new ClickHouseJDBCDataStoreFactory();
 
     /** parameter for database type */
     // TODO: find some better way to separate this from the DGGSGeometryStore?
@@ -57,7 +58,7 @@ public class ClickHouseDGGStoreFactory implements DataStoreFactorySpi {
     public DataStore createDataStore(Map<String, ?> params) throws IOException {
         // setup the JDBC data store based on Clickhouse
         Map<String, Object> delegateParams = new HashMap<>(params);
-        delegateParams.put(JDBCDataStoreFactory.DBTYPE.key, delegate.getDatabaseID());
+        delegateParams.put(JDBCDataStoreFactory.DBTYPE.key, "clickhouse");
         delegateParams.put(
                 JDBCDataStoreFactory.SCHEMA.key, params.get(JDBCDataStoreFactory.DATABASE.key));
         JDBCDataStore jdbcStore = delegate.createDataStore(delegateParams);
@@ -94,5 +95,9 @@ public class ClickHouseDGGStoreFactory implements DataStoreFactorySpi {
     public boolean isAvailable() {
         return delegate.isAvailable()
                 && DGGSFactoryFinder.getExtensionFactories().findAny().isPresent();
+    }
+
+    protected DataSource createDataSource(Map<String, ?> params) throws IOException {
+        return delegate.createDataSource(params);
     }
 }

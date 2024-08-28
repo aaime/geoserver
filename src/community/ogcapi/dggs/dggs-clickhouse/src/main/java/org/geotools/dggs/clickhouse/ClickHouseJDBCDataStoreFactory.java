@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geootols.dggs.clickhouse;
+package org.geotools.dggs.clickhouse;
 
 import java.io.IOException;
 import java.util.Map;
@@ -34,7 +34,7 @@ public class ClickHouseJDBCDataStoreFactory extends JDBCDataStoreFactory {
 
     @Override
     protected String getDriverClassName() {
-        return "ru.yandex.clickhouse.ClickHouseDriver";
+        return "com.clickhouse.jdbc.ClickHouseDriver";
     }
 
     @Override
@@ -58,5 +58,10 @@ public class ClickHouseJDBCDataStoreFactory extends JDBCDataStoreFactory {
         ds.addConnectionProperty("max_query_size", "1000000");
         ds.addConnectionProperty("socket_timeout", "300000");
         return ds;
+    }
+
+    @Override
+    protected String getJDBCUrl(Map<String, ?> params) throws IOException {
+        return super.getJDBCUrl(params) + "?http_connection_provider=HTTP_CLIENT";
     }
 }
