@@ -24,6 +24,11 @@
       <artifactId>jackson-core</artifactId>
       <version>${jackson2.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.glassfish.jaxb</groupId>
+      <artifactId>jaxb-runtime</artifactId>
+      <version>4.0.2</version>
+    </dependency>
 
     <!-- Test dependencies -->
     <dependency>

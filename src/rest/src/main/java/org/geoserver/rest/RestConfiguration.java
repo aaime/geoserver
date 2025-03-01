@@ -139,7 +139,7 @@ public class RestConfiguration extends DelegatingWebMvcConfiguration {
         // make sure that Jaxb2RootElementHttpMessageConverter is the first one, otherwise Jackson
         // will override and ignore Jaxb annotations
         converters.removeIf(Jaxb2RootElementHttpMessageConverter.class::isInstance);
-        converters.add(0, new Jaxb2RootElementHttpMessageConverter());
+        converters.add(0, new JakartaJaxb2RootElementHttpMessageConverter());
 
         // use the default ones as lowest priority
         super.addDefaultHttpMessageConverters(converters);

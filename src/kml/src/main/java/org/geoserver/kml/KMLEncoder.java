@@ -6,16 +6,13 @@
 package org.geoserver.kml;
 
 import de.micromata.opengis.kml.v_2_2_0.Kml;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
 import java.io.OutputStream;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.util.JAXBSource;
 import javax.xml.transform.Templates;
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import org.geoserver.platform.ServiceException;
 
@@ -39,15 +36,8 @@ public class KMLEncoder {
 
     public void encode(Kml kml, OutputStream output, KmlEncodingContext context) {
         try {
-            if ((context != null) && (context.getWms() == null)) {
-                // No need to transform WFS KML.
-                createMarshaller().marshal(kml, output);
-            } else {
-                Transformer transformer = templates.newTransformer();
-                JAXBSource source = new JAXBSource(createMarshaller(), kml);
-                transformer.transform(source, new StreamResult(output));
-            }
-        } catch (JAXBException | TransformerException e) {
+            createMarshaller().marshal(kml, output);
+        } catch (JAXBException e) {
             throw new ServiceException(e);
         } finally {
             if (context != null) {

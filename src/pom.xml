@@ -103,7 +103,7 @@
     <wicket.version>9.20.0</wicket.version>
     <ant.version>1.10.11</ant.version>
     <httpclient.version>4.5.14</httpclient.version>
-    <imageio-ext.version>1.4.14</imageio-ext.version>
+    <imageio-ext.version>1.4-SNAPSHOT</imageio-ext.version>
     <jaiext.version>1.1.29</jaiext.version>
     <java.awt.headless>true</java.awt.headless>
     <sun.java2d.d3d>true</sun.java2d.d3d>
@@ -1755,19 +1755,9 @@
         <version>2.0.0-M24</version>
       </dependency>
       <dependency>
-        <groupId>javax.xml.bind</groupId>
-        <artifactId>jaxb-api</artifactId>
-        <version>2.4.0-b180830.0359</version>
-      </dependency>
-      <dependency>
         <groupId>org.glassfish.jaxb</groupId>
         <artifactId>jaxb-runtime</artifactId>
-        <version>2.4.0-b180830.0438</version>
-      </dependency>
-      <dependency>
-        <groupId>javax.annotation</groupId>
-        <artifactId>javax.annotation-api</artifactId>
-        <version>1.3.1</version>
+        <version>4.0.2</version>
       </dependency>
       <dependency>
         <groupId>com.hazelcast</groupId>
