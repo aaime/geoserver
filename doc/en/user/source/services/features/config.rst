@@ -16,26 +16,49 @@ The service is configured using:
 
 * Extra links can be added on a per-service or per-collection basis as indicated in :ref:`ogcapi_links`.
 
-Feature Service conformances
-''''''''''''''''''''''''''''
+Conformance class configuration
+'''''''''''''''''''''''''''''''
 
-The OGC API Feature Service is modular, allowing you to enable/disable the functionality you wish to include.
-  
-* By default stable Standards and Community Standards are enabled. If WFS is strict, only official Standards are enabled and community standards are disabled
-  
-* The OpenAPI service description is mandatory and may not be disabled.
-  
-* The HTML and GeoJSON output formats are built-in and may not be disabled.
-  
+OGC API - Features is a modular service that allows you to enable or disable specific conformance classes based on your requirements.
+The configuration is done through the GeoServer web interface, and allows to tailor the service to your needs.
+
+Each set of conformance classes is represented in a table, where only the configurable classes
+are displayed (e.g. the HTML and JSON conformance classes cannot be disabled, thus are not enumerated
+in the table).
+
+The table reports checkboxes for enabling or disabling the conformance classes. If a conformance
+class was not configured before, an "unset" checkbox is displayed, and for that one, the default
+behavior is applied:
+
+* For standard conformance classes, the default is to enable them.
+* For community and draft conformance classes, the default is to disable them.
+
+In terms of classification, the table have a different type, "core" for the core class (part 1),
+and "extension" for all optional extension.conformance
+
+The table also reports a "level":
+
+* "Standard": an official OGC standard conformance class.
+* "Implementing": an official OGC standard conformance class that is not yet fully implemented and compliant.
+* "Draft Standard": an official OGC standard conformance class that is still in draft status.
+* "Community": a conformance class that is provided by a non OGC source (e.g., GeoServer itself) and is finalized.
+* "Community Draft": same as above, but still in draft status.
+* "Retired standard": a standard, official or otherwise, that has been retired and should be migrated away from.
+
+Feature Service conformance classes
+'''''''''''''''''''''''''''''''''''
+
+The OGC API - Feature service is modular, allowing you to enable/disable the functionality you wish to include.
+
+* Feature API basic conformance classes
+
   .. figure:: img/feature-service-configuration.png
      
      Feature Service Configuration
-  
+
 * CQL2 Filter conformances.
   
   Both the Text and JSON formats for CQL2 are available and may be enabled or disabled.
-  
-  The remaining conformances reflect the built-in CQL2 implementation and may not be edited. The conformances marked enabled have been implemented, and the disabled conformances have not yet been implemented.
 
   .. figure:: img/cql2-configuration.png
      
