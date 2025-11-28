@@ -959,11 +959,6 @@
         <version>7.11.0</version>
         <scope>test</scope>
       </dependency>
-      <dependency>
-        <groupId>jakarta.xml.bind</groupId>
-        <artifactId>jakarta.xml.bind-api</artifactId>
-        <version>4.0.4</version>
-      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -1935,7 +1930,7 @@
         </plugins>
       </build>
       <modules>
-        <!--module>release</module-->
+        <module>release</module>
       </modules>
       <dependencies>
         <dependency>
