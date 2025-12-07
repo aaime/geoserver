@@ -21,7 +21,6 @@ import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.extensions.markup.html.form.palette.Palette;
@@ -52,6 +51,7 @@ import org.geoserver.web.util.MapModel;
 import org.geoserver.web.wicket.FileExistsValidator;
 import org.geoserver.web.wicket.GSModalWindow;
 import org.geoserver.web.wicket.HTTPURLsListTextArea;
+import org.geoserver.web.wicket.LambdaFactory;
 import org.geoserver.web.wicket.LiveCollectionModel;
 import org.geoserver.web.wicket.ParamResourceModel;
 import org.geoserver.web.wicket.SRSListTextArea;
@@ -144,15 +144,8 @@ public class WMSAdminPage extends BaseServiceAdminPage<WMSInfo> {
         form.add(srsList);
 
         form.add(new CheckBox("bBOXForEachCRS"));
-        form.add(new AjaxLink<>("bBOXForEachCRSHelp") {
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                dialog.showInfo(
-                        target,
-                        new StringResourceModel("bboxForEachCRSHelp.title", WMSAdminPage.this, null),
-                        new StringResourceModel("bboxForEachCRSHelp.message", WMSAdminPage.this, null));
-            }
-        });
+        form.add(LambdaFactory.ajaxLink("bBOXForEachCRSHelp", this::showHelpBBoxForEachCRS));
+
         // advanced projection handling
         MapModel aphEnabled =
                 defaultedModel(metadataModel, WMS.ADVANCED_PROJECTION_KEY, WMS.ENABLE_ADVANCED_PROJECTION);
@@ -323,6 +316,13 @@ public class WMSAdminPage extends BaseServiceAdminPage<WMSInfo> {
         form.add(new LocalesDropdown("defaultLocale", new PropertyModel<>(info, "defaultLocale")));
         // add mark factory optimization
         addMarkFactoryLoadOptimizationPanel(metadataModel, form);
+    }
+
+    private void showHelpBBoxForEachCRS(AjaxRequestTarget target) {
+        dialog.showInfo(
+                target,
+                new StringResourceModel("bboxForEachCRSHelp.title", this, null),
+                new StringResourceModel("bboxForEachCRSHelp.message", this, null));
     }
 
     /** Adds the MarkFactory performance optimization panel. */

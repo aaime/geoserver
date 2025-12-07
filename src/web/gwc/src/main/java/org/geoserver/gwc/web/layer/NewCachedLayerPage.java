@@ -32,6 +32,7 @@ import org.geoserver.web.wicket.CachingImage;
 import org.geoserver.web.wicket.GeoServerDataProvider.Property;
 import org.geoserver.web.wicket.GeoServerDialog;
 import org.geoserver.web.wicket.GeoServerTablePanel;
+import org.geoserver.web.wicket.LambdaFactory;
 import org.geoserver.web.wicket.ParamResourceModel;
 import org.geowebcache.layer.TileLayer;
 
@@ -52,7 +53,7 @@ public class NewCachedLayerPage extends GeoServerSecuredPage {
 
     private GeoServerDialog dialog;
 
-    private BulkCachedLayerConfigurationLink bulkConfig;
+    private AjaxLink<Void> bulkConfig;
 
     private Label insaneDefaultsMessage;
 
@@ -128,7 +129,7 @@ public class NewCachedLayerPage extends GeoServerSecuredPage {
         Fragment header = new Fragment(HEADER_PANEL, "header", this);
 
         // the add button
-        header.add(bulkConfig = new BulkCachedLayerConfigurationLink("bulkConfig"));
+        header.add(bulkConfig = LambdaFactory.ajaxLink("bulkConfig", this::bulkConfigClick));
         bulkConfig.setOutputMarkupId(true);
 
         header.add(
@@ -141,78 +142,65 @@ public class NewCachedLayerPage extends GeoServerSecuredPage {
     }
 
     /**
-     * A simple ajax link that asks for confirmation and configures all the selected layers and layer groups using the
-     * {@link GWC#getConfig() default settings}.
+     * Asks for confirmation and configures all the selected layers and layer groups using the {@link GWC#getConfig()
+     * default settings}.
      */
-    private class BulkCachedLayerConfigurationLink extends AjaxLink<String> {
-
-        @Serial
-        private static final long serialVersionUID = 1L;
-
-        public BulkCachedLayerConfigurationLink(String string) {
-            super(string, new ResourceModel("NewCachedLayerPage.bulkConfig"));
+    public void bulkConfigClick(final AjaxRequestTarget target) {
+        List<TileLayer> selection = this.table.getSelection();
+        if (selection.isEmpty()) {
+            return;
         }
 
-        @Override
-        public void onClick(final AjaxRequestTarget target) {
-
-            List<TileLayer> selection = NewCachedLayerPage.this.table.getSelection();
-            if (selection.isEmpty()) {
-                return;
-            }
-
-            // use a list of name instead of selection so its serializable, to be used in
-            // showOkCancel, and so we don't fetch the selection again
-            final List<String> selectedNames = new ArrayList<>();
-            for (TileLayer layer : selection) {
-                selectedNames.add(layer.getName());
-            }
-            dialog.setTitle(new ParamResourceModel("confirmBulkConfig.title", NewCachedLayerPage.this));
-
-            // if there is something to cancel, let's warn the user about what
-            // could go wrong, and if the user accepts, let's delete what's needed
-            dialog.showOkCancel(target, new GeoServerDialog.DialogDelegate() {
-                @Serial
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                protected Component getContents(final String id) {
-                    // show a confirmation panel for all the objects we have to remove
-
-                    final Integer selectedLayerCount = selectedNames.size();
-
-                    IModel<String> model = new StringResourceModel(
-                                    "NewCachedLayerPage.confirmBulkConfig.message",
-                                    BulkCachedLayerConfigurationLink.this)
-                            .setParameters(new Object[] {selectedLayerCount.toString()});
-                    Label confirmLabel = new Label(id, model);
-                    confirmLabel.setEscapeModelStrings(false); // allow some html inside, like
-                    // <b></b>, etc
-                    return confirmLabel;
-                }
-
-                @Override
-                protected boolean onSubmit(final AjaxRequestTarget target, final Component contents) {
-                    GWC facade = GWC.get();
-                    GWCConfig saneConfig = facade.getConfig().saneConfig();
-                    saneConfig.setCacheLayersByDefault(true);
-                    facade.autoConfigureLayers(selectedNames, saneConfig);
-                    table.clearSelection();
-                    return true;
-                }
-
-                @Override
-                public void onClose(final AjaxRequestTarget target) {
-                    // if the selection has been cleared out it's sign a deletion
-                    // occurred, so refresh the table
-                    List<TileLayer> selection = table.getSelection();
-                    if (selection.isEmpty()) {
-                        updateBulkConfigLink();
-                        target.add(BulkCachedLayerConfigurationLink.this);
-                        target.add(table);
-                    }
-                }
-            });
+        // use a list of name instead of selection so its serializable, to be used in
+        // showOkCancel, and so we don't fetch the selection again
+        final List<String> selectedNames = new ArrayList<>();
+        for (TileLayer layer : selection) {
+            selectedNames.add(layer.getName());
         }
+        dialog.setTitle(new ParamResourceModel("confirmBulkConfig.title", this));
+
+        // if there is something to cancel, let's warn the user about what
+        // could go wrong, and if the user accepts, let's delete what's needed
+        dialog.showOkCancel(target, new GeoServerDialog.DialogDelegate() {
+            @Serial
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected Component getContents(final String id) {
+                // show a confirmation panel for all the objects we have to remove
+
+                final Integer selectedLayerCount = selectedNames.size();
+
+                IModel<String> model = new StringResourceModel(
+                                "NewCachedLayerPage.confirmBulkConfig.message", NewCachedLayerPage.this)
+                        .setParameters(new Object[] {selectedLayerCount.toString()});
+                Label confirmLabel = new Label(id, model);
+                confirmLabel.setEscapeModelStrings(false); // allow some html inside, like
+                // <b></b>, etc
+                return confirmLabel;
+            }
+
+            @Override
+            protected boolean onSubmit(final AjaxRequestTarget target, final Component contents) {
+                GWC facade = GWC.get();
+                GWCConfig saneConfig = facade.getConfig().saneConfig();
+                saneConfig.setCacheLayersByDefault(true);
+                facade.autoConfigureLayers(selectedNames, saneConfig);
+                table.clearSelection();
+                return true;
+            }
+
+            @Override
+            public void onClose(final AjaxRequestTarget target) {
+                // if the selection has been cleared out it's sign a deletion
+                // occurred, so refresh the table
+                List<TileLayer> selection = table.getSelection();
+                if (selection.isEmpty()) {
+                    updateBulkConfigLink();
+                    target.add(NewCachedLayerPage.this);
+                    target.add(table);
+                }
+            }
+        });
     }
 }

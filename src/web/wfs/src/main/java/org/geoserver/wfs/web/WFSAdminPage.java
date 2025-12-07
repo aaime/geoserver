@@ -14,7 +14,6 @@ import java.util.logging.Level;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
@@ -44,6 +43,7 @@ import org.geoserver.platform.resource.Resource.Type;
 import org.geoserver.web.data.resource.LocalesDropdown;
 import org.geoserver.web.services.BaseServiceAdminPage;
 import org.geoserver.web.util.MapModel;
+import org.geoserver.web.wicket.LambdaFactory;
 import org.geoserver.web.wicket.LiveCollectionModel;
 import org.geoserver.web.wicket.SRSListTextArea;
 import org.geoserver.wfs.GMLInfo;
@@ -174,20 +174,19 @@ public class WFSAdminPage extends BaseServiceAdminPage<WFSInfo> {
         // other srs list
         TextArea srsList = new SRSListTextArea("srs", LiveCollectionModel.list(new PropertyModel<>(info, "sRS")));
         form.add(srsList);
-        form.add(new AjaxLink<>("otherSRSHelp") {
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                dialog.showInfo(
-                        target,
-                        new StringResourceModel("otherSRS", WFSAdminPage.this, null),
-                        new StringResourceModel("otherSRS.message", WFSAdminPage.this, null));
-            }
-        });
+        form.add(LambdaFactory.ajaxLink("otherSRSHelp", this::showOtherSRSHelp));
 
         // allowGlobalQueries checkbox
         form.add(new CheckBox("allowGlobalQueries"));
         form.add(new CheckBox("disableStoredQueriesManagement"));
         form.add(new LocalesDropdown("defaultLocale", new PropertyModel<>(info, "defaultLocale")));
+    }
+
+    private void showOtherSRSHelp(AjaxRequestTarget target) {
+        dialog.showInfo(
+                target,
+                new StringResourceModel("otherSRS", this, null),
+                new StringResourceModel("otherSRS.message", this, null));
     }
 
     static class GMLPanel extends Panel {

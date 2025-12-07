@@ -10,7 +10,6 @@ import java.io.Serial;
 import java.util.logging.Logger;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
@@ -22,6 +21,7 @@ import org.geoserver.catalog.FeatureTypeInfo;
 import org.geoserver.web.GeoServerApplication;
 import org.geoserver.web.wicket.GeoServerDataProvider.Property;
 import org.geoserver.web.wicket.GeoServerTablePanel;
+import org.geoserver.web.wicket.LambdaFactory;
 import org.geotools.api.data.FeatureSource;
 import org.geotools.api.data.Query;
 import org.geotools.api.feature.Feature;
@@ -40,6 +40,7 @@ public class DataPanel extends Panel {
     private static final long serialVersionUID = -2635691554700860434L;
 
     static final Logger LOGGER = Logging.getLogger(DataPanel.class);
+    private final WebMarkupContainer attsContainer;
 
     String featureTypeId;
 
@@ -50,7 +51,7 @@ public class DataPanel extends Panel {
         add(new Label(
                 "summary-message",
                 "For reference, here is a listing of the attributes in this data set.")); // TODO: I18N
-        final WebMarkupContainer attsContainer = new WebMarkupContainer("attributes-container");
+        this.attsContainer = new WebMarkupContainer("attributes-container");
         attsContainer.setOutputMarkupId(true);
         add(attsContainer);
 
@@ -74,23 +75,7 @@ public class DataPanel extends Panel {
                     String id, final IModel<DataAttribute> itemModel, Property<DataAttribute> property) {
                 if (DataAttributesProvider.COMPUTE_STATS.equals(property.getName())) {
                     Fragment f = new Fragment(id, "computeStatsFragment", DataPanel.this);
-                    f.add(new AjaxLink<Void>("computeStats") {
-
-                        @Serial
-                        private static final long serialVersionUID = 1L;
-
-                        @Override
-                        public void onClick(AjaxRequestTarget target) {
-                            DataAttribute attribute = itemModel.getObject();
-                            try {
-                                updateAttributeStats(attribute);
-                            } catch (IOException e) {
-                                error("Failed to compute stats for the attribute: " + e.getMessage());
-                            }
-                            target.add(attsContainer);
-                        }
-                    });
-
+                    f.add(LambdaFactory.ajaxLink("computeStats", target -> computeStats(itemModel, target)));
                     return f;
                 }
 
@@ -103,30 +88,37 @@ public class DataPanel extends Panel {
         attsContainer.add(attributes);
     }
 
-    protected void updateAttributeStats(DataAttribute attribute) throws IOException {
-        FeatureTypeInfo featureType = GeoServerApplication.get().getCatalog().getFeatureType(featureTypeId);
-        FeatureSource<?, ?> fs = featureType.getFeatureSource(null, null);
+    private void computeStats(IModel<DataAttribute> itemModel, AjaxRequestTarget target) {
+        DataAttribute attribute = itemModel.getObject();
+        try {
+            FeatureTypeInfo featureType =
+                    GeoServerApplication.get().getCatalog().getFeatureType(featureTypeId);
+            FeatureSource<?, ?> fs = featureType.getFeatureSource(null, null);
 
-        // check we can compute min and max
-        PropertyDescriptor pd = fs.getSchema().getDescriptor(attribute.getName());
-        Class<?> binding = pd.getType().getBinding();
-        if (pd == null || !Comparable.class.isAssignableFrom(binding) || Geometry.class.isAssignableFrom(binding)) {
-            return;
+            // check we can compute min and max
+            PropertyDescriptor pd = fs.getSchema().getDescriptor(attribute.getName());
+            Class<?> binding = pd.getType().getBinding();
+            if (pd == null || !Comparable.class.isAssignableFrom(binding) || Geometry.class.isAssignableFrom(binding)) {
+                return;
+            }
+
+            // grab the feature collection and run the min/max visitors (this will move the
+            // query to the dbms in case of such data source)
+            Query q = new Query();
+            q.setPropertyNames(attribute.getName());
+            FeatureCollection<?, ?> fc = fs.getFeatures(q);
+            MinVisitor minVisitor = new MinVisitor(attribute.getName());
+            MaxVisitor maxVisitor = new MaxVisitor(attribute.getName());
+            fc.accepts(minVisitor, null);
+            fc.accepts(maxVisitor, null);
+            Object min = minVisitor.getResult().getValue();
+            attribute.setMin(Converters.convert(min, String.class));
+            Object max = maxVisitor.getResult().getValue();
+            attribute.setMax(Converters.convert(max, String.class));
+        } catch (IOException e) {
+            error("Failed to compute stats for the attribute: " + e.getMessage());
         }
-
-        // grab the feature collection and run the min/max visitors (this will move the
-        // query to the dbms in case of such data source)
-        Query q = new Query();
-        q.setPropertyNames(attribute.getName());
-        FeatureCollection<?, ?> fc = fs.getFeatures(q);
-        MinVisitor minVisitor = new MinVisitor(attribute.getName());
-        MaxVisitor maxVisitor = new MaxVisitor(attribute.getName());
-        fc.accepts(minVisitor, null);
-        fc.accepts(maxVisitor, null);
-        Object min = minVisitor.getResult().getValue();
-        attribute.setMin(Converters.convert(min, String.class));
-        Object max = maxVisitor.getResult().getValue();
-        attribute.setMax(Converters.convert(max, String.class));
+        target.add(attsContainer);
     }
 
     private Feature getSampleFeature(FeatureTypeInfo layerInfo) throws IOException {

@@ -9,7 +9,6 @@ import java.io.Serial;
 import java.util.List;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.border.Border;
 import org.apache.wicket.markup.html.form.CheckBox;
@@ -23,6 +22,7 @@ import org.apache.wicket.validation.validator.RangeValidator;
 import org.geoserver.catalog.LayerInfo;
 import org.geoserver.web.publish.PublishedConfigurationPanel;
 import org.geoserver.web.wicket.GeoServerDialog;
+import org.geoserver.web.wicket.LambdaFactory;
 import org.geoserver.web.wicket.LiveCollectionModel;
 import org.geoserver.web.wicket.SRSListTextArea;
 
@@ -96,41 +96,29 @@ public class WFSLayerConfig extends PublishedConfigurationPanel<LayerInfo> {
                 target.add(otherSrsContainer);
             }
         });
-        add(new AjaxLink<String>("skipNumberMatchedHelp") {
-            @Serial
-            private static final long serialVersionUID = 9222171216768726057L;
+        add(LambdaFactory.ajaxLink("skipNumberMatchedHelp", this::showSkipNumberMatchedHelp));
+        add(LambdaFactory.ajaxLink("otherSRSHelp", this::showOtherSRSHelp));
+        add(LambdaFactory.ajaxLink("coordinatesEncodingHelp", this::showCoordinateEncodingHelp));
+    }
 
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                dialog.showInfo(
-                        target,
-                        new StringResourceModel("skipNumberMatched", WFSLayerConfig.this, null),
-                        new StringResourceModel("skipNumberMatched.message", WFSLayerConfig.this, null));
-            }
-        });
-        add(new AjaxLink<String>("otherSRSHelp") {
-            @Serial
-            private static final long serialVersionUID = -1239179491855142211L;
+    private void showCoordinateEncodingHelp(AjaxRequestTarget target) {
+        dialog.showInfo(
+                target,
+                new StringResourceModel("coordinatesEncodingTitle", this, null),
+                new StringResourceModel("coordinatesEncodingHelp.message", this, null));
+    }
 
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                dialog.showInfo(
-                        target,
-                        new StringResourceModel("otherSRS", WFSLayerConfig.this, null),
-                        new StringResourceModel("otherSRS.message", WFSLayerConfig.this, null));
-            }
-        });
-        add(new AjaxLink<String>("coordinatesEncodingHelp") {
-            @Serial
-            private static final long serialVersionUID = 926171216768726057L;
+    private void showOtherSRSHelp(AjaxRequestTarget target) {
+        dialog.showInfo(
+                target,
+                new StringResourceModel("otherSRS", this, null),
+                new StringResourceModel("otherSRS.message", this, null));
+    }
 
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                dialog.showInfo(
-                        target,
-                        new StringResourceModel("coordinatesEncodingTitle", WFSLayerConfig.this, null),
-                        new StringResourceModel("coordinatesEncodingHelp.message", WFSLayerConfig.this, null));
-            }
-        });
+    private void showSkipNumberMatchedHelp(AjaxRequestTarget target) {
+        dialog.showInfo(
+                target,
+                new StringResourceModel("skipNumberMatched", this, null),
+                new StringResourceModel("skipNumberMatched.message", this, null));
     }
 }

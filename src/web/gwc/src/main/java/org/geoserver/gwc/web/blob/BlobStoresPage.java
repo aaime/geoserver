@@ -24,6 +24,7 @@ import org.geoserver.web.wicket.GeoServerDataProvider.Property;
 import org.geoserver.web.wicket.GeoServerDialog;
 import org.geoserver.web.wicket.GeoServerTablePanel;
 import org.geoserver.web.wicket.Icon;
+import org.geoserver.web.wicket.LambdaFactory;
 import org.geoserver.web.wicket.ParamResourceModel;
 import org.geoserver.web.wicket.SimpleAjaxLink;
 import org.geowebcache.config.BlobStoreInfo;
@@ -55,15 +56,7 @@ public class BlobStoresPage extends GeoServerSecuredPage {
         Fragment header = new Fragment(HEADER_PANEL, "header", this);
 
         // the add button
-        header.add(new AjaxLink<>("addNew") {
-            @Serial
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                setResponsePage(new BlobStorePage());
-            }
-        });
+        header.add(LambdaFactory.ajaxLink("addNew", target -> setResponsePage(new BlobStorePage())));
 
         // the removal button
         header.add(remove = new RemoveSelectedLink());

@@ -10,7 +10,6 @@ import java.util.logging.Level;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -43,6 +42,7 @@ import org.geoserver.web.data.store.StoreListModel;
 import org.geoserver.web.wicket.CachingImage;
 import org.geoserver.web.wicket.GeoServerDataProvider.Property;
 import org.geoserver.web.wicket.GeoServerTablePanel;
+import org.geoserver.web.wicket.LambdaFactory;
 import org.geoserver.web.wicket.ParamResourceModel;
 import org.geoserver.web.wicket.Select2DropDownChoice;
 import org.geoserver.web.wicket.SimpleAjaxLink;
@@ -143,32 +143,33 @@ public class NewLayerPage extends GeoServerSecuredPage {
 
         createTypeContainer = new WebMarkupContainer("createTypeContainer");
         createTypeContainer.setVisible(false);
-        createTypeContainer.add(newFeatureTypeLink());
+        createTypeContainer.add(LambdaFactory.ajaxLink("createFeatureType", this::createFeatureType));
         selectLayersContainer.add(createTypeContainer);
 
         createSQLViewContainer = new WebMarkupContainer("createSQLViewContainer");
         createSQLViewContainer.setVisible(false);
-        createSQLViewContainer.add(newSQLViewLink());
+        createSQLViewContainer.add(LambdaFactory.ajaxLink("createSQLView", this::newSQLViewLink));
         selectLayersContainer.add(createSQLViewContainer);
 
         createCoverageViewContainer = new WebMarkupContainer("createCoverageViewContainer");
         createCoverageViewContainer.setVisible(false);
-        createCoverageViewContainer.add(newCoverageViewLink());
+        createCoverageViewContainer.add(LambdaFactory.ajaxLink("createCoverageView", this::newCoverageViewLink));
         selectLayersContainer.add(createCoverageViewContainer);
 
         createCascadedWFSStoredQueryContainer = new WebMarkupContainer("createCascadedWFSStoredQueryContainer");
         createCascadedWFSStoredQueryContainer.setVisible(false);
-        createCascadedWFSStoredQueryContainer.add(newCascadedWFSStoredQueryLink());
+        createCascadedWFSStoredQueryContainer.add(
+                LambdaFactory.ajaxLink("createCascadedWFSStoredQuery", this::newCascadedWFSStoredQueryLink));
         selectLayersContainer.add(createCascadedWFSStoredQueryContainer);
 
         createWMSLayerImportContainer = new WebMarkupContainer("createWMSLayerImportContainer");
         createWMSLayerImportContainer.setVisible(false);
-        createWMSLayerImportContainer.add(newWMSImportLink());
+        createWMSLayerImportContainer.add(LambdaFactory.ajaxLink("createWMSImport", this::newWMSImportLink));
         selectLayersContainer.add(createWMSLayerImportContainer);
 
         createWMTSLayerImportContainer = new WebMarkupContainer("createWMTSLayerImportContainer");
         createWMTSLayerImportContainer.setVisible(false);
-        createWMTSLayerImportContainer.add(newWMTSImportLink());
+        createWMTSLayerImportContainer.add(LambdaFactory.ajaxLink("createWMTSImport", this::newWMTSImportLink));
         selectLayersContainer.add(createWMTSLayerImportContainer);
 
         // case where the store is selected, or we have just created new one
@@ -178,82 +179,42 @@ public class NewLayerPage extends GeoServerSecuredPage {
         }
     }
 
-    Component newFeatureTypeLink() {
-        return new AjaxLink<Void>("createFeatureType") {
-
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                DataStoreInfo ds = getCatalog().getStore(storeId, DataStoreInfo.class);
-                PageParameters pp = new PageParameters()
-                        .add("wsName", ds.getWorkspace().getName())
-                        .add("storeName", ds.getName());
-                setResponsePage(NewFeatureTypePage.class, pp);
-            }
-        };
+    private void createFeatureType() {
+        DataStoreInfo ds = getCatalog().getStore(this.storeId, DataStoreInfo.class);
+        PageParameters pp =
+                new PageParameters().add("wsName", ds.getWorkspace().getName()).add("storeName", ds.getName());
+        setResponsePage(NewFeatureTypePage.class, pp);
     }
 
-    Component newSQLViewLink() {
-        return new AjaxLink<Void>("createSQLView") {
-
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                DataStoreInfo ds = getCatalog().getStore(storeId, DataStoreInfo.class);
-                PageParameters pp = new PageParameters()
-                        .add("wsName", ds.getWorkspace().getName())
-                        .add("storeName", ds.getName());
-                setResponsePage(SQLViewNewPage.class, pp);
-            }
-        };
+    private void newSQLViewLink() {
+        DataStoreInfo ds = getCatalog().getStore(this.storeId, DataStoreInfo.class);
+        PageParameters pp =
+                new PageParameters().add("wsName", ds.getWorkspace().getName()).add("storeName", ds.getName());
+        setResponsePage(SQLViewNewPage.class, pp);
     }
 
-    Component newCoverageViewLink() {
-        return new AjaxLink<Void>("createCoverageView") {
-
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                CoverageStoreInfo cs = getCatalog().getStore(storeId, CoverageStoreInfo.class);
-                PageParameters pp = new PageParameters()
-                        .add("wsName", cs.getWorkspace().getName())
-                        .add("storeName", cs.getName());
-                setResponsePage(CoverageViewNewPage.class, pp);
-            }
-        };
+    private void newCoverageViewLink() {
+        CoverageStoreInfo cs = getCatalog().getStore(this.storeId, CoverageStoreInfo.class);
+        PageParameters pp =
+                new PageParameters().add("wsName", cs.getWorkspace().getName()).add("storeName", cs.getName());
+        setResponsePage(CoverageViewNewPage.class, pp);
     }
 
-    Component newCascadedWFSStoredQueryLink() {
-        return new AjaxLink<Void>("createCascadedWFSStoredQuery") {
-
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                DataStoreInfo ds = getCatalog().getStore(storeId, DataStoreInfo.class);
-                PageParameters pp = new PageParameters()
-                        .add("wsName", ds.getWorkspace().getName())
-                        .add("storeName", ds.getName());
-                setResponsePage(CascadedWFSStoredQueryNewPage.class, pp);
-            }
-        };
+    private void newCascadedWFSStoredQueryLink() {
+        DataStoreInfo ds = getCatalog().getStore(this.storeId, DataStoreInfo.class);
+        PageParameters pp =
+                new PageParameters().add("wsName", ds.getWorkspace().getName()).add("storeName", ds.getName());
+        setResponsePage(CascadedWFSStoredQueryNewPage.class, pp);
     }
 
-    Component newWMSImportLink() {
-        return new AjaxLink<Void>("createWMSImport") {
-
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                PageParameters pp = new PageParameters().add("storeId", storeId);
-                setResponsePage(WMSLayerImporterPage.class, pp);
-            }
-        };
+    private void newWMSImportLink() {
+        PageParameters pp = new PageParameters().add("storeId", this.storeId);
+        setResponsePage(WMSLayerImporterPage.class, pp);
     }
 
-    Component newWMTSImportLink() {
-        return new AjaxLink<Void>("createWMTSImport") {
-
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                PageParameters pp = new PageParameters().add("storeId", storeId);
-                setResponsePage(WMTSLayerImporterPage.class, pp);
-            }
-        };
+    private void newWMTSImportLink() {
+        PageParameters pp = new PageParameters().add("storeId", this.storeId);
+        setResponsePage(WMTSLayerImporterPage.class, pp);
     }
 
     private Select2DropDownChoice<StoreInfo> storesDropDown() {
