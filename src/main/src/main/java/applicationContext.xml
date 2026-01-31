@@ -17,7 +17,48 @@
         http://www.springframework.org/schema/context/spring-context.xsd">
         
     <context:component-scan base-package="org.geoserver.system.status"/>
-        
+
+    <!--
+      Assign infrastructure role to certain beans that eventually end up
+      amongst the dependencies of the catalog proxy loader, to avoid reports that
+      they cannot be post-processed (Spring 6+ strictness)
+    -->
+    <bean class="org.geoserver.spring.InfrastructureRoleAssigner">
+        <constructor-arg name="beanNames">
+            <list>
+                <value>authenticationManager</value>
+                <value>configurationLock</value>
+                <value>contentNegotiationStrategy</value>
+                <value>customCRSAuthorityLoader</value>
+                <value>dataDirectory</value>
+                <value>dataDirectoryResourceStore</value>
+                <value>environments</value>
+                <value>extensions</value>
+                <value>lockProvider</value>
+                <value>memMonitorDAO</value>
+                <value>monitor</value>
+                <value>monitorConfig</value>
+                <value>nullLockProvider</value>
+                <value>resourceLoader</value>
+                <value>resourceStore</value>
+                <value>wfsSqlViewKvpParser</value>
+            </list>
+        </constructor-arg>
+        <constructor-arg name="infrastructureClasses">
+            <list>
+                <value>org.geoserver.config.util.XStreamPersisterInitializer</value>
+                <value>org.geoserver.security.GeoServerSecurityProvider</value>
+                <value>org.springframework.aop.framework.ProxyFactoryBean</value>
+                <value>org.geoserver.platform.ExtensionFilter</value>
+                <value>org.springframework.beans.factory.config.FieldRetrievingFactoryBean</value>
+                <value>org.springframework.beans.factory.config.MethodInvokingFactoryBean</value>
+                <value>org.springframework.security.config.annotation.configuration.ObjectPostProcessorConfiguration</value>
+                <value>org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration</value>
+                <value>org.springframework.security.config.annotation.web.configuration.HttpSecurityConfiguration</value>
+            </list>
+        </constructor-arg>
+    </bean>
+
     <bean id="gsMainModule" class="org.geoserver.platform.ModuleStatusImpl">
         <constructor-arg index="0" value="gs-main"/>
         <constructor-arg index="1" value="GeoServer Main"/>
