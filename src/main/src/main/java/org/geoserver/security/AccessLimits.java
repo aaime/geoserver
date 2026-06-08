@@ -7,6 +7,7 @@ package org.geoserver.security;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Set;
 
 /**
  * Base class for all AccessLimits declared by a {@link ResourceAccessManager}.
@@ -25,6 +26,15 @@ public class AccessLimits implements Serializable, Cloneable {
     /** Gets the catalog mode for this layer */
     CatalogMode mode;
 
+    /**
+     * Optional tags used for targeted cache invalidation (tile caches, CDNs, WMS caches, etc.). Not part of the content
+     * fingerprint — excluded from equals/hashCode. Null by default; {@link ResourceAccessManager} implementations that
+     * support tag-based invalidation may populate this with opaque identifiers representing the security rules that
+     * shaped these limits (e.g. rule IDs, role names), allowing downstream caches to invalidate only the entries
+     * affected by a specific rule change rather than sweeping all security-keyed entries for a layer.
+     */
+    Set<String> securityTags;
+
     /** Builds a generic AccessLimits */
     public AccessLimits(CatalogMode mode) {
         this.mode = mode;
@@ -33,6 +43,16 @@ public class AccessLimits implements Serializable, Cloneable {
     /** The catalog mode for this layer */
     public CatalogMode getMode() {
         return mode;
+    }
+
+    /** Tags used for targeted cache invalidation, or null if none. See {@link #securityTags}. */
+    public Set<String> getSecurityTags() {
+        return securityTags;
+    }
+
+    /** Sets tags used for targeted cache invalidation. See {@link #securityTags}. */
+    public void setSecurityTags(Set<String> securityTags) {
+        this.securityTags = securityTags;
     }
 
     @Override
