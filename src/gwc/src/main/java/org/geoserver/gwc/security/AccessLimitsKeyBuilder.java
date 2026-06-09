@@ -4,9 +4,14 @@
  */
 package org.geoserver.gwc.security;
 
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import org.geoserver.security.AccessLimits;
 import org.geoserver.security.CoverageAccessLimits;
@@ -16,6 +21,7 @@ import org.geotools.api.filter.Filter;
 import org.geotools.api.filter.expression.PropertyName;
 import org.geotools.api.parameter.GeneralParameterValue;
 import org.geotools.api.parameter.ParameterValue;
+import org.geotools.util.Range;
 import org.locationtech.jts.geom.Geometry;
 import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.databind.node.ArrayNode;
@@ -37,13 +43,26 @@ import tools.jackson.databind.node.ObjectNode;
 public class AccessLimitsKeyBuilder {
 
     private static final JsonMapper MAPPER = new JsonMapper();
+
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern(
+                    "yyyy-MM-dd'T'HH:mm:ss.SSSX", Locale.ROOT)
+            .withZone(ZoneOffset.UTC);
     private static final FilterKeySerializer FILTER_SER = new FilterKeySerializer();
     private static final GeometryKeySerializer GEOM_SER = new GeometryKeySerializer();
 
-    /** Built-in serializers, checked after custom ones. Order matters: specific types before broad ones. */
+    /**
+     * Built-in serializers, checked after custom ones. Order matters: specific before broad. Note: List and Range are
+     * handled in serializeValue() directly since they need to recurse into the serializer chain.
+     */
     private static final List<ParameterValueKeySerializer<?>> BUILT_INS = List.of(
             FILTER_SER,
             GEOM_SER,
+            new TypedKeySerializer<>(Date.class) {
+                @Override
+                public String toKey(Date value) {
+                    return DATE_FORMAT.format(value.toInstant());
+                }
+            },
             new TypedKeySerializer<>(Number.class),
             new TypedKeySerializer<>(Boolean.class),
             new TypedKeySerializer<>(String.class));
@@ -128,6 +147,19 @@ public class AccessLimitsKeyBuilder {
 
     @SuppressWarnings("unchecked")
     private String serializeValue(String paramName, Object value) {
+        // List and Range recurse into this method, so they can't be ParameterValueKeySerializer instances
+        if (value instanceof List<?> list) {
+            return list.stream()
+                    .filter(Objects::nonNull)
+                    .map(e -> serializeValue(paramName, e))
+                    .sorted()
+                    .collect(Collectors.joining(","));
+        }
+        if (value instanceof Range<?> range) {
+            String min = range.getMinValue() != null ? serializeValue(paramName, range.getMinValue()) : "*";
+            String max = range.getMaxValue() != null ? serializeValue(paramName, range.getMaxValue()) : "*";
+            return min + "/" + max;
+        }
         // custom serializers take priority over built-ins
         for (ParameterValueKeySerializer<?> s : custom) {
             if (s.getValueType().isAssignableFrom(value.getClass())) {
