@@ -2177,8 +2177,10 @@ public class GWC implements DisposableBean, InitializingBean, ApplicationContext
                                 limitBox = new ReferencedEnvelope(limitBox.intersection(box), dataCrs);
                             }
                         }
+                        boolean hasRasterFilter = false;
                         if (limits instanceof CoverageAccessLimits accessLimits) {
                             if (accessLimits.getRasterFilter() != null) {
+                                hasRasterFilter = true;
                                 Envelope box = accessLimits.getRasterFilter().getEnvelopeInternal();
                                 if (box != null) {
                                     limitBox = new ReferencedEnvelope(limitBox.intersection(box), dataCrs);
@@ -2187,6 +2189,7 @@ public class GWC implements DisposableBean, InitializingBean, ApplicationContext
                         }
                         if (limits instanceof WMSAccessLimits accessLimits) {
                             if (accessLimits.getRasterFilter() != null) {
+                                hasRasterFilter = true;
                                 Envelope box = accessLimits.getRasterFilter().getEnvelopeInternal();
                                 if (box != null) {
                                     limitBox = new ReferencedEnvelope(limitBox.intersection(box), dataCrs);
@@ -2194,7 +2197,20 @@ public class GWC implements DisposableBean, InitializingBean, ApplicationContext
                             }
                         }
 
-                        if (!limitBox.covers(ReferencedEnvelope.EVERYTHING)
+                        // Skip the bbox contains check when the rendering pipeline enforces
+                        // the spatial restriction itself; out-of-restriction tiles become empty,
+                        // not errors:
+                        //  - rasters with rasterFilter: SecuredGridCoverage2DReader returns null
+                        //    for non-intersecting tiles → RenderedImageMapOutputFormat emits a
+                        //    transparent background tile
+                        //  - vectors: SecuredFeatureSource applies readFilter to every query, so
+                        //    tiles outside the filter extent simply contain no features
+                        // Rasters WITHOUT a rasterFilter keep the check because the rendering
+                        // pipeline cannot enforce a geometry readFilter on coverage data.
+                        boolean renderingEnforcesRestriction =
+                                hasRasterFilter || layerInfo.getResource() instanceof FeatureTypeInfo;
+                        if (!renderingEnforcesRestriction
+                                && !limitBox.covers(ReferencedEnvelope.EVERYTHING)
                                 && (boundingBox == null || !limitBox.contains(boundingBox))) {
                             throw new SecurityException("Access denied to bounding box on layer " + layerName);
                         }

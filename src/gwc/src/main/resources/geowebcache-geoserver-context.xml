@@ -150,4 +150,21 @@
     <constructor-arg ref="gwcGridSetBroker"/>
   </bean>
 
+  <!-- GWC security parameter filter -->
+
+  <bean id="gwcIgnorableParameterRegistry"
+        class="org.geoserver.gwc.security.IgnorableParameterRegistry"/>
+
+  <bean id="gwcAccessLimitsKeyBuilder"
+        class="org.geoserver.gwc.security.AccessLimitsKeyBuilder">
+    <constructor-arg>
+      <!-- custom ParameterValueKeySerializer extension beans; add refs here or replace with a collected list -->
+      <list/>
+    </constructor-arg>
+    <constructor-arg ref="gwcIgnorableParameterRegistry"/>
+  </bean>
+
+  <bean id="gwcSecurityKeyDispatcherCallback"
+        class="org.geoserver.gwc.security.SecurityKeyDispatcherCallback"/>
+
 </beans>
