@@ -94,9 +94,16 @@ import org.geoserver.gwc.GWC;
 import org.geoserver.gwc.GWCSynchEnv;
 import org.geoserver.gwc.config.GWCConfig;
 import org.geoserver.gwc.dispatch.GwcServiceDispatcherCallback;
+import org.geoserver.gwc.security.AccessLimitsKeyBuilder;
+import org.geoserver.gwc.security.SecurityKeyHolder;
+import org.geoserver.gwc.security.SecurityParameterFilter;
 import org.geoserver.ows.Dispatcher;
 import org.geoserver.ows.LocalWorkspace;
 import org.geoserver.ows.Request;
+import org.geoserver.platform.GeoServerExtensions;
+import org.geoserver.security.DataAccessLimits;
+import org.geoserver.security.ResourceAccessManager;
+import org.geoserver.security.SecureCatalogImpl;
 import org.geoserver.util.DimensionWarning;
 import org.geoserver.util.DimensionWarning.WarningType;
 import org.geoserver.util.HTTPWarningAppender;
@@ -141,6 +148,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -175,6 +183,8 @@ public class GeoServerTileLayerTest {
     public void tearDown() throws Exception {
         GWC.set(null, null);
         Dispatcher.REQUEST.remove();
+        SecurityKeyHolder.clear();
+        new GeoServerExtensions().setApplicationContext(null);
     }
 
     @Before
@@ -273,6 +283,7 @@ public class GeoServerTileLayerTest {
         layerGroup.setLayers(Collections.singletonList(layerInfo));
 
         defaults = GWCConfig.getOldDefaults();
+        when(mockGWC.getConfig()).thenReturn(defaults);
 
         when(catalog.getLayer(eq(layerInfoId))).thenReturn(layerInfo);
         when(catalog.getLayerGroup(eq(layerGroupId))).thenReturn(layerGroup);
@@ -416,6 +427,71 @@ public class GeoServerTileLayerTest {
                 assertEquals(Collections.singletonMap("STYLES", legalStyle), modifiedParams);
             }
         }
+    }
+
+    @Test
+    public void testGetParameterFiltersSecurityOn() {
+        defaults.setSecurityEnabled(true);
+        layerInfoTileLayer = new GeoServerTileLayer(layerInfo, defaults, gridSetBroker);
+        List<ParameterFilter> parameterFilters = layerInfoTileLayer.getParameterFilters();
+        assertEquals(2, parameterFilters.size());
+        assertEquals(
+                SecurityParameterFilter.ACCESS_LIMITS_KEY,
+                parameterFilters.get(1).getKey());
+    }
+
+    @Test
+    public void testGetDefaultParameterFiltersSecurityOn() {
+        defaults.setSecurityEnabled(true);
+        layerInfoTileLayer = new GeoServerTileLayer(layerInfo, defaults, gridSetBroker);
+        Map<String, String> defaultFilters = layerInfoTileLayer.getDefaultParameterFilters();
+        assertEquals(2, defaultFilters.size());
+        assertEquals("", defaultFilters.get(SecurityParameterFilter.ACCESS_LIMITS_KEY));
+    }
+
+    @Test
+    public void testModifiableParamsUnrestricted() throws GeoWebCacheException {
+        defaults.setSecurityEnabled(true);
+        // mock key builder returning null = unrestricted access
+        AccessLimitsKeyBuilder mockKeyBuilder = mock(AccessLimitsKeyBuilder.class);
+        ResourceAccessManager mockRam = mock(ResourceAccessManager.class);
+        when(mockRam.getAccessLimits(any(), any(LayerInfo.class))).thenReturn(mock(DataAccessLimits.class));
+        when(mockKeyBuilder.buildKey(any())).thenReturn(null);
+        SecureCatalogImpl mockSecureCatalog = mock(SecureCatalogImpl.class);
+        when(mockSecureCatalog.getResourceAccessManager()).thenReturn(mockRam);
+        GenericApplicationContext ctx = new GenericApplicationContext();
+        ctx.getBeanFactory().registerSingleton("keyBuilder", mockKeyBuilder);
+        ctx.getBeanFactory().registerSingleton("secureCatalog", mockSecureCatalog);
+        ctx.refresh();
+        new GeoServerExtensions().setApplicationContext(ctx);
+
+        layerInfoTileLayer = new GeoServerTileLayer(layerInfo, defaults, gridSetBroker);
+        // non-default STYLES: result must not contain ACCESS_LIMITS_KEY
+        Map<String, String> params = Collections.singletonMap("sTyLeS", "alternateStyle-1");
+        Map<String, String> result = layerInfoTileLayer.getModifiableParameters(params, "UTF-8");
+        assertEquals(Collections.singletonMap("STYLES", "alternateStyle-1"), result);
+    }
+
+    @Test
+    public void testModifiableParamsWithSecurityKey() throws GeoWebCacheException {
+        defaults.setSecurityEnabled(true);
+        AccessLimitsKeyBuilder mockKeyBuilder = mock(AccessLimitsKeyBuilder.class);
+        ResourceAccessManager mockRam = mock(ResourceAccessManager.class);
+        when(mockRam.getAccessLimits(any(), any(LayerInfo.class))).thenReturn(mock(DataAccessLimits.class));
+        when(mockKeyBuilder.buildKey(any())).thenReturn("user_hash");
+        SecureCatalogImpl mockSecureCatalog = mock(SecureCatalogImpl.class);
+        when(mockSecureCatalog.getResourceAccessManager()).thenReturn(mockRam);
+        GenericApplicationContext ctx = new GenericApplicationContext();
+        ctx.getBeanFactory().registerSingleton("keyBuilder", mockKeyBuilder);
+        ctx.getBeanFactory().registerSingleton("secureCatalog", mockSecureCatalog);
+        ctx.refresh();
+        new GeoServerExtensions().setApplicationContext(ctx);
+
+        layerInfoTileLayer = new GeoServerTileLayer(layerInfo, defaults, gridSetBroker);
+        Map<String, String> params = Collections.singletonMap("sTyLeS", "alternateStyle-1");
+        Map<String, String> result = layerInfoTileLayer.getModifiableParameters(params, "UTF-8");
+        assertEquals("alternateStyle-1", result.get("STYLES"));
+        assertEquals("user_hash", result.get(SecurityParameterFilter.ACCESS_LIMITS_KEY));
     }
 
     @Test

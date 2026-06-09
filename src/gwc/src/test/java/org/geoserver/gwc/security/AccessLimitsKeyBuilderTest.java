@@ -4,11 +4,11 @@
  */
 package org.geoserver.gwc.security;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
 import java.util.List;
@@ -40,6 +40,9 @@ public class AccessLimitsKeyBuilderTest {
     static final GeometryFactory GF = new GeometryFactory();
     static final FilterFactory FF = CommonFactoryFinder.getFilterFactory();
 
+    // expected key strings are load-bearing: any change breaks existing tile caches
+    static final String TRIANGLE_WKT = "MULTIPOLYGON (((0 0, 0 1, 1 1, 0 0)))";
+
     AccessLimitsKeyBuilder builder;
     IgnorableParameterRegistry ignorable;
 
@@ -55,8 +58,6 @@ public class AccessLimitsKeyBuilderTest {
                 });
         return GF.createMultiPolygon(new Polygon[] {tri});
     }
-
-    // --- null / unrestricted ---
 
     @Test
     public void testNullReturnsNull() {
@@ -79,28 +80,17 @@ public class AccessLimitsKeyBuilderTest {
         assertNull(builder.buildKey(v));
     }
 
-    // --- DataAccessLimits ---
-
     @Test
     public void testDataFilter() throws Exception {
         DataAccessLimits d = new DataAccessLimits(CatalogMode.HIDE, ECQL.toFilter("population > 1000"));
-        String key = builder.buildKey(d);
-        assertNotNull(key);
-        assertTrue(key.contains("readFilter"));
-        assertTrue(key.contains("population"));
+        assertEquals("{\"readFilter\":\"population > 1000\"}", builder.buildKey(d));
     }
-
-    // --- VectorAccessLimits ---
 
     @Test
     public void testVectorAttributes() {
         List<PropertyName> attrs = List.of(FF.property("name"), FF.property("pop"));
         VectorAccessLimits v = new VectorAccessLimits(CatalogMode.HIDE, attrs, Filter.INCLUDE, null, Filter.INCLUDE);
-        String key = builder.buildKey(v);
-        assertNotNull(key);
-        assertTrue(key.contains("readAttributes"));
-        // sorted: name,pop
-        assertTrue(key.contains("name,pop"));
+        assertEquals("{\"readAttributes\":\"name,pop\"}", builder.buildKey(v));
     }
 
     @Test
@@ -116,28 +106,20 @@ public class AccessLimitsKeyBuilderTest {
     public void testVectorClip() {
         VectorAccessLimits v =
                 new VectorAccessLimits(CatalogMode.HIDE, null, Filter.INCLUDE, null, Filter.INCLUDE, triangle());
-        String key = builder.buildKey(v);
-        assertNotNull(key);
-        assertTrue(key.contains("clipVectorFilter"));
+        assertEquals("{\"clipVectorFilter\":\"" + TRIANGLE_WKT + "\"}", builder.buildKey(v));
     }
 
     @Test
     public void testVectorIntersect() {
         VectorAccessLimits v = new VectorAccessLimits(CatalogMode.HIDE, null, Filter.INCLUDE, null, Filter.INCLUDE);
         v.setIntersectVectorFilter(GF.createPoint(new Coordinate(5, 5)));
-        String key = builder.buildKey(v);
-        assertNotNull(key);
-        assertTrue(key.contains("intersectVectorFilter"));
+        assertEquals("{\"intersectVectorFilter\":\"POINT (5 5)\"}", builder.buildKey(v));
     }
-
-    // --- CoverageAccessLimits ---
 
     @Test
     public void testCoverageRasterFilter() {
         CoverageAccessLimits c = new CoverageAccessLimits(CatalogMode.HIDE, Filter.INCLUDE, triangle(), null);
-        String key = builder.buildKey(c);
-        assertNotNull(key);
-        assertTrue(key.contains("rasterFilter"));
+        assertEquals("{\"rasterFilter\":\"" + TRIANGLE_WKT + "\"}", builder.buildKey(c));
     }
 
     @Test
@@ -145,7 +127,6 @@ public class AccessLimitsKeyBuilderTest {
         Parameter<Boolean> mt = new Parameter<>(ImageMosaicFormat.ALLOW_MULTITHREADING, true);
         CoverageAccessLimits c =
                 new CoverageAccessLimits(CatalogMode.HIDE, Filter.INCLUDE, null, new GeneralParameterValue[] {mt});
-        // ignorable param contributes nothing → unrestricted
         assertNull(builder.buildKey(c));
     }
 
@@ -155,10 +136,7 @@ public class AccessLimitsKeyBuilderTest {
         Parameter<String> bands = new Parameter<>(desc, "1,2,3");
         CoverageAccessLimits c =
                 new CoverageAccessLimits(CatalogMode.HIDE, Filter.INCLUDE, null, new GeneralParameterValue[] {bands});
-        String key = builder.buildKey(c);
-        assertNotNull(key);
-        assertTrue(key.contains("BANDS"));
-        assertTrue(key.contains("1,2,3"));
+        assertEquals("{\"BANDS\":\"1,2,3\"}", builder.buildKey(c));
     }
 
     @Test
@@ -169,11 +147,9 @@ public class AccessLimitsKeyBuilderTest {
         CoverageAccessLimits c =
                 new CoverageAccessLimits(CatalogMode.HIDE, Filter.INCLUDE, null, new GeneralParameterValue[] {bad});
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> builder.buildKey(c));
-        assertTrue(ex.getMessage().contains("MyArray"));
-        assertTrue(ex.getMessage().contains(IgnorableParameterRegistry.SYSTEM_PROPERTY));
+        assertThat(ex.getMessage(), containsString("MyArray"));
+        assertThat(ex.getMessage(), containsString(IgnorableParameterRegistry.SYSTEM_PROPERTY));
     }
-
-    // --- layer group ---
 
     @Test
     public void testLayerGroupAllUnrestricted() throws Exception {
@@ -188,20 +164,15 @@ public class AccessLimitsKeyBuilderTest {
     public void testLayerGroupPartialRestriction() throws Exception {
         DataAccessLimits restricted = new DataAccessLimits(CatalogMode.HIDE, ECQL.toFilter("population > 0"));
         DataAccessLimits open = new DataAccessLimits(CatalogMode.HIDE, Filter.INCLUDE);
-        String key = builder.buildLayerGroupKey(List.of("ws:a", "ws:b"), List.of(restricted, open));
-        assertNotNull(key);
-        assertTrue(key.startsWith("["));
-        assertTrue(key.contains("ws:a"));
-        assertTrue(key.contains("ws:b"));
-        assertTrue(key.contains("readFilter"));
+        assertEquals(
+                "[{\"layer\":\"ws:a\",\"readFilter\":\"population > 0\"},{\"layer\":\"ws:b\"}]",
+                builder.buildLayerGroupKey(List.of("ws:a", "ws:b"), List.of(restricted, open)));
     }
 
     @Test
     public void testLayerGroupSizeMismatch() {
         assertThrows(IllegalArgumentException.class, () -> builder.buildLayerGroupKey(List.of("a"), List.of()));
     }
-
-    // --- custom serializer ---
 
     @Test
     public void testCustomSerializerPriority() {
@@ -216,9 +187,7 @@ public class AccessLimitsKeyBuilderTest {
         Parameter<String> tag = new Parameter<>(desc, "hello");
         CoverageAccessLimits c =
                 new CoverageAccessLimits(CatalogMode.HIDE, Filter.INCLUDE, null, new GeneralParameterValue[] {tag});
-        String key = b2.buildKey(c);
-        assertNotNull(key);
-        assertTrue("custom serializer must uppercase", key.contains("HELLO"));
+        assertEquals("{\"TAG\":\"HELLO\"}", b2.buildKey(c));
     }
 
     @Test
@@ -228,17 +197,12 @@ public class AccessLimitsKeyBuilderTest {
         assertThrows(IllegalStateException.class, () -> new AccessLimitsKeyBuilder(List.of(s1, s2), ignorable));
     }
 
-    // --- filter normalization ---
-
     @Test
     public void testFilterNormalization() throws Exception {
-        // literal-left swap must produce same key
         DataAccessLimits a = new DataAccessLimits(CatalogMode.HIDE, ECQL.toFilter("13 = population"));
         DataAccessLimits b = new DataAccessLimits(CatalogMode.HIDE, ECQL.toFilter("population = 13"));
         assertEquals(builder.buildKey(a), builder.buildKey(b));
     }
-
-    // --- List / Date / Range (TIME, ELEVATION, custom dimension params) ---
 
     @Test
     public void testTimeParam() {
@@ -248,17 +212,11 @@ public class AccessLimitsKeyBuilderTest {
         Parameter<List> time = new Parameter<>(desc, List.of(t1, t2));
         CoverageAccessLimits c =
                 new CoverageAccessLimits(CatalogMode.HIDE, Filter.INCLUDE, null, new GeneralParameterValue[] {time});
-        String key = builder.buildKey(c);
-        assertNotNull(key);
-        assertTrue(key.contains("TIME"));
-        // ISO-8601 UTC with explicit milliseconds
-        assertTrue(key.contains("1970-01-01T00:00:01.000Z"));
-        assertTrue(key.contains("1970-01-01T00:00:02.000Z"));
+        assertEquals("{\"TIME\":\"1970-01-01T00:00:01.000Z,1970-01-01T00:00:02.000Z\"}", builder.buildKey(c));
     }
 
     @Test
     public void testTimeSorted() {
-        // list in different order must produce same key
         Date t1 = new Date(1000L);
         Date t2 = new Date(2000L);
         DefaultParameterDescriptor<List> desc = new DefaultParameterDescriptor<>("TIME", List.class, null, null);
@@ -278,10 +236,7 @@ public class AccessLimitsKeyBuilderTest {
         Parameter<List> time = new Parameter<>(desc, List.of(range));
         CoverageAccessLimits c =
                 new CoverageAccessLimits(CatalogMode.HIDE, Filter.INCLUDE, null, new GeneralParameterValue[] {time});
-        String key = builder.buildKey(c);
-        assertNotNull(key);
-        // range serialized as min/max
-        assertTrue(key.contains("1970-01-01T00:00:01.000Z/1970-01-01T00:00:02.000Z"));
+        assertEquals("{\"TIME\":\"1970-01-01T00:00:01.000Z/1970-01-01T00:00:02.000Z\"}", builder.buildKey(c));
     }
 
     @Test
@@ -291,9 +246,7 @@ public class AccessLimitsKeyBuilderTest {
         Parameter<List> elev = new Parameter<>(desc, List.of(range));
         CoverageAccessLimits c =
                 new CoverageAccessLimits(CatalogMode.HIDE, Filter.INCLUDE, null, new GeneralParameterValue[] {elev});
-        String key = builder.buildKey(c);
-        assertNotNull(key);
-        assertTrue(key.contains("100.0/200.0"));
+        assertEquals("{\"ELEVATION\":\"100.0/200.0\"}", builder.buildKey(c));
     }
 
     @Test
@@ -302,10 +255,6 @@ public class AccessLimitsKeyBuilderTest {
         Parameter<List> dim = new Parameter<>(desc, List.of("A", "B", "C"));
         CoverageAccessLimits c =
                 new CoverageAccessLimits(CatalogMode.HIDE, Filter.INCLUDE, null, new GeneralParameterValue[] {dim});
-        String key = builder.buildKey(c);
-        assertNotNull(key);
-        assertTrue(key.contains("MY_DIM"));
-        assertTrue(key.contains("A"));
-        assertTrue(key.contains("B"));
+        assertEquals("{\"MY_DIM\":\"A,B,C\"}", builder.buildKey(c));
     }
 }
