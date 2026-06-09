@@ -23,10 +23,8 @@ public class KeySerializerTest {
     static final GeometryKeySerializer GEOM_SER = new GeometryKeySerializer();
     static final GeometryFactory GF = new GeometryFactory();
 
-    // --- FilterKeySerializer ---
-
     @Test
-    public void testFilterNormalizationApplied() throws Exception {
+    public void testFilterNormalization() throws Exception {
         // literal-left swap: "13 = population" and "population = 13" must produce the same key
         Filter a = ECQL.toFilter("13 = population");
         Filter b = ECQL.toFilter("population = 13");
@@ -34,17 +32,15 @@ public class KeySerializerTest {
     }
 
     @Test
-    public void testFilterKeyIsEcql() throws Exception {
+    public void testFilterEcql() throws Exception {
         Filter f = ECQL.toFilter("population > 1000");
         String key = FILTER_SER.toKey(f);
         // round-trip: re-parsing the key must produce a semantically equal filter
         assertEquals(f, ECQL.toFilter(key));
     }
 
-    // --- GeometryKeySerializer ---
-
     @Test
-    public void testGeometryNormApplied() {
+    public void testGeometryNorm() {
         // two rings with same vertices in different order → same key after norm()
         Coordinate[] cw = {
             new Coordinate(0, 0), new Coordinate(0, 1), new Coordinate(1, 1), new Coordinate(1, 0), new Coordinate(0, 0)
@@ -58,7 +54,7 @@ public class KeySerializerTest {
     }
 
     @Test
-    public void testCrsFromUserData() throws Exception {
+    public void testCrsUserData() throws Exception {
         CoordinateReferenceSystem crs = CRS.decode("EPSG:4326");
         Geometry geom = GF.createPoint(new Coordinate(10, 20));
         geom.setUserData(crs);
@@ -67,7 +63,7 @@ public class KeySerializerTest {
     }
 
     @Test
-    public void testCrsFromSrid() {
+    public void testCrsSrid() {
         Geometry geom = GF.createPoint(new Coordinate(10, 20));
         geom.setSRID(3857);
         String key = GEOM_SER.toKey(geom);
@@ -75,7 +71,7 @@ public class KeySerializerTest {
     }
 
     @Test
-    public void testNoCrsProducesPlainWkt() {
+    public void testNoCrs() {
         Geometry geom = GF.createPoint(new Coordinate(10, 20));
         // SRID defaults to 0, no userData
         String key = GEOM_SER.toKey(geom);
@@ -83,7 +79,7 @@ public class KeySerializerTest {
     }
 
     @Test
-    public void testUserDataCrsTakesPrecedenceOverSrid() throws Exception {
+    public void testCrsUserDataWins() throws Exception {
         // userData CRS wins; SRID is ignored when userData is set
         CoordinateReferenceSystem crs = CRS.decode("EPSG:4326");
         Geometry geom = GF.createPoint(new Coordinate(10, 20));
@@ -94,7 +90,7 @@ public class KeySerializerTest {
     }
 
     @Test
-    public void testDifferentCrsProducesDifferentKey() throws Exception {
+    public void testDifferentCrs() throws Exception {
         Geometry geom4326 = GF.createPoint(new Coordinate(10, 20));
         geom4326.setSRID(4326);
         Geometry geom3857 = GF.createPoint(new Coordinate(10, 20));

@@ -19,70 +19,70 @@ public class NormalizingFilterVisitorTest {
     }
 
     @Test
-    public void testEqualLiteralLeftSwapped() throws Exception {
+    public void testEqualSwap() throws Exception {
         Filter normalized = normalize(ECQL.toFilter("13 = foo"));
         Filter expected = ECQL.toFilter("foo = 13");
         assertEquals(expected, normalized);
     }
 
     @Test
-    public void testGreaterThanLiteralLeftSwapped() throws Exception {
+    public void testGtSwap() throws Exception {
         Filter normalized = normalize(ECQL.toFilter("13 > foo"));
         Filter expected = ECQL.toFilter("foo < 13");
         assertEquals(expected, normalized);
     }
 
     @Test
-    public void testGreaterThanOrEqualLiteralLeftSwapped() throws Exception {
+    public void testGteSwap() throws Exception {
         Filter normalized = normalize(ECQL.toFilter("13 >= foo"));
         Filter expected = ECQL.toFilter("foo <= 13");
         assertEquals(expected, normalized);
     }
 
     @Test
-    public void testLessThanLiteralLeftSwapped() throws Exception {
+    public void testLtSwap() throws Exception {
         Filter normalized = normalize(ECQL.toFilter("13 < foo"));
         Filter expected = ECQL.toFilter("foo > 13");
         assertEquals(expected, normalized);
     }
 
     @Test
-    public void testLessThanOrEqualLiteralLeftSwapped() throws Exception {
+    public void testLteSwap() throws Exception {
         Filter normalized = normalize(ECQL.toFilter("13 <= foo"));
         Filter expected = ECQL.toFilter("foo >= 13");
         assertEquals(expected, normalized);
     }
 
     @Test
-    public void testPropertyLeftUnchanged() throws Exception {
+    public void testPropertyLeft() throws Exception {
         Filter normalized = normalize(ECQL.toFilter("foo = 13"));
         Filter expected = ECQL.toFilter("foo = 13");
         assertEquals(expected, normalized);
     }
 
     @Test
-    public void testAndOperandsSortedRegardlessOfInputOrder() throws Exception {
+    public void testAndSort() throws Exception {
         Filter normalized = normalize(ECQL.toFilter("foo = 1 AND bar = 2"));
         Filter expected = ECQL.toFilter("bar = 2 AND foo = 1");
         assertEquals(expected, normalized);
     }
 
     @Test
-    public void testOrOperandsSortedRegardlessOfInputOrder() throws Exception {
+    public void testOrSort() throws Exception {
         Filter normalized = normalize(ECQL.toFilter("foo = 1 OR bar = 2"));
         Filter expected = ECQL.toFilter("bar = 2 OR foo = 1");
         assertEquals(expected, normalized);
     }
 
     @Test
-    public void testAndWithLiteralLeftSwappedAndSorted() throws Exception {
+    public void testAndSwapSort() throws Exception {
         Filter normalized = normalize(ECQL.toFilter("13 = foo AND bar = 'x'"));
         Filter expected = ECQL.toFilter("bar = 'x' AND foo = 13");
         assertEquals(expected, normalized);
     }
 
     @Test
-    public void testOrWithThreeOperandsSorted() throws Exception {
+    public void testOrSort3() throws Exception {
         // normalize flattens nested OR (via SimplifyingFilterVisitor), so expected must also be normalized
         Filter expected = normalize(ECQL.toFilter("a = 1 OR b = 2 OR c = 3"));
         assertEquals(expected, normalize(ECQL.toFilter("c = 3 OR a = 1 OR b = 2")));
@@ -90,14 +90,14 @@ public class NormalizingFilterVisitorTest {
     }
 
     @Test
-    public void testInFunctionValuesAreSorted() throws Exception {
+    public void testInSort() throws Exception {
         Filter normalized = normalize(ECQL.toFilter("in3(foo,'c','a','b') = true"));
         Filter expected = ECQL.toFilter("in3(foo,'a','b','c') = true");
         assertEquals(expected, normalized);
     }
 
     @Test
-    public void testInFunctionAlreadySortedUnchanged() throws Exception {
+    public void testInAlreadySorted() throws Exception {
         Filter normalized = normalize(ECQL.toFilter("in3(foo,'a','b','c') = true"));
         Filter expected = ECQL.toFilter("in3(foo,'a','b','c') = true");
         assertEquals(expected, normalized);
