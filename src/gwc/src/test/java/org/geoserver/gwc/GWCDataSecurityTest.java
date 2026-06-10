@@ -9,6 +9,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -602,6 +603,51 @@ public class GWCDataSecurityTest extends WMSTestSupport {
         setRequestAuth("cite", "cite");
         response = getAsServletResponse(path);
         assertEquals("image/png", response.getContentType());
+    }
+
+    @Test
+    public void testWmscCacheSegregation() throws Exception {
+        // gwc/service/wms (WMS-C) goes through a different dispatcher path than WMTS/TMS.
+        // Verify that SecurityParameterFilter still segregates tiles per user access profile.
+        GWC.get().truncate("sf:mosaic");
+        TestResourceAccessManager tam =
+                (TestResourceAccessManager) applicationContext.getBean("testResourceAccessManager");
+        CoverageInfo coverage = getCatalog().getCoverageByName("sf:mosaic");
+        // cite_cropmosaic has a raster clip to Australia, giving it a different ACCESS_LIMITS_KEY
+        String wmscPath = "gwc/service/wms?LAYERS=sf:mosaic&FORMAT=image/png&SERVICE=WMS&VERSION=1.1.1"
+                + "&REQUEST=GetMap&SRS=EPSG:4326&BBOX=0,-90,180,90&WIDTH=256&HEIGHT=256";
+
+        setRequestAuth("cite", "cite");
+        MockHttpServletResponse response = getAsServletResponse(wmscPath);
+        assertEquals("image/png", response.getContentType());
+        assertThat(
+                "first cite request must be a MISS",
+                response.getHeader("geowebcache-cache-result"),
+                equalToIgnoringCase("MISS"));
+
+        setRequestAuth("cite", "cite");
+        response = getAsServletResponse(wmscPath);
+        assertEquals("image/png", response.getContentType());
+        assertThat(
+                "second cite request must HIT the cache",
+                response.getHeader("geowebcache-cache-result"),
+                equalToIgnoringCase("HIT"));
+
+        setRequestAuth("cite_cropmosaic", "cite");
+        response = getAsServletResponse(wmscPath);
+        assertEquals("image/png", response.getContentType());
+        assertThat(
+                "restricted user must MISS (different ACCESS_LIMITS_KEY)",
+                response.getHeader("geowebcache-cache-result"),
+                equalToIgnoringCase("MISS"));
+
+        setRequestAuth("cite_cropmosaic", "cite");
+        response = getAsServletResponse(wmscPath);
+        assertEquals("image/png", response.getContentType());
+        assertThat(
+                "restricted user must HIT own cache entry",
+                response.getHeader("geowebcache-cache-result"),
+                equalToIgnoringCase("HIT"));
     }
 
     @Test

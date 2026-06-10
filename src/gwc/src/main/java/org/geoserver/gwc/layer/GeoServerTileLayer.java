@@ -286,10 +286,13 @@ public class GeoServerTileLayer extends TileLayer implements ProxyLayer, TileJSO
     @Override
     public List<ParameterFilter> getParameterFilters() {
         List<ParameterFilter> filters = new ArrayList<>(info.getParameterFilters());
-        // synthetic security filter — only added when gwc security integration is on
-        if (GWC.get().getConfig().isSecurityEnabled()
-                && filters.stream().noneMatch(f -> SecurityParameterFilter.ACCESS_LIMITS_KEY.equals(f.getKey()))) {
-            filters.add(new SecurityParameterFilter(SecurityParameterFilter.ACCESS_LIMITS_KEY));
+        if (GWC.get().getConfig().isSecurityEnabled()) {
+            if (filters.stream().noneMatch(f -> SecurityParameterFilter.ACCESS_LIMITS_KEY.equals(f.getKey()))) {
+                filters.add(new SecurityParameterFilter(SecurityParameterFilter.ACCESS_LIMITS_KEY));
+            }
+            if (filters.stream().noneMatch(f -> SecurityParameterFilter.SECURITY_TAGS_KEY.equals(f.getKey()))) {
+                filters.add(new SecurityParameterFilter(SecurityParameterFilter.SECURITY_TAGS_KEY));
+            }
         }
         return filters;
     }
@@ -305,15 +308,19 @@ public class GeoServerTileLayer extends TileLayer implements ProxyLayer, TileJSO
         if (key != null) {
             Map<String, Object> augmented = new HashMap<>(map);
             augmented.put(SecurityParameterFilter.ACCESS_LIMITS_KEY, key);
+            String tags = SecurityKeyHolder.resolveSecurityTags(getPublishedInfo());
+            if (tags != null) {
+                augmented.put(SecurityParameterFilter.SECURITY_TAGS_KEY, tags);
+            }
             effective = augmented;
         }
         Map<String, String> result = super.getModifiableParameters(effective, encoding);
-        // when unrestricted, strip ACCESS_LIMITS_KEY="" from the result to preserve the
-        // pre-existing parametersId for tiles cached before security was enabled
-        if (key == null && !result.isEmpty() && result.containsKey(SecurityParameterFilter.ACCESS_LIMITS_KEY)) {
+        // when unrestricted, strip security params to preserve the pre-existing parametersId
+        if (key == null && !result.isEmpty()) {
             Map<String, String> clean = new HashMap<>(result);
-            clean.remove(SecurityParameterFilter.ACCESS_LIMITS_KEY);
-            return clean.isEmpty() ? Collections.emptyMap() : clean;
+            boolean changed = clean.remove(SecurityParameterFilter.ACCESS_LIMITS_KEY) != null;
+            changed |= clean.remove(SecurityParameterFilter.SECURITY_TAGS_KEY) != null;
+            if (changed) return clean.isEmpty() ? Collections.emptyMap() : clean;
         }
         return result;
     }

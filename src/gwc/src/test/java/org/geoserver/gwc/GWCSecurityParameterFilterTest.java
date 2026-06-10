@@ -11,6 +11,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.xml.namespace.QName;
 import org.geoserver.catalog.Catalog;
 import org.geoserver.catalog.CatalogBuilder;
@@ -30,8 +31,11 @@ import org.geoserver.test.GeoServerSystemTestSupport;
 import org.geotools.api.filter.Filter;
 import org.geotools.api.filter.FilterFactory;
 import org.geotools.api.filter.expression.PropertyName;
+import org.geotools.api.parameter.GeneralParameterValue;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.filter.text.ecql.ECQL;
+import org.geotools.parameter.DefaultParameterDescriptor;
+import org.geotools.parameter.Parameter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -152,6 +156,27 @@ public class GWCSecurityParameterFilterTest extends GeoServerSystemTestSupport {
             new Coordinate(minX, minY)
         });
         return GF.createMultiPolygon(new Polygon[] {p});
+    }
+
+    private static VectorAccessLimits vectorFilter(String ecql) throws Exception {
+        return new VectorAccessLimits(CatalogMode.HIDE, null, ECQL.toFilter(ecql), null, Filter.INCLUDE);
+    }
+
+    private static VectorAccessLimits vectorClip(MultiPolygon clip) {
+        return new VectorAccessLimits(CatalogMode.HIDE, null, Filter.INCLUDE, null, Filter.INCLUDE, clip);
+    }
+
+    private static VectorAccessLimits vectorIntersect(MultiPolygon intersect) {
+        VectorAccessLimits limits =
+                new VectorAccessLimits(CatalogMode.HIDE, null, Filter.INCLUDE, null, Filter.INCLUDE);
+        limits.setIntersectVectorFilter(intersect);
+        return limits;
+    }
+
+    private static GeneralParameterValue[] rasterParam(String value) {
+        DefaultParameterDescriptor<String> desc =
+                new DefaultParameterDescriptor<>("SECURITY_PARAM", String.class, null, null);
+        return new GeneralParameterValue[] {new Parameter<>(desc, value)};
     }
 
 
@@ -437,11 +462,118 @@ public class GWCSecurityParameterFilterTest extends GeoServerSystemTestSupport {
     }
 
 
-    private static VectorAccessLimits vectorFilter(String ecql) throws Exception {
-        return new VectorAccessLimits(CatalogMode.HIDE, null, ECQL.toFilter(ecql), null, Filter.INCLUDE);
+    @Test
+    public void testVectorIntersectFilterSeparatesCache() throws Exception {
+        GWC.get().getConfig().setSecurityEnabled(true);
+        LayerInfo layer = getCatalog().getLayerByName(getLayerId(MockData.BASIC_POLYGONS));
+        getRAM().putLimits("user_a", layer.getResource(), vectorIntersect(CLIP_A));
+        getRAM().putLimits("user_b", layer.getResource(), vectorIntersect(CLIP_B));
+
+        login("user_a", "test");
+        assertTileResult(MockData.BASIC_POLYGONS, "MISS");
+
+        login("user_b", "test");
+        assertTileResult(MockData.BASIC_POLYGONS, "MISS"); // different intersect → different key
+
+        login("user_a", "test");
+        assertTileResult(MockData.BASIC_POLYGONS, "HIT");
     }
 
-    private static VectorAccessLimits vectorClip(MultiPolygon clip) {
-        return new VectorAccessLimits(CatalogMode.HIDE, null, Filter.INCLUDE, null, Filter.INCLUDE, clip);
+    @Test
+    public void testVectorSameIntersectFilterSharesCache() throws Exception {
+        GWC.get().getConfig().setSecurityEnabled(true);
+        LayerInfo layer = getCatalog().getLayerByName(getLayerId(MockData.BASIC_POLYGONS));
+        getRAM().putLimits("user_a", layer.getResource(), vectorIntersect(CLIP_A));
+        getRAM().putLimits("user_b", layer.getResource(), vectorIntersect(CLIP_A));
+
+        login("user_a", "test");
+        assertTileResult(MockData.BASIC_POLYGONS, "MISS");
+
+        login("user_b", "test");
+        assertTileResult(MockData.BASIC_POLYGONS, "HIT");
+    }
+
+
+    @Test
+    public void testSecurityTagsSeparateCache() throws Exception {
+        GWC.get().getConfig().setSecurityEnabled(true);
+        LayerInfo layer = getCatalog().getLayerByName(getLayerId(MockData.BASIC_POLYGONS));
+        VectorAccessLimits noTags = vectorFilter("FID = 'BasicPolygons.1107531493630'");
+        VectorAccessLimits withTags = vectorFilter("FID = 'BasicPolygons.1107531493630'");
+        withTags.setSecurityTags(Set.of("tenant-a"));
+        getRAM().putLimits("user_a", layer.getResource(), noTags);
+        getRAM().putLimits("user_b", layer.getResource(), withTags);
+
+        login("user_a", "test");
+        assertTileResult(MockData.BASIC_POLYGONS, "MISS");
+
+        // same ACCESS_LIMITS_KEY but different SECURITY_TAGS_KEY → own cache
+        login("user_b", "test");
+        assertTileResult(MockData.BASIC_POLYGONS, "MISS");
+
+        login("user_b", "test");
+        assertTileResult(MockData.BASIC_POLYGONS, "HIT");
+    }
+
+    @Test
+    public void testSecurityTagsShareCacheWhenIdentical() throws Exception {
+        GWC.get().getConfig().setSecurityEnabled(true);
+        LayerInfo layer = getCatalog().getLayerByName(getLayerId(MockData.BASIC_POLYGONS));
+        VectorAccessLimits limitsA = vectorFilter("FID = 'BasicPolygons.1107531493630'");
+        limitsA.setSecurityTags(Set.of("tenant-a"));
+        VectorAccessLimits limitsB = vectorFilter("FID = 'BasicPolygons.1107531493630'");
+        limitsB.setSecurityTags(Set.of("tenant-a"));
+        getRAM().putLimits("user_a", layer.getResource(), limitsA);
+        getRAM().putLimits("user_b", layer.getResource(), limitsB);
+
+        login("user_a", "test");
+        assertTileResult(MockData.BASIC_POLYGONS, "MISS");
+
+        login("user_b", "test");
+        assertTileResult(MockData.BASIC_POLYGONS, "HIT");
+    }
+
+
+    @Test
+    public void testRasterParamsSeparatesCache() throws Exception {
+        GWC.get().getConfig().setSecurityEnabled(true);
+        CoverageInfo coverage = getCatalog().getCoverageByName("sf:mosaic");
+        getRAM().putLimits(
+                        "user_a",
+                        coverage,
+                        new CoverageAccessLimits(CatalogMode.HIDE, Filter.INCLUDE, null, rasterParam("zone-1")));
+        getRAM().putLimits(
+                        "user_b",
+                        coverage,
+                        new CoverageAccessLimits(CatalogMode.HIDE, Filter.INCLUDE, null, rasterParam("zone-2")));
+
+        login("user_a", "test");
+        assertRasterTileResult("MISS");
+
+        login("user_b", "test");
+        assertRasterTileResult("MISS"); // different param value → own cache
+
+        login("user_a", "test");
+        assertRasterTileResult("HIT");
+    }
+
+    @Test
+    public void testRasterSameParamsSharesCache() throws Exception {
+        GWC.get().getConfig().setSecurityEnabled(true);
+        CoverageInfo coverage = getCatalog().getCoverageByName("sf:mosaic");
+        getRAM().putLimits(
+                        "user_a",
+                        coverage,
+                        new CoverageAccessLimits(CatalogMode.HIDE, Filter.INCLUDE, null, rasterParam("zone-1")));
+        getRAM().putLimits(
+                        "user_b",
+                        coverage,
+                        new CoverageAccessLimits(CatalogMode.HIDE, Filter.INCLUDE, null, rasterParam("zone-1")));
+
+        login("user_a", "test");
+        assertRasterTileResult("MISS");
+
+        login("user_b", "test");
+        assertRasterTileResult("HIT");
     }
 }

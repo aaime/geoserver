@@ -5,6 +5,8 @@
 package org.geoserver.gwc.security;
 
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import org.geoserver.catalog.LayerGroupInfo;
 import org.geoserver.catalog.LayerInfo;
 import org.geoserver.catalog.PublishedInfo;
@@ -32,6 +34,7 @@ public class SecurityKeyHolder {
     private static final String UNRESTRICTED = "";
 
     private static final ThreadLocal<String> KEY = new ThreadLocal<>();
+    private static final ThreadLocal<String> TAGS = new ThreadLocal<>();
 
     private SecurityKeyHolder() {}
 
@@ -61,6 +64,38 @@ public class SecurityKeyHolder {
         return key;
     }
 
+    /**
+     * Returns the sorted comma-joined security tags for the given layer, computing and caching them on the first call
+     * within a request. Returns {@code null} when no limits carry tags, or when security infrastructure is unavailable.
+     * Only meaningful when {@link #resolveKey} returns non-null.
+     */
+    public static String resolveSecurityTags(PublishedInfo published) {
+        if (TAGS.get() != null) {
+            String cached = TAGS.get();
+            return cached.isEmpty() ? null : cached;
+        }
+        SecureCatalogImpl secureCatalog = GeoServerExtensions.bean(SecureCatalogImpl.class);
+        if (secureCatalog == null) {
+            TAGS.set(UNRESTRICTED);
+            return null;
+        }
+        ResourceAccessManager ram = secureCatalog.getResourceAccessManager();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Set<String> allTags = new TreeSet<>();
+        if (published instanceof LayerInfo layer) {
+            collectTags(ram.getAccessLimits(auth, layer), allTags);
+        } else if (published instanceof LayerGroupInfo group) {
+            for (LayerInfo l : group.layers()) collectTags(ram.getAccessLimits(auth, l), allTags);
+        }
+        String tags = allTags.isEmpty() ? null : String.join(",", allTags);
+        TAGS.set(tags != null ? tags : UNRESTRICTED);
+        return tags;
+    }
+
+    private static void collectTags(AccessLimits limits, Set<String> out) {
+        if (limits != null && limits.getSecurityTags() != null) out.addAll(limits.getSecurityTags());
+    }
+
     private static String buildKey(
             PublishedInfo published,
             ResourceAccessManager ram,
@@ -80,8 +115,9 @@ public class SecurityKeyHolder {
         return null;
     }
 
-    /** Clears the cached key. Called by {@link SecurityKeyDispatcherCallback} after each request. */
+    /** Clears the cached key and tags. Called by {@link SecurityKeyDispatcherCallback} after each request. */
     public static void clear() {
         KEY.remove();
+        TAGS.remove();
     }
 }

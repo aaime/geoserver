@@ -434,10 +434,13 @@ public class GeoServerTileLayerTest {
         defaults.setSecurityEnabled(true);
         layerInfoTileLayer = new GeoServerTileLayer(layerInfo, defaults, gridSetBroker);
         List<ParameterFilter> parameterFilters = layerInfoTileLayer.getParameterFilters();
-        assertEquals(2, parameterFilters.size());
+        assertEquals(3, parameterFilters.size()); // STYLES + ACCESS_LIMITS_KEY + SECURITY_TAGS_KEY
         assertEquals(
                 SecurityParameterFilter.ACCESS_LIMITS_KEY,
                 parameterFilters.get(1).getKey());
+        assertEquals(
+                SecurityParameterFilter.SECURITY_TAGS_KEY,
+                parameterFilters.get(2).getKey());
     }
 
     @Test
@@ -445,8 +448,9 @@ public class GeoServerTileLayerTest {
         defaults.setSecurityEnabled(true);
         layerInfoTileLayer = new GeoServerTileLayer(layerInfo, defaults, gridSetBroker);
         Map<String, String> defaultFilters = layerInfoTileLayer.getDefaultParameterFilters();
-        assertEquals(2, defaultFilters.size());
+        assertEquals(3, defaultFilters.size()); // STYLES + ACCESS_LIMITS_KEY + SECURITY_TAGS_KEY
         assertEquals("", defaultFilters.get(SecurityParameterFilter.ACCESS_LIMITS_KEY));
+        assertEquals("", defaultFilters.get(SecurityParameterFilter.SECURITY_TAGS_KEY));
     }
 
     @Test
