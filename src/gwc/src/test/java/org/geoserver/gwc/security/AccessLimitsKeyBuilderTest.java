@@ -6,11 +6,16 @@ package org.geoserver.gwc.security;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.Date;
+import java.util.HexFormat;
 import java.util.List;
 import org.geoserver.security.AccessLimits;
 import org.geoserver.security.CatalogMode;
@@ -43,13 +48,30 @@ public class AccessLimitsKeyBuilderTest {
     // expected key strings are load-bearing: any change breaks existing tile caches
     static final String TRIANGLE_WKT = "MULTIPOLYGON (((0 0, 0 1, 1 1, 0 0)))";
 
+    // limit chosen so a 500-char field value triggers truncation (JSON overhead ~14 chars → total 514 > 300)
+    static final int TRUNC_LIMIT = 300;
+
     AccessLimitsKeyBuilder builder;
+    AccessLimitsKeyBuilder truncBuilder;
     IgnorableParameterRegistry ignorable;
 
     @Before
     public void setUp() {
         ignorable = new IgnorableParameterRegistry();
         builder = new AccessLimitsKeyBuilder(List.of(), ignorable);
+        truncBuilder = new AccessLimitsKeyBuilder(List.of(), ignorable, TRUNC_LIMIT);
+    }
+
+    /** CoverageAccessLimits with a single string parameter — convenient for truncation tests. */
+    private static CoverageAccessLimits coverageParam(String paramName, String value) {
+        DefaultParameterDescriptor<String> desc = new DefaultParameterDescriptor<>(paramName, String.class, null, null);
+        return new CoverageAccessLimits(
+                CatalogMode.HIDE, Filter.INCLUDE, null, new GeneralParameterValue[] {new Parameter<>(desc, value)});
+    }
+
+    private static String sha256hex(String value) throws Exception {
+        byte[] hash = MessageDigest.getInstance("SHA-256").digest(value.getBytes(StandardCharsets.UTF_8));
+        return HexFormat.of().formatHex(hash);
     }
 
     static MultiPolygon triangle() {
@@ -256,5 +278,129 @@ public class AccessLimitsKeyBuilderTest {
         CoverageAccessLimits c =
                 new CoverageAccessLimits(CatalogMode.HIDE, Filter.INCLUDE, null, new GeneralParameterValue[] {dim});
         assertEquals("{\"MY_DIM\":\"A,B,C\"}", builder.buildKey(c));
+    }
+
+
+    @Test
+    public void testNoTruncationWhenUnderLimit() {
+        // 100-char value → JSON ~114 chars, well under TRUNC_LIMIT=300
+        String key = truncBuilder.buildKey(coverageParam("PARAM_A", "A".repeat(100)));
+        assertThat(key, not(containsString("...too long")));
+        assertTrue(key.length() <= TRUNC_LIMIT);
+    }
+
+    @Test
+    public void testSingleFieldTruncatedWhenOverLimit() throws Exception {
+        // 500-char value → JSON ~514 chars > 300
+        String longValue = "A".repeat(500);
+        String key = truncBuilder.buildKey(coverageParam("PARAM_A", longValue));
+        assertThat(key, containsString("...too long, sha is "));
+        assertThat(key, containsString(sha256hex(longValue)));
+        assertTrue("key must be within limit after truncation", key.length() <= TRUNC_LIMIT);
+    }
+
+    @Test
+    public void testTruncatedKeyPreservesMinPrefix() {
+        // prefix must be at least MIN_FIELD_PREFIX chars of the original value
+        String longValue = "X".repeat(500);
+        String key = truncBuilder.buildKey(coverageParam("PARAM_A", longValue));
+        // value in JSON is between the opening quote and "...too long"
+        int valueStart = key.indexOf('"', key.indexOf(':') + 1) + 1;
+        int truncMarker = key.indexOf("...too long");
+        String visiblePrefix = key.substring(valueStart, truncMarker);
+        assertTrue("visible prefix must be >= MIN_FIELD_PREFIX (50)", visiblePrefix.length() >= 50);
+        assertEquals(
+                "visible prefix must match original start",
+                longValue.substring(0, visiblePrefix.length()),
+                visiblePrefix);
+    }
+
+    @Test
+    public void testSameValueProducesSameKey() {
+        // two users with the same large restriction must share cache → identical key
+        String longValue = "A".repeat(500);
+        String k1 = truncBuilder.buildKey(coverageParam("PARAM_A", longValue));
+        String k2 = truncBuilder.buildKey(coverageParam("PARAM_A", longValue));
+        assertEquals(k1, k2);
+    }
+
+    @Test
+    public void testDifferentValuesProduceDifferentKeys() throws Exception {
+        // different long values must NOT share cache
+        String k1 = truncBuilder.buildKey(coverageParam("PARAM_A", "A".repeat(500)));
+        String k2 = truncBuilder.buildKey(coverageParam("PARAM_A", "B".repeat(500)));
+        assertTrue("different long values must yield different sha → different keys", !k1.equals(k2));
+    }
+
+    @Test
+    public void testLongestFieldTruncatedFirst() throws Exception {
+        // PARAM_A=500 chars (long), PARAM_B=20 chars (short) — only PARAM_A needs truncating
+        String longValue = "A".repeat(500);
+        String shortValue = "B".repeat(20);
+        DefaultParameterDescriptor<String> descA =
+                new DefaultParameterDescriptor<>("PARAM_A", String.class, null, null);
+        DefaultParameterDescriptor<String> descB =
+                new DefaultParameterDescriptor<>("PARAM_B", String.class, null, null);
+        CoverageAccessLimits c =
+                new CoverageAccessLimits(CatalogMode.HIDE, Filter.INCLUDE, null, new GeneralParameterValue[] {
+                    new Parameter<>(descA, longValue), new Parameter<>(descB, shortValue)
+                });
+        String key = truncBuilder.buildKey(c);
+        // long field must be truncated with sha
+        assertThat(key, containsString("...too long, sha is " + sha256hex(longValue)));
+        // short field must appear verbatim
+        assertThat(key, containsString("\"PARAM_B\":\"" + shortValue + "\""));
+        assertTrue(key.length() <= TRUNC_LIMIT);
+    }
+
+    @Test
+    public void testBothFieldsTruncatedWhenOneNotEnough() throws Exception {
+        // PARAM_A=500 chars, PARAM_B=500 chars — truncating only A is not enough
+        String valueA = "A".repeat(500);
+        String valueB = "B".repeat(500);
+        DefaultParameterDescriptor<String> descA =
+                new DefaultParameterDescriptor<>("PARAM_A", String.class, null, null);
+        DefaultParameterDescriptor<String> descB =
+                new DefaultParameterDescriptor<>("PARAM_B", String.class, null, null);
+        CoverageAccessLimits c =
+                new CoverageAccessLimits(CatalogMode.HIDE, Filter.INCLUDE, null, new GeneralParameterValue[] {
+                    new Parameter<>(descA, valueA), new Parameter<>(descB, valueB)
+                });
+        String key = truncBuilder.buildKey(c);
+        assertThat(key, containsString("...too long, sha is " + sha256hex(valueA)));
+        assertThat(key, containsString("...too long, sha is " + sha256hex(valueB)));
+        assertTrue(key.length() <= TRUNC_LIMIT);
+    }
+
+    @Test
+    public void testLayerGroupFieldTruncated() {
+        // layer group with one entry whose rasterFilter WKT exceeds the limit
+        // a 30-vertex circle polygon produces ~700 chars of WKT — well over TRUNC_LIMIT=300
+        Coordinate[] coords = new Coordinate[31];
+        for (int i = 0; i < 30; i++) {
+            double a = 2 * Math.PI * i / 30;
+            coords[i] = new Coordinate(Math.cos(a) * 100, Math.sin(a) * 100);
+        }
+        coords[30] = coords[0]; // close the ring
+        MultiPolygon bigPoly = GF.createMultiPolygon(new Polygon[] {GF.createPolygon(coords)});
+        CoverageAccessLimits restricted = new CoverageAccessLimits(CatalogMode.HIDE, Filter.INCLUDE, bigPoly, null);
+        DataAccessLimits open = new DataAccessLimits(CatalogMode.HIDE, Filter.INCLUDE);
+        String key = truncBuilder.buildLayerGroupKey(List.of("ws:a", "ws:b"), List.of(restricted, open));
+        assertThat(key, containsString("...too long, sha is "));
+        // the second layer entry must still be present and untouched
+        assertThat(key, containsString("\"layer\":\"ws:b\""));
+        assertTrue(key.length() <= TRUNC_LIMIT);
+    }
+
+    @Test
+    public void testShortFieldNotTruncatedWhenTruncationWouldNotHelp() {
+        // field value ≤ MIN_FIELD_PREFIX(50) + SUFFIX_FIXED_LENGTH(84) = 134 chars cannot be truncated to shorter form
+        // use a tiny limit that can't be achieved — field must appear verbatim anyway
+        AccessLimitsKeyBuilder tinyLimitBuilder = new AccessLimitsKeyBuilder(List.of(), ignorable, 10);
+        String shortValue = "A".repeat(100); // 100 ≤ 134, skip truncation
+        String key = tinyLimitBuilder.buildKey(coverageParam("PARAM_A", shortValue));
+        // field untouched — no truncation marker present
+        assertThat(key, not(containsString("...too long")));
+        assertThat(key, containsString(shortValue));
     }
 }

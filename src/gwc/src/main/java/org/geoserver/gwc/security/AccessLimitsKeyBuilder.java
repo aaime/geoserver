@@ -4,9 +4,15 @@
  */
 package org.geoserver.gwc.security;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HexFormat;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -23,6 +29,7 @@ import org.geotools.api.parameter.GeneralParameterValue;
 import org.geotools.api.parameter.ParameterValue;
 import org.geotools.util.Range;
 import org.locationtech.jts.geom.Geometry;
+import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.databind.node.ArrayNode;
 import tools.jackson.databind.node.ObjectNode;
@@ -39,8 +46,23 @@ import tools.jackson.databind.node.ObjectNode;
  * <p>Unknown {@link GeneralParameterValue} types that are neither ignorable (see {@link IgnorableParameterRegistry})
  * nor serializable cause a request-time failure with a message naming the descriptor and pointing to the available
  * extension mechanisms.
+ *
+ * <p>Keys longer than {@value #DEFAULT_MAX_KEY_LENGTH} characters (configurable via the
+ * {@value #MAX_KEY_LENGTH_PROPERTY} system property) are trimmed by truncating the longest individual field values
+ * first, replacing each with its prefix followed by {@code "...too long, sha is <sha256hex>"}. This keeps every field
+ * visible in the stored property file while bounding total size. The default (64 KB) was validated to open instantly in
+ * standard text editors and gives ~2,100 readable characters per geometry field in a 30-layer group.
  */
 public class AccessLimitsKeyBuilder {
+
+    static final String MAX_KEY_LENGTH_PROPERTY = "gwc.security.maxKeyLength";
+    static final int DEFAULT_MAX_KEY_LENGTH = 65536;
+
+    private static final String TRUNCATION_SUFFIX = "...too long, sha is ";
+    // TRUNCATION_SUFFIX (20) + sha256 hex (64) = 84
+    private static final int SUFFIX_FIXED_LENGTH = TRUNCATION_SUFFIX.length() + 64;
+    // minimum chars of the original value kept visible after truncation
+    private static final int MIN_FIELD_PREFIX = 50;
 
     private static final JsonMapper MAPPER = new JsonMapper();
 
@@ -69,8 +91,14 @@ public class AccessLimitsKeyBuilder {
 
     private final List<ParameterValueKeySerializer<?>> custom;
     private final IgnorableParameterRegistry ignorable;
+    private final int maxKeyLength;
 
     public AccessLimitsKeyBuilder(List<ParameterValueKeySerializer<?>> custom, IgnorableParameterRegistry ignorable) {
+        this(custom, ignorable, Integer.getInteger(MAX_KEY_LENGTH_PROPERTY, DEFAULT_MAX_KEY_LENGTH));
+    }
+
+    AccessLimitsKeyBuilder(
+            List<ParameterValueKeySerializer<?>> custom, IgnorableParameterRegistry ignorable, int maxKeyLength) {
         // fail fast on duplicate contributed serializers for the same value type
         Map<Class<?>, String> seen = new LinkedHashMap<>();
         for (ParameterValueKeySerializer<?> s : custom) {
@@ -81,6 +109,7 @@ public class AccessLimitsKeyBuilder {
         }
         this.custom = List.copyOf(custom);
         this.ignorable = ignorable;
+        this.maxKeyLength = maxKeyLength;
     }
 
     /**
@@ -88,7 +117,8 @@ public class AccessLimitsKeyBuilder {
      */
     public String buildKey(AccessLimits limits) {
         ObjectNode node = buildKeyNode(limits);
-        return (node == null || node.isEmpty()) ? null : node.toString();
+        if (node == null || node.isEmpty()) return null;
+        return buildAndLimit(node);
     }
 
     private ObjectNode buildKeyNode(AccessLimits limits) {
@@ -203,7 +233,65 @@ public class AccessLimitsKeyBuilder {
             }
             array.add(entry);
         }
-        return anyRestricted ? array.toString() : null;
+        if (!anyRestricted) return null;
+        return buildAndLimit(array);
+    }
+
+    private String buildAndLimit(ObjectNode node) {
+        String s = node.toString();
+        if (s.length() <= maxKeyLength) return s;
+        truncateLongestFields(List.of(node), s.length());
+        return node.toString();
+    }
+
+    private String buildAndLimit(ArrayNode array) {
+        String s = array.toString();
+        if (s.length() <= maxKeyLength) return s;
+        List<ObjectNode> entries = new ArrayList<>();
+        for (int i = 0; i < array.size(); i++) {
+            if (array.get(i) instanceof ObjectNode on) entries.add(on);
+        }
+        truncateLongestFields(entries, s.length());
+        return array.toString();
+    }
+
+    private void truncateLongestFields(List<ObjectNode> nodes, int currentLength) {
+        record Field(ObjectNode node, String name, String value) {}
+        List<Field> fields = new ArrayList<>();
+        for (ObjectNode n : nodes) {
+            for (String fname : n.propertyNames()) {
+                JsonNode v = n.get(fname);
+                if (v.isTextual()) fields.add(new Field(n, fname, v.textValue()));
+            }
+        }
+        // longest value first — each truncation removes the most bytes
+        fields.sort(Comparator.comparingInt(f -> -f.value().length()));
+
+        int current = currentLength;
+        for (Field f : fields) {
+            if (current <= maxKeyLength) break;
+            String orig = f.value();
+            int length = orig.length();
+            // truncation only helps if the result is shorter than the original
+            if (length <= MIN_FIELD_PREFIX + SUFFIX_FIXED_LENGTH) continue;
+            int excess = current - maxKeyLength;
+            // keep as much prefix as possible while achieving at least `excess` reduction;
+            // fall back to MIN_FIELD_PREFIX when the ideal prefix would be too small
+            int prefix = Math.max(MIN_FIELD_PREFIX, length - SUFFIX_FIXED_LENGTH - excess);
+            if (prefix + SUFFIX_FIXED_LENGTH >= length) continue; // no actual savings
+            String truncated = orig.substring(0, prefix) + TRUNCATION_SUFFIX + sha256hex(orig);
+            f.node().put(f.name(), truncated);
+            current -= length - truncated.length();
+        }
+    }
+
+    private static String sha256hex(String value) {
+        try {
+            byte[] hash = MessageDigest.getInstance("SHA-256").digest(value.getBytes(StandardCharsets.UTF_8));
+            return HexFormat.of().formatHex(hash);
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("SHA-256 unavailable", e);
+        }
     }
 
     private static String errorDuplicateSerializer(Class<?> valueType, String first, Class<?> second) {
