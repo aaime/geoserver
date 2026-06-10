@@ -545,6 +545,30 @@ public class GWCDataSecurityTest extends WMSTestSupport {
     }
 
     @Test
+    public void testCroppedMosaicDirectWms() throws Exception {
+        // direct WMS integration path: /wms with tiled=true and tile-aligned bbox goes through GWC
+        GWC.get().truncate("sf:mosaic");
+        GWC.get().getConfig().setDirectWMSIntegrationEnabled(true);
+        setRequestAuth("cite_cropmosaic", "cite");
+        // zoom-0 left tile (-180,-90,0,90): outside Australia clip — mosaic data here does not intersect Australia
+        String path = "wms?LAYERS=sf:mosaic&STYLES=&FORMAT=image/png&SERVICE=WMS&VERSION=1.1.1"
+                + "&REQUEST=GetMap&SRS=EPSG:4326&BBOX=-180,-90,0,90&WIDTH=256&HEIGHT=256&transparent=true&tiled=true";
+        MockHttpServletResponse response = getAsServletResponse(path);
+        assertEquals("image/png", response.getContentType());
+        assertThat(
+                "GWC must handle tile-aligned request via direct integration",
+                response.getHeader("geowebcache-tile-index"),
+                Matchers.notNullValue());
+        assertThat(
+                "first request must be a MISS",
+                response.getHeader("geowebcache-cache-result"),
+                equalToIgnoringCase("MISS"));
+        BufferedImage img = ImageIO.read(new ByteArrayInputStream(response.getContentAsByteArray()));
+        double[] maxima = new ImageWorker(img).forceComponentColorModel().getMaximums();
+        assertEquals("area outside Australia clip must be fully transparent", 0.0, maxima[maxima.length - 1], 0.0);
+    }
+
+    @Test
     public void testFilterMosaic() throws Exception {
         // first to cache
         setRequestAuth("cite", "cite");

@@ -33,7 +33,7 @@ public class AccessLimits implements Serializable, Cloneable {
      * shaped these limits (e.g. rule IDs, role names), allowing downstream caches to invalidate only the entries
      * affected by a specific rule change rather than sweeping all security-keyed entries for a layer.
      */
-    Set<String> securityTags;
+    private Set<String> securityTags;
 
     /** Builds a generic AccessLimits */
     public AccessLimits(CatalogMode mode) {
@@ -52,7 +52,7 @@ public class AccessLimits implements Serializable, Cloneable {
 
     /** Sets tags used for targeted cache invalidation. See {@link #securityTags}. */
     public void setSecurityTags(Set<String> securityTags) {
-        this.securityTags = securityTags;
+        this.securityTags = securityTags == null ? null : Set.copyOf(securityTags);
     }
 
     @Override

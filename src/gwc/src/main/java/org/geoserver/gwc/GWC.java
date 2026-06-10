@@ -24,6 +24,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -52,6 +53,7 @@ import org.apache.hc.client5.http.utils.DateUtils;
 import org.geoserver.catalog.Catalog;
 import org.geoserver.catalog.CatalogInfo;
 import org.geoserver.catalog.FeatureTypeInfo;
+import org.geoserver.catalog.impl.ProxyUtils;
 import org.geoserver.catalog.LayerGroupInfo;
 import org.geoserver.catalog.LayerInfo;
 import org.geoserver.catalog.NamespaceInfo;
@@ -2140,6 +2142,9 @@ public class GWC implements DisposableBean, InitializingBean, ApplicationContext
         // filter is a spatial/attribute restriction that the rendering pipeline handles by producing
         // empty tiles — no need for a bbox check here.
         for (LayerInfo layerInfo : layerInfos) {
+            if (layerInfo instanceof Proxy) {
+                layerInfo = ProxyUtils.unwrap(layerInfo, Proxy.getInvocationHandler(layerInfo).getClass());
+            }
             if (layerInfo instanceof SecuredLayerInfo securedLayerInfo) {
                 AccessLimits limits = securedLayerInfo.getWrapperPolicy().getLimits();
                 if (limits instanceof DataAccessLimits dal && Filter.EXCLUDE.equals(dal.getReadFilter())) {

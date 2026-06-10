@@ -73,6 +73,8 @@ When turned on, the embedded GWC enforces GeoServer data security on every tile 
 
   Unrestricted users have no `ACCESS_LIMITS_KEY` in their tile parameters and continue to use the shared default cache. GWC hashes all tile parameters into the `parametersId` used to locate tiles in the cache storage, so tiles with different `ACCESS_LIMITS_KEY` values are stored at different cache paths even if they cover the same bounding box.
 
+  When access restrictions involve complex geometries or long filter expressions, the `ACCESS_LIMITS_KEY` value can become large. GeoWebCache limits it to **64 KB** by default. If the serialized key exceeds this limit, individual field values are truncated (longest first) until the total fits. Each truncated value is replaced with its visible prefix followed by `...too long, sha is <sha256hex>`, where the SHA-256 is computed from the full original value. This ensures that users with identical restrictions still share cache entries even after truncation. The limit can be overridden with the system property `gwc.security.maxKeyLength` (value in characters).
+
 !!! note
     The `ACCESS_LIMITS_KEY` parameter is injected at runtime and is **never written** to the gwc-layers XML configuration files (`<data_dir>/gwc-layers/`). It will not appear there when inspecting layer configuration. To observe it however one can check out the property files collecting the filter parameter values for the various tile caches, found in each tile layer folder.
 
