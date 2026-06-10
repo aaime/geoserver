@@ -463,17 +463,18 @@ public class GeoServerTileLayerTest {
         when(mockKeyBuilder.buildKey(any())).thenReturn(null);
         SecureCatalogImpl mockSecureCatalog = mock(SecureCatalogImpl.class);
         when(mockSecureCatalog.getResourceAccessManager()).thenReturn(mockRam);
-        GenericApplicationContext ctx = new GenericApplicationContext();
-        ctx.getBeanFactory().registerSingleton("keyBuilder", mockKeyBuilder);
-        ctx.getBeanFactory().registerSingleton("secureCatalog", mockSecureCatalog);
-        ctx.refresh();
-        new GeoServerExtensions().setApplicationContext(ctx);
+        try (GenericApplicationContext ctx = new GenericApplicationContext()) {
+            ctx.getBeanFactory().registerSingleton("keyBuilder", mockKeyBuilder);
+            ctx.getBeanFactory().registerSingleton("secureCatalog", mockSecureCatalog);
+            ctx.refresh();
+            new GeoServerExtensions().setApplicationContext(ctx);
 
-        layerInfoTileLayer = new GeoServerTileLayer(layerInfo, defaults, gridSetBroker);
-        // non-default STYLES: result must not contain ACCESS_LIMITS_KEY
-        Map<String, String> params = Collections.singletonMap("sTyLeS", "alternateStyle-1");
-        Map<String, String> result = layerInfoTileLayer.getModifiableParameters(params, "UTF-8");
-        assertEquals(Collections.singletonMap("STYLES", "alternateStyle-1"), result);
+            layerInfoTileLayer = new GeoServerTileLayer(layerInfo, defaults, gridSetBroker);
+            // non-default STYLES: result must not contain ACCESS_LIMITS_KEY
+            Map<String, String> params = Collections.singletonMap("sTyLeS", "alternateStyle-1");
+            Map<String, String> result = layerInfoTileLayer.getModifiableParameters(params, "UTF-8");
+            assertEquals(Collections.singletonMap("STYLES", "alternateStyle-1"), result);
+        }
     }
 
     @Test
@@ -485,17 +486,18 @@ public class GeoServerTileLayerTest {
         when(mockKeyBuilder.buildKey(any())).thenReturn("user_hash");
         SecureCatalogImpl mockSecureCatalog = mock(SecureCatalogImpl.class);
         when(mockSecureCatalog.getResourceAccessManager()).thenReturn(mockRam);
-        GenericApplicationContext ctx = new GenericApplicationContext();
-        ctx.getBeanFactory().registerSingleton("keyBuilder", mockKeyBuilder);
-        ctx.getBeanFactory().registerSingleton("secureCatalog", mockSecureCatalog);
-        ctx.refresh();
-        new GeoServerExtensions().setApplicationContext(ctx);
+        try (GenericApplicationContext ctx = new GenericApplicationContext()) {
+            ctx.getBeanFactory().registerSingleton("keyBuilder", mockKeyBuilder);
+            ctx.getBeanFactory().registerSingleton("secureCatalog", mockSecureCatalog);
+            ctx.refresh();
+            new GeoServerExtensions().setApplicationContext(ctx);
 
-        layerInfoTileLayer = new GeoServerTileLayer(layerInfo, defaults, gridSetBroker);
-        Map<String, String> params = Collections.singletonMap("sTyLeS", "alternateStyle-1");
-        Map<String, String> result = layerInfoTileLayer.getModifiableParameters(params, "UTF-8");
-        assertEquals("alternateStyle-1", result.get("STYLES"));
-        assertEquals("user_hash", result.get(SecurityParameterFilter.ACCESS_LIMITS_KEY));
+            layerInfoTileLayer = new GeoServerTileLayer(layerInfo, defaults, gridSetBroker);
+            Map<String, String> params = Collections.singletonMap("sTyLeS", "alternateStyle-1");
+            Map<String, String> result = layerInfoTileLayer.getModifiableParameters(params, "UTF-8");
+            assertEquals("alternateStyle-1", result.get("STYLES"));
+            assertEquals("user_hash", result.get(SecurityParameterFilter.ACCESS_LIMITS_KEY));
+        }
     }
 
     @Test

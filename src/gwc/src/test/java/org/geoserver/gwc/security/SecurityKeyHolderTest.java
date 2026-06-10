@@ -44,6 +44,7 @@ public class SecurityKeyHolderTest {
     private ResourceAccessManager mockRam;
     private SecureCatalogImpl mockSecureCatalog;
     private LayerInfo mockLayer;
+    private GenericApplicationContext ctx;
 
     @Before
     public void setUp() {
@@ -59,10 +60,12 @@ public class SecurityKeyHolderTest {
     public void tearDown() {
         SecurityKeyHolder.clear();
         new GeoServerExtensions().setApplicationContext(null);
+        if (ctx != null) ctx.close();
     }
 
     private void setContext(AccessLimitsKeyBuilder keyBuilder) {
-        GenericApplicationContext ctx = new GenericApplicationContext();
+        if (ctx != null) ctx.close();
+        ctx = new GenericApplicationContext();
         ctx.getBeanFactory().registerSingleton("keyBuilder", keyBuilder);
         ctx.getBeanFactory().registerSingleton("secureCatalog", mockSecureCatalog);
         ctx.refresh();
@@ -117,6 +120,18 @@ public class SecurityKeyHolderTest {
         SecurityKeyHolder.resolveKey(mockLayer);
 
         verify(mockKeyBuilder, times(2)).buildKey(any());
+    }
+
+    @Test
+    public void testSingleRamCallForKeyAndTags() {
+        // resolveKey + resolveSecurityTags must share one RAM call per request
+        when(mockRam.getAccessLimits(any(), any(LayerInfo.class))).thenReturn(mock(DataAccessLimits.class));
+        when(mockKeyBuilder.buildKey(any())).thenReturn("user_key");
+
+        SecurityKeyHolder.resolveKey(mockLayer);
+        SecurityKeyHolder.resolveSecurityTags(mockLayer);
+
+        verify(mockRam, times(1)).getAccessLimits(any(), any(LayerInfo.class));
     }
 
     // --- key content tests (real builder) ---

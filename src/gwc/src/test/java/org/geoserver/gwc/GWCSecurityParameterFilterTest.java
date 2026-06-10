@@ -22,6 +22,8 @@ import org.geoserver.data.test.CiteTestData;
 import org.geoserver.data.test.MockData;
 import org.geoserver.data.test.SystemTestData;
 import org.geoserver.data.test.SystemTestData.LayerProperty;
+import org.geoserver.gwc.security.CustomParam;
+import org.geoserver.gwc.security.CustomParamSerializer;
 import org.geoserver.gwc.security.SecurityKeyHolder;
 import org.geoserver.security.CatalogMode;
 import org.geoserver.security.CoverageAccessLimits;
@@ -69,6 +71,7 @@ public class GWCSecurityParameterFilterTest extends GeoServerSystemTestSupport {
     protected void setUpSpring(List<String> springContextLocations) {
         super.setUpSpring(springContextLocations);
         springContextLocations.add("classpath:/org/geoserver/wms/ResourceAccessManagerContext.xml");
+        springContextLocations.add("classpath:/org/geoserver/gwc/security/CustomParamSerializerContext.xml");
     }
 
     @Override
@@ -179,6 +182,9 @@ public class GWCSecurityParameterFilterTest extends GeoServerSystemTestSupport {
         return new GeneralParameterValue[] {new Parameter<>(desc, value)};
     }
 
+    private static GeneralParameterValue[] customParam(String value) {
+        return new GeneralParameterValue[] {new Parameter<>(CustomParamSerializer.DESCRIPTOR, new CustomParam(value))};
+    }
 
     @Test
     public void testSecurityDisabledSharesCache() throws Exception {
@@ -190,7 +196,6 @@ public class GWCSecurityParameterFilterTest extends GeoServerSystemTestSupport {
         assertTileResult(MockData.BASIC_POLYGONS, "HIT");
     }
 
-
     @Test
     public void testVectorUnrestrictedSharesCache() throws Exception {
         GWC.get().getConfig().setSecurityEnabled(true);
@@ -200,7 +205,6 @@ public class GWCSecurityParameterFilterTest extends GeoServerSystemTestSupport {
         login("user_b", "test");
         assertTileResult(MockData.BASIC_POLYGONS, "HIT");
     }
-
 
     @Test
     public void testVectorReadFilterSeparatesCache() throws Exception {
@@ -250,7 +254,6 @@ public class GWCSecurityParameterFilterTest extends GeoServerSystemTestSupport {
         assertTileResult(MockData.BASIC_POLYGONS, "HIT");
     }
 
-
     @Test
     public void testVectorReadAttributesSeparatesCache() throws Exception {
         GWC.get().getConfig().setSecurityEnabled(true);
@@ -298,7 +301,6 @@ public class GWCSecurityParameterFilterTest extends GeoServerSystemTestSupport {
         assertTileResult(MockData.BASIC_POLYGONS, "HIT");
     }
 
-
     @Test
     public void testVectorClipGeometrySeparatesCache() throws Exception {
         GWC.get().getConfig().setSecurityEnabled(true);
@@ -329,7 +331,6 @@ public class GWCSecurityParameterFilterTest extends GeoServerSystemTestSupport {
         login("user_b", "test");
         assertTileResult(MockData.BASIC_POLYGONS, "HIT");
     }
-
 
     @Test
     public void testRasterUnrestrictedSharesCache() throws Exception {
@@ -400,7 +401,6 @@ public class GWCSecurityParameterFilterTest extends GeoServerSystemTestSupport {
         assertRasterTileResult("HIT");
     }
 
-
     @Test
     public void testGroupUnrestrictedSharesCache() throws Exception {
         GWC.get().getConfig().setSecurityEnabled(true);
@@ -461,7 +461,6 @@ public class GWCSecurityParameterFilterTest extends GeoServerSystemTestSupport {
         assertTileResult(GROUP, 0, "HIT");
     }
 
-
     @Test
     public void testVectorIntersectFilterSeparatesCache() throws Exception {
         GWC.get().getConfig().setSecurityEnabled(true);
@@ -492,7 +491,6 @@ public class GWCSecurityParameterFilterTest extends GeoServerSystemTestSupport {
         login("user_b", "test");
         assertTileResult(MockData.BASIC_POLYGONS, "HIT");
     }
-
 
     @Test
     public void testSecurityTagsSeparateCache() throws Exception {
@@ -532,7 +530,6 @@ public class GWCSecurityParameterFilterTest extends GeoServerSystemTestSupport {
         login("user_b", "test");
         assertTileResult(MockData.BASIC_POLYGONS, "HIT");
     }
-
 
     @Test
     public void testRasterParamsSeparatesCache() throws Exception {
@@ -574,6 +571,31 @@ public class GWCSecurityParameterFilterTest extends GeoServerSystemTestSupport {
         assertRasterTileResult("MISS");
 
         login("user_b", "test");
+        assertRasterTileResult("HIT");
+    }
+
+    @Test
+    public void testRasterCustomSerializerSeparatesCache() throws Exception {
+        // verifies that CustomParamSerializer (registered as a Spring bean in CustomParamSerializerContext.xml)
+        // is picked up by AccessLimitsKeyBuilder.afterPropertiesSet() at context startup
+        GWC.get().getConfig().setSecurityEnabled(true);
+        CoverageInfo coverage = getCatalog().getCoverageByName("sf:mosaic");
+        getRAM().putLimits(
+                        "user_a",
+                        coverage,
+                        new CoverageAccessLimits(CatalogMode.HIDE, Filter.INCLUDE, null, customParam("value_a")));
+        getRAM().putLimits(
+                        "user_b",
+                        coverage,
+                        new CoverageAccessLimits(CatalogMode.HIDE, Filter.INCLUDE, null, customParam("value_b")));
+
+        login("user_a", "test");
+        assertRasterTileResult("MISS");
+
+        login("user_b", "test");
+        assertRasterTileResult("MISS"); // different custom param → own cache
+
+        login("user_a", "test");
         assertRasterTileResult("HIT");
     }
 }

@@ -19,6 +19,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import org.geoserver.platform.GeoServerExtensions;
 import org.geoserver.security.AccessLimits;
 import org.geoserver.security.CoverageAccessLimits;
 import org.geoserver.security.DataAccessLimits;
@@ -29,6 +30,7 @@ import org.geotools.api.parameter.GeneralParameterValue;
 import org.geotools.api.parameter.ParameterValue;
 import org.geotools.util.Range;
 import org.locationtech.jts.geom.Geometry;
+import org.springframework.beans.factory.InitializingBean;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.databind.node.ArrayNode;
@@ -53,7 +55,7 @@ import tools.jackson.databind.node.ObjectNode;
  * visible in the stored property file while bounding total size. The default (64 KB) was validated to open instantly in
  * standard text editors and gives ~2,100 readable characters per geometry field in a 30-layer group.
  */
-public class AccessLimitsKeyBuilder {
+public class AccessLimitsKeyBuilder implements InitializingBean {
 
     static final String MAX_KEY_LENGTH_PROPERTY = "gwc.security.maxKeyLength";
     static final int DEFAULT_MAX_KEY_LENGTH = 65536;
@@ -89,17 +91,22 @@ public class AccessLimitsKeyBuilder {
             new TypedKeySerializer<>(Boolean.class),
             new TypedKeySerializer<>(String.class));
 
-    private final List<ParameterValueKeySerializer<?>> custom;
+    private List<ParameterValueKeySerializer<?>> custom;
     private final IgnorableParameterRegistry ignorable;
     private final int maxKeyLength;
 
+    /** Spring constructor — custom serializers collected from context in {@link #afterPropertiesSet()}. */
+    public AccessLimitsKeyBuilder(IgnorableParameterRegistry ignorable) {
+        this(List.of(), ignorable, Integer.getInteger(MAX_KEY_LENGTH_PROPERTY, DEFAULT_MAX_KEY_LENGTH));
+    }
+
+    /** Test constructor — custom serializers supplied directly; {@link #afterPropertiesSet()} not called. */
     public AccessLimitsKeyBuilder(List<ParameterValueKeySerializer<?>> custom, IgnorableParameterRegistry ignorable) {
         this(custom, ignorable, Integer.getInteger(MAX_KEY_LENGTH_PROPERTY, DEFAULT_MAX_KEY_LENGTH));
     }
 
     AccessLimitsKeyBuilder(
             List<ParameterValueKeySerializer<?>> custom, IgnorableParameterRegistry ignorable, int maxKeyLength) {
-        // fail fast on duplicate contributed serializers for the same value type
         Map<Class<?>, String> seen = new LinkedHashMap<>();
         for (ParameterValueKeySerializer<?> s : custom) {
             String prev = seen.put(s.getValueType(), s.getClass().getName());
@@ -110,6 +117,24 @@ public class AccessLimitsKeyBuilder {
         this.custom = List.copyOf(custom);
         this.ignorable = ignorable;
         this.maxKeyLength = maxKeyLength;
+    }
+
+    /** Collects all {@link ParameterValueKeySerializer} beans from the Spring context. Fails on duplicates. */
+    @Override
+    public void afterPropertiesSet() {
+        @SuppressWarnings("rawtypes")
+        List<ParameterValueKeySerializer> discovered =
+                GeoServerExtensions.extensions(ParameterValueKeySerializer.class);
+        Map<Class<?>, String> seen = new LinkedHashMap<>();
+        for (ParameterValueKeySerializer<?> s : discovered) {
+            String prev = seen.put(s.getValueType(), s.getClass().getName());
+            if (prev != null) {
+                throw new IllegalStateException(errorDuplicateSerializer(s.getValueType(), prev, s.getClass()));
+            }
+        }
+        @SuppressWarnings("unchecked")
+        List<ParameterValueKeySerializer<?>> cast = (List<ParameterValueKeySerializer<?>>) (List<?>) discovered;
+        this.custom = List.copyOf(cast);
     }
 
     /**
@@ -261,7 +286,7 @@ public class AccessLimitsKeyBuilder {
         for (ObjectNode n : nodes) {
             for (String fname : n.propertyNames()) {
                 JsonNode v = n.get(fname);
-                if (v.isTextual()) fields.add(new Field(n, fname, v.textValue()));
+                if (v.isString()) fields.add(new Field(n, fname, v.stringValue()));
             }
         }
         // longest value first — each truncation removes the most bytes

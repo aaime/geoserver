@@ -53,7 +53,6 @@ import org.apache.hc.client5.http.utils.DateUtils;
 import org.geoserver.catalog.Catalog;
 import org.geoserver.catalog.CatalogInfo;
 import org.geoserver.catalog.FeatureTypeInfo;
-import org.geoserver.catalog.impl.ProxyUtils;
 import org.geoserver.catalog.LayerGroupInfo;
 import org.geoserver.catalog.LayerInfo;
 import org.geoserver.catalog.NamespaceInfo;
@@ -61,6 +60,7 @@ import org.geoserver.catalog.PublishedInfo;
 import org.geoserver.catalog.PublishedType;
 import org.geoserver.catalog.ResourceInfo;
 import org.geoserver.catalog.StyleInfo;
+import org.geoserver.catalog.impl.ProxyUtils;
 import org.geoserver.catalog.util.CloseableIterator;
 import org.geoserver.gwc.config.GWCConfig;
 import org.geoserver.gwc.config.GWCConfigPersister;
@@ -2143,7 +2143,8 @@ public class GWC implements DisposableBean, InitializingBean, ApplicationContext
         // empty tiles — no need for a bbox check here.
         for (LayerInfo layerInfo : layerInfos) {
             if (layerInfo instanceof Proxy) {
-                layerInfo = ProxyUtils.unwrap(layerInfo, Proxy.getInvocationHandler(layerInfo).getClass());
+                layerInfo = ProxyUtils.unwrap(
+                        layerInfo, Proxy.getInvocationHandler(layerInfo).getClass());
             }
             if (layerInfo instanceof SecuredLayerInfo securedLayerInfo) {
                 AccessLimits limits = securedLayerInfo.getWrapperPolicy().getLimits();

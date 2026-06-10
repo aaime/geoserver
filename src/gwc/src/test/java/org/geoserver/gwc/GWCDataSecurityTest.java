@@ -634,9 +634,6 @@ public class GWCDataSecurityTest extends WMSTestSupport {
         // gwc/service/wms (WMS-C) goes through a different dispatcher path than WMTS/TMS.
         // Verify that SecurityParameterFilter still segregates tiles per user access profile.
         GWC.get().truncate("sf:mosaic");
-        TestResourceAccessManager tam =
-                (TestResourceAccessManager) applicationContext.getBean("testResourceAccessManager");
-        CoverageInfo coverage = getCatalog().getCoverageByName("sf:mosaic");
         // cite_cropmosaic has a raster clip to Australia, giving it a different ACCESS_LIMITS_KEY
         String wmscPath = "gwc/service/wms?LAYERS=sf:mosaic&FORMAT=image/png&SERVICE=WMS&VERSION=1.1.1"
                 + "&REQUEST=GetMap&SRS=EPSG:4326&BBOX=0,-90,180,90&WIDTH=256&HEIGHT=256";

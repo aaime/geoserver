@@ -8,6 +8,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
@@ -17,6 +18,7 @@ import java.security.MessageDigest;
 import java.util.Date;
 import java.util.HexFormat;
 import java.util.List;
+import org.geoserver.platform.GeoServerExtensionsHelper;
 import org.geoserver.security.AccessLimits;
 import org.geoserver.security.CatalogMode;
 import org.geoserver.security.CoverageAccessLimits;
@@ -33,6 +35,7 @@ import org.geotools.parameter.DefaultParameterDescriptor;
 import org.geotools.parameter.Parameter;
 import org.geotools.util.DateRange;
 import org.geotools.util.NumberRange;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
@@ -60,6 +63,11 @@ public class AccessLimitsKeyBuilderTest {
         ignorable = new IgnorableParameterRegistry();
         builder = new AccessLimitsKeyBuilder(List.of(), ignorable);
         truncBuilder = new AccessLimitsKeyBuilder(List.of(), ignorable, TRUNC_LIMIT);
+    }
+
+    @After
+    public void tearDown() {
+        GeoServerExtensionsHelper.clear();
     }
 
     /** CoverageAccessLimits with a single string parameter — convenient for truncation tests. */
@@ -280,7 +288,6 @@ public class AccessLimitsKeyBuilderTest {
         assertEquals("{\"MY_DIM\":\"A,B,C\"}", builder.buildKey(c));
     }
 
-
     @Test
     public void testNoTruncationWhenUnderLimit() {
         // 100-char value → JSON ~114 chars, well under TRUNC_LIMIT=300
@@ -329,7 +336,7 @@ public class AccessLimitsKeyBuilderTest {
         // different long values must NOT share cache
         String k1 = truncBuilder.buildKey(coverageParam("PARAM_A", "A".repeat(500)));
         String k2 = truncBuilder.buildKey(coverageParam("PARAM_A", "B".repeat(500)));
-        assertTrue("different long values must yield different sha → different keys", !k1.equals(k2));
+        assertNotEquals("different long values must yield different sha → different keys", k1, k2);
     }
 
     @Test
@@ -402,5 +409,29 @@ public class AccessLimitsKeyBuilderTest {
         // field untouched — no truncation marker present
         assertThat(key, not(containsString("...too long")));
         assertThat(key, containsString(shortValue));
+    }
+
+    @Test
+    public void testAfterPropertiesSetCollectsContributedSerializers() {
+        GeoServerExtensionsHelper.singleton(
+                "customParamSerializer", new CustomParamSerializer(), ParameterValueKeySerializer.class);
+
+        AccessLimitsKeyBuilder b = new AccessLimitsKeyBuilder(ignorable);
+        b.afterPropertiesSet();
+
+        CoverageAccessLimits limits =
+                new CoverageAccessLimits(CatalogMode.HIDE, Filter.INCLUDE, null, new GeneralParameterValue[] {
+                    new Parameter<>(CustomParamSerializer.DESCRIPTOR, new CustomParam("hello"))
+                });
+        assertEquals("{\"CUSTOM_PARAM\":\"hello\"}", b.buildKey(limits));
+    }
+
+    @Test
+    public void testAfterPropertiesSetFailsOnDuplicateContributedSerializers() {
+        GeoServerExtensionsHelper.singleton("ser1", new CustomParamSerializer(), ParameterValueKeySerializer.class);
+        GeoServerExtensionsHelper.singleton("ser2", new CustomParamSerializer(), ParameterValueKeySerializer.class);
+
+        AccessLimitsKeyBuilder b = new AccessLimitsKeyBuilder(ignorable);
+        assertThrows(IllegalStateException.class, b::afterPropertiesSet);
     }
 }
