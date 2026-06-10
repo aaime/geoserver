@@ -321,7 +321,6 @@ public class OAuth2LoginButtonManagerTest {
                 info.getFilterClass().getName());
     }
 
-    // ── SecurityManagerListener: auto-enablement on save ─────────────────────
     //
     // These tests cover the "save filter → button appears without container restart" path.
     // After context refresh the manager must self-register as a SecurityManagerListener and

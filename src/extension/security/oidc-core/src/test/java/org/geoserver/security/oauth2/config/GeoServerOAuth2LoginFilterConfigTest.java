@@ -41,7 +41,6 @@ public class GeoServerOAuth2LoginFilterConfigTest {
         System.clearProperty("PROXY_BASE_URL");
     }
 
-    // ── Bug 1: Optional.toString() leak ─────────────────────────────────────
 
     /** Verify that baseRedirectUri never contains the literal "Optional[" wrapper. */
     @Test
@@ -66,7 +65,6 @@ public class GeoServerOAuth2LoginFilterConfigTest {
         assertFalse(config.getMsRedirectUri().contains("Optional["));
     }
 
-    // ── Bug 2: PROXY_BASE_URL takes priority ────────────────────────────────
 
     /** PROXY_BASE_URL system property should take priority over the test fallback. */
     @Test
@@ -96,7 +94,6 @@ public class GeoServerOAuth2LoginFilterConfigTest {
         assertEquals("https://proxy.example.com/geoserver/", config.getBaseRedirectUri());
     }
 
-    // ── JIRA #2: Dynamic redirect URI resolution ────────────────────────────
 
     /** Redirect URIs should reflect the current base dynamically, without needing calculateRedirectUris(). */
     @Test
@@ -174,7 +171,6 @@ public class GeoServerOAuth2LoginFilterConfigTest {
                 "http://example/gs/web/oauth2/authorization/oidc", config.getAuthenticationEntryPointRedirectUri());
     }
 
-    // ── JIRA #6: Empty-to-null normalization ────────────────────────────────
 
     /** Setting an optional URI to empty string should normalize to null. */
     @Test
@@ -254,7 +250,6 @@ public class GeoServerOAuth2LoginFilterConfigTest {
         assertEquals("query", config.getOidcResponseMode());
     }
 
-    // ── Dropdown selector (new in v2) ───────────────────────────────────────
 
     /** Verify that setSelectedProvider enables only the selected provider. */
     @Test
@@ -281,7 +276,6 @@ public class GeoServerOAuth2LoginFilterConfigTest {
         assertEquals("oidc", config.getSelectedProvider());
     }
 
-    // ── unwrapToString: handles Optional<String> from GeoServer 3.x ─────────
 
     /** unwrapToString should extract the inner value from Optional.of(string). */
     @Test
@@ -312,7 +306,6 @@ public class GeoServerOAuth2LoginFilterConfigTest {
         assertNull(GeoServerOAuth2LoginFilterConfig.unwrapToString(null));
     }
 
-    // ── Dynamic postLogoutRedirectUri ───────────────────────────────────────
 
     /** postLogoutRedirectUri should dynamically reflect the current base URI. */
     @Test

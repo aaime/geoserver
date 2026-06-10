@@ -447,7 +447,6 @@ public class OAuth2LoginButtonManager
         return Collections.unmodifiableMap(registeredButtons);
     }
 
-    // ── ExtensionProvider<LoginFormInfo> ────────────────────────────────────
     //
     // Bypass GeoServerExtensions.extensionsCache for our dynamic singletons. That cache (a static
     // ConcurrentHashMap in GeoServerExtensions, keyed by extension-point class) is populated on the

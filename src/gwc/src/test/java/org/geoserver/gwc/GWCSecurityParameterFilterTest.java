@@ -154,7 +154,6 @@ public class GWCSecurityParameterFilterTest extends GeoServerSystemTestSupport {
         return GF.createMultiPolygon(new Polygon[] {p});
     }
 
-    // ── security disabled ─────────────────────────────────────────────────────
 
     @Test
     public void testSecurityDisabledSharesCache() throws Exception {
@@ -166,7 +165,6 @@ public class GWCSecurityParameterFilterTest extends GeoServerSystemTestSupport {
         assertTileResult(MockData.BASIC_POLYGONS, "HIT");
     }
 
-    // ── vector: unrestricted ──────────────────────────────────────────────────
 
     @Test
     public void testVectorUnrestrictedSharesCache() throws Exception {
@@ -178,7 +176,6 @@ public class GWCSecurityParameterFilterTest extends GeoServerSystemTestSupport {
         assertTileResult(MockData.BASIC_POLYGONS, "HIT");
     }
 
-    // ── vector: read filter ───────────────────────────────────────────────────
 
     @Test
     public void testVectorReadFilterSeparatesCache() throws Exception {
@@ -228,7 +225,6 @@ public class GWCSecurityParameterFilterTest extends GeoServerSystemTestSupport {
         assertTileResult(MockData.BASIC_POLYGONS, "HIT");
     }
 
-    // ── vector: read attributes ───────────────────────────────────────────────
 
     @Test
     public void testVectorReadAttributesSeparatesCache() throws Exception {
@@ -277,7 +273,6 @@ public class GWCSecurityParameterFilterTest extends GeoServerSystemTestSupport {
         assertTileResult(MockData.BASIC_POLYGONS, "HIT");
     }
 
-    // ── vector: clip geometry ─────────────────────────────────────────────────
 
     @Test
     public void testVectorClipGeometrySeparatesCache() throws Exception {
@@ -310,7 +305,6 @@ public class GWCSecurityParameterFilterTest extends GeoServerSystemTestSupport {
         assertTileResult(MockData.BASIC_POLYGONS, "HIT");
     }
 
-    // ── raster ────────────────────────────────────────────────────────────────
 
     @Test
     public void testRasterUnrestrictedSharesCache() throws Exception {
@@ -381,7 +375,6 @@ public class GWCSecurityParameterFilterTest extends GeoServerSystemTestSupport {
         assertRasterTileResult("HIT");
     }
 
-    // ── layer group ───────────────────────────────────────────────────────────
 
     @Test
     public void testGroupUnrestrictedSharesCache() throws Exception {
@@ -443,7 +436,6 @@ public class GWCSecurityParameterFilterTest extends GeoServerSystemTestSupport {
         assertTileResult(GROUP, 0, "HIT");
     }
 
-    // ── helpers ───────────────────────────────────────────────────────────────
 
     private static VectorAccessLimits vectorFilter(String ecql) throws Exception {
         return new VectorAccessLimits(CatalogMode.HIDE, null, ECQL.toFilter(ecql), null, Filter.INCLUDE);

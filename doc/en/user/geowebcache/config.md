@@ -51,6 +51,28 @@ For stability reasons, it is not recommended to use the embedded GeoWebCache wit
 
 GWC Data Security is an option that can be turned on and turned off through the [Caching defaults](webadmin/defaults.md) page. By default it is turned off.
 
-When turned on, the embedded GWC will do a data security check before calling GeoWebCache, i.e. verify whether the user actually has access to the layer, and reject the request if this is not the case. In the case of WMS-C requests, there is also limited support for data access limit filters, only with respect to geographic boundaries (all other types of data access limits will be ignored). The embedded GWC will reject requests for which the requested bounding box is (partly) inaccessible. It is only possible to request a tile within a bounding box that is fully accessible. This behaviour is different from the regular WMS, which will filter the data before serving it. However, if the integrated WMS/WMS-C is used, the request will be forwarded back to WMS and give the desired result.
+When turned on, the embedded GWC enforces GeoServer data security on every tile request:
 
-When using the default GeoServer security system, rules cannot combine data security with service security. However, when using a security subsystem it may be possible to make such particular combinations. In this case the WMS-C service inherits all security rules from the regular WMS service; while all other GWC services will get their security from rules associated with the 'GWC' service itself.
+- **Layer access**: users without access to a layer receive a "layer not found" error (HIDE mode) or an authentication challenge (CHALLENGE mode), consistent with regular WMS behavior.
+
+- **Spatial access limits**: when a user's access is restricted to a geographic area, tiles outside that area are rendered as empty transparent tiles rather than being rejected with an error. This is consistent with the regular WMS, which filters data before serving it.
+
+- **Security-aware tile caching**: when a user has data access restrictions, GeoWebCache caches their tiles separately from unrestricted users and from users with different restrictions. The separation is based on the *access profile* (the actual restriction rules), not on the user identity. Two users with identical restrictions share the same cached tiles; only users with different restrictions get independent cache entries. This avoids both cache poisoning and unnecessary duplication.
+
+  The separation is implemented by injecting a synthetic `ACCESS_LIMITS_KEY` parameter into the tile request before it reaches the cache. The value is a compact JSON object encoding the active access restrictions. For example, a user restricted to features where `NAME = 'Blue Lake'` would carry:
+
+  ```
+  ACCESS_LIMITS_KEY={"readFilter":"NAME = 'Blue Lake'"}
+  ```
+
+  A user clipped to a raster region in Australia would carry:
+
+  ```
+  ACCESS_LIMITS_KEY={"rasterFilter":"MULTIPOLYGON(((140 -50, 150 -50, 150 -30, 140 -30, 140 -50)))"}
+  ```
+
+  Unrestricted users have no `ACCESS_LIMITS_KEY` in their tile parameters and continue to use the shared default cache. GWC hashes all tile parameters into the `parametersId` used to locate tiles in the cache storage, so tiles with different `ACCESS_LIMITS_KEY` values are stored at different cache paths even if they cover the same bounding box.
+
+!!! note
+    The `ACCESS_LIMITS_KEY` parameter is injected at runtime and is **never written** to the gwc-layers XML configuration files (`<data_dir>/gwc-layers/`). It will not appear there when inspecting layer configuration. To observe it however one can check out the property files collecting the filter parameter values for the various tile caches, found in each tile layer folder.
+

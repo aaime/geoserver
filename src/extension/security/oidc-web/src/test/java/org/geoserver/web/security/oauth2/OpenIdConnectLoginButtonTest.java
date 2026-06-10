@@ -111,7 +111,6 @@ public class OpenIdConnectLoginButtonTest extends GeoServerWicketTestSupport {
         assertFalse(html.contains(MARKUP_IMG));
     }
 
-    // ── Multi-filter integration tests ────────────────────────────────────────
     //
     // These tests guard against the regression where multiple OIDC filters collapsed
     // into a single login button pointing at "an arbitrary surviving one". With the

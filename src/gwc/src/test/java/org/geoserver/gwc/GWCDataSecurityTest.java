@@ -553,17 +553,15 @@ public class GWCDataSecurityTest extends WMSTestSupport {
         MockHttpServletResponse response = getAsServletResponse(path);
         assertEquals("image/png", response.getContentType());
 
-        // this should fail
+        // readFilter-only (no rasterFilter): no bbox check, tile renders normally (filter applied by reader)
         setRequestAuth("cite_filtermosaic", "cite");
 
         path = "gwc/service/wms?bgcolor=0x000000&LAYERS=sf:mosaic&STYLES=&FORMAT=image/png&SERVICE=WMS&VERSION=1.1.1"
                 + "&REQUEST=GetMap&SRS=EPSG:4326&BBOX=0,-90,180,90&WIDTH=256&HEIGHT=256&transparent=false";
         response = getAsServletResponse(path);
-        assertEquals(SECURITY_ERROR_TYPE, response.getContentType());
-        String str = string(getBinaryInputStream(response));
-        assertThat(str, containsString("Not Authorized"));
+        assertEquals("image/png", response.getContentType());
 
-        // but this should be fine
+        // this too
         path = "gwc/service/wms?bgcolor=0x000000&LAYERS=sf:mosaic&STYLES=&FORMAT=image/png&SERVICE=WMS&VERSION=1.1.1"
                 + "&REQUEST=GetMap&SRS=EPSG:4326&BBOX=143.4375,-42.1875,146.25,-39.375&WIDTH=256&HEIGHT=256&transparent=false";
         response = getAsServletResponse(path);
