@@ -82,6 +82,7 @@ public class SecurityKeyHolder {
         if (published instanceof LayerInfo layer) {
             AccessLimits limits = ram.getAccessLimits(auth, layer);
             String key = keyBuilder.buildKey(limits);
+            assert key == null || !key.isEmpty() : "buildKey must not return empty string";
             String tags = tagsFrom(limits);
             return (key != null || tags != null) ? new KeyAndTags(key, tags) : null;
         }
@@ -92,6 +93,7 @@ public class SecurityKeyHolder {
                     .map(l -> (AccessLimits) ram.getAccessLimits(auth, l))
                     .toList();
             String key = keyBuilder.buildLayerGroupKey(names, limitsList);
+            assert key == null || !key.isEmpty() : "buildLayerGroupKey must not return empty string";
             Set<String> allTags = new TreeSet<>();
             for (AccessLimits l : limitsList) collectTags(l, allTags);
             String tags = allTags.isEmpty() ? null : String.join(",", allTags);

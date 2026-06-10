@@ -283,10 +283,14 @@ public class GeoServerTileLayer extends TileLayer implements ProxyLayer, TileJSO
         return configErrorMessage;
     }
 
+    private static boolean isSecurityEnabled() {
+        return GWC.get().getConfig().isSecurityEnabled();
+    }
+
     @Override
     public List<ParameterFilter> getParameterFilters() {
         List<ParameterFilter> filters = new ArrayList<>(info.getParameterFilters());
-        if (GWC.get().getConfig().isSecurityEnabled()) {
+        if (isSecurityEnabled()) {
             if (filters.stream().noneMatch(f -> SecurityParameterFilter.ACCESS_LIMITS_KEY.equals(f.getKey()))) {
                 filters.add(new SecurityParameterFilter(SecurityParameterFilter.ACCESS_LIMITS_KEY));
             }
@@ -300,7 +304,7 @@ public class GeoServerTileLayer extends TileLayer implements ProxyLayer, TileJSO
     @Override
     public Map<String, String> getModifiableParameters(Map<String, ?> map, String encoding)
             throws GeoWebCacheException {
-        if (!GWC.get().getConfig().isSecurityEnabled()) {
+        if (!isSecurityEnabled()) {
             return super.getModifiableParameters(map, encoding);
         }
         String key = SecurityKeyHolder.resolveKey(getPublishedInfo());

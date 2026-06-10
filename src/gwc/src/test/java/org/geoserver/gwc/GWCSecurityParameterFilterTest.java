@@ -7,11 +7,15 @@ package org.geoserver.gwc;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.imageio.ImageIO;
 import javax.xml.namespace.QName;
 import org.geoserver.catalog.Catalog;
 import org.geoserver.catalog.CatalogBuilder;
@@ -36,6 +40,7 @@ import org.geotools.api.filter.expression.PropertyName;
 import org.geotools.api.parameter.GeneralParameterValue;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.filter.text.ecql.ECQL;
+import org.geotools.image.ImageWorker;
 import org.geotools.parameter.DefaultParameterDescriptor;
 import org.geotools.parameter.Parameter;
 import org.junit.After;
@@ -597,5 +602,35 @@ public class GWCSecurityParameterFilterTest extends GeoServerSystemTestSupport {
 
         login("user_a", "test");
         assertRasterTileResult("HIT");
+    }
+
+    @Test
+    public void testRasterClipEnforcedOnTileContent() throws Exception {
+        // verifies that the raster clip is actually applied during rendering, not just segregating cache keys.
+        // tile col=0 at EPSG:4326:0 covers the western hemisphere (-180,-90,0,90);
+        // clip (10,10,20,20) is entirely in the eastern hemisphere → no intersection → null coverage → transparent
+        // tile.
+        GWC.get().getConfig().setSecurityEnabled(true);
+        CoverageInfo coverage = getCatalog().getCoverageByName("sf:mosaic");
+        getRAM().putLimits(
+                        "user_b",
+                        coverage,
+                        new CoverageAccessLimits(CatalogMode.HIDE, Filter.INCLUDE, bbox(10, 10, 20, 20), null));
+
+        String path = "gwc/service/wmts?request=GetTile&layer=sf:mosaic"
+                + "&format=image/png&tilematrixset=EPSG:4326&tilematrix=EPSG:4326:0&tilerow=0&tilecol=0";
+
+        login("user_a", "test");
+        byte[] tileA = getAsServletResponse(path).getContentAsByteArray();
+
+        login("user_b", "test");
+        byte[] tileB = getAsServletResponse(path).getContentAsByteArray();
+
+        BufferedImage imgA = ImageIO.read(new ByteArrayInputStream(tileA));
+        BufferedImage imgB = ImageIO.read(new ByteArrayInputStream(tileB));
+        double[] alphaA = new ImageWorker(imgA).forceComponentColorModel().getMaximums();
+        double[] alphaB = new ImageWorker(imgB).forceComponentColorModel().getMaximums();
+        assertTrue("unrestricted tile must have visible content", alphaA[alphaA.length - 1] > 0);
+        assertEquals("clip outside tile extent must produce transparent tile", 0.0, alphaB[alphaB.length - 1], 0.0);
     }
 }

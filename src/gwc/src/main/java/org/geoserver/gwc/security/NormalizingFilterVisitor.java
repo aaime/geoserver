@@ -44,8 +44,6 @@ class NormalizingFilterVisitor extends SimplifyingFilterVisitor {
     private static final Comparator<Filter> FILTER_ORDER =
             Comparator.comparing((Filter f) -> f.getClass().getName()).thenComparing(Object::toString);
 
-    // --- Comparison operand swap ---
-
     @Override
     public Object visit(PropertyIsEqualTo filter, Object extraData) {
         Object result = super.visit(filter, extraData);
@@ -104,8 +102,6 @@ class NormalizingFilterVisitor extends SimplifyingFilterVisitor {
         return result;
     }
 
-    // --- AND/OR operand sort ---
-
     @Override
     public Object visit(And filter, Object extraData) {
         Object result = super.visit(filter, extraData);
@@ -128,8 +124,6 @@ class NormalizingFilterVisitor extends SimplifyingFilterVisitor {
         return result;
     }
 
-    // --- InFunction value sort ---
-
     @Override
     public Object visit(Function expression, Object extraData) {
         Object result = super.visit(expression, extraData);
@@ -150,8 +144,6 @@ class NormalizingFilterVisitor extends SimplifyingFilterVisitor {
         }
         return result;
     }
-
-    // --- helpers ---
 
     private static boolean isLiteralLeft(BinaryComparisonOperator op) {
         return op.getExpression1() instanceof Literal && op.getExpression2() instanceof PropertyName;

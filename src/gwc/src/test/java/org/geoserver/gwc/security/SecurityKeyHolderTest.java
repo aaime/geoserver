@@ -76,8 +76,6 @@ public class SecurityKeyHolderTest {
         return new AccessLimitsKeyBuilder(List.of(), new IgnorableParameterRegistry());
     }
 
-    // --- behavioral tests (mock builder) ---
-
     @Test
     public void testResolveKeyNoBeans() {
         new GeoServerExtensions().setApplicationContext(null);
@@ -134,8 +132,7 @@ public class SecurityKeyHolderTest {
         verify(mockRam, times(1)).getAccessLimits(any(), any(LayerInfo.class));
     }
 
-    // --- key content tests (real builder) ---
-    // expected strings are load-bearing: any change breaks existing tile caches
+    // expected strings affect the cache identifier: any change invalidates existing tile caches
 
     @Test
     public void testKeyVectorFilter() throws Exception {
@@ -189,6 +186,8 @@ public class SecurityKeyHolderTest {
         when(mockRam.getAccessLimits(any(), same(layerA))).thenReturn(restricted);
         when(mockRam.getAccessLimits(any(), same(layerB))).thenReturn(open);
 
+        // field order affects the cache identifier: stored keys must not change across releases.
+        // Jackson ObjectNode preserves insertion order; verify this holds after any Jackson upgrade.
         assertEquals(
                 "[{\"layer\":\"ws:a\",\"readFilter\":\"pop > 0\"},{\"layer\":\"ws:b\"}]",
                 SecurityKeyHolder.resolveKey(group));

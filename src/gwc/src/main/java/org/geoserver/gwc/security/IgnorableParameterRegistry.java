@@ -5,9 +5,9 @@
 package org.geoserver.gwc.security;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 import org.geotools.api.parameter.GeneralParameterDescriptor;
 import org.geotools.api.parameter.GeneralParameterValue;
@@ -44,9 +44,7 @@ public class IgnorableParameterRegistry {
             ImageMosaicFormat.MAX_ALLOWED_TILES,
             AbstractGridFormat.SUGGESTED_TILE_SIZE);
 
-    // registered by RAMs at startup; plain HashSet is safe — written during single-threaded Spring init, read-only
-    // after
-    private final Set<GeneralParameterDescriptor> contributed = new HashSet<>();
+    private final Set<GeneralParameterDescriptor> contributed = ConcurrentHashMap.newKeySet();
     private final Set<String> extraNames;
 
     public IgnorableParameterRegistry() {

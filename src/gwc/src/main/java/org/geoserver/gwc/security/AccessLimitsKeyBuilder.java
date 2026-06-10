@@ -139,6 +139,7 @@ public class AccessLimitsKeyBuilder implements InitializingBean {
 
     /**
      * Builds a cache key for a single layer. Returns {@code null} for unrestricted access (no key injection needed).
+     * Never returns an empty string — callers rely on this to distinguish {@code null} (unrestricted) from a real key.
      */
     public String buildKey(AccessLimits limits) {
         ObjectNode node = buildKeyNode(limits);
@@ -168,15 +169,15 @@ public class AccessLimitsKeyBuilder implements InitializingBean {
         return node;
     }
 
-    private static void addReadFilter(ObjectNode node, Filter filter) {
+    private void addReadFilter(ObjectNode node, Filter filter) {
         if (filter != null && !Filter.INCLUDE.equals(filter)) {
-            node.put("readFilter", FILTER_SER.toKey(filter));
+            node.put("readFilter", serializeValue("readFilter", filter));
         }
     }
 
-    private static void addGeometry(ObjectNode node, String field, Geometry geom) {
+    private void addGeometry(ObjectNode node, String field, Geometry geom) {
         if (geom != null) {
-            node.put(field, GEOM_SER.toKey(geom));
+            node.put(field, serializeValue(field, geom));
         }
     }
 
@@ -237,7 +238,7 @@ public class AccessLimitsKeyBuilder implements InitializingBean {
 
     /**
      * Builds a composite cache key for a layer group. Layer names and limits must be in composition order. Returns
-     * {@code null} if no constituent has content-affecting restrictions.
+     * {@code null} if no constituent has content-affecting restrictions. Never returns an empty string.
      */
     public String buildLayerGroupKey(List<String> layerNames, List<AccessLimits> limits) {
         if (layerNames.size() != limits.size()) {
