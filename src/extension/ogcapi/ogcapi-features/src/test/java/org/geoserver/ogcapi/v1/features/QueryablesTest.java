@@ -8,20 +8,32 @@ package org.geoserver.ogcapi.v1.features;
 import static org.geoserver.data.test.CiteTestData.ROAD_SEGMENTS;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import com.github.erosb.jsonsKema.JsonParser;
 import com.github.erosb.jsonsKema.JsonValue;
 import com.github.erosb.jsonsKema.SchemaLoader;
 import com.jayway.jsonpath.DocumentContext;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
+import java.util.Map;
+import org.geoserver.catalog.AttributeTypeInfo;
+import org.geoserver.catalog.FeatureTypeInfo;
 import org.geoserver.data.test.MockData;
 import org.geoserver.ogcapi.Queryables;
+import org.geotools.util.SimpleInternationalString;
 import org.hamcrest.Matchers;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 public class QueryablesTest extends FeaturesTestSupport {
+
+    @Before
+    public void resetLayers() throws Exception {
+        revertLayer(ROAD_SEGMENTS);
+    }
 
     @Test
     public void testDefaultFormat() throws Exception {
@@ -38,6 +50,31 @@ public class QueryablesTest extends FeaturesTestSupport {
         assertEquals("application/schema+json", response.getContentType());
 
         checkRoadSegmentsQueryables(response);
+    }
+
+    @Test
+    public void testAttributeDescription() throws Exception {
+        String layerId = getLayerId(ROAD_SEGMENTS);
+        // no description in the catalog, no description in the schema
+        assertFalse(nameSchema(getAsJSONPath(roadSegmentQueryables(), 200)).containsKey("description"));
+
+        FeatureTypeInfo fti = getCatalog().getFeatureTypeByName(layerId);
+        List<AttributeTypeInfo> attributes = fti.attributes();
+        attributes.stream()
+                .filter(a -> "NAME".equals(a.getName()))
+                .forEach(a -> a.setDescription(new SimpleInternationalString("Name of the road")));
+        fti.getAttributes().addAll(attributes);
+        getCatalog().save(fti);
+
+        DocumentContext json = getAsJSONPath(roadSegmentQueryables(), 200);
+        assertEquals("Name of the road", nameSchema(json).get("description"));
+        // the other attributes are untouched
+        assertEquals("string", json.read("properties.FID.type"));
+        assertFalse(json.read("properties.FID", Map.class).containsKey("description"));
+    }
+
+    private Map<String, Object> nameSchema(DocumentContext json) {
+        return json.read("properties.NAME", Map.class);
     }
 
     private String roadSegmentQueryables() {

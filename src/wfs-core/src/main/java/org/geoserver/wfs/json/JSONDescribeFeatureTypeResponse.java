@@ -24,6 +24,7 @@ import org.geoserver.wfs.WFSDescribeFeatureTypeOutputFormat;
 import org.geotools.api.feature.simple.SimpleFeatureType;
 import org.geotools.api.feature.type.AttributeDescriptor;
 import org.geotools.api.filter.Filter;
+import org.geotools.api.util.InternationalString;
 import org.geotools.filter.IsBetweenImpl;
 import org.geotools.filter.IsEqualsToImpl;
 import org.geotools.filter.OrImpl;
@@ -120,6 +121,11 @@ public class JSONDescribeFeatureTypeResponse extends WFSDescribeFeatureTypeOutpu
             jw.key("type").value("xsd:" + mapToJsonType(binding));
         }
         jw.key("localType").value(mapToJsonType(binding));
+
+        InternationalString description = ad.getType().getDescription();
+        if (description != null) {
+            jw.key("description").value(description.toString());
+        }
 
         if (ad.getType().getRestrictions() != null
                 && !ad.getType().getRestrictions().isEmpty()) {

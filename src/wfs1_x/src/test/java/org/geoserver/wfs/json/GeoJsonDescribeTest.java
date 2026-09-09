@@ -6,19 +6,31 @@
 
 package org.geoserver.wfs.json;
 
+import static org.geoserver.data.test.SystemTestData.PRIMITIVEGEOFEATURE;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
+import org.geoserver.catalog.AttributeTypeInfo;
+import org.geoserver.catalog.FeatureTypeInfo;
 import org.geoserver.data.test.SystemTestData;
 import org.geoserver.json.JSONType;
 import org.geoserver.wfs.WFSTestSupport;
+import org.geotools.util.SimpleInternationalString;
+import org.junit.Before;
 import org.junit.Test;
 import org.kordamp.json.JSONArray;
 import org.kordamp.json.JSONObject;
 
 /** @author carlo cancellieri - GeoSolutions */
 public class GeoJsonDescribeTest extends WFSTestSupport {
+
+    @Before
+    public void resetLayers() throws Exception {
+        revertLayer(PRIMITIVEGEOFEATURE);
+    }
 
     @Test
     public void testDescribePrimitiveGeoFeatureJSON() throws Exception {
@@ -184,5 +196,37 @@ public class GeoJsonDescribeTest extends WFSTestSupport {
         output = output.substring(0, output.length() - 2);
         output = output.substring("custom".length() + 1, output.length());
         testOutput(output);
+    }
+
+    @Test
+    public void testAttributeDescription() throws Exception {
+        String layerId = getLayerId(PRIMITIVEGEOFEATURE);
+        // no description in the catalog, no description in the output
+        assertFalse(properties(layerId).getJSONObject(0).has("description"));
+
+        FeatureTypeInfo fti = getCatalog().getFeatureTypeByName(layerId);
+        List<AttributeTypeInfo> attributes = fti.attributes();
+        attributes.get(0).setDescription(new SimpleInternationalString("Free text describing the site"));
+        fti.getAttributes().addAll(attributes);
+        getCatalog().save(fti);
+
+        JSONArray props = properties(layerId);
+        JSONObject described = props.getJSONObject(0);
+        assertEquals("description", described.get("name"));
+        assertEquals("Free text describing the site", described.get("description"));
+        // the other attributes are untouched
+        assertEquals("name", props.getJSONObject(1).get("name"));
+        assertFalse(props.getJSONObject(1).has("description"));
+    }
+
+    private JSONArray properties(String layerId) throws Exception {
+        String output = getAsString("wfs?service=WFS&request=DescribeFeatureType&version=2.0.0&outputFormat="
+                + JSONType.json
+                + "&typeName="
+                + layerId);
+        return JSONObject.fromObject(output)
+                .getJSONArray("featureTypes")
+                .getJSONObject(0)
+                .getJSONArray("properties");
     }
 }

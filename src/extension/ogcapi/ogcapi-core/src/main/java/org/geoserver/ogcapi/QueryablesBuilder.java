@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 import org.geoserver.catalog.FeatureTypeInfo;
 import org.geotools.api.feature.type.FeatureType;
 import org.geotools.api.feature.type.PropertyDescriptor;
+import org.geotools.api.util.InternationalString;
 import org.geotools.feature.FeatureTypes;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
@@ -75,6 +76,10 @@ public class QueryablesBuilder {
         int fieldLength = FeatureTypes.getFieldLength(descriptor);
         if (fieldLength != FeatureTypes.ANY_LENGTH) {
             schema.setMaxLength(fieldLength);
+        }
+        InternationalString description = descriptor.getType().getDescription();
+        if (description != null) {
+            schema.setDescription(description.toString());
         }
         return schema;
     }
