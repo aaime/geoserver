@@ -1,5 +1,15 @@
 # Upgrading GeoServer 3
 
+## Upgrading GeoServer 3.1.0 Guidance
+
+### Client address behind a reverse proxy
+
+GeoServer now resolves the client address in one place, in the same way as the Tomcat remote IP valve, and only trusts a reverse proxy on the local host by default. If the proxy runs on another host, set the `GEOSERVER_TRUSTED_PROXIES` [application property](../configuration/properties/index.md) to its address or address range. Otherwise logs, monitoring, control flow and IP-based security rules see the proxy address for every request. GeoServer logs a warning the first time a request carries `X-Forwarded-For` from a host that is not listed.
+
+On Kubernetes, list the address range of the ingress controller pods. To see the real client address, the Service in front of the ingress controller needs `externalTrafficPolicy: Local`.
+
+A customized `web.xml` needs the new `Remote IP Resolution` filter, mapped right after the character encoding filter, as in the `web.xml` shipped with GeoServer.
+
 ## Upgrading GeoServer 3.0.0 Guidance
 
 GeoServer 3.0.x is scheduled for release in April/May 2026.
